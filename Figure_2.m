@@ -1,5 +1,5 @@
 clear all;
-close all;
+
 clc;
 
 load workspace_Fig2_LOS.mat
@@ -40,7 +40,7 @@ cdf90_SNR_25dB_Q2 = x_SNR_25dB_Q2(min(find(f_SNR_25dB_Q2>0.9)));
 figure;
 s1 = scatter(x_real(1:2:41,1:2:41)', y_real(1:2:41,1:2:41)', 'o', 'MarkerEdgeColor', "k"); hold on;
 s2 = scatter(x_est_cell{6,38}(1:2:41,1:2:41), y_est_cell{6,38}(1:2:41,1:2:41), '.', 'MarkerEdgeColor', colorsMATLAB(1,:)); hold on;
-s3 = scatter(x_est_cell{6,68}(1:2:41,1:2:41), y_est_cell{6,78}(1:2:41,1:2:41), 'x', 'MarkerEdgeColor', colorsMATLAB(2,:)); hold on;
+s3 = scatter(x_est_cell{6,68}(1:2:41,1:2:41), y_est_cell{6,68}(1:2:41,1:2:41), 'x', 'MarkerEdgeColor', colorsMATLAB(2,:)); hold on;
 
 
 load workspace_Fig2_LOS_NLOS.mat

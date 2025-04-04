@@ -17,7 +17,7 @@ P_t = 0.405;
 theta_half = 45;
 d = 0.95;
 theta = atand(d./1.65) % Angle of orientation in the deterministic mode
-theta = 1:10;
+theta = 4;
 N0 = 10^(-22.8); %0 %10^(-21.9); %10^(-22.8); 10^(-22.7);10^(-22.5);
 N0 = 10^(-23.5); 
 step = 0.2; % Distance between each receiving point (m)
@@ -104,9 +104,9 @@ SNR = cell(1,length(theta));
 % localPoolNumWorkers = 6;
 
 for i_angle = 1:length(theta)
-    n_t = [          0,                             0,           -1;
-                     0,         sind(theta(i_angle)), -cosd(theta(i_angle));
-        sind(theta(i_angle)),                        0, -cosd(theta(i_angle))];
+    n_t = [   sind(theta(i_angle))*cosd(0),   sind(theta(i_angle))*sind(0), -cosd(theta(i_angle)) ;
+              sind(theta(i_angle))*cosd(120),   sind(theta(i_angle))*sind(120), -cosd(theta(i_angle)) ;
+              sind(theta(i_angle))*cosd(240),   sind(theta(i_angle))*sind(240), -cosd(theta(i_angle)) ;];
 
     a = n_t(:,1); b = n_t(:,2); c = n_t(:,3); % Intermediate variables added for consistency with the work document
     for i_n = 1:size(n_t,1)
@@ -127,7 +127,7 @@ for i_angle = 1:length(theta)
                 s_r = (R_pd*P_r_real(r_x,r_y,i_n)).*ones(1,10000) + sqrt(sigma2_tot)*randn(1,10000);
                 Pr_elec = sum(s_r.^2)./length(s_r); % Electrical power of the received signal (W or A²)
                 P_r(r_x,r_y,i_n) = sqrt(Pr_elec)/R_pd; % Estimation of the optical power collected by the PD (W)
-                SNR{i_angle}(r_x,r_y,i_n) = 10*log10( (R_pd*P_r_real(r_x,r_y,i_n))^2/sigma2_tot );
+                %SNR{i_angle}(r_x,r_y,i_n) = 10*log10( (R_pd*P_r_real(r_x,r_y,i_n))^2/sigma2_tot );
                 %fprintf('Distance = %.3f m |  orientation n°%.0f, x = %.1f m, y = %.1f m (%.2f/100)\n', d(i_angle), i_n, x, y, round( ( (i_angle-1)*size(n_t,1)*N_rx*N_ry + (i_n-1)*N_rx*N_ry + (r_x-1)*N_ry + r_y )/(length(theta)*size(n_t,1)*N_rx*N_ry)*100 , 2) );
                 
             end
@@ -157,6 +157,10 @@ scatter(x_real, y_real, 'o', 'MarkerEdgeColor', "k"); hold on;
 scatter(x_est, y_est, 'x', 'MarkerEdgeColor', [0.8500 0.3250 0.0980]); hold on;
 xlim([-2.1,2.1]); ylim([-2.1,2.1]); grid on;
 xlabel('x (m)'); ylabel('y (m)');
+quiver3(0,0, 0, n_t(1,1), n_t(1,2), n_t(1,3), 5, 'r', 'LineWidth', 0.5)
+quiver3(0,0, 0, n_t(2,1), n_t(2,2), n_t(2,3), 5, 'r', 'LineWidth', 0.5)
+quiver3(0,0, 0, n_t(3,1), n_t(3,2), n_t(3,3), 5, 'r', 'LineWidth', 0.5)
 
-mean(SNR{1}(:))
+
+%mean(SNR{1}(:))
 %save workspace;
