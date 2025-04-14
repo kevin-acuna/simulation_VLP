@@ -1,12 +1,13 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%close all;
-clear variables;
-clc;
+function [cdf90_RMS] = RMS_orientation(n_t_s)
 
+%N0 = 10^(-22.8); % Nivel de ruido, SNR=25dB
+%N0 = 10^(-21.8); % Nivel de ruido, SNR=15dB
+N0 = 10^(-21); % Nivel de ruido, SNR=10dB
+
+N_n_t = 3; % Number of different orientations of the Tx
+step = 0.1; % Distance between each receiving point (m)
 import opticalWireless.*
 
-
-%% 1. Simulation Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                    Main Simulation Parameters                     %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,29 +16,11 @@ import opticalWireless.*
 %------------------------------------------%
 P_t = 0.405;
 theta_half = 45;
-d = 0.95;
-theta = atand(d./1.65) % Angle of orientation in the deterministic mode
-theta = 4;
-N0 = 10^(-22.8); %0 %10^(-21.9); %10^(-22.8); 10^(-22.7);10^(-22.5);
-N0 = 10^(-23.5); 
-step = 0.2; % Distance between each receiving point (m)
-%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                         Room Parameters                           %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-L = 4; W = 4; H = 2.5; % Length, width and height of the room (m)
-N_wx = 40; % Number of wall reflectors considered along the x axis
-N_wy = 40; % Number of wall reflectors considered along the y axis
-N_wz = 25; % Number of wall reflectors considered along the z axis
-bounceOrderDecomposition = 0;
-bounceOrder = 1; % Number of bounces taken into account for the finite response
-
-N = 2*N_wx*N_wy + 2*N_wx*N_wz + 2*N_wy*N_wz; % Total number of wall reflectors in the rooom
-[reflectors, n_w, dA, numRefPerWall, X_w, Y_w, Z_w] = roomGenerator(L, W, H, N_wx, N_wy, N_wz, 0);
-reflectivity = 0.6;
-rho = [reflectivity.*ones(1,N-N_wy*N_wx), reflectivity.*ones(1,N_wy*N_wx)]; % Reflectivity factor of the wall reflectors
-G_rho = diag(rho); % Reflectivity matrix
-param_w = {reflectors, n_w, dA, L, W, H, G_rho};
+L = 2.4; W = 2.4; H = 2; % Length, width and height of the room (m)
 i_t = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,7 +31,6 @@ i_t = 1;
 %------------------------%
 m_t = -log(2)./log(cosd(theta_half)); % Lambertian order of emission
 coord_t = [0 0 0]; % Positions of the light sources
-N_n_t = 3; % Number of different orientations of the Tx
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                          Rx Parameters                            %%%%
@@ -75,39 +57,37 @@ sigma2_tot = signalBandwidth*N0; % Receiver's noise variance (A²)
 %---------------------------%
 % RECEIVER PLANE PARAMETERS %
 %---------------------------%
-X_r = -2:step:2; % Range of Rx points along x axis
-Y_r = -2:step:2; % Range of Rx points along y axis
+testbed = [-1.2 1.2 -1.2 1.2]; % Testbed in format [-xlim xlim -ylim ylim]
+X_r = testbed(1):step:testbed(2); % Range of Rx points along x axis
+Y_r = testbed(3):step:testbed(4); % Range of Rx points along y axis
 N_rx = length(X_r); N_ry = length(Y_r); % Number of reception points simulated along the x and y axis
 [x_real, y_real] = meshgrid(X_r, Y_r);
-z_ref = 0.85; % Height of the receiver plane from the ground (m)
-z = z_ref-H; % z = -1.65; % Height of the Rx points ("-" because coordinates system origin at the center of the ceiling)
+z_ref = 0.96; % Height of the receiver plane from the ground (m)
+z = z_ref-H; % z = -1.04; % Height of the Rx points ("-" because coordinates system origin at the center of the ceiling)
 if( abs(z) > H )
     fprintf('ERROR: The receiver plane is out of the room.\n');
     return
 end
+z_real = z*ones(size(x_real));
 param_r = {A_det, n_r, FOV}; % Vector of the Rx parameters used for channel simulation
 
-%% 2. Simulations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                         Simulation Core                           %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 H_LOS = zeros(N_rx,N_ry,N_n_t);
-H_NLOS = zeros(N_rx,N_ry,N_n_t);
 P_r = zeros(N_rx,N_ry,N_n_t);
 P_r_real = zeros(N_rx,N_ry,N_n_t);
-cdf90_RMS = zeros(1,length(theta));
-rmsError = cell(1,length(theta));
-SNR = cell(1,length(theta));
+%SNR = cell(1,length(theta));
 
-% delete(gcp("nocreate"));
-% profile = "Processes";
-% localPoolNumWorkers = 6;
+[theta_n_t_1, theta_n_t_2, theta_n_t_3] = deal(n_t_s(1), n_t_s(3), n_t_s(5));
+[rho_n_t_1, rho_n_t_2, rho_n_t_3] = deal(n_t_s(2), n_t_s(4), n_t_s(6));
 
-for i_angle = 1:length(theta)
-    n_t = [   sind(theta(i_angle))*cosd(0),   sind(theta(i_angle))*sind(0), -cosd(theta(i_angle)) ;
-              sind(theta(i_angle))*cosd(120),   sind(theta(i_angle))*sind(120), -cosd(theta(i_angle)) ;
-              sind(theta(i_angle))*cosd(240),   sind(theta(i_angle))*sind(240), -cosd(theta(i_angle)) ;];
+n_t_1 = [sind(theta_n_t_1)*cosd(rho_n_t_1), sind(theta_n_t_1)*sind(rho_n_t_1), -cosd(theta_n_t_1)];
+n_t_2 = [sind(theta_n_t_2)*cosd(rho_n_t_2), sind(theta_n_t_2)*sind(rho_n_t_2), -cosd(theta_n_t_2)];
+n_t_3 = [sind(theta_n_t_3)*cosd(rho_n_t_3), sind(theta_n_t_3)*sind(rho_n_t_3), -cosd(theta_n_t_3)];
+n_t = [n_t_1;n_t_2;n_t_3];
 
+    % Calculo perse
     a = n_t(:,1); b = n_t(:,2); c = n_t(:,3); % Intermediate variables added for consistency with the work document
     for i_n = 1:size(n_t,1)
         param_t = {coord_t, n_t(i_n,:), m_t};
@@ -116,10 +96,6 @@ for i_angle = 1:length(theta)
                 
                 x = X_r(r_x); y = Y_r(r_y);
                 
-                % Considering reflections
-                %[H_LOS(r_x,r_y,i_n), H_NLOS(r_x,r_y,i_n), ~] = opticalWirelessChannel(param_t, i_t, param_w, param_r, x, y, z, bounceOrderDecomposition, bounceOrder);
-                %P_r_real(r_x,r_y,i_n) = ( H_LOS(r_x,r_y,i_n)+H_NLOS(r_x,r_y,i_n) )*P_t;
-                
                 % Considering only LOS:
                 H_LOS(r_x,r_y,i_n) = h_LOS(param_t, i_t, param_r, x, y, z);
                 P_r_real(r_x,r_y,i_n) = H_LOS(r_x,r_y,i_n)*P_t;
@@ -127,13 +103,10 @@ for i_angle = 1:length(theta)
                 s_r = (R_pd*P_r_real(r_x,r_y,i_n)).*ones(1,10000) + sqrt(sigma2_tot)*randn(1,10000);
                 Pr_elec = sum(s_r.^2)./length(s_r); % Electrical power of the received signal (W or A²)
                 P_r(r_x,r_y,i_n) = sqrt(Pr_elec)/R_pd; % Estimation of the optical power collected by the PD (W)
-                %SNR{i_angle}(r_x,r_y,i_n) = 10*log10( (R_pd*P_r_real(r_x,r_y,i_n))^2/sigma2_tot );
-                %fprintf('Distance = %.3f m |  orientation n°%.0f, x = %.1f m, y = %.1f m (%.2f/100)\n', d(i_angle), i_n, x, y, round( ( (i_angle-1)*size(n_t,1)*N_rx*N_ry + (i_n-1)*N_rx*N_ry + (r_x-1)*N_ry + r_y )/(length(theta)*size(n_t,1)*N_rx*N_ry)*100 , 2) );
-                
+%                 SNR(r_x,r_y,i_n) = 10*log10( (R_pd*P_r_real(r_x,r_y,i_n))^2/sigma2_tot );
             end
         end
     end
-
 
     i = 1; j = 2; k = 1; l = 3;
     K_ij = (P_r(:,:,i)./P_r(:,:,j)).^(1/m_t);
@@ -145,22 +118,9 @@ for i_angle = 1:length(theta)
     y_est = z.*( (K_kl.*a(l)-a(k)).*(c(i)-K_ij.*c(j)) - (K_ij.*a(j)-a(i)).*(c(k)-c(l).*K_kl) ) ./ ...
         ( (K_kl.*a(l)-a(k)).*(K_ij.*b(j)-b(i)) - (K_ij.*a(j)-a(i)).*(K_kl.*b(l)-b(k)) );
 
-    rmsError{i_angle} = sqrt((x_real'-x_est).^2+(y_real'-y_est).^2);
-    [f_RMS,x_RMS] = ecdf(rmsError{i_angle}(:));
-    cdf90_RMS(i_angle) = x_RMS(max(find(f_RMS<0.9)));
+    rmsError = sqrt((x_real'-x_est).^2+(y_real'-y_est).^2);
+    [f_RMS,x_RMS] = ecdf(rmsError(:));
+    cdf90_RMS = x_RMS(max(find(f_RMS<0.9)));
+
+%     mean(SNR(:))
 end
-
-cdf90_RMS
-
-figure(1)
-scatter(x_real, y_real, 'o', 'MarkerEdgeColor', "k"); hold on;
-scatter(x_est, y_est, 'x', 'MarkerEdgeColor', [0.8500 0.3250 0.0980]); hold on;
-xlim([-2.1,2.1]); ylim([-2.1,2.1]); grid on;
-xlabel('x (m)'); ylabel('y (m)');
-quiver3(0,0, 0, n_t(1,1), n_t(1,2), n_t(1,3), 5, 'r', 'LineWidth', 0.5)
-quiver3(0,0, 0, n_t(2,1), n_t(2,2), n_t(2,3), 5, 'r', 'LineWidth', 0.5)
-quiver3(0,0, 0, n_t(3,1), n_t(3,2), n_t(3,3), 5, 'r', 'LineWidth', 0.5)
-
-
-%mean(SNR{1}(:))
-%save workspace;
