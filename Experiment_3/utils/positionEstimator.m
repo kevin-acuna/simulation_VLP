@@ -1,17 +1,17 @@
-function [cdf90_RMS] = POM_WLS_RMSE(n_t_s)
-% RMS_ORIENTATION  Simula un escenario con orientaciones Tx y obtiene RMS error (CDF 90%).
+function [x_est, y_est, x_real, y_real] = positionEstimator(n_t_s)
+% GET_POSITION_ESTIMATES Obtiene las estimaciones de posición para un conjunto de orientaciones
 %
 %   n_t_s : vector con [theta_1, rho_1, theta_2, rho_2, ..., theta_n, rho_n]
 %
-%   Devuelve: cdf90_RMS - el valor del error RMS al 90% de la CDF.
+%   Devuelve:
+%     x_est, y_est: matrices con las coordenadas estimadas
+%     x_real, y_real: matrices con las coordenadas reales
 %
-%   Además, grafica:
-%     1) Los vectores de orientación del Tx (quiver3).
-%     2) La distribución real de receptores (scatter).
-%     3) La posición estimada (scatter x).
+%   Esta función es similar a POM_WLS_RMSE pero devuelve las coordenadas
+%   en lugar del error RMS.
 
-    import opticalWireless.*  % Para usar h_LOS u otras funciones en +opticalWireless
-    import positionEstimators.* % Estimar las posiciones
+    import opticalWireless.*
+    import positionEstimators.*
 
     %% 1) Preparar parámetros
     % Leer parámetros usando la función setupParameters
@@ -103,70 +103,6 @@ function [cdf90_RMS] = POM_WLS_RMSE(n_t_s)
         end
     end
 
-    %% 5) Llamar a la función de estimación
-    %    (Si deseas, podrías enviar SNR o un flag. Por ahora, lo hacemos simple.)
-    [x_est, y_est] = estimatePosition(P_r, orientations, m_t); 
-
-    %  (El prototipo: estimatePosition(P, orientations, m, 'Method','LS'/'WLS','SNR',SNR,...))
+    %% 5) Llamar a la función de estimación WLS
     [x_est, y_est] = estimatePosition(P_r, orientations, m_t, 'Method', 'WLS', 'SNR', SNR);
-
-    %% 6) Calcular error RMS y CDF
-    rmsError = sqrt( (x_real' - x_est).^2 + (y_real' - y_est).^2 );
-    [f_RMS, x_RMS] = ecdf(rmsError(:));
-
-    % cdf90
-    idx90 = find(f_RMS<0.9, 1, 'last');
-    cdf90_RMS = x_RMS(idx90);
-
-    %% 7) Visualización (al final)
-    visualizeResults(n_t_s, x_real, y_real, x_est, y_est);
-end
-
-
-%% Función interna: visualizeResults
-function visualizeResults(n_t_s, x_real, y_real, x_est, y_est)
-% VISUALIZERESULTS  Grafica:
-%   - Vectores de orientación del Tx
-%   - Distribución (x_real,y_real)
-%   - Posiciones estimadas (x_est,y_est)
-%
-%   n_t_s: [theta_1, rho_1, theta_2, rho_2, ...]
-%   x_real, y_real: malla original
-%   x_est, y_est  : estimación en la misma malla (matrices de igual dim)
-
-    figure; 
-    hold on; grid on;
-
-    % 7.1) Graficar los vectores de orientación en 3D
-    nPairs = length(n_t_s)/2;
-    colors = lines(nPairs);  % Genera nPairs colores distintos
-    for tx = 1:nPairs
-        theta_deg = n_t_s(2*(tx-1) + 1);
-        rho_deg   = n_t_s(2*(tx-1) + 2);
-
-        x_u = sind(theta_deg)*cosd(rho_deg);
-        y_u = sind(theta_deg)*sind(rho_deg);
-        z_u = -cosd(theta_deg);
-
-        quiver3(0, 0, 0, x_u, y_u, z_u, ...
-            'Color', colors(tx,:), ...
-            'LineWidth', 1, ...
-            'MaxHeadSize', 0.5, ...
-            'AutoScale','off');
-    end
-
-    % 7.2) Graficar la "distribución real" (o sea, la malla de puntos Rx)
-    scatter(x_real(:), y_real(:), 'o', 'MarkerEdgeColor', 'k'); 
-    % 7.3) Graficar la posición estimada 
-    %      (aquí x_est,y_est son toda la malla; en muchos experimentos
-    %       uno sólo traza la "diferencia" en cada punto, o un subset.)
-    scatter(x_est(:), y_est(:), 'x', 'MarkerEdgeColor',[0.8500 0.3250 0.0980]);
-
-    % Ajuste de ejes (similar a tu snippet)
-    axis([-1.2 1.2 -1.2 1.2 -2 0]);
-    view([0 90]);  % Vista "desde arriba" 2D
-    xlabel('X (m)'); ylabel('Y (m)'); zlabel('Z (m)');
-    title('Estimation');
-
-    hold off;
 end

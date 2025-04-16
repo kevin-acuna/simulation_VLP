@@ -71,8 +71,12 @@ function [x_est, y_est] = estimatePositionWLS(P, orientations, m, SNR, varargin)
                 B = [B; -alpha_z*zVal];
 
                 % Asumimos un peso ∝ SNR_i
-                w_i = max(0, snrVec(i));  % en caso de SNR<0 => clamp
-                W = [W; w_i];
+            % Convertir SNR en dB a lineal para mejor ponderación
+            snr_linear = 10^(snrVec(i)/10);
+            
+            % Limitar el SNR para evitar valores extremos
+            w_i = min(max(snr_linear, 0.001), 1000);  % Limitar entre 0.001 y 1000
+            W = [W; w_i];
             end
 
             if rank(A) < 2
@@ -83,13 +87,40 @@ function [x_est, y_est] = estimatePositionWLS(P, orientations, m, SNR, varargin)
                 % => A'_W = sqrt(W)*A, B'_W = sqrt(W)*B
                 % => [x;y] = inv(A'_W^T * A'_W)* A'_W^T * B'_W
                 % Con 'W' diagonal => implementamos vector W en la diag
-                W_sqrt = sqrt(W);
-                A_w = diag(W_sqrt)*A;
-                B_w = diag(W_sqrt)*B;
-
-                x_y = (A_w'*A_w)\(A_w'*B_w);
-                x_est(rxIdx, ryIdx) = x_y(1);
-                y_est(rxIdx, ryIdx) = x_y(2);
+                
+                % Normalizar los pesos para evitar problemas numéricos
+                W_norm = W / max(W);
+                
+                % Aplicar un mínimo para evitar pesos cercanos a cero
+                W_norm = max(W_norm, 1e-6);
+                
+                W_sqrt = sqrt(W_norm);
+                A_w = diag(W_sqrt) * A;
+                B_w = diag(W_sqrt) * B;
+                
+                % Usar SVD para resolver el sistema de forma más estable
+                try
+                    % Primer intento: solución mediante backslash
+                    x_y = (A_w'*A_w)\(A_w'*B_w);
+                    
+                    % Verificar si la solución tiene valores NaN o Inf
+                    if any(isnan(x_y)) || any(isinf(x_y))
+                        % Si falla, usar SVD con pseudoinversa
+                        x_y = pinv(A_w) * B_w;
+                    end
+                catch
+                    % Si falla el backslash, usar pseudoinversa
+                    x_y = pinv(A_w) * B_w;
+                end
+                
+                % Verificar límites razonables para las estimaciones
+                if all(abs(x_y) <= 10)  % Suponiendo que las posiciones están en un rango razonable
+                    x_est(rxIdx, ryIdx) = x_y(1);
+                    y_est(rxIdx, ryIdx) = x_y(2);
+                else
+                    x_est(rxIdx, ryIdx) = NaN;
+                    y_est(rxIdx, ryIdx) = NaN;
+                end
             end
         end
     end

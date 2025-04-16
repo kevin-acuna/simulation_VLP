@@ -39,7 +39,6 @@ function [x_est, y_est] = estimatePosition(P, orientations, m, varargin)
         %   a = orientations(:,1), b = orientations(:,2), c = orientations(:,3).
         %   P1 = P(:,:,1), P2 = P(:,:,2), P3 = P(:,:,3).
         % Devuelves x_est, y_est con la misma dimensión que la malla de P.
-        disp('here')
         [x_est, y_est] = positionEstimators.deterministic3Orientation(P, orientations, m);
 
     else
