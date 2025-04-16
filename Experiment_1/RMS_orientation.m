@@ -103,7 +103,7 @@ n_t = [n_t_1;n_t_2;n_t_3];
                 s_r = (R_pd*P_r_real(r_x,r_y,i_n)).*ones(1,10000) + sqrt(sigma2_tot)*randn(1,10000);
                 Pr_elec = sum(s_r.^2)./length(s_r); % Electrical power of the received signal (W or A²)
                 P_r(r_x,r_y,i_n) = sqrt(Pr_elec)/R_pd; % Estimation of the optical power collected by the PD (W)
-%                 SNR(r_x,r_y,i_n) = 10*log10( (R_pd*P_r_real(r_x,r_y,i_n))^2/sigma2_tot );
+                SNR(r_x,r_y,i_n) = 10*log10( (R_pd*P_r_real(r_x,r_y,i_n))^2/sigma2_tot );
             end
         end
     end
@@ -122,5 +122,5 @@ n_t = [n_t_1;n_t_2;n_t_3];
     [f_RMS,x_RMS] = ecdf(rmsError(:));
     cdf90_RMS = x_RMS(max(find(f_RMS<0.9)));
 
-%     mean(SNR(:))
+    
 end
