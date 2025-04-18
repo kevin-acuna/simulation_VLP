@@ -18,7 +18,8 @@ def main(mode: str, n: int):
     """
     if mode == 'predefined':
         # Example predefined orientations [theta, rho, ...]
-        n_t_s = [0, 50, 5, 120, 5, 240, 5, 0, 5, 20]
+        n_t_s = [5, 0, 5, 120, 5, 240, 5, 300]
+        #n_t_s = [1.28, 318.46, 49.09, 159.26, 59.94, 344.35, 49.36, 118.45, 57.72 ,  294.29]
         cdf90 = rmse_calculator(n_t_s)
         print(f"CDF 90% RMS Error (predefined): {cdf90:.4f} m")
     else:
