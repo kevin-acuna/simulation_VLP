@@ -5,7 +5,7 @@ function params = setupParameters()
     % Ruido
     %  10^(-21.8) --- Low Level
     %  10^(-21.0) --- High Level
-    params.N0 = 10^(-21.8);       % Nivel de ruido densidad espectral
+    params.N0 = 0;       % Nivel de ruido densidad espectral
     params.signalBandwidth = 30e6;
 
     % Parámetros de la sala
@@ -29,6 +29,6 @@ function params = setupParameters()
     params.R_pd = 0.63;         % Responsividad PD
       
     % Plano de recepción
-    params.testbed = [-1.2 1.2 -1.2 1.2];  % (xmin xmax ymin ymax)
+    params.testbed = [-1.2 1.2 -1.2 1.2 -1.2 -0.8];  % (xmin xmax ymin ymax zmin zmax)
     params.step = 0.1;
 end

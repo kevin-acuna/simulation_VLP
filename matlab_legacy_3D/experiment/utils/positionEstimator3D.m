@@ -1,4 +1,4 @@
-function [x_est, y_est, x_real, y_real] = positionEstimator(n_t_s)
+function [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t_s)
 % GET_POSITION_ESTIMATES Obtiene las estimaciones de posición para un conjunto de orientaciones
 %
 %   n_t_s : vector con [theta_1, rho_1, theta_2, rho_2, ..., theta_n, rho_n]
@@ -17,12 +17,11 @@ function [x_est, y_est, x_real, y_real] = positionEstimator(n_t_s)
     % Leer parámetros usando la función setupParameters
     params = setupParameters();
     
-    H      = params.room.H;
+    H      = params.room.H; %H
     P_t    = params.P_t;
     m_t    = params.m_t;
     coord_t= params.coord_t;
 
-    z_ref  = params.z_ref;
     p      = params.p; 
     q      = params.q;
     FOV    = params.FOV;
@@ -59,23 +58,21 @@ function [x_est, y_est, x_real, y_real] = positionEstimator(n_t_s)
     %% 3) Definir el plano de recepción
     X_r = testbed(1):step:testbed(2);
     Y_r = testbed(3):step:testbed(4);
-    [x_real, y_real] = meshgrid(X_r, Y_r);
-    z = z_ref - H;  % si el (0,0,0) es el techo en param_t
+    Z_r = testbed(5):step:testbed(6);
+
+    [x_real, y_real, z_real] = meshgrid(X_r, Y_r, Z_r);
 
     N_rx = length(X_r);
     N_ry = length(Y_r);
+    N_rz = length(Z_r);
 
-    % Chequear que el plano no esté fuera de la sala
-    if abs(z) > H
-        error('La altura del plano Rx excede la sala (z=%f, H=%f).', z, H);
-    end
 
     %% 4) Simular potencias medidas
     %    P_r  -> [N_rx x N_ry x nPairs]
-    P_r = zeros(N_rx, N_ry, nPairs);
+    P_r = zeros(N_rx, N_ry, N_rz, nPairs);
 
     % para el metodo 'WLS'
-    SNR = zeros(N_rx, N_ry, nPairs);
+    SNR = zeros(N_rx, N_ry, N_rz, nPairs);
 
     A_det = p*q;  % Área PD (simple) - si hay N_det, multiplícalo
     param_r = {A_det, n_r, FOV};
@@ -84,26 +81,28 @@ function [x_est, y_est, x_real, y_real] = positionEstimator(n_t_s)
         param_t = {coord_t, orientations(i_n,:), m_t};
         for ix = 1:N_rx
             for iy = 1:N_ry
-                x_pos = X_r(ix);
-                y_pos = Y_r(iy);
-
-                [hVal, ~, ~, ~] = h_LOS(param_t, 1, param_r, x_pos, y_pos, z);
-                P_los = hVal * P_t;  % potencia óptica ideal
-
-                % Añadir ruido simulando (opcional):
-                % supondremos s_r ~ N( (R_pd * P_los), sqrt(sigma2_tot) ), 
-                % generamos un vector estadístico:
-                s_r = (R_pd * P_los) + sqrt(sigma2_tot)*randn(1,10000);
-                Pr_elec = mean(s_r.^2); 
-                P_r(ix, iy, i_n) = sqrt(Pr_elec)/R_pd;
-
-                % para el metodo 'WLS'
-                SNR(ix,iy,i_n) = 10*log10( (R_pd*P_los)^2/sigma2_tot );
+                for iz = 1:N_rz
+                    x_pos = X_r(ix);
+                    y_pos = Y_r(iy);
+                    z_pos = Z_r(iz);
+    
+                    [hVal, ~, ~, ~] = h_LOS(param_t, 1, param_r, x_pos, y_pos, z_pos);
+                    P_los = hVal * P_t;  % potencia óptica ideal
+    
+                    % Añadir ruido simulando (opcional):
+                    % supondremos s_r ~ N( (R_pd * P_los), sqrt(sigma2_tot) ), 
+                    % generamos un vector estadístico:
+                    s_r = (R_pd * P_los) + sqrt(sigma2_tot)*randn(1,10000);
+                    Pr_elec = mean(s_r.^2); 
+                    P_r(ix, iy, i_n) = sqrt(Pr_elec)/R_pd;
+    
+                    % para el metodo 'WLS'
+                    SNR(ix,iy,i_n) = 10*log10( (R_pd*P_los)^2/sigma2_tot );
+                end
             end
         end
     end
 
     %% 5) Llamar a la función de estimación WLS
-    %[x_est, y_est] = estimatePosition(P_r, orientations, m_t, 'Method', 'WLS', 'SNR', SNR);
-    [x_est, y_est] = estimatePosition(P_r, orientations, m_t, 'Method', 'LS');
+    [x_est, y_est, z_est] = estimatePosition3D(P_r, orientations, m_t, H);
 end
