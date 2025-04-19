@@ -4,8 +4,8 @@
 clear, clc
 %% 1 · Escenario --------------------------------------------------------
 H  = 2.0;      m = 1.5;
-Rref  = [0.60 0.60 0.80];       % << posición de prueba
-Ktrue = 0.8;
+Rref  = [0.30 0.50 0.20];       % << posición de prueba
+Ktrue = 0.4;
 
 % Orientaciones (vertical + 3 inclinadas 30°, 120° apartadas)
 nT = [ 0 0 -1 ;
@@ -24,10 +24,12 @@ end
 disp('Potencias P(i) :' ), disp(P.')
 
 %% 3 · p0 + s·α a partir de los ratios  P2/P1 , P3/P1 ------------------
+% Solo se requiere 3 orientaciones
 beta  = (P./P(1)).^(1/m);                 % 4×1
 Delta = nT(2:3,:) - beta(2:3).*nT(1,:);
 M = Delta(:,1:3);  b = H*Delta(:,3);
-p0 = M\b;          s  = null(M);  s = s/norm(s);
+p0 = M\b;          
+s  = null(M);  s = s/norm(s); % Direccion unitaria Transmisor a Receptor
 
 fprintf('p0 = [%g %g %g]\n', p0)
 fprintf('s  = [%g %g %g]\n', s)

@@ -5,10 +5,10 @@
 rng('default'); 
 
 % Vector de orientaciones a optimizar
-n_orientations_vector = [4,5,6,7,8,10]; % Vector con diferentes números de orientaciones a optimizar
+n_orientations_vector = [3, 10]; % Vector con diferentes números de orientaciones a optimizar
 
 % Crear directorio base para resultados si no existe
-results_base_dir = 'results/LS_lowNoise';
+results_base_dir = 'results/WLS_highNoise';
 if ~exist(results_base_dir, 'dir')
     mkdir(results_base_dir);
 end

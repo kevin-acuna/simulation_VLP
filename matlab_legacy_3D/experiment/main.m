@@ -5,7 +5,7 @@ clear, clc
 
 % 1. Ejecutar un escenario con orientaciones predefinidas
 disp('Ejecutando escenario con orientaciones predefinidas...');
-n_t_s = [0,50,30,0,30,120,30,240]; % Vector de [theta_1, rho_1, theta_2, rho_2, ...]
+n_t_s = [30,0,30,120,30,240]; % Vector de [theta_1, rho_1, theta_2, rho_2, ...]
 cdf90_val = rmseCalculator3D(n_t_s);
 fprintf('CDF 90%% RMS Error con orientaciones predefinidas: %.4f m\n\n', cdf90_val);
 

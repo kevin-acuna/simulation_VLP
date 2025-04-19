@@ -26,5 +26,5 @@ function [cdf90_RMS] = rmseCalculator3D(n_t_s)
     cdf90_RMS = x_RMS(idx90);
 
     % Visualización (al final)
-    %visualizeResults(n_t_s, x_real, y_real, x_est, y_est);
+    %visualizeResults3D(n_t_s, x_real, y_real, z_real, x_est, y_est, z_est);
 end

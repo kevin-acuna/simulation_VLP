@@ -5,7 +5,7 @@ function params = setupParameters()
     % Ruido
     %  10^(-21.8) --- Low Level
     %  10^(-21.0) --- High Level
-    params.N0 = 10^(-21.8);       % Nivel de ruido densidad espectral
+    params.N0 = 10^(-21.0);       % Nivel de ruido densidad espectral
     params.signalBandwidth = 30e6;
 
     % Parámetros de la sala
