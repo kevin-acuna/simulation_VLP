@@ -5,10 +5,10 @@
 rng('default'); 
 
 % Vector de orientaciones a optimizar
-n_orientations_vector = [3, 10]; % Vector con diferentes números de orientaciones a optimizar
+n_orientations_vector = [7, 20]; % Vector con diferentes números de orientaciones a optimizar
 
 % Crear directorio base para resultados si no existe
-results_base_dir = 'results/WLS_highNoise';
+results_base_dir = 'results/WLS_lowNoise_true';
 if ~exist(results_base_dir, 'dir')
     mkdir(results_base_dir);
 end
@@ -64,10 +64,18 @@ A = []; b = [];
 Aeq = []; beq = [];
 nonlcon = [];
 
+if n_orientations == 7 % 
+    popul_size = 150 % funciona
+    max_gener = 200 % funciona
+else
+    popul_size = 250
+    max_gener = 100
+end
+
 % Opciones de GA
 options = optimoptions('ga', ...
-    'PopulationSize',    150, ...     % 12×12
-    'MaxGenerations',    200, ...     % 12×25
+    'PopulationSize',    popul_size, ...     % 12×12
+    'MaxGenerations',    max_gener, ...     % 12×25
     'CrossoverFraction', 0.8, ...
     'MutationFcn',  @mutationadaptfeasible, ...
     'Display',           'iter', ...
