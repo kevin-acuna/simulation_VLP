@@ -10,10 +10,10 @@ function [cdf90_RMS] = rmseCalculator3D(n_t_s)
 %     2) La distribución real de receptores (scatter).
 %     3) La posición estimada (scatter x).
 
-    % import visualization.* % Para usar funciones de visualización
+    import visualization.* % Para usar funciones de visualización
 
     % Obtener las estimaciones de posición utilizando la función positionEstimator
-    [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t_s)
+    [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t_s);
     
     % Calcular error RMS y CDF
     %rmsError = sqrt( (x_real' - x_est).^2 + (y_real' - y_est).^2 );
@@ -26,5 +26,5 @@ function [cdf90_RMS] = rmseCalculator3D(n_t_s)
     cdf90_RMS = x_RMS(idx90);
 
     % Visualización (al final)
-    %visualizeResults3D(n_t_s, x_real, y_real, z_real, x_est, y_est, z_est);
+    visualizeResults3D(n_t_s, x_real, y_real, z_real, x_est, y_est, z_est);
 end

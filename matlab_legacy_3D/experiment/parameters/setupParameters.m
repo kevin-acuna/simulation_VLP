@@ -5,7 +5,7 @@ function params = setupParameters()
     % Ruido
     %  10^(-21.8) --- Low Level
     %  10^(-21.0) --- High Level
-    params.N0 = 0;       % Nivel de ruido densidad espectral
+    params.N0 = 10^(-21.8);       % Nivel de ruido densidad espectral
     params.signalBandwidth = 30e6;
 
     % Parámetros de la sala
@@ -21,14 +21,14 @@ function params = setupParameters()
     params.coord_t = [0 0 0];  % Posición del Tx
     
     % Receptor
-    params.z_ref = 0.96;        % Altura del Rx sobre el piso
+    params.z_ref = [1 1];   % Altura del Rx sobre el piso
     params.p = 4.8e-3;          % Dimensión PD
     params.q = 5.5e-3;          % Dimensión PD
     params.FOV = 85;            % FOV del receptor
     params.n_r = [0, 0, 1];     % Normal del receptor
     params.R_pd = 0.63;         % Responsividad PD
-      
+    
     % Plano de recepción
-    params.testbed = [-1.2 1.2 -1.2 1.2 -1.2 -0.8];  % (xmin xmax ymin ymax zmin zmax)
+    params.testbed = [-1.2 1.2 -1.2 1.2];  % (xmin xmax ymin ymax zmin zmax)
     params.step = 0.1;
 end

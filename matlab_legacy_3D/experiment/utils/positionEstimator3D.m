@@ -31,6 +31,7 @@ function [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t
     N0     = params.N0;
     BW     = params.signalBandwidth;
 
+    z_ref = params.z_ref;
     testbed= params.testbed;
     step   = params.step;
 
@@ -58,7 +59,10 @@ function [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t
     %% 3) Definir el plano de recepción
     X_r = testbed(1):step:testbed(2);
     Y_r = testbed(3):step:testbed(4);
-    Z_r = testbed(5):step:testbed(6);
+
+    % Eje z
+    testbed_z = z_ref - H; 
+    Z_r = testbed_z(1):step:testbed_z(2);
 
     [x_real, y_real, z_real] = meshgrid(X_r, Y_r, Z_r);
 
@@ -94,15 +98,16 @@ function [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t
                     % generamos un vector estadístico:
                     s_r = (R_pd * P_los) + sqrt(sigma2_tot)*randn(1,10000);
                     Pr_elec = mean(s_r.^2); 
-                    P_r(ix, iy, i_n) = sqrt(Pr_elec)/R_pd;
+                    P_r(ix, iy, iz, i_n) = sqrt(Pr_elec)/R_pd;
     
                     % para el metodo 'WLS'
-                    SNR(ix,iy,i_n) = 10*log10( (R_pd*P_los)^2/sigma2_tot );
+                    SNR(ix,iy,iz, i_n) = 10*log10( (R_pd*P_los)^2/sigma2_tot );
                 end
             end
         end
     end
 
-    %% 5) Llamar a la función de estimación WLS
-    [x_est, y_est, z_est] = estimatePosition3D(P_r, orientations, m_t, H);
+    %% 5) Llamar a la función de estimacion
+    C = P_t*(m_t + 1)*A_det/(2*pi); % Asumimos que se conoce C
+    [x_est, y_est, z_est] = deterministic3D(P_r, orientations, C, m_t, n_r, coord_t);
 end

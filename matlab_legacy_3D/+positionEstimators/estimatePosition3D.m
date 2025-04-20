@@ -1,9 +1,10 @@
+% NO FUNCIONA !!
 %======================================================================
 %  estimatePosition3D.m   (package +positionEstimators)
 %  ----------------------------------------------------
 %  Estima (x,y,z) con 4 potencias absolutas cuando el
-%  factor de escala K es desconocido.
-%
+%  factor de escala K es conocido.
+%  
 %  Inputs
 %     P         :  (Nx,Ny,Nz,4)   potencias simuladas sin ruido
 %     nT        :  (4,3)          vectores de orientación del LED
