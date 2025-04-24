@@ -21,7 +21,7 @@ function params = setupParameters()
     params.coord_t = [0 0 0];  % Posición del Tx
     
     % Receptor
-    params.z_ref = [1 1];   % Altura del Rx sobre el piso
+    params.z_ref = [0.2 1.2];   % Altura del Rx sobre el piso
     params.p = 4.8e-3;          % Dimensión PD
     params.q = 5.5e-3;          % Dimensión PD
     params.FOV = 85;            % FOV del receptor

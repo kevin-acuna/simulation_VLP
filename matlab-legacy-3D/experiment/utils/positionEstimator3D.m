@@ -109,5 +109,13 @@ function [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t
 
     %% 5) Llamar a la función de estimacion
     C = P_t*(m_t + 1)*A_det/(2*pi); % Asumimos que se conoce C
-    [x_est, y_est, z_est] = deterministic3D(P_r, orientations, C, m_t, n_r, coord_t);
+    
+    if nPairs==3
+        [x_est, y_est, z_est] = deterministic3D(P_r, orientations, C, m_t, n_r, coord_t);
+    else
+        [x_est, y_est, z_est] = estimate3D_case_n_WLS(P_r, orientations, C, m_t, n_r, coord_t, SNR);
+    end
+    snr = SNR(:);
+    snr = snr(isfinite(snr));
+    snr = mean(snr)
 end
