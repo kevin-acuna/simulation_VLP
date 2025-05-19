@@ -5,10 +5,10 @@
 rng('default'); 
 
 % Vector de orientaciones a optimizar
-n_orientations_vector = [7, 20]; % Vector con diferentes números de orientaciones a optimizar
+n_orientations_vector = [4,5]; % Vector con diferentes números de orientaciones a optimizar
 
 % Crear directorio base para resultados si no existe
-results_base_dir = 'results/WLS_lowNoise_true';
+results_base_dir = 'results/LS_highNoise_true';
 if ~exist(results_base_dir, 'dir')
     mkdir(results_base_dir);
 end
@@ -52,7 +52,7 @@ ub = zeros(1, nvars);
 for i = 1:nvars
     if mod(i, 2) == 1 % Índices impares son valores theta
         lb(i) = 0;
-        ub(i) = 60;
+        ub(i) = 80;
     else % Índices pares son valores rho
         lb(i) = 0;
         ub(i) = 360;

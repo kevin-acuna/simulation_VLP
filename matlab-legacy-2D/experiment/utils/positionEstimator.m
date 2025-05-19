@@ -104,6 +104,6 @@ function [x_est, y_est, x_real, y_real] = positionEstimator(n_t_s)
     end
 
     %% 5) Llamar a la función de estimación WLS
-    [x_est, y_est] = estimatePosition(P_r, orientations, m_t, 'Method', 'WLS', 'SNR', SNR);
-    %[x_est, y_est] = estimatePosition(P_r, orientations, m_t, 'Method', 'LS');
+    %[x_est, y_est] = estimatePosition(P_r, orientations, m_t, 'Method', 'WLS', 'SNR', SNR);
+    [x_est, y_est] = estimatePosition(P_r, orientations, m_t, 'Method', 'LS');
 end

@@ -19,7 +19,7 @@ ub = zeros(1, nvars);
 for i = 1:nvars
     if mod(i, 2) == 1 % Índices impares son valores theta
         lb(i) = 0;
-        ub(i) = 60;
+        ub(i) = 80;
     else % Índices pares son valores rho
         lb(i) = 0;
         ub(i) = 360;
