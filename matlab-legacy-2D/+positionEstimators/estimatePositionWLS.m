@@ -121,6 +121,7 @@ function [x_est, y_est] = estimatePositionWLS(P, orientations, m, SNR, varargin)
                     x_est(rxIdx, ryIdx) = NaN;
                     y_est(rxIdx, ryIdx) = NaN;
                 end
+
             end
         end
     end

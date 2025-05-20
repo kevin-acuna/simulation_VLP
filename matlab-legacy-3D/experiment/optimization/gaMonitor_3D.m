@@ -1,4 +1,4 @@
-function [state, options, optchanged] = gaMonitor(options, state, flag)
+function [state, options, optchanged] = gaMonitor_3D(options, state, flag)
     % GAMONITOR Función de monitoreo para GA que grafica:
     % 1) La evolución de los ángulos a lo largo de las generaciones (en una figura).
     % 2) La orientación 3D de la mejor solución en cada generación (en otra figura).
@@ -109,14 +109,14 @@ function [state, options, optchanged] = gaMonitor(options, state, flag)
             % Gráfica de estimación de posición
             % Llamar a rmseCalculator para obtener el error RMS, pero necesitamos obtener x_est, y_est, etc.
             % Usaremos la función positionEstimator para obtener estos valores
-            [x_est, y_est, x_real, y_real] = positionEstimator(bestVector);
-            scatter(x_real, y_real, 'o', 'MarkerEdgeColor', "k"); 
-            scatter(x_est, y_est, 'x', 'MarkerEdgeColor', [0.8500 0.3250 0.0980]);
+            [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(bestVector);
+            scatter(x_real, y_real,z_real,'o', 'MarkerEdgeColor', "k"); 
+            scatter(x_est, y_est, z_est,'x', 'MarkerEdgeColor', [0.8500 0.3250 0.0980]);
             
 
-            axis([-1.2 1.2 -1.2 1.2 -2 0])
+            axis([-1.2 1.2 -1.2 1.2 -2 0]);
             % Fijar un buen ángulo de vista 3D
-            view([0 90]);  % Ajustar según se desee
+            view([90,90]);  % Ajustar según se desee
 
             hold off;
             drawnow;

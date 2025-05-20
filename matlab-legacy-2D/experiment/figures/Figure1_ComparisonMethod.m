@@ -11,29 +11,32 @@ colorsMATLAB = [0.0000 0.4470 0.7410 ;...
 
 % Data (RMS in meters)
 n            = [   3,     4,      5,      6,      7,      8,     10];
-LS_lowNoise  = [0.11, 0.11,  0.111, 0.113, 0.111, 0.114, 0.113];
-LS_highNoise  = [0.4794, 0.11,  0.111, 0.113, 0.111, 0.114, 0.113];
-WLS_lowNoise = [0.11, 0.048646, 0.02749, 0.023329, 0.02998, 0.02727, 0.02818];
-WLS_highNoise= [0.4794, 0.2289, 0.1290, 0.1305, 0.1338, 0.1312, 0.1156];
+LS_lowNoise   = [0.11, 0.11,  0.111, 0.113, 0.111, 0.114, 0.113];
+LS_highNoise  = [0.4794, 0.4794,  0.4794,0.4794, 0.4794, 0.4794, 0.475];
+WLS_lowNoise  = [0.11, 0.048646, 0.02749, 0.023329, 0.02998, 0.02727, 0.02818];
+WLS_highNoise = [0.4794, 0.2289, 0.1290, 0.1305, 0.1338, 0.1312, 0.1156];
 
 % Convert RMS from meters to centimeters
 LS_lowNoise_cm   = LS_lowNoise  * 100;
+LS_highNoise_cm   = LS_highNoise  * 100;
 WLS_lowNoise_cm  = WLS_lowNoise * 100;
 WLS_highNoise_cm = WLS_highNoise* 100;
 
 % Plot
 figure;
 plot(n, LS_lowNoise_cm,   '--*', 'Color', colorsMATLAB(1,:) ); hold on;
+plot(n, LS_highNoise_cm,   '--*', 'Color', colorsMATLAB(4,:) ); hold on;
 plot(n, WLS_lowNoise_cm,  '--*', 'Color', colorsMATLAB(5,:));
 plot(n, WLS_highNoise_cm, '--*', 'Color', colorsMATLAB(2,:));
 hold off;
 
 % Labels and legend
 xlabel('Number of Orientations (n)','interpreter', 'latex');
-ylabel('RMS error  $\varepsilon_{90\%}$ (cm)','interpreter', 'latex');
-title('RMS error  $\varepsilon_{90\%}$ vs Number of Orientations','interpreter', 'latex');
-legend({'LS (low noise)', 'WLS (low noise)', 'WLS (high noise)'}, ...
-       'Location', 'northeast');
+ylabel('$\varepsilon_{90\%}$ (cm)','interpreter', 'latex');
+
+title('$\varepsilon_{90\%}$ vs Number of Orientations','interpreter', 'latex');
+legend({'LS (low noise)', 'LS (high noise)', 'WLS (low noise)', 'WLS (high noise)'}, ...
+       'Location', 'best');
 grid on;
 %set(gca, 'FontSize', 11);
 % , 'FontSize', 10

@@ -14,3 +14,5 @@ fprintf('CDF 90%% RMS Error con orientaciones predefinidas: %.4f m\n\n', cdf90_v
 
 % 2. Para ejecutar el optimizador genético (GA), descomenta la siguiente línea
 % run('optimization/gaOptimizer.m');
+
+% -0.024609363079072,0.001761239285562 (side-view)

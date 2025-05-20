@@ -42,7 +42,7 @@ function [x_est, y_est, z_est] = estimate3D_case_n_WLS(P, orientations, C, m, n_
                 Pvec   = squeeze(P(ix,iy,iz,:));   % [n x 1]
                 snrVec = squeeze(SNR(ix,iy,iz,:)); % [n x 1]
                 % Validar
-                if Pvec(1) <= 0 || all(snrVec <= 0)
+                if Pvec(1) <= 0 %|| all(snrVec <= 0)
                     continue;
                 end
                 % Convertir SNR a lineal si está en dB
@@ -92,6 +92,7 @@ function [x_est, y_est, z_est] = estimate3D_case_n_WLS(P, orientations, C, m, n_
                     y_est(ix,iy,iz) = pos(2);
                     z_est(ix,iy,iz) = pos(3);
                 end
+
             end
         end
     end

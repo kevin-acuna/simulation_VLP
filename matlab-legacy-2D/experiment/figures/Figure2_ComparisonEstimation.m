@@ -14,12 +14,11 @@ scenario03 = load('scenario03.mat'); % scenario3 : n=5 (best number of orientati
 
 figure(1)
 hold on
-scatter(scenario01.pos.x_real(:), scenario01.pos.y_real(:), 'o', 'MarkerEdgeColor', 'k','DisplayName','Ground True'); 
+scatter(scenario01.pos.x_real(:), scenario01.pos.y_real(:), 'o', 'MarkerEdgeColor', 'k','DisplayName','Ground truth'); 
 
-scatter(scenario03.pos.x_est(:) , scenario03.pos.y_est(:), 'p', 'MarkerEdgeColor', colorsMATLAB(1,:), 'DisplayName','n=5 (GA)' ); 
-scatter(scenario02.pos.x_est(:) , scenario02.pos.y_est(:), 'x', 'MarkerEdgeColor', colorsMATLAB(2,:), 'DisplayName','n=3 (GA)' ); 
-
-scatter(scenario01.pos.x_est(:) , scenario01.pos.y_est(:), '*', 'MarkerEdgeColor', colorsMATLAB(3,:), 'DisplayName','n=3 (non-GA)' ); 
+scatter(scenario03.pos.x_est(:) , scenario03.pos.y_est(:), 'p', 'MarkerEdgeColor', colorsMATLAB(1,:), 'DisplayName','Configuration 1' ); 
+scatter(scenario02.pos.x_est(:) , scenario02.pos.y_est(:), 'x', 'MarkerEdgeColor', colorsMATLAB(2,:), 'DisplayName','Configuration 2' ); 
+scatter(scenario01.pos.x_est(:) , scenario01.pos.y_est(:), '*', 'MarkerEdgeColor', colorsMATLAB(3,:), 'DisplayName','Configuration 3' ); 
 
 legend('Location','best')
 axis([-1.3 1.3 -1.3 1.3]);
@@ -27,6 +26,10 @@ xlabel('X (m)'); ylabel('Y (m)');
 grid minor
 title('Estimation');
 
+%Ground truth
+% 3 random orientations
+% 3 GA-optimised orientations
+% 5 GA-optimised orientations (WLS)
 
 % Grafica: estimacion de posicion
 % n=3 (sin GA, n al centro, n2 y n3 en X y Y , como la configuracion inicial del experimental setup)

@@ -1,0 +1,46 @@
+
+==================================
+Iniciando optimización para 5 orientaciones
+==================================
+
+
+Single objective optimization:
+10 Variable(s)
+
+Options:
+CreationFcn:       @gacreationuniform
+CrossoverFcn:      @crossoverscattered
+SelectionFcn:      @selectionstochunif
+MutationFcn:       @mutationadaptfeasible
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+{Arrays have incompatible sizes for this operation.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('opticalWireless.h_LOS', 'C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-3D\+opticalWireless\h_LOS.m', 26)" style="font-weight:bold">opticalWireless.h_LOS</a> (<a href="matlab: opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-3D\+opticalWireless\h_LOS.m',26,0)">line 26</a>)
+d_tr = sqrt(dot(R-T, R-T));
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('positionEstimator', 'C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-2D\experiment\utils\positionEstimator.m', 90)" style="font-weight:bold">positionEstimator</a> (<a href="matlab: opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-2D\experiment\utils\positionEstimator.m',90,0)">line 90</a>)
+                [hVal, ~, ~, ~] = h_LOS(param_t, 1, param_r, x_pos, y_pos, z);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gaMonitor', 'C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-2D\experiment\optimization\gaMonitor.m', 112)" style="font-weight:bold">gaMonitor</a> (<a href="matlab: opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-2D\experiment\optimization\gaMonitor.m',112,0)">line 112</a>)
+            [x_est, y_est, x_real, y_real] = positionEstimator(bestVector);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gaoutput', 'C:\Program Files\MATLAB\R2022a\toolbox\globaloptim\globaloptim\private\gaoutput.m', 51)" style="font-weight:bold">gaoutput</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2022a\toolbox\globaloptim\globaloptim\private\gaoutput.m',51,0)">line 51</a>)
+    [state,optnew,changed] = feval(functions{i},options.OutputPlotFcnOptions,state,flag,args{i}{:});
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('galincon', 'C:\Program Files\MATLAB\R2022a\toolbox\globaloptim\globaloptim\private\galincon.m', 107)" style="font-weight:bold">galincon</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2022a\toolbox\globaloptim\globaloptim\private\galincon.m',107,0)">line 107</a>)
+    [state,options,optchanged] = gaoutput(FitnessFcn,options,state,currentState);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ga', 'C:\Program Files\MATLAB\R2022a\toolbox\globaloptim\globaloptim\ga.m', 414)" style="font-weight:bold">ga</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2022a\toolbox\globaloptim\globaloptim\ga.m',414,0)">line 414</a>)
+            [x,fval,exitFlag,output,population,scores] = galincon(FitnessFcn,nvars, ...
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('gaOptimizerIteration_3D', 'C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-3D\experiment\optimization\gaOptimizerIteration_3D.m', 79)" style="font-weight:bold">gaOptimizerIteration_3D</a> (<a href="matlab: opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-3D\experiment\optimization\gaOptimizerIteration_3D.m',79,0)">line 79</a>)
+[xOpt, fvalOpt, exitflag, output] = ga(@rmseCalculator3D, nvars, ...
+
+<a href="matlab:helpview('matlab','error_sizeDimensionsMustMatch')" style="font-weight:bold">Related documentation</a>
+} 
+opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-3D\+opticalWireless\h_LOS.m',26,0)
+opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-2D\experiment\optimization\gaMonitor.m',112,0)
+opentoline('C:\Program Files\MATLAB\R2022a\toolbox\globaloptim\globaloptim\ga.m',414,0)
+opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\matlab-legacy-3D\experiment\optimization\gaOptimizerIteration_3D.m',79,0)

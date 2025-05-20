@@ -117,5 +117,5 @@ function [x_est, y_est, z_est, x_real, y_real, z_real] = positionEstimator3D(n_t
     end
     snr = SNR(:);
     snr = snr(isfinite(snr));
-    snr = mean(snr)
+    snr = mean(snr);
 end

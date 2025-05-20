@@ -5,10 +5,10 @@
 rng('default'); 
 
 % Vector de orientaciones a optimizar
-n_orientations_vector = [5, 6, 7, 8]; % Vector con diferentes números de orientaciones a optimizar
+n_orientations_vector = [5]; % Vector con diferentes números de orientaciones a optimizar
 
 % Crear directorio base para resultados si no existe
-results_base_dir = 'results/High_Noise';
+results_base_dir = 'results/High_Noise_3D';
 if ~exist(results_base_dir, 'dir')
     mkdir(results_base_dir);
 end
@@ -52,7 +52,7 @@ ub = zeros(1, nvars);
 for i = 1:nvars
     if mod(i, 2) == 1 % Índices impares son valores theta
         lb(i) = 0;
-        ub(i) = 60;
+        ub(i) = 80;
     else % Índices pares son valores rho
         lb(i) = 0;
         ub(i) = 360;
@@ -72,11 +72,11 @@ options = optimoptions('ga', ...
     'MutationFcn',  @mutationadaptfeasible, ...
     'Display',           'iter', ...
     'PlotFcn',           {@gaplotbestf}, ...
-    'OutputFcn',         @gaMonitor);
+    'OutputFcn',         @gaMonitor_3D);
 
 
 % Ejecutar GA con la función de estimación de posición WLS
-[xOpt, fvalOpt, exitflag, output] = ga(@rmseCalculator, nvars, ...
+[xOpt, fvalOpt, exitflag, output] = ga(@rmseCalculator3D, nvars, ...
                                        A, b, Aeq, beq, lb, ub, ...
                                        nonlcon, options);
 

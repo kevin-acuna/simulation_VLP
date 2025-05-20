@@ -5,7 +5,7 @@
 rng('default'); 
 
 % Número de orientaciones a optimizar
-n_orientations = 4; % Cambiar esto al número deseado de orientaciones
+n_orientations = 5; % Cambiar esto al número deseado de orientaciones
 
 tic
 % Número de variables de decisión (2 por orientación: theta y rho)
@@ -43,7 +43,7 @@ options = optimoptions('ga', ...
 
 
 % Ejecutar GA con la función de estimación de posición WLS
-[xOpt, fvalOpt, exitflag, output] = ga(@rmseCalculator, nvars, ...
+[xOpt, fvalOpt, exitflag, output] = ga(@rmseCalculator3D, nvars, ...
                                        A, b, Aeq, beq, lb, ub, ...
                                        nonlcon, options);
 

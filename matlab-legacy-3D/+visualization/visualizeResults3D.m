@@ -30,11 +30,18 @@ function visualizeResults3D(n_t_s, x_real, y_real, z_real, x_est, y_est, z_est)
     end
 
     % 7.2) Graficar la "distribución real" (o sea, la malla de puntos Rx)
-    scatter3(x_real(:), y_real(:), z_real(:), 'o', 'MarkerEdgeColor', 'k'); 
+    %scatter3(x_real(:), y_real(:), z_real(:), 'o', 'MarkerEdgeColor'); 
+
+    h = scatter3(x_real(:), y_real(:), z_real(:), 20, 'o', 'MarkerEdgeColor', 'k');
+    h.MarkerEdgeAlpha = 0.5;
+
     % 7.3) Graficar la posición estimada 
     %      (aquí x_est,y_est son toda la malla; en muchos experimentos
     %       uno sólo traza la "diferencia" en cada punto, o un subset.)
-    scatter3(x_est(:), y_est(:), z_est(:), 'x', 'MarkerEdgeColor',[0.8500 0.3250 0.0980]);
+    %scatter3(x_est(:), y_est(:), z_est(:), 'x', 'MarkerEdgeColor',[0.8500 0.3250 0.0980]);
+
+    scatter3(x_est(:), y_est(:), z_est(:), 20, 'x', 'MarkerEdgeColor',[0.8500 0.3250 0.0980]);
+    
 
     % Ajuste de ejes (similar a tu snippet)
     axis([-1.2 1.2 -1.2 1.2 -2 0]);
