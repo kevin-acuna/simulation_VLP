@@ -23,12 +23,12 @@ function [cdf90_RMS] = rmseCalculator(n_t_s)
     idx90 = find(f_RMS<0.9, 1, 'last');
     cdf90_RMS = x_RMS(idx90);
 
-%     % ********************************************************
-%     % OPCIONES
-%     % ********************************************************
-%     % Visualizacion
-%     visualizeResults(n_t_s, x_real, y_real, x_est, y_est);
-%     
+    % ********************************************************
+    % OPCIONES
+    % ********************************************************
+    % Visualizacion
+    visualizeResults(n_t_s, x_real, y_real, x_est, y_est);
+    
 %     % Grabar
 %     pos = struct();
 %     pos.x_real=x_real;
@@ -36,7 +36,7 @@ function [cdf90_RMS] = rmseCalculator(n_t_s)
 %     pos.x_est=x_est;
 %     pos.y_est=y_est;
 %     
-%     save 'test.mat' pos n_t_s cdf90_RMS
+%     save 'test_NLOS.mat' pos n_t_s cdf90_RMS
 %     % ********************************************************
 
 end

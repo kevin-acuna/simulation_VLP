@@ -11,6 +11,8 @@ disp('Ejecutando escenario con orientaciones predefinidas...');
 %n_t_s = [1.28, 318.46, 49.09, 159.26, 59.94, 344.35, 49.36, 118.45, 57.72,
 %294.29] %scenario 3
 
+n_t_s = [1.28, 318.46, 49.09, 159.26, 59.94, 344.35, 49.36, 118.45, 57.72, 294.29];
+
 cdf90_val = rmseCalculator(n_t_s);
 fprintf('CDF 90%% RMS Error con orientaciones predefinidas: %.4f m\n\n', cdf90_val);
 
