@@ -109,9 +109,7 @@ for i_pos = 1:N_pos
     for i_dir = 1:N_or
         param_t = {T, n_t(i_dir,:), P_t, m_t};
         [~, P_r{i_pos,i_dir}, v_tr(i_pos,:), d_tr(i_pos,1)] = OWC_LOS_channel(x, y, z, param_t, param_r);
-        
-        P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000)); % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
-        % P_r_noisy{i_pos,i_dir} = (R_pd.*P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./R_pd; % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
+        P_r_noisy{i_pos,i_dir} = (R_pd.*P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./R_pd; % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
 
         % para el metodo 'WLS' (basic)
         SNR{i_pos,i_dir} = 10*log10( (R_pd*P_r{i_pos,i_dir})^2/sigma2 );
@@ -285,8 +283,7 @@ for i_pos = 1:N_pos
     param_t_axis = {T, v_tr_est_GLS, P_t, m_t};
     param_r_axis = {A_det, -v_tr_est_GLS, FOV}; % Vector de parámetros del receptor
     [~, P_r_axis_GLS, ~, ~] = OWC_LOS_channel(x_real, y_real, z_real, param_t_axis, param_r_axis);
-    % P_r_axis_noisy_GLS = (R_pd.*P_r_axis_GLS + sqrt(sigma2).*randn(1,1000))./R_pd; % Potencia observada con ruido
-    P_r_axis_noisy_GLS = P_r_axis_GLS + sqrt(sigma2).*randn(1,1000); % Potencia observada con ruido
+    P_r_axis_noisy_GLS = (R_pd.*P_r_axis_GLS + sqrt(sigma2).*randn(1,1000))./R_pd; % Potencia observada con ruido
     
     % Cálculo de la distancia con la fórmula del modelo lambertiano
     d_tr_est_GLS = sqrt(P_t*(m_t+1)*A_det/(2*pi*mean(P_r_axis_noisy_GLS)));
@@ -338,12 +335,11 @@ for i = 1:N_pos
     R_real = [X_r(i); Y_r(i); Z_r(i)];  % Posición del receptor
     K = P_t*(m_t+1)*A_det/(2*pi);            % Constante radiométrica P_t(m+1)/(2π)
     % sigma2_crlb = sigma2/R_pd^2;       % Varianza del ruido (W^2)
-    sigma2_crlb = sigma2/1; % 1/N
-    % sigma2_crlb = sigma2_crlb/1000; %1000 muestras
+    sigma2_crlb = sigma2/1000; % 1/N
 
     % Calcular CRLB para esta posición
-    % peb_value = vlp_peb(R_real, n_t(1:N_or,:)', T', m_t, K, sigma2_crlb);
-    peb_value = vlp_peb_beam(R_real, n_t(1:N_or,:)', T', m_t, K, sigma2, 1000, 1000);
+    peb_value = vlp_peb(R_real, n_t(1:N_or,:)', T', m_t, K, sigma2_crlb);
+    
     % Verificar si el valor es imaginario
     if ~isreal(peb_value)
         valid_indices(i) = false;  % Marcar como no válido
@@ -384,12 +380,6 @@ cdf90_RMS_GLS_cm = x_RMS_GLS(idx90_GLS)*100; % cm
 idx90_CRLB = find(f_RMS_CRLB<0.9, 1, 'last');
 cdf90_RMS_CRLB_cm = x_RMS_CRLB(idx90_CRLB)*100; % cm
 
-load 'non-linear.mat'
-[f_RMS_NLS, x_RMS_NLS] = ecdf(errorNorm(:));
-idx90_NLS = find(f_RMS_NLS<0.9, 1, 'last');
-cdf90_RMS_NLS_cm = x_RMS_NLS(idx90_NLS)*100; % cm
-
-
 % Mostrar resultados de error
 fprintf('\nResumen de errores (90%% CDF):\n');
 fprintf('Error SVD: %.2f cm\n', cdf90_RMS_SVD_cm);
@@ -397,9 +387,12 @@ fprintf('Error SVD: %.2f cm\n', cdf90_RMS_SVD_cm);
 fprintf('Error WLS-SNR: %.2f cm\n', cdf90_RMS_WLS_SVD_cm);
 fprintf('Error WLS: %.2f cm\n', cdf90_RMS_WLS_Robust_cm);
 fprintf('Error GLS: %.2f cm\n', cdf90_RMS_GLS_cm);
-fprintf('Error Non-linear: %.2f cm\n', cdf90_RMS_NLS_cm);
 fprintf('CRLB (límite teórico): %.2f cm\n', cdf90_RMS_CRLB_cm);
 
+load 'non-linear.mat'
+[f_RMS_NLS, x_RMS_NLS] = ecdf(errorNorm(:));
+idx90_NLS = find(f_RMS_NLS<0.9, 1, 'last');
+cdf90_RMS_NLS_cm = x_RMS_NLS(idx90_NLS)*100 % cm
 
 figure(1)
 ecdf(errorNormSVD(:),'Function','cdf'); hold on;
@@ -414,17 +407,17 @@ axis([0 0.2 0 1])
 xlabel('Positioning Error [m]'); ylabel('CDF');
 legend('Linear estimator of P_{r,i} + SVD', 'WLS(SNR)', 'WLS(var)', 'GLS', 'non-linear','CRLB (theoretical bound)','Location', 'southeast');
 
-% figure(2)
-% plot3(realPos(1,:), realPos(2,:), realPos(3,:),'ko', 'MarkerSize', 2); hold on;
-% plot3(estPosSVD(:,1), estPosSVD(:,2), estPosSVD(:,3), 'bx', 'MarkerSize', 2);
-% plot3(estPosWLS(:,1), estPosWLS(:,2), estPosWLS(:,3), 'r+', 'MarkerSize', 2);
-% plot3(estPosWLS_SVD(:,1), estPosWLS_SVD(:,2), estPosWLS_SVD(:,3), 'g*', 'MarkerSize', 2);
-% plot3(estPosWLS_Robust(:,1), estPosWLS_Robust(:,2), estPosWLS_Robust(:,3), 'ms', 'MarkerSize', 2);
-% plot3(estPosGLS(:,1), estPosGLS(:,2), estPosGLS(:,3), 'cd', 'MarkerSize', 2);
-% xlabel('X [m]'); ylabel('Y [m]'); zlabel('Z [m]');
-% legend('Posición real', 'Estimación SVD', 'Estimación WLS (basic)', 'Estimación WLS Tx-Rx', 'Estimación WLS robust', 'Estimación GLS');
-% axis([-1.2 1.2 -1.2 1.2 -1.8 -0.8])
-% grid on;
+figure(2)
+plot3(realPos(1,:), realPos(2,:), realPos(3,:),'ko', 'MarkerSize', 2); hold on;
+plot3(estPosSVD(:,1), estPosSVD(:,2), estPosSVD(:,3), 'bx', 'MarkerSize', 2);
+plot3(estPosWLS(:,1), estPosWLS(:,2), estPosWLS(:,3), 'r+', 'MarkerSize', 2);
+plot3(estPosWLS_SVD(:,1), estPosWLS_SVD(:,2), estPosWLS_SVD(:,3), 'g*', 'MarkerSize', 2);
+plot3(estPosWLS_Robust(:,1), estPosWLS_Robust(:,2), estPosWLS_Robust(:,3), 'ms', 'MarkerSize', 2);
+plot3(estPosGLS(:,1), estPosGLS(:,2), estPosGLS(:,3), 'cd', 'MarkerSize', 2);
+xlabel('X [m]'); ylabel('Y [m]'); zlabel('Z [m]');
+legend('Posición real', 'Estimación SVD', 'Estimación WLS (basic)', 'Estimación WLS Tx-Rx', 'Estimación WLS robust', 'Estimación GLS');
+axis([-1.2 1.2 -1.2 1.2 -1.8 -0.8])
+grid on;
 
 toc;
 
@@ -551,7 +544,7 @@ nr = [0;0;1];                 % normal del receptor (vertical)
 cr = nr.'*(-d);               % cos(psi) = H - z
 normd = norm(d);
 n     = size(nt,2);
-N = 1000; %numero de muestras
+
 I = zeros(3);                 % FIM de 3×3
 
 % --------- 2. Bucle sobre orientaciones -------------------------
@@ -564,62 +557,9 @@ for i = 1:n
       - (m+3) * ci^m     * cr / normd^(m+5)   * d ...
       -           ci^m        / normd^(m+3)   * nr );
     % ------- acumular FIM --------------------
-    I = I + (N* K^2/sigma2) * (g_i * g_i.');
+    I = I + (K^2/sigma2) * (g_i * g_i.');
 end
 
 % --------- 3. PEB -----------------------------------------------
 PEB = sqrt(trace(inv(I)));     % ec. (29)
-end
-
-
-function PEB = vlp_peb_beam(theta, nt, T, m, K, sigma2, N, Nb)
-%-----------------------------------------------------------------
-% theta   : 3×1  [x; y; z]      -> posición Rx (m)
-% nt      : 3×n  orientaciones unitarias consideradas en la fase-1
-% T       : 3×1  posición Tx [0;0;H] (m)
-% m       : orden Lambertiano
-% K       : constante radiométrica  P_t (m+1)A_det/(2π)
-% sigma2  : varianza de UNA única muestra (W²)
-% N       : nº de muestras promediadas en cada orientación de la fase-1
-% Nb      : nº de muestras promediadas en la orientación *beam-steered*
-%-----------------------------------------------------------------
-% Devuelve: PEB  =  √tr{ I⁻¹ }  (m RMS)  con ambas fases incluidas
-%-----------------------------------------------------------------
-
-% -------- 1. Geometría ------------------------------------------
-d      = theta - T;            % vector Tx→Rx (3×1)
-nr     = [0;0;1];              % normal del receptor (arriba)
-cr     = nr.'*(-d);            % cos(ψ)=H−z
-normd  = norm(d);
-n      = size(nt,2);
-
-% Dirección "real" para la orientación beam-steered
-d_unit = d / normd;            % = v_tr  (3×1)
-
-% -------- 2. Fisher Information Matrix --------------------------
-I = zeros(3);                  % inicializa FIM
-
-% --- (a) Orientaciones de la fase-1 -----------------------------
-for i = 1:n
-    nt_i = nt(:,i);
-    ci   = nt_i.'*d;           % cos(φ_i)*‖d‖
-    g_i  = ( ...
-           m     * ci^(m-1) * cr / normd^(m+3) * nt_i ...
-        - (m+3)  * ci^m     * cr / normd^(m+5) * d     ...
-        -             ci^m      / normd^(m+3) * nr );
-    I = I + (N * K^2 / sigma2) * (g_i * g_i.');
-end
-
-% --- (b) Orientación beam-steered -------------------------------
-% nt_beam =  d_unit   ;   cosφ = 1,  cosψ = 1
-ci_b  = normd;                 % n_t·d  = ‖d‖  (porque cosφ=1)
-cr_b  = cr;                    % sigue siendo H−z
-g_b   = ( ...
-        m     * ci_b^(m-1) * cr_b / normd^(m+3) * d_unit ...
-      - (m+3) * ci_b^m     * cr_b / normd^(m+5) * d      ...
-      -            ci_b^m         / normd^(m+3) * nr );
-I = I + (Nb * K^2 / sigma2) * (g_b * g_b.');   % contribución extra
-
-% -------- 3. PEB (RMS) ------------------------------------------
-PEB = sqrt(trace(inv(I)));      % √tr{I⁻¹}
 end

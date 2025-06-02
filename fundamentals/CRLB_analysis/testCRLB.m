@@ -1,6 +1,6 @@
     % --- datos de ejemplo ---
     clc, clear, close
-    n_orientation=5;
+    n_orientation=9;
 
     theta = 30;
     n_t = [       0,              0,             -1;
@@ -14,7 +14,7 @@
              -sqrt(2)/2*sind(theta),  -sqrt(2)/2*sind(theta),  -cosd(theta)]';
 
 
-    R      = [-1.0418   ;-0.9302 ;  -1.5734];         % Rx (m)
+    R      = [0.6937; -0.6811; -1.2351];         % Rx (m)
     T      = [0; 0; 0];             % Tx (m)
     m      = 2;                     % LED semiancho ≈ 60°
     K      = 5.1051e-06;                % <<< 
@@ -47,3 +47,6 @@
 
 % R=[-1.0418   ;-0.9302 ;  -1.5734]
 % e=0.0561
+
+
+% [0.6937; -0.6811; -1.2351]
