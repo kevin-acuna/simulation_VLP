@@ -2,6 +2,7 @@ close all;
 clear variables;
 clc;
 tic;
+rng(42);
 
 %% 1. Simulation Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,30 +304,40 @@ errorSVD = realPos' - estPosSVD;
 for i = 1:length(errorSVD)
     errorNormSVD(i) = norm(errorSVD(i,:));
 end
+% Calcular RMSE para SVD
+rmseSVD = sqrt(mean(errorNormSVD.^2));
 
 % Calcular error para método WLS
 errorWLS = realPos' - estPosWLS;
 for i = 1:length(errorWLS)
     errorNormWLS(i) = norm(errorWLS(i,:));
 end
+% Calcular RMSE para WLS
+rmseWLS = sqrt(mean(errorNormWLS.^2));
 
 % Calcular error para método híbrido WLS+SVD
 errorWLS_SVD = realPos' - estPosWLS_SVD;
 for i = 1:length(errorWLS_SVD)
     errorNormWLS_SVD(i) = norm(errorWLS_SVD(i,:));
 end
+% Calcular RMSE para WLS+SVD
+rmseWLS_SVD = sqrt(mean(errorNormWLS_SVD.^2));
 
 % Calcular error para método WLS robusto
 errorWLS_Robust = realPos' - estPosWLS_Robust;
 for i = 1:length(errorWLS_Robust)
     errorNormWLS_Robust(i) = norm(errorWLS_Robust(i,:));
 end
+% Calcular RMSE para WLS robusto
+rmseWLS_Robust = sqrt(mean(errorNormWLS_Robust.^2));
 
 % Calcular error para método GLS
 errorGLS = realPos' - estPosGLS;
 for i = 1:length(errorGLS)
     errorNormGLS(i) = norm(errorGLS(i,:));
 end
+% Calcular RMSE para GLS
+rmseGLS = sqrt(mean(errorNormGLS.^2));
 
 % Calcular CRLB (límite teórico de error)
 tmp_errorNormCRLB = zeros(1, N_pos);
@@ -358,6 +369,9 @@ end
 errorNormCRLB = tmp_errorNormCRLB(valid_indices);
 fprintf('Número total de valores CRLB imaginarios filtrados: %d\n', num_imaginarios);
 
+% Calcular RMSE promedio para CRLB (valor teórico)
+rmseCRLB = sqrt(mean(errorNormCRLB.^2));
+
 % Calcular percentil 90 para los tres métodos
 [f_RMS_SVD, x_RMS_SVD] = ecdf(errorNormSVD(:));
 idx90_SVD = find(f_RMS_SVD<0.9, 1, 'last');
@@ -384,47 +398,67 @@ cdf90_RMS_GLS_cm = x_RMS_GLS(idx90_GLS)*100; % cm
 idx90_CRLB = find(f_RMS_CRLB<0.9, 1, 'last');
 cdf90_RMS_CRLB_cm = x_RMS_CRLB(idx90_CRLB)*100; % cm
 
-load 'non-linear.mat'
+load 'non-linear-n5.mat'
 [f_RMS_NLS, x_RMS_NLS] = ecdf(errorNorm(:));
 idx90_NLS = find(f_RMS_NLS<0.9, 1, 'last');
 cdf90_RMS_NLS_cm = x_RMS_NLS(idx90_NLS)*100; % cm
+% Calcular RMSE para Non-linear
+rmseNLS = sqrt(mean(errorNorm.^2));
 
 
 % Mostrar resultados de error
-fprintf('\nResumen de errores (90%% CDF):\n');
-fprintf('Error SVD: %.2f cm\n', cdf90_RMS_SVD_cm);
-% fprintf('Error WLS: %.2f cm\n', cdf90_RMS_WLS_cm);
-fprintf('Error WLS-SNR: %.2f cm\n', cdf90_RMS_WLS_SVD_cm);
-fprintf('Error WLS: %.2f cm\n', cdf90_RMS_WLS_Robust_cm);
-fprintf('Error GLS: %.2f cm\n', cdf90_RMS_GLS_cm);
-fprintf('Error Non-linear: %.2f cm\n', cdf90_RMS_NLS_cm);
+fprintf('\n==== RESUMEN DE ERRORES ====\n');
+fprintf('\n-- Percentil 90 (CDF) --\n');
+fprintf('SVD: %.2f cm\n', cdf90_RMS_SVD_cm);
+% fprintf('WLS: %.2f cm\n', cdf90_RMS_WLS_cm);
+fprintf('WLS-SNR: %.2f cm\n', cdf90_RMS_WLS_SVD_cm);
+fprintf('WLS: %.2f cm\n', cdf90_RMS_WLS_Robust_cm);
+fprintf('GLS: %.2f cm\n', cdf90_RMS_GLS_cm);
+fprintf('Non-linear: %.2f cm\n', cdf90_RMS_NLS_cm);
 fprintf('CRLB (límite teórico): %.2f cm\n', cdf90_RMS_CRLB_cm);
+
+fprintf('\n-- RMSE --\n');
+fprintf('SVD: %.4f m (%.2f cm)\n', rmseSVD, rmseSVD*100);
+% fprintf('WLS: %.4f m (%.2f cm)\n', rmseWLS, rmseWLS*100);
+fprintf('WLS-SNR: %.4f m (%.2f cm)\n', rmseWLS_SVD, rmseWLS_SVD*100);
+fprintf('WLS: %.4f m (%.2f cm)\n', rmseWLS_Robust, rmseWLS_Robust*100);
+fprintf('GLS: %.4f m (%.2f cm)\n', rmseGLS, rmseGLS*100);
+fprintf('Non-linear: %.4f m (%.2f cm)\n', rmseNLS, rmseNLS*100);
+fprintf('CRLB (límite teórico): %.4f m (%.2f cm)\n', rmseCRLB, rmseCRLB*100);
+
+fprintf('\n-- Ratio respecto al CRLB --\n');
+fprintf('SVD: %.2f veces CRLB\n', rmseSVD/rmseCRLB);
+% fprintf('WLS: %.2f veces CRLB\n', rmseWLS/rmseCRLB);
+fprintf('WLS-SNR: %.2f veces CRLB\n', rmseWLS_SVD/rmseCRLB);
+fprintf('WLS: %.2f veces CRLB\n', rmseWLS_Robust/rmseCRLB);
+fprintf('GLS: %.2f veces CRLB\n', rmseGLS/rmseCRLB);
+fprintf('Non-linear: %.2f veces CRLB\n', rmseNLS/rmseCRLB);
 
 
 figure(1)
-ecdf(errorNormSVD(:),'Function','cdf'); hold on;
-% ecdf(errorNormWLS(:),'Function','cdf');
-ecdf(errorNormWLS_SVD(:),'Function','cdf');
-ecdf(errorNormWLS_Robust(:),'Function','cdf');
-ecdf(errorNormGLS(:),'Function','cdf');
-ecdf(errorNorm(:),'Function','cdf');
-ecdf(errorNormCRLB(:),'Function','cdf');
+ecdf(errorNormSVD(:)*100,'Function','cdf'); hold on;
+% ecdf(errorNormWLS(:)*100,'Function','cdf');
+ecdf(errorNormWLS_SVD(:)*100,'Function','cdf');
+ecdf(errorNormWLS_Robust(:)*100,'Function','cdf');
+ecdf(errorNormGLS(:)*100,'Function','cdf');
+ecdf(errorNorm(:)*100,'Function','cdf');
+ecdf(errorNormCRLB(:)*100,'Function','cdf');
 grid on;
-axis([0 0.2 0 1])
-xlabel('Positioning Error [m]'); ylabel('CDF');
+axis([0 10 0 1])
+xlabel('Positioning Error [cm]'); ylabel('CDF');
 legend('Linear estimator of P_{r,i} + SVD', 'WLS(SNR)', 'WLS(var)', 'GLS', 'non-linear','CRLB (theoretical bound)','Location', 'southeast');
 
-% figure(2)
-% plot3(realPos(1,:), realPos(2,:), realPos(3,:),'ko', 'MarkerSize', 2); hold on;
-% plot3(estPosSVD(:,1), estPosSVD(:,2), estPosSVD(:,3), 'bx', 'MarkerSize', 2);
-% plot3(estPosWLS(:,1), estPosWLS(:,2), estPosWLS(:,3), 'r+', 'MarkerSize', 2);
-% plot3(estPosWLS_SVD(:,1), estPosWLS_SVD(:,2), estPosWLS_SVD(:,3), 'g*', 'MarkerSize', 2);
-% plot3(estPosWLS_Robust(:,1), estPosWLS_Robust(:,2), estPosWLS_Robust(:,3), 'ms', 'MarkerSize', 2);
-% plot3(estPosGLS(:,1), estPosGLS(:,2), estPosGLS(:,3), 'cd', 'MarkerSize', 2);
-% xlabel('X [m]'); ylabel('Y [m]'); zlabel('Z [m]');
-% legend('Posición real', 'Estimación SVD', 'Estimación WLS (basic)', 'Estimación WLS Tx-Rx', 'Estimación WLS robust', 'Estimación GLS');
-% axis([-1.2 1.2 -1.2 1.2 -1.8 -0.8])
-% grid on;
+figure(2)
+plot3(realPos(1,:), realPos(2,:), realPos(3,:),'ko', 'MarkerSize', 2); hold on;
+plot3(estPosSVD(:,1), estPosSVD(:,2), estPosSVD(:,3), 'bx', 'MarkerSize', 2);
+plot3(estPosWLS(:,1), estPosWLS(:,2), estPosWLS(:,3), 'r+', 'MarkerSize', 2);
+plot3(estPosWLS_SVD(:,1), estPosWLS_SVD(:,2), estPosWLS_SVD(:,3), 'g*', 'MarkerSize', 2);
+plot3(estPosWLS_Robust(:,1), estPosWLS_Robust(:,2), estPosWLS_Robust(:,3), 'ms', 'MarkerSize', 2);
+plot3(estPosGLS(:,1), estPosGLS(:,2), estPosGLS(:,3), 'cd', 'MarkerSize', 2);
+xlabel('X [m]'); ylabel('Y [m]'); zlabel('Z [m]');
+legend('Posición real', 'Estimación SVD', 'Estimación WLS (basic)', 'Estimación WLS Tx-Rx', 'Estimación WLS robust', 'Estimación GLS');
+axis([-1.2 1.2 -1.2 1.2 -1.8 -0.8])
+grid on;
 
 toc;
 

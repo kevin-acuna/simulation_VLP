@@ -18,7 +18,7 @@ close all;
 clear variables;
 clc;
 tic;
-
+rng(42);
 %% 1. Simulation Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                    Main Simulation Parameters                     %%%%
@@ -29,7 +29,7 @@ tic;
 theta_half = 45; % 60; % Semi-angle at half-power [°]
 P_t = 0.405; % 1; % Transmitted optical power [W]
 orientationMode = 'deterministic'; % 'randomEqual'
-N_or = 9; % Number of orientations considered by the non-linear least square estimator
+N_or = 5; % Number of orientations considered by the non-linear least square estimator
 theta = 30; % Main angle of orientation (only for deterministic mode) [°]
 L = 2.4; W = 2.4; H = 2; % Full length, width and height of the room [m]
 % L = 2; W = 2; H = 2.5; % Full Length, width and height of the room [m]
@@ -119,7 +119,8 @@ for i_pos = 1:N_pos
     for i_dir = 1:size(n_t,1)
         param_t = {T, n_t(i_dir,:), P_t, m_t};
         [~, P_r{i_pos,i_dir}, v_tr(i_pos,:), d_tr(i_pos,1)] = OWC_LOS_channel(x, y, z, param_t, param_r);
-        P_r_noisy{i_pos,i_dir} = (R_pd.*P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./(-R_pd*C); % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
+        % P_r_noisy{i_pos,i_dir} = (R_pd.*P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./(-R_pd*C); % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
+        P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./(-C); % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
     end
 end
 
@@ -262,9 +263,9 @@ for i_pos = 1:N_pos
     %---------------------------------------------------------------------------------------%
     % Case 2: Indirect position estimation with with estimation of the received power + SVD %      
     %---------------------------------------------------------------------------------------%
-    K_ij = (mean(P_r{i_pos,1})./mean(P_r{i_pos,2})).^(1/m_t);
-    K_jk = (mean(P_r{i_pos,2})./mean(P_r{i_pos,3})).^(1/m_t);
-    K_ik = (mean(P_r{i_pos,1})./mean(P_r{i_pos,3})).^(1/m_t);
+    K_ij = (mean(P_r_noisy{i_pos,1})./mean(P_r_noisy{i_pos,2})).^(1/m_t);
+    K_jk = (mean(P_r_noisy{i_pos,2})./mean(P_r_noisy{i_pos,3})).^(1/m_t);
+    K_ik = (mean(P_r_noisy{i_pos,1})./mean(P_r_noisy{i_pos,3})).^(1/m_t);
     alpha_ij = a_i - K_ij*a_j;
     alpha_jk = a_j - K_jk*a_k;
     alpha_ik = a_i - K_ik*a_k;
@@ -301,7 +302,7 @@ for i_pos = 1:N_pos
         estPosSVD(i_pos,:) = [NaN, NaN, NaN];
     end
 end
-
+%%
 realPos = [X_r ; Y_r ; Z_r];
 errorNLS = realPos' - estPos;
 errorSVD = realPos' - estPosSVD;
