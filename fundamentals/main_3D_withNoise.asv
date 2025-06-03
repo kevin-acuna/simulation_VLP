@@ -15,7 +15,7 @@ rng(42);
 theta_half = 45; % 60; % Semi-angle at half-power [°]
 P_t = 0.405; % 1; % Transmitted optical power [W]
 orientationMode = 'deterministic'; % 'randomEqual'
-N_or = 5; % Number of orientations considered by the non-linear least square estimator
+N_or = 9; % Number of orientations considered by the non-linear least square estimator
 theta = 30; % Main angle of orientation (only for deterministic mode) [°]
 L = 2.4; W = 2.4; H = 2; % Full length, width and height of the room [m]
 % L = 2; W = 2; H = 2.5; % Full Length, width and height of the room [m]

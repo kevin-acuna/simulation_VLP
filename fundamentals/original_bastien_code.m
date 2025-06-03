@@ -29,7 +29,7 @@ rng(42);
 theta_half = 45; % 60; % Semi-angle at half-power [°]
 P_t = 0.405; % 1; % Transmitted optical power [W]
 orientationMode = 'deterministic'; % 'randomEqual'
-N_or = 5; % Number of orientations considered by the non-linear least square estimator
+N_or = 9; % Number of orientations considered by the non-linear least square estimator
 theta = 30; % Main angle of orientation (only for deterministic mode) [°]
 L = 2.4; W = 2.4; H = 2; % Full length, width and height of the room [m]
 % L = 2; W = 2; H = 2.5; % Full Length, width and height of the room [m]
@@ -87,7 +87,8 @@ n_r = [0, 0, 1]; % Normal vector of the photoreceiver
 % n_r = [-0.5+rand(1,2), H]; Normal vector of the photoreceiver (random)
 % n_r = n_r/norm(n_r); % Normal vector of the photoreceiver (normalized)
 alpha = n_r(1,1); beta = n_r(1,2); gamma = n_r(1,3); % Cartesian coordinates of the normal vector of the photoreceiver
-sigma2 = 30e6*10^(-21.0); % AWGN variance [A²]
+% sigma2 = 30e6*10^(-21.0); % AWGN variance [A²]
+sigma2 = 30e6*10^(-21.0)/(R_pd^2);
 C = -P_t*(m_t+1)*A_det/(2*pi); % Normalization factor
 %---------------------------%
 % RECEIVER PLANE PARAMETERS %
