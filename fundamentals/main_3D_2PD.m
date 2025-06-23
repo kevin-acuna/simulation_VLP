@@ -3,6 +3,8 @@ clear variables;
 clc;
 tic;
 
+rng(42)
+
 % Hyperparameters
 N_pos = 1000; % Number of random Rx positions simulated
 d_pd   = 0.20; % separación [m]
@@ -17,7 +19,7 @@ d_pd   = 0.20; % separación [m]
 theta_half = 45; % 60; % Semi-angle at half-power [°]
 P_t = 0.405; % 1; % Transmitted optical power [W]
 orientationMode = 'deterministic'; % 'randomEqual'
-N_or = 3; % Number of orientations considered by the non-linear least square estimator
+N_or = 9; % Number of orientations considered by the non-linear least square estimator
 theta = 30; % Main angle of orientation (only for deterministic mode) [°]
 L = 2.4; W = 2.4; H = 2; % Full length, width and height of the room [m]
 % L = 2; W = 2; H = 2.5; % Full Length, width and height of the room [m]
@@ -64,7 +66,7 @@ R_pd = 0.63; % Photosensitivity of the photodiode [A/W]
 FOV = 85; % Fielf-of-view of the photoreceiver [°]
 n_r = [0, 0, 1]; % Normal vector of the photoreceiver
 alpha = n_r(1,1); beta = n_r(1,2); gamma = n_r(1,3); % Cartesian coordinates of the normal vector of the photoreceiver
-sigma2 = 30e6*10^(-21.8); % AWGN variance [A²]
+sigma2 = 30e6*10^(-22.0)/R_pd^2; % AWGN variance [A²]
 C = -P_t*(m_t+1)*A_det/(2*pi); % Normalization factor
 
 %---------------------------%
@@ -115,8 +117,8 @@ for i_pos = 1:N_pos
         [~,P_r2{i_pos,i_dir}, ~, ~] = OWC_LOS_channel(R2(1),R2(2),R2(3),param_t,param_r); % PD-2
 
         % Adding noise
-        P_r1_noisy{i_pos,i_dir} = (R_pd.*P_r1{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./R_pd;
-        P_r2_noisy{i_pos,i_dir} = (R_pd.*P_r2{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./R_pd;
+        P_r1_noisy{i_pos,i_dir} = P_r1{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000);
+        P_r2_noisy{i_pos,i_dir} = P_r2{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000);
 
     end
 end
@@ -129,33 +131,46 @@ d1_hat = zeros(N_pos,3);  d2_hat = zeros(N_pos,3);
 
 for i_pos = 1:N_pos
     
-    % --- PD-1 -----------------------------------------------------------
-    beta = zeros(N_or-1,1);     A = zeros(N_or-1,3);
-    beta_i = zeros(N_or-1,1);
-    for i = 2:N_or
-%         beta(i-1) = (P_r1{i_pos,i}/P_r1{i_pos,1}).^(1/m_t);
-        beta(i-1) = (mean(P_r1_noisy{i_pos,i})/mean(P_r1_noisy{i_pos,1})).^(1/m_t);
-        A(i-1,:)  = n_t(i,:) - beta(i-1)*n_t(1,:);
-    end
-    [~,~,V] = svd(A,0);                 % SVD minimal
-    d1_hat(i_pos,:) = V(:,end).';
-    if d1_hat(i_pos,:)*n_t(1,:).' < 0,  d1_hat(i_pos,:) = -d1_hat(i_pos,:); end
-
-    % --- PD-2 -----------------------------------------------------------
-    beta = zeros(N_or-1,1);     A = zeros(N_or-1,3);
-    for i = 2:N_or
-%         beta(i-1) = (P_r2{i_pos,i}/P_r2{i_pos,1}).^(1/m_t);
-        beta(i-1) = (mean(P_r2_noisy{i_pos,i})/mean(P_r2_noisy{i_pos,1})).^(1/m_t);
-        A(i-1,:)  = n_t(i,:) - beta(i-1)*n_t(1,:);
-    end
-    [~,~,V] = svd(A,0);
-    d2_hat(i_pos,:) = V(:,end).';
-    if d2_hat(i_pos,:)*n_t(1,:).' < 0,  d2_hat(i_pos,:) = -d2_hat(i_pos,:); end
+    if (N_or==3)
+        % --- PD-1 -----------------------------------------------------------
+        beta = zeros(N_or-1,1);     A = zeros(N_or-1,3);
+        beta_i = zeros(N_or-1,1);
+        for i = 2:N_or
+    %         beta(i-1) = (P_r1{i_pos,i}/P_r1{i_pos,1}).^(1/m_t);
+            beta(i-1) = (mean(P_r1_noisy{i_pos,i})/mean(P_r1_noisy{i_pos,1})).^(1/m_t);
+            A(i-1,:)  = n_t(i,:) - beta(i-1)*n_t(1,:);
+        end
+        [~,~,V] = svd(A,0);                 % SVD minimal
+        d1_hat(i_pos,:) = V(:,end).';
+        if d1_hat(i_pos,:)*n_t(1,:).' < 0,  d1_hat(i_pos,:) = -d1_hat(i_pos,:); end
     
+        % --- PD-2 -----------------------------------------------------------
+        beta = zeros(N_or-1,1);     A = zeros(N_or-1,3);
+        for i = 2:N_or
+    %         beta(i-1) = (P_r2{i_pos,i}/P_r2{i_pos,1}).^(1/m_t);
+            beta(i-1) = (mean(P_r2_noisy{i_pos,i})/mean(P_r2_noisy{i_pos,1})).^(1/m_t);
+            A(i-1,:)  = n_t(i,:) - beta(i-1)*n_t(1,:);
+        end
+        [~,~,V] = svd(A,0);
+        d2_hat(i_pos,:) = V(:,end).';
+        if d2_hat(i_pos,:)*n_t(1,:).' < 0,  d2_hat(i_pos,:) = -d2_hat(i_pos,:); end
+    
+    else
 
+    
+        P_raw = zeros(1000, N_or); % Cada fila es una muestra, cada columna una orientación
+        for i_dir = 1:N_or
+            P_raw(:, i_dir) = P_r1_noisy{i_pos, i_dir}; % 1000 muestras de potencia para cada orientación
+        end
+        d1_hat(i_pos,:) = vlp_direction_cov(n_t(1:N_or,:)', P_raw, m_t, sigma2);
 
+        P_raw = zeros(1000, N_or); % Cada fila es una muestra, cada columna una orientación
+        for i_dir = 1:N_or
+            P_raw(:, i_dir) = P_r2_noisy{i_pos, i_dir}; % 1000 muestras de potencia para cada orientación
+        end
+        d2_hat(i_pos,:) = vlp_direction_cov(n_t(1:N_or,:)', P_raw, m_t, sigma2);
 
-
+    end
 
     % Estudiar la forma OPTIMA de obtener este resultado
     d1 = d1_hat(i_pos,:).';   % [3×1]
@@ -223,3 +238,42 @@ end
 P_r_LOS = P_t*H0;
 end
 
+function d_hat = vlp_direction_cov(nt, Praw, m, sigma2)
+% nt      : 3×n  — orientaciones n_t^(i) (columnas)
+% Praw    : N×n  — muestras de potencia P_r^(k,i)
+% m       : esc. Lambertiano
+% sigma2  : varianza común de cada muestra
+%
+% d_hat   : dirección 3×1 del Tx al Rx (normada)
+
+[N,n]  = size(Praw);
+mu_hat = mean(Praw,1).';          % μ̂_i  (n×1)
+mu1    = mu_hat(1);
+beta   = (mu_hat(2:end)/mu1).^(1/m);      % (n-1)×1
+
+% ---------- 1. matriz de covarianza completa Σ_r ----------
+diagVar = beta.^2 .* ( mu_hat(2:end).^(-2) + mu1^(-2) );
+Sigma_r = diag(diagVar) + (beta*beta.')*mu1^(-2) ...
+          - diag(beta.^2*mu1^(-2));       % tamaño (n-1)×(n-1)
+
+% factor σ²/(N m²) es común → suprimir
+% ---------- 2. matriz A ----------
+A = zeros(3, n-1);
+for i = 2:n
+    A(:,i-1) = nt(:,i) - beta(i-1)*nt(:,1);
+end
+
+% ---------- 3. matriz de información M ----------
+W   = inv(Sigma_r);                %  Σ_r^{-1}
+M   = A * W * A.';                 %  3×3
+
+% ---------- 4. autovector de menor autovalor ----------
+[V,D]  = eig(M);
+[~,ix] = min(diag(D));
+d_hat  = V(:,ix) / norm(V(:,ix));  % unitario
+
+% ---------- 5. signo coherente (hacia el receptor) ----------
+if dot(d_hat, nt(:,1)) < 0
+    d_hat = -d_hat;
+end
+end
