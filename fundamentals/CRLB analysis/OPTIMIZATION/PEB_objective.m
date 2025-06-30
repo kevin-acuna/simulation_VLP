@@ -35,9 +35,79 @@ for i = 1:K
     ];
 end
 
+%% Check for degenerate configurations
+% 1. Check for nearly identical orientations
+MIN_ANGLE_SEPARATION = 10; % degrees
+for i = 1:K-1
+    for j = i+1:K
+        % Calculate angle between orientations
+        dot_product = dot(nt_orientations(:,i), nt_orientations(:,j));
+        angle_deg = rad2deg(acos(abs(dot_product)));
+        
+        if angle_deg < MIN_ANGLE_SEPARATION
+            % Orientations too similar, add penalty
+            PEB_value = 50 + (MIN_ANGLE_SEPARATION - angle_deg) * 5;
+            return;
+        end
+    end
+end
+
+% 2. Check for coplanar orientations (all in same plane)
+if K >= 3
+    % Find two non-parallel vectors to define a plane
+    v1 = nt_orientations(:,1);
+    plane_found = false;
+    normal = [];
+    
+    for j = 2:K
+        v2 = nt_orientations(:,j);
+        cross_prod = cross(v1, v2);
+        
+        if norm(cross_prod) > 1e-6  % Vectors not parallel
+            normal = cross_prod / norm(cross_prod);
+            plane_found = true;
+            break;
+        end
+    end
+    
+    if plane_found
+        % Check if all other orientations lie in the same plane
+        coplanar_count = 2; % v1 and v2 are already in the plane
+        
+        for i = 1:K
+            if i == 1 || i == j
+                continue; % Skip the vectors used to define the plane
+            end
+            
+            % Calculate distance from vector to plane
+            % Distance = |dot(vector, normal)| where normal is unit vector
+            distance_to_plane = abs(dot(nt_orientations(:,i), normal));
+            
+            if distance_to_plane < 0.2  % Threshold for coplanarity (more lenient)
+                coplanar_count = coplanar_count + 1;
+            end
+        end
+        
+        % If most orientations are coplanar, apply penalty
+        if coplanar_count >= K-1  % Allow one orientation to be out of plane
+            % All or most orientations are coplanar, add penalty
+            PEB_value = 30;
+            return;
+        end
+    else
+        % All vectors are parallel (very bad configuration)
+        PEB_value = 50;
+        return;
+    end
+end
+
 %% Calculate PEB for each receiver position
 N_positions = size(receiver_positions, 2);
 PEB_values = zeros(1, N_positions);
+
+% Suppress warnings during optimization to avoid cluttering output
+warning_state = warning('query', 'all');
+warning('off', 'all');
 
 for pos_idx = 1:N_positions
     R = receiver_positions(:, pos_idx);
@@ -50,17 +120,27 @@ for pos_idx = 1:N_positions
             system_params.Psi_FOV, system_params.sigma2, system_params.N);
         
         % Handle infinite or very large PEB values
-        if ~isfinite(PEB_values(pos_idx)) || PEB_values(pos_idx) > 100
+        if ~isfinite(PEB_values(pos_idx))
             PEB_values(pos_idx) = 100; % Penalty for poor configurations
+        elseif PEB_values(pos_idx) > 50  % Reduced threshold
+            PEB_values(pos_idx) = 50;   % Cap very large values
+        elseif PEB_values(pos_idx) < 0   % Should not happen, but safety check
+            PEB_values(pos_idx) = 100;
         end
         
     catch ME
         % If PEB calculation fails, assign penalty
-        warning('PEB calculation failed for position [%.2f, %.2f, %.2f]: %s', ...
-            R(1), R(2), R(3), ME.message);
+        % Only show warning in debug mode
+        if system_params.debug_mode
+            fprintf('PEB calculation failed for position [%.2f, %.2f, %.2f]: %s\n', ...
+                R(1), R(2), R(3), ME.message);
+        end
         PEB_values(pos_idx) = 100; % Large penalty
     end
 end
+
+% Restore warning state
+warning(warning_state);
 
 %% Calculate objective function value
 % Use different aggregation strategies

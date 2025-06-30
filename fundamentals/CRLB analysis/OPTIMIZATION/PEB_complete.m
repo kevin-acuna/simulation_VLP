@@ -98,11 +98,55 @@ I_fisher = I_fisher + (N / sigma2) * (grad_mu_distance * grad_mu_distance');
 
 %% Calculate Position Error Bound
 % PEB = sqrt(trace(I^(-1)))
-if det(I_fisher) < eps
-    warning('Fisher Information Matrix is singular or near-singular');
-    PEB = Inf;
+
+% Check matrix condition and handle singular cases
+cond_num = cond(I_fisher);
+det_val = det(I_fisher);
+
+% Define thresholds for numerical stability
+COND_THRESHOLD = 1e12;  % Condition number threshold
+DET_THRESHOLD = 1e-15;  % Determinant threshold
+REG_FACTOR = 1e-8;      % Regularization factor
+
+if det_val < DET_THRESHOLD || cond_num > COND_THRESHOLD
+    % Matrix is singular or ill-conditioned
+    if det_val < eps
+        warning('Fisher Information Matrix is singular (det = %.2e)', det_val);
+    else
+        warning('Fisher Information Matrix is ill-conditioned (cond = %.2e)', cond_num);
+    end
+    
+    % Try regularization (Tikhonov regularization)
+    I_fisher_reg = I_fisher + REG_FACTOR * eye(3);
+    cond_reg = cond(I_fisher_reg);
+    
+    if cond_reg < COND_THRESHOLD
+        % Regularization successful
+        try
+            PEB = sqrt(trace(inv(I_fisher_reg)));
+            % Add penalty for using regularization
+            PEB = PEB * 1.1; % 10% penalty
+        catch
+            PEB = Inf;
+        end
+    else
+        % Even regularization failed
+        PEB = Inf;
+    end
 else
-    PEB = sqrt(trace(inv(I_fisher)));
+    % Matrix is well-conditioned, proceed normally
+    try
+        PEB = sqrt(trace(inv(I_fisher)));
+    catch ME
+        warning('Matrix inversion failed: %s', ME.message);
+        PEB = Inf;
+    end
+end
+
+% Additional check for complex or invalid results
+if ~isreal(PEB) || ~isfinite(PEB) || PEB < 0
+    warning('Invalid PEB result: PEB = %.6f', PEB);
+    PEB = Inf;
 end
 
 end

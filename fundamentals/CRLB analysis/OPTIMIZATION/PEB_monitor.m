@@ -95,9 +95,9 @@ switch flag
         hold on;
         
         % Draw coordinate system
-        quiver3(0, 0, 0, 1, 0, 0, 0.5, 'r', 'LineWidth', 2); % X-axis
-        quiver3(0, 0, 0, 0, 1, 0, 0.5, 'g', 'LineWidth', 2); % Y-axis
-        quiver3(0, 0, 0, 0, 0, -1, 0.5, 'b', 'LineWidth', 2); % Z-axis (downward)
+        %quiver3(0, 0, 0, 1, 0, 0, 0.5, 'r', 'LineWidth', 2); % X-axis
+        %quiver3(0, 0, 0, 0, 1, 0, 0.5, 'g', 'LineWidth', 2); % Y-axis
+        %quiver3(0, 0, 0, 0, 0, -1, 0.5, 'b', 'LineWidth', 2); % Z-axis (downward)
         
         % Draw LED orientations
         for i = 1:K
@@ -120,7 +120,8 @@ switch flag
         legend('Location', 'best');
         axis equal;
         grid on;
-        view(45, 30); % Good viewing angle
+        %view(45, 30); % Good viewing angle
+        view(90,90)
         xlim([-1 1]); ylim([-1 1]); zlim([-1 0.2]);
         
         hold off;

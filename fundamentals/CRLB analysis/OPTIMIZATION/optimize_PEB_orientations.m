@@ -16,7 +16,7 @@ clear; clc; close all;
 rng('default');
 
 % Number of LED orientations to optimize
-K_orientations = [4]; % Test different numbers of orientations
+K_orientations = [3,4,5,6]; % Test different numbers of orientations
 
 % Create results directory
 results_dir = 'results/PEB_optimization';
@@ -35,20 +35,25 @@ system_params.A_det = (4.8e-3)*(5.5e-3);        % Photodiode effective area [m²
 system_params.Psi_FOV = deg2rad(85);            % Receiver field of view [rad]
 
 % Noise and sampling parameters
-system_params.sigma2 = (10^(-21.0))*(30e6);     % Noise variance per sample [W²]
+system_params.sigma2 = (10^(-20.0))*(30e6);     % Noise variance per sample [W²]
 system_params.N = 1000;                         % Number of samples per orientation
 
 % Optimization parameters
 system_params.optimization_metric = 'rms';     % 'mean', 'max', 'rms', 'percentile_90'
-system_params.penalize_extreme_angles = true;   % Penalize very vertical/horizontal orientations
+system_params.penalize_extreme_angles = false;   % Penalize very vertical/horizontal orientations
+system_params.debug_mode = false;               % Set to true to show detailed warnings
 
 %% ======================== TEST SCENARIO ========================
 
 % Define receiver positions for testing (3D testbed)
 % Create a grid of positions at different heights
-x_range = -1.2:0.2:1.2;
-y_range = -1.2:0.2:1.2;
-z_heights = 0:0.2:1.2; % Different receiver heights
+
+L = 2.4; W = 2.4; H = 2.0;
+step = 0.1; 
+
+x_range = -L/2:step:L/2;
+y_range = -W/2:step:W/2;
+z_heights = 0:step:1.2; % Different receiver heights
 
 receiver_positions = [];
 for z = z_heights
@@ -112,8 +117,8 @@ for k_idx = 1:length(K_orientations)
     
     % GA options
     options = optimoptions('ga', ...
-        'PopulationSize', 100, ...
-        'MaxGenerations', 150, ...
+        'PopulationSize', 200, ...
+        'MaxGenerations', 200, ...
         'CrossoverFraction', 0.8, ...
         'MutationFcn', @mutationadaptfeasible, ...
         'Display', 'iter', ...
