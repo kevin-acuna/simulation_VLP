@@ -24,13 +24,20 @@ sigma2_values = sigma2_base:sigma2_base:10*sigma2_base; % Multiply by bandwidth 
 
 % Configurations
 orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
-orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-orientations_K5 = [57.57, 87.79, 57.71, 358.55,57.17,177.68,0.48,294.81, 55.72,268.14];
-orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
+orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57]
+orientations_K5 = [57.57, 87.79, 57.71, 358.55,57.17,177.68,0.48,294.81, 55.72,268.14]
+orientations_K6 = [53.23, 179.80, 58.97]
+
+LED 1: θ = °, ρ = °
+LED 2: θ = °, ρ = 355.37°
+LED 3: θ = 48.42°, ρ = 97.78°
+LED 4: θ = 49.58°, ρ = 268.13°
+LED 5: θ = 19.80°, ρ = 252.81°
+LED 6: θ = 25.95°, ρ = 39.19°
 
 % Store all orientation sets in a cell array
-all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6};
-K_values = [3, 4, 5, 6];
+all_orientations = {orientations_K3, orientations_K4, orientations_K5};
+K_values = [3, 4, 5];
 
 %% ======================== SYSTEM PARAMETERS ========================
 % (Same as in optimize_PEB_orientations.m)
@@ -115,24 +122,13 @@ fprintf('Log file saved in: %s\n', results_dir);
 diary off;
 
 %% ======================== PLOTTING ========================
-close all
+
 % Create the figure
 fig = figure('Position', [100, 100, 800, 600]);
 
 % Plot styles for different K values
 markers = {'o-', 's-', 'd-'};
-
-colors       = [0.0000 0.4470 0.7410 ;... 
-                0.8500 0.3250 0.0980 ;...
-                0.9290 0.6940 0.1250 ;...
-                0.4940 0.1840 0.5560 ;...
-                0.4660 0.6740 0.1880 ;...
-                0.3010 0.7450 0.9330 ;...
-                0.6350 0.0780 0.1840 ;...
-                0.0000 0.4470 0.7410 ;...
-                0.8500 0.3250 0.0980 ;...
-                0.9290 0.6940 0.1250];
-
+colors = {[0, 0.4470, 0.7410], [0.8500, 0.3250, 0.0980], [0.9290, 0.6940, 0.1250]};
 legend_entries = cell(1, length(K_values));
 
 % Create a single plot for all K values
@@ -143,32 +139,29 @@ for j = 1:length(K_values)
     K = K_values(j);
     
     % Plot PEB vs noise level for this K value (with linear axes)
-    plot(sigma2_values, peb_results(:, j), markers{min(j,length(markers))}, 'Color', colors(j,:), ...
+    plot(sigma2_values, peb_results(:, j), markers{j}, 'Color', colors{j}, ...
         'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'w');
-    
+   
     legend_entries{j} = sprintf('K=%d', K);
 end
 
 % Add labels, title, grid, and legend
 xlabel('Noise Variance \sigma^2 (W²)', 'FontSize', 12);
 ylabel('Position Error Bound (m)', 'FontSize', 12);
-title('Position Error Bound vs Noise Level', 'FontSize', 14, 'FontWeight', 'bold');
-grid on;
+title('PEB vs noise', 'FontSize', 12);
+grid minor;
 legend(legend_entries, 'Location', 'northwest', 'FontSize', 10);
-
-% Set specific X-axis limits to start from first sigma2 and end at last sigma2
-xlim([sigma2_values(1), sigma2_values(end)]);
-
-% Adjust Y-axis limits to have some margin
-y_min = min(peb_results(:)) * 0.95;
-y_max = max(peb_results(:)) * 1.05;
-ylim([y_min, y_max]);
-
-% Format the axes for better readability
-ax = gca;
-ax.FontSize = 11;
-ax.GridLineStyle = ':';
-ax.GridAlpha = 0.3;
+% 
+% % Format x-axis to scientific notation
+% ax = gca;
+% ax.XTickMode = 'auto';
+% % Format the x-axis tick labels as scientific notation
+% set(ax, 'XTickLabelMode', 'auto');
+% 
+% % Set y-axis limits based on all data
+% y_min = min(peb_results(:)) * 0.8;
+% y_max = max(peb_results(:)) * 1.2;
+% ylim([y_min, y_max]);
 
 hold off;
 
