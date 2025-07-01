@@ -10,19 +10,28 @@
 
 clear; clc; close all;
 
+% Get current date/time for log filename
+current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
+
 %% ======================== CONFIGURATION ========================
 
 % Random seed for reproducibility
 rng('default');
 
 % Number of LED orientations to optimize
-K_orientations = [3,4,5,6]; % Test different numbers of orientations
+K_orientations = 3; % Test different numbers of orientations
 
 % Create results directory
 results_dir = 'results/PEB_optimization';
 if ~exist(results_dir, 'dir')
     mkdir(results_dir);
 end
+
+% Create and start log file
+log_filename = fullfile(results_dir, sprintf('optimization_log_%s.txt', current_datetime));
+diary(log_filename);
+fprintf('Log file started: %s\n', log_filename);
+fprintf('Date and time: %s\n\n', datestr(now));
 
 %% ======================== SYSTEM PARAMETERS ========================
 
@@ -35,11 +44,11 @@ system_params.A_det = (4.8e-3)*(5.5e-3);        % Photodiode effective area [m²
 system_params.Psi_FOV = deg2rad(85);            % Receiver field of view [rad]
 
 % Noise and sampling parameters
-system_params.sigma2 = (10^(-20.0))*(30e6);     % Noise variance per sample [W²]
+system_params.sigma2 = (10^(-21.0))*(30e6);     % Noise variance per sample [W²]
 system_params.N = 1000;                         % Number of samples per orientation
 
 % Optimization parameters
-system_params.optimization_metric = 'rms';     % 'mean', 'max', 'rms', 'percentile_90'
+system_params.optimization_metric = 'percentile_90';     % 'mean', 'max', 'rms', 'percentile_90'
 system_params.penalize_extreme_angles = false;   % Penalize very vertical/horizontal orientations
 system_params.debug_mode = false;               % Set to true to show detailed warnings
 
@@ -48,12 +57,12 @@ system_params.debug_mode = false;               % Set to true to show detailed w
 % Define receiver positions for testing (3D testbed)
 % Create a grid of positions at different heights
 
-L = 2.4; W = 2.4; H = 2.0;
-step = 0.1; 
+L = 3; W = 3; Hmax = 1.2;
+step = 0.2; 
 
 x_range = -L/2:step:L/2;
 y_range = -W/2:step:W/2;
-z_heights = 0:step:1.2; % Different receiver heights
+z_heights = 0:step:Hmax; % Different receiver heights
 
 receiver_positions = [];
 for z = z_heights
@@ -209,64 +218,8 @@ for k_idx = 1:length(K_orientations)
     pause(1); % Brief pause to ensure proper cleanup
 end
 
+% Close the log file
+fprintf('\nOptimization completed at: %s\n', datestr(now));
+fprintf('Log file saved to: %s\n', log_filename);
+diary off;
 
-
-% 
-% %% ======================== COMPARATIVE ANALYSIS ========================
-% 
-% fprintf('\n' + string(repmat('=', 1, 60)) + '\n');
-% fprintf('COMPARATIVE ANALYSIS\n');
-% fprintf(string(repmat('=', 1, 60)) + '\n');
-% 
-% % Create comparison table
-% fprintf('K\tBest PEB [m]\tTime [s]\tImprovement\n');
-% fprintf(string(repmat('-', 1, 45)) + '\n');
-% 
-% best_PEBs = zeros(size(K_orientations));
-% for i = 1:length(K_orientations)
-%     K = K_orientations(i);
-%     result = optimization_results.(sprintf('K_%d', K));
-%     best_PEBs(i) = result.best_PEB;
-% 
-%     if i == 1
-%         improvement = 0;
-%     else
-%         improvement = (best_PEBs(i-1) - best_PEBs(i)) / best_PEBs(i-1) * 100;
-%     end
-% 
-%     fprintf('%d\t%.6f\t%.1f\t\t%.1f%%\n', K, result.best_PEB, result.optimization_time, improvement);
-% end
-% 
-% %% Create comparison plot
-% figure('Name', 'PEB vs Number of Orientations', 'NumberTitle', 'off');
-% plot(K_orientations, best_PEBs, 'o-', 'LineWidth', 2, 'MarkerSize', 8);
-% xlabel('Number of Orientations (K)');
-% ylabel('Best PEB [m]');
-% title('Position Error Bound vs Number of LED Orientations');
-% grid on;
-% saveas(gcf, fullfile(results_dir, 'PEB_comparison.fig'));
-% saveas(gcf, fullfile(results_dir, 'PEB_comparison.png'));
-% 
-% %% Save overall results
-% save(fullfile(results_dir, 'all_optimization_results.mat'), 'optimization_results', 'K_orientations', 'best_PEBs');
-% 
-% fprintf('\n' + string(repmat('=', 1, 60)) + '\n');
-% fprintf('OPTIMIZATION COMPLETE\n');
-% fprintf('Results saved in: %s\n', results_dir);
-% fprintf(string(repmat('=', 1, 60)) + '\n');
-% 
-% %% ======================== HELPER FUNCTIONS ========================
-% 
-% function display_system_info(system_params, receiver_positions)
-% % Display system configuration information
-% fprintf('System Configuration:\n');
-% fprintf('  LED position: [%.1f, %.1f, %.1f] m\n', system_params.T);
-% fprintf('  Transmitted power: %.1f W\n', system_params.Pt);
-% fprintf('  Half-power angle: %.1f°\n', rad2deg(system_params.theta_half));
-% fprintf('  Lambertian order: %.2f\n', system_params.m);
-% fprintf('  Photodiode area: %.1e m²\n', system_params.A_det);
-% fprintf('  Receiver FOV: %.1f°\n', rad2deg(system_params.Psi_FOV));
-% fprintf('  Noise variance: %.1e W²\n', system_params.sigma2);
-% fprintf('  Samples per measurement: %d\n', system_params.N);
-% fprintf('  Test positions: %d\n', size(receiver_positions, 2));
-% end

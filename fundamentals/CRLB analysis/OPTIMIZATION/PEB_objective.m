@@ -37,11 +37,12 @@ end
 
 %% Check for degenerate configurations
 % 1. Check for nearly identical orientations
-MIN_ANGLE_SEPARATION = 10; % degrees
+MIN_ANGLE_SEPARATION = 5; % degrees
 for i = 1:K-1
     for j = i+1:K
         % Calculate angle between orientations
         dot_product = dot(nt_orientations(:,i), nt_orientations(:,j));
+        dot_product = max(min(dot_product,1),-1); % Ensure valid range for acos
         angle_deg = rad2deg(acos(abs(dot_product)));
         
         if angle_deg < MIN_ANGLE_SEPARATION
@@ -52,50 +53,20 @@ for i = 1:K-1
     end
 end
 
-% 2. Check for coplanar orientations (all in same plane)
+% 2. Check for coplanar orientations using matrix rank
 if K >= 3
-    % Find two non-parallel vectors to define a plane
-    v1 = nt_orientations(:,1);
-    plane_found = false;
-    normal = [];
-    
-    for j = 2:K
-        v2 = nt_orientations(:,j);
-        cross_prod = cross(v1, v2);
-        
-        if norm(cross_prod) > 1e-6  % Vectors not parallel
-            normal = cross_prod / norm(cross_prod);
-            plane_found = true;
-            break;
-        end
+    % If rank of orientations matrix is less than 3, orientations are coplanar or collinear
+    % Use a small tolerance to account for numerical precision
+    if rank(nt_orientations) < 3
+        % All orientations are coplanar (or collinear), add penalty
+        PEB_value = 30;
+        return;
     end
-    
-    if plane_found
-        % Check if all other orientations lie in the same plane
-        coplanar_count = 2; % v1 and v2 are already in the plane
-        
-        for i = 1:K
-            if i == 1 || i == j
-                continue; % Skip the vectors used to define the plane
-            end
-            
-            % Calculate distance from vector to plane
-            % Distance = |dot(vector, normal)| where normal is unit vector
-            distance_to_plane = abs(dot(nt_orientations(:,i), normal));
-            
-            if distance_to_plane < 0.2  % Threshold for coplanarity (more lenient)
-                coplanar_count = coplanar_count + 1;
-            end
-        end
-        
-        % If most orientations are coplanar, apply penalty
-        if coplanar_count >= K-1  % Allow one orientation to be out of plane
-            % All or most orientations are coplanar, add penalty
-            PEB_value = 30;
-            return;
-        end
-    else
-        % All vectors are parallel (very bad configuration)
+elseif K == 2
+    % For 2 orientations, check if they are nearly parallel
+    cross_prod = cross(nt_orientations(:,1), nt_orientations(:,2));
+    if norm(cross_prod) < 1e-6
+        % Orientations are parallel (very bad configuration)
         PEB_value = 50;
         return;
     end
@@ -157,19 +128,5 @@ switch system_params.optimization_metric
         PEB_value = mean(PEB_values); % Default to mean
 end
 
-%% Add penalty for extreme orientations (optional)
-if system_params.penalize_extreme_angles
-    penalty = 0;
-    for i = 1:K
-        theta_deg = orientation_vector(2*i-1);
-        % Penalize very vertical orientations (theta < 5°) or very tilted (theta > 85°)
-        if theta_deg < 5
-            penalty = penalty + (5 - theta_deg)^2 * 0.01;
-        elseif theta_deg > 85
-            penalty = penalty + (theta_deg - 85)^2 * 0.01;
-        end
-    end
-    PEB_value = PEB_value + penalty;
-end
 
 end

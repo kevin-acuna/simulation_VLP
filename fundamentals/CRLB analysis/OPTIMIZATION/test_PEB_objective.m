@@ -15,19 +15,23 @@ system_params.m = -log(2)/log(cos(system_params.theta_half)); % Lambertian order
 system_params.A_det = (4.8e-3)*(5.5e-3);        % Photodiode effective area [m²]
 system_params.Psi_FOV = deg2rad(85);            % Receiver field of view [rad]
 system_params.N = 1000;                         % Number of samples per orientation
-system_params.optimization_metric = 'rms';      % RMS metric for PEB aggregation
+system_params.optimization_metric = 'percentile_90';      % RMS metric for PEB aggregation
 system_params.penalize_extreme_angles = false;  % No extreme angle penalties
 system_params.debug_mode = false;               % No debug warnings
 
-%R_pd= 0.63;
-R_pd = 1;
-system_params.sigma2 = (10^(-20.0))*(30e6)/(R_pd^2)     % Noise variance per sample [W²]
+% R_pd= 0.63; Se considera que el ruido está en la potencia recibida.
+
+system_params.sigma2 = (10^(-21.0))*(30e6);     % Noise variance per sample [W²]
 
 %% Test Receiver Positions (same as optimize_PEB_orientations.m)
 % Define receiver positions for testing (3D testbed)
-x_range = -1.2:0.1:1.2;
-y_range = -1.2:0.1:1.2;
-z_heights = 0.0:0.1:1.2; % Different receiver heights
+
+L = 3; W = 3; H = 2.0;
+step = 0.1; 
+
+x_range = -L/2:step:L/2;
+y_range = -W/2:step:W/2;
+z_heights = 0:step:1.2; % Different receiver heights
 
 receiver_positions = [];
 for z = z_heights
@@ -54,7 +58,10 @@ fprintf('- Optimization metric: %s\n\n', system_params.optimization_metric);
 % Define your orientation set [elevation1, azimuth1, elevation2, azimuth2, ...]
 % Example with 5 orientations (K=5):
 %orientation_set = [25, 30, 40, 120, 35, 210, 45, 300, 20, 60];
-orientation_set = [0.0, 0.0, 45.0, 90.0, 45.0, 0.0, 45.0, 180.0, 45.0, 270.0]
+orientation_set = [0.0, 0.0, 45.0, 0.0, 45.0, 90.0]
+%orientation_set = [0.0, 0.0, 45.0, 0.0, 30.0, 90.0]
+%orientation_set = [45.0, 0.0, 45.0, 90.0, 45.0, 180.0, 45, 270]
+%PEB Result (RMS): 0.089687 m/ 0.074201
 
 % Display the configuration
 K = length(orientation_set) / 2;
