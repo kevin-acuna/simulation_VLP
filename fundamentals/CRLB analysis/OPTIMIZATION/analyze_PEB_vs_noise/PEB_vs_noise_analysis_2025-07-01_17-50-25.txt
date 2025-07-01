@@ -1,0 +1,55 @@
+Log file started: C:\Users\Owner\Documents\UVSQ\simulation_VLP\fundamentals\CRLB analysis\OPTIMIZATION\analyze_PEB_vs_noise\PEB_vs_noise_analysis_2025-07-01_17-50-25.txt
+Date and time: 01-Jul-2025 17:50:25
+
+Processing noise level 3.00e-14 W²...
+  K=3: PEB = 0.037135 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.034062 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.031452 m (calculated in 0.02 seconds)
+
+Processing noise level 6.00e-14 W²...
+  K=3: PEB = 0.052517 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.048171 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.044480 m (calculated in 0.02 seconds)
+
+Processing noise level 9.00e-14 W²...
+  K=3: PEB = 0.064320 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.058997 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.054476 m (calculated in 0.02 seconds)
+
+Processing noise level 1.20e-13 W²...
+  K=3: PEB = 0.074270 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.068124 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.062904 m (calculated in 0.02 seconds)
+
+Processing noise level 1.50e-13 W²...
+  K=3: PEB = 0.083036 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.076164 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.070329 m (calculated in 0.02 seconds)
+
+Processing noise level 1.80e-13 W²...
+  K=3: PEB = 0.090962 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.083434 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.077041 m (calculated in 0.02 seconds)
+
+Processing noise level 2.10e-13 W²...
+  K=3: PEB = 0.098250 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.090119 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.083214 m (calculated in 0.02 seconds)
+
+Processing noise level 2.40e-13 W²...
+  K=3: PEB = 0.105033 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.096341 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.088960 m (calculated in 0.02 seconds)
+
+Processing noise level 2.70e-13 W²...
+  K=3: PEB = 0.111405 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.102185 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.094356 m (calculated in 0.02 seconds)
+
+Processing noise level 3.00e-13 W²...
+  K=3: PEB = 0.117431 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.107713 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.099460 m (calculated in 0.02 seconds)
+
+Analysis completed at: 01-Jul-2025 17:50:25
+Log file saved in: C:\Users\Owner\Documents\UVSQ\simulation_VLP\fundamentals\CRLB analysis\OPTIMIZATION\analyze_PEB_vs_noise
