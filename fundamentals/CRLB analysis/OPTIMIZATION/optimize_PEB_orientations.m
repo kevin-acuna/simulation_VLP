@@ -19,7 +19,7 @@ current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
 rng('default');
 
 % Number of LED orientations to optimize
-K_orientations = 3; % Test different numbers of orientations
+K_orientations = [4,5,6]; % Test different numbers of orientations
 
 % Create results directory
 results_dir = 'results/PEB_optimization';
