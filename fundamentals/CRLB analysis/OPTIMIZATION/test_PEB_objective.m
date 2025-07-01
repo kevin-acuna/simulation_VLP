@@ -58,10 +58,14 @@ fprintf('- Optimization metric: %s\n\n', system_params.optimization_metric);
 % Define your orientation set [elevation1, azimuth1, elevation2, azimuth2, ...]
 % Example with 5 orientations (K=5):
 %orientation_set = [25, 30, 40, 120, 35, 210, 45, 300, 20, 60];
-orientation_set = [0.0, 0.0, 45.0, 0.0, 45.0, 90.0]
+% orientation_set = [0.0, 0.0, 45.0, 0.0, 45.0, 90.0]
+
 %orientation_set = [0.0, 0.0, 45.0, 0.0, 30.0, 90.0]
 %orientation_set = [45.0, 0.0, 45.0, 90.0, 45.0, 180.0, 45, 270]
 %PEB Result (RMS): 0.089687 m/ 0.074201
+
+orientation_set = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
+orientation_set = [57.57, 87.79, 57.71, 358.55,57.17,177.68,0.48,294.81, 55.72,268.14];
 
 % Display the configuration
 K = length(orientation_set) / 2;

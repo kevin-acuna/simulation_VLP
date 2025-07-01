@@ -1,6 +1,6 @@
-%% PEB Analysis vs Noise Level
-% This script analyzes how PEB changes with different noise levels (sigma2)
-% for different sets of LED orientations (K=3,4,5).
+%% PEB Analysis vs LED Half-Angle (theta_half)
+% This script analyzes how PEB changes with different LED half-angles
+% for different sets of LED orientations (K=3 to K=9).
 %
 % Author: Kevin Acuña
 % Date: July 2025
@@ -8,7 +8,7 @@
 clear; clc; close all;
 
 % Create results directory with the same name as this file
-script_name = 'analyze_PEB_vs_noise';
+script_name = 'analyze_PEB_vs_theta_half';
 results_dir = fullfile(pwd, script_name);
 if ~exist(results_dir, 'dir')
     mkdir(results_dir);
@@ -16,8 +16,11 @@ end
 
 %% ======================== CONFIGURATION ========================
 
+% Fix the noise level (sigma2)
 sigma2_base = (10^(-21.0))*(30e6);
-sigma2_values = sigma2_base:sigma2_base:10*sigma2_base; % Multiply by bandwidth (30e6)
+
+% Define the theta_half values to test (in degrees)
+theta_half_deg = [30, 45, 60];
 
 % Define sets of orientations for different K values
 % Format: [theta1, rho1, theta2, rho2, ...] where theta is elevation and rho is azimuth
@@ -25,7 +28,7 @@ sigma2_values = sigma2_base:sigma2_base:10*sigma2_base; % Multiply by bandwidth 
 % Configurations
 orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
 orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-orientations_K5 = [57.57, 87.79, 57.71, 358.55,57.17,177.68,0.48,294.81, 55.72,268.14];
+orientations_K5 = [57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 0.48, 294.81, 55.72, 268.14];
 orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
 orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
 orientations_K8 = [32.76, 218.19, 28.47, 61.48, 51.87, 178.18, 35.72, 25.47, 51.63, 338.81, 57.74, 273.57, 49.66, 106.23, 18.14, 243.22];
@@ -36,19 +39,19 @@ all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientati
 K_values = [3, 4, 5, 6, 7, 8, 9];
 
 %% ======================== SYSTEM PARAMETERS ========================
-% (Same as in optimize_PEB_orientations.m)
+% (Same as in optimize_PEB_orientations.m, except for theta_half which will vary)
 
 system_params = struct();
 system_params.T = [0; 0; 2];                    % LED position at 2m height [m]
 system_params.Pt = 0.405;                       % Transmitted optical power [W]
-system_params.theta_half = deg2rad(45);         % LED half-power angle [rad]
-system_params.m = -log(2)/log(cos(system_params.theta_half)); % Lambertian order
+% theta_half will be set in the loop
 system_params.A_det = (4.8e-3)*(5.5e-3);        % Photodiode effective area [m²]
 system_params.Psi_FOV = deg2rad(85);            % Receiver field of view [rad]
 system_params.N = 1000;                         % Number of samples per orientation
-system_params.optimization_metric = 'percentile_90';      
+system_params.optimization_metric = 'percentile_90';
 system_params.penalize_extreme_angles = false;  % No extreme angle penalties
 system_params.debug_mode = false;               % No debug warnings
+system_params.sigma2 = sigma2_base;             % Fixed noise value
 
 %% ======================== TEST ENVIRONMENT ========================
 
@@ -74,25 +77,26 @@ fprintf('Position range: X ∈ [%.1f, %.1f], Y ∈ [%.1f, %.1f], Z ∈ [%.1f, %.
 
 %% ======================== PEB CALCULATION ========================
 
-fprintf('\nCalculating PEB for different noise levels and orientations...\n');
+fprintf('\nCalculating PEB for different theta_half values and orientations...\n');
 
-% Initialize results matrix: rows=noise levels, columns=K values
-peb_results = zeros(length(sigma2_values), length(K_values));
+% Initialize results matrix: rows=K values, columns=theta_half values
+peb_results = zeros(length(K_values), length(theta_half_deg));
 
 % Create a log file
 current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
-log_filename = fullfile(results_dir, sprintf('PEB_vs_noise_analysis_%s.txt', current_datetime));
+log_filename = fullfile(results_dir, sprintf('PEB_vs_theta_half_%s.txt', current_datetime));
 diary(log_filename);
 fprintf('Log file started: %s\n', log_filename);
 fprintf('Date and time: %s\n\n', datestr(now));
 
-% Loop through each noise level
-for i = 1:length(sigma2_values)
-    sigma2 = sigma2_values(i);
-    fprintf('Processing noise level %.2e W²...\n', sigma2);
+% Loop through each theta_half value
+for i = 1:length(theta_half_deg)
+    theta_half = theta_half_deg(i);
+    fprintf('Processing theta_half = %d°...\n', theta_half);
     
-    % Update system parameters with current sigma2
-    system_params.sigma2 = sigma2;
+    % Update system parameters with current theta_half
+    system_params.theta_half = deg2rad(theta_half);
+    system_params.m = -log(2)/log(cos(system_params.theta_half)); % Update Lambertian order
     
     % Loop through each K value
     for j = 1:length(K_values)
@@ -105,7 +109,7 @@ for i = 1:length(sigma2_values)
         calc_time = toc;
         
         % Store the result
-        peb_results(i, j) = peb;
+        peb_results(j, i) = peb;
         
         fprintf('  K=%d: PEB = %.6f m (calculated in %.2f seconds)\n', K, peb, calc_time);
     end
@@ -119,64 +123,53 @@ diary off;
 
 %% ======================== PLOTTING ========================
 close all
+
 % Create the figure
 fig = figure('Position', [100, 100, 800, 600]);
 
-% Plot styles for different K values
+% Plot styles for different theta_half values
 markers = {'o-', 's-', 'd-'};
+colors = [
+    0.0000, 0.4470, 0.7410; % Blue
+    0.8500, 0.3250, 0.0980; % Orange/Red
+    0.4660, 0.6740, 0.1880  % Green
+];
 
-colors       = [0.0000 0.4470 0.7410 ;... 
-                0.8500 0.3250 0.0980 ;...
-                0.9290 0.6940 0.1250 ;...
-                0.4940 0.1840 0.5560 ;...
-                0.4660 0.6740 0.1880 ;...
-                0.3010 0.7450 0.9330 ;...
-                0.6350 0.0780 0.1840 ;...
-                0.0000 0.4470 0.7410 ;...
-                0.8500 0.3250 0.0980 ;...
-                0.9290 0.6940 0.1250];
+legend_entries = cell(1, length(theta_half_deg));
 
-legend_entries = cell(1, length(K_values));
-
-% Create a single plot for all K values
+% Create a single plot for all theta_half values
 hold on;
 
-% Loop through each K value to add to the single plot
-for j = 1:length(K_values)
-    K = K_values(j);
+% Loop through each theta_half value
+for i = 1:length(theta_half_deg)
+    theta_half = theta_half_deg(i);
     
-    % Plot PEB vs noise level for this K value (with linear axes)
-    plot(sigma2_values, peb_results(:, j)*100, markers{min(j,length(markers))}, 'Color', colors(j,:), ...
+    % Plot PEB vs K for this theta_half value
+    plot(K_values, peb_results(:, i)*100, markers{min(i,length(markers))}, 'Color', colors(i,:), ...
         'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'w');
     
-    legend_entries{j} = sprintf('K=%d', K);
+    % Create legend entry
+    legend_entries{i} = sprintf('\\theta_{1/2} = %d°', theta_half);
 end
 
 % Add labels, title, grid, and legend
-xlabel('Noise Variance $\sigma^2(\mathrm{W}^2)$', 'FontSize', 12,'interpreter', 'latex');
-ylabel('Overal PEB error $\mathrm{PEB_{90\%}}$(cm)', 'FontSize', 12, 'interpreter', 'latex');
+xlabel('Number of Orientations (K)', 'FontSize', 12,'interpreter', 'latex');
+ylabel('Overal PEB error $\mathrm{PEB_{90\%}}$(cm)', 'FontSize', 12,'interpreter', 'latex');
 grid on;
-legend(legend_entries, 'Location', 'northwest', 'FontSize', 10,'Interpreter','latex');
-
-% Set specific X-axis limits to start from first sigma2 and end at last sigma2
-xlim([sigma2_values(1), sigma2_values(end)]);
-
-% Adjust Y-axis limits to have some margin
-y_min = min(peb_results(:)*100) * 0.95;
-y_max = max(peb_results(:)*100) * 1.05;
-ylim([y_min, y_max]);
+legend(legend_entries, 'Location', 'northeast', 'FontSize', 11);
+axis([3,9,0,10])
 
 % Format the axes for better readability
 ax = gca;
 ax.FontSize = 11;
+ax.TickLabelInterpreter="latex"
 ax.GridLineStyle = ':';
 ax.GridAlpha = 0.3;
-ax.TickLabelInterpreter="latex";
 
 hold off;
 
 % Save the figure to the results directory
-saveas(fig, fullfile(results_dir, sprintf('PEB_vs_noise_analysis_%s.fig', current_datetime)));
-saveas(fig, fullfile(results_dir, sprintf('PEB_vs_noise_analysis_%s.png', current_datetime)));
+saveas(fig, fullfile(results_dir, sprintf('PEB_vs_theta_half_%s.fig', current_datetime)));
+saveas(fig, fullfile(results_dir, sprintf('PEB_vs_theta_half_%s.png', current_datetime)));
 
 fprintf('Analysis complete. Figure saved in %s\n', results_dir);

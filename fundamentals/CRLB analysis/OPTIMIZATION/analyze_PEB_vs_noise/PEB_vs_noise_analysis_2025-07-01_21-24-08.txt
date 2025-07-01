@@ -1,0 +1,95 @@
+Log file started: C:\Users\Owner\Documents\UVSQ\simulation_VLP\fundamentals\CRLB analysis\OPTIMIZATION\analyze_PEB_vs_noise\PEB_vs_noise_analysis_2025-07-01_21-24-08.txt
+Date and time: 01-Jul-2025 21:24:08
+
+Processing noise level 3.00e-14 W²...
+  K=3: PEB = 0.037135 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.027871 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.024220 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.022623 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.021322 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.020252 m (calculated in 0.03 seconds)
+  K=9: PEB = 0.019114 m (calculated in 0.03 seconds)
+
+Processing noise level 6.00e-14 W²...
+  K=3: PEB = 0.052517 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.039415 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.034252 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.031993 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.030154 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.028640 m (calculated in 0.02 seconds)
+  K=9: PEB = 0.027031 m (calculated in 0.03 seconds)
+
+Processing noise level 9.00e-14 W²...
+  K=3: PEB = 0.064320 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.048273 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.041950 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.039183 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.036931 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.035077 m (calculated in 0.03 seconds)
+  K=9: PEB = 0.033106 m (calculated in 0.03 seconds)
+
+Processing noise level 1.20e-13 W²...
+  K=3: PEB = 0.074270 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.055741 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.048440 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.045245 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.042644 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.040504 m (calculated in 0.03 seconds)
+  K=9: PEB = 0.038227 m (calculated in 0.03 seconds)
+
+Processing noise level 1.50e-13 W²...
+  K=3: PEB = 0.083036 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.062321 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.054158 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.050586 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.047678 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.045284 m (calculated in 0.03 seconds)
+  K=9: PEB = 0.042739 m (calculated in 0.03 seconds)
+
+Processing noise level 1.80e-13 W²...
+  K=3: PEB = 0.090962 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.068269 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.059327 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.055414 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.052229 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.049607 m (calculated in 0.03 seconds)
+  K=9: PEB = 0.046818 m (calculated in 0.03 seconds)
+
+Processing noise level 2.10e-13 W²...
+  K=3: PEB = 0.098250 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.073739 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.064080 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.059854 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.056413 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.053581 m (calculated in 0.02 seconds)
+  K=9: PEB = 0.050570 m (calculated in 0.03 seconds)
+
+Processing noise level 2.40e-13 W²...
+  K=3: PEB = 0.105033 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.078830 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.068505 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.063986 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.060308 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.057281 m (calculated in 0.03 seconds)
+  K=9: PEB = 0.054061 m (calculated in 0.03 seconds)
+
+Processing noise level 2.70e-13 W²...
+  K=3: PEB = 0.111405 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.083612 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.072660 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.067868 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.063967 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.060755 m (calculated in 0.02 seconds)
+  K=9: PEB = 0.057341 m (calculated in 0.03 seconds)
+
+Processing noise level 3.00e-13 W²...
+  K=3: PEB = 0.117431 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.088135 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.076591 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.071539 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.067427 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.064042 m (calculated in 0.02 seconds)
+  K=9: PEB = 0.060442 m (calculated in 0.03 seconds)
+
+Analysis completed at: 01-Jul-2025 21:24:10
+Log file saved in: C:\Users\Owner\Documents\UVSQ\simulation_VLP\fundamentals\CRLB analysis\OPTIMIZATION\analyze_PEB_vs_noise
