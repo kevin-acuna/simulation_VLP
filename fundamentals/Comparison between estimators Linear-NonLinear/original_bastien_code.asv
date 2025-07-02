@@ -127,8 +127,7 @@ for i_pos = 1:N_pos
         param_t = {T, n_t(i_dir,:), P_t, m_t};
         [~, P_r{i_pos,i_dir}, v_tr(i_pos,:), d_tr(i_pos,1)] = OWC_LOS_channel(x, y, z, param_t, param_r);
         % P_r_noisy{i_pos,i_dir} = (R_pd.*P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./(-R_pd*C); % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
-        P_r_raw = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./(-C); % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
-        P_r_noisy{i_pos,i_dir} = min(max(P_r_raw, 0.00000000001), 1000);
+        P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./(-C); % Noise power observed after normalization (needed for the non-linear MATLAB solver to coverge) [W]
     end
 end
 
@@ -321,8 +320,8 @@ for i = 1:length(errorNLS)
     errorNormSVD(i) = norm(errorSVD(i,:));
 end
 cdfplot(errorNorm.*1e3); hold on;
-cdfplot(errorNormSVD.*1e2); hold off;
-xlabel('RMS error [cm]'); ylabel('Empirical cumulative distribution function'); %xlim([0,50]);
+cdfplot(errorNormSVD.*1e3); hold off;
+xlabel('RMS error [mm]'); ylabel('Empirical cumulative distribution function'); xlim([0,50]);
 legend('Non-linear estimator of X','Linear estimator of P_{r,i} + SVD');
 
 

@@ -85,6 +85,41 @@ Z_r = -(0.8+rand(1,N_pos)); % x-axis Rx coordinate (random altitudes)
 % X_r = -L+2.*L.*rand(1,N_pos); % x-axis Rx coordinate
 % Y_r = -W+2.*W.*rand(1,N_pos); % x-axis Rx coordinate
 % Z_r = -H+rand(1,N_pos); % x-axis Rx coordinate
+
+
+
+
+
+% % Room dimensions
+% L = 2.4; W = 2.4; H = 2;                   % Largo, ancho y altura del cuarto [m]
+% Hmax = 1.2; step = 0.2;
+% 
+% x_range = -L/2:step:L/2;
+% y_range = -W/2:step:W/2;
+% z_heights = -1.8:step:-0.8; % Different receiver heights
+% 
+% % Initialize position arrays
+% receiver_positions = [];
+% for z = z_heights
+%     for x = x_range
+%         for y = y_range
+%             receiver_positions = [receiver_positions, [x; y; z]];
+%         end
+%     end
+% end
+% 
+% % Extract individual coordinates
+% X_r = receiver_positions(1,:);
+% Y_r = receiver_positions(2,:);
+% Z_r = receiver_positions(3,:);
+% N_pos = size(receiver_positions, 2);
+
+
+
+
+
+
+
 param_r = {A_det, n_r, FOV}; % Vector of the Rx parameters used for channel simulation
 
 
@@ -131,7 +166,7 @@ SNR_avg(pos_negInf) = -80;
 % 3. Calcular el promedio del vector modificado:
 promedio = mean(SNR_avg)
 
-
+%%
 %----------------------------------------%
 % Step 2: Estimation of the Rx positions %
 %----------------------------------------%

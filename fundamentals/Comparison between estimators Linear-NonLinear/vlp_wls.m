@@ -1,4 +1,4 @@
-function [d_hat, beta_hat, w] = vlp_wls_robust(nt, Praw, m)
+function [d_hat, beta_hat, w] = vlp_wls(nt, Praw, m)
 % VLP_WLS_ROBUST Robust Weighted Least Squares estimator for VLP
 % 
 % Inputs:
@@ -16,6 +16,8 @@ function [d_hat, beta_hat, w] = vlp_wls_robust(nt, Praw, m)
 
 % ---- 1. medias μ̂_i
 mu_hat = mean(Praw, 1) .';          % n×1
+
+mu_hat = min(max(mu_hat, 0.00000000001), 1000); % Limites minimos para la potencia media.
 
 mu1    = mu_hat(1);
 beta_hat = (mu_hat(2:end) / mu1).^(1/m);   % (n-1)×1

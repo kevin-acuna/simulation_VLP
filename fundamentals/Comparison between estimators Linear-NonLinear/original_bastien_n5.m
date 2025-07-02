@@ -66,17 +66,12 @@ for i = 1:N_or
     n_t(i,3) = -cosd(theta_i);               % z component (negative because pointing down)
 end
 
-n_t = [n_t; n_t];
 % Cartesian coordinates of the orientations vectors
 a_i = n_t(1,1); b_i = n_t(1,2); c_i = n_t(1,3);
 a_j = n_t(2,1); b_j = n_t(2,2); c_j = n_t(2,3);
 a_k = n_t(3,1); b_k = n_t(3,2); c_k = n_t(3,3);
 a_l = n_t(4,1); b_l = n_t(4,2); c_l = n_t(4,3);
 a_m = n_t(5,1); b_m = n_t(5,2); c_m = n_t(5,3);
-a_n = n_t(6,1); b_n = n_t(6,2); c_n = n_t(6,3);
-a_o = n_t(7,1); b_o = n_t(7,2); c_o = n_t(7,3);
-a_p = n_t(8,1); b_p = n_t(8,2); c_p = n_t(8,3);
-a_q = n_t(9,1); b_q = n_t(9,2); c_q = n_t(9,3);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                          Rx Parameters                            %%%%
@@ -102,11 +97,8 @@ C = -P_t*(m_t+1)*A_det/(2*pi); % Normalization factor
 N_pos = 1000; % Number of random Rx positions simulated
 X_r = -L/2 + L.*rand(1,N_pos); % x-axis Rx coordinate
 Y_r = -W/2 + W.*rand(1,N_pos); % y-axis Rx coordinate
-% Z_r = (0.96-H).*ones(1,N_pos); % z-axis Rx coordinate (single reception plane)
 Z_r = -(0.8+Hmax*rand(1,N_pos)); % x-axis Rx coordinate (random altitudes)
-% X_r = -L+2.*L.*rand(1,N_pos); % x-axis Rx coordinate
-% Y_r = -W+2.*W.*rand(1,N_pos); % x-axis Rx coordinate
-% Z_r = -H+rand(1,N_pos); % x-axis Rx coordinate
+
 param_r = {A_det, n_r, FOV}; % Vector of the Rx parameters used for channel simulation
 
 %% 2. Simulations
@@ -149,10 +141,6 @@ for i_pos = 1:N_pos
     Q_k = a_k.*x + b_k.*y + c_k.*z;
     Q_l = a_l.*x + b_l.*y + c_l.*z;
     Q_m = a_m.*x + b_m.*y + c_m.*z;
-    Q_n = a_n.*x + b_n.*y + c_n.*z;
-    Q_o = a_o.*x + b_o.*y + c_o.*z;
-    Q_p = a_p.*x + b_p.*y + c_p.*z;
-    Q_q = a_q.*x + b_q.*y + c_q.*z;
     L = alpha.*x + beta.*y + gamma.*z;
 
     % 3. Definition of the objective functions F_i(x,y,z)
@@ -161,27 +149,10 @@ for i_pos = 1:N_pos
     F_k = sum( ( C.*L.*Q_k.^m_t - P_r_noisy{i_pos,3} ).^2 );
     F_l = sum( ( C.*L.*Q_l.^m_t - P_r_noisy{i_pos,4} ).^2 );
     F_m = sum( ( C.*L.*Q_m.^m_t - P_r_noisy{i_pos,5} ).^2 );
-    F_n = sum( ( C.*L.*Q_n.^m_t - P_r_noisy{i_pos,6} ).^2 );
-    F_o = sum( ( C.*L.*Q_o.^m_t - P_r_noisy{i_pos,7} ).^2 );
-    F_p = sum( ( C.*L.*Q_p.^m_t - P_r_noisy{i_pos,8} ).^2 );
-    F_q = sum( ( C.*L.*Q_q.^m_t - P_r_noisy{i_pos,9} ).^2 );
 
     % 4. Definition of the final objective function F(x,y,z) - CAN BE OPTIMIZED
-    if( N_or == 3 )
-        F = F_i + F_j + F_k;
-    elseif( N_or == 4 )
-        F = F_i + F_j + F_k + F_l;
-    elseif( N_or == 5 )
-        F = F_i + F_j + F_k + F_l + F_m;
-    elseif( N_or == 6 )
-        F = F_i + F_j + F_k + F_l + F_m + F_n;
-    elseif( N_or == 7 )
-        F = F_i + F_j + F_k + F_l + F_m + F_n + F_o;
-    elseif( N_or == 8 )
-        F = F_i + F_j + F_k + F_l + F_m + F_n + F_o + F_p;
-    elseif( N_or == 9 )
-        F = F_i + F_j + F_k + F_l + F_m + F_n + F_o + F_p + F_q;
-    end
+    F = F_i + F_j + F_k + F_l + F_m;
+
 
     % 5. Definition of the optimization problem to solve
     prob = optimproblem('Objective',F);
@@ -192,64 +163,15 @@ for i_pos = 1:N_pos
     Q3Constraint = Q_k >= 0;
     Q4Constraint = Q_l >= 0;
     Q5Constraint = Q_m >= 0;
-    Q6Constraint = Q_n >= 0;
-    Q7Constraint = Q_o >= 0;
-    Q8Constraint = Q_p >= 0;
-    Q9Constraint = Q_q >= 0;
     LConstraint = L <= 0;
     % sphereConstraint = x.^2 + y.^2 + z.^2 == 1; % Commented because otherwise prevents the optimization algorithm to converge
 
     % 7. Addition of the constraints to the optimization problem
-    if( N_or == 3 )
-        prob.Constraints.Q1 = Q1Constraint;
-        prob.Constraints.Q2 = Q2Constraint;
-        prob.Constraints.Q3 = Q3Constraint;
-    elseif( N_or == 4 )
-        prob.Constraints.Q1 = Q1Constraint;
-        prob.Constraints.Q2 = Q2Constraint;
-        prob.Constraints.Q3 = Q3Constraint;
-        prob.Constraints.Q4 = Q4Constraint;
-    elseif( N_or == 5 )
-        prob.Constraints.Q1 = Q1Constraint;
-        prob.Constraints.Q2 = Q2Constraint;
-        prob.Constraints.Q3 = Q3Constraint;
-        prob.Constraints.Q4 = Q4Constraint;
-        prob.Constraints.Q5 = Q5Constraint;
-    elseif( N_or == 6 )
-        prob.Constraints.Q1 = Q1Constraint;
-        prob.Constraints.Q2 = Q2Constraint;
-        prob.Constraints.Q3 = Q3Constraint;
-        prob.Constraints.Q4 = Q4Constraint;
-        prob.Constraints.Q5 = Q5Constraint;
-        prob.Constraints.Q6 = Q6Constraint;
-    elseif( N_or == 7 )
-        prob.Constraints.Q1 = Q1Constraint;
-        prob.Constraints.Q2 = Q2Constraint;
-        prob.Constraints.Q3 = Q3Constraint;
-        prob.Constraints.Q4 = Q4Constraint;
-        prob.Constraints.Q5 = Q5Constraint;
-        prob.Constraints.Q6 = Q6Constraint;
-        prob.Constraints.Q7 = Q7Constraint;
-    elseif( N_or == 8 )
-        prob.Constraints.Q1 = Q1Constraint;
-        prob.Constraints.Q2 = Q2Constraint;
-        prob.Constraints.Q3 = Q3Constraint;
-        prob.Constraints.Q4 = Q4Constraint;
-        prob.Constraints.Q5 = Q5Constraint;
-        prob.Constraints.Q6 = Q6Constraint;
-        prob.Constraints.Q7 = Q7Constraint;
-        prob.Constraints.Q8 = Q8Constraint;
-    elseif( N_or == 9 )
-        prob.Constraints.Q1 = Q1Constraint;
-        prob.Constraints.Q2 = Q2Constraint;
-        prob.Constraints.Q3 = Q3Constraint;
-        prob.Constraints.Q4 = Q4Constraint;
-        prob.Constraints.Q5 = Q5Constraint;
-        prob.Constraints.Q6 = Q6Constraint;
-        prob.Constraints.Q7 = Q7Constraint;
-        prob.Constraints.Q8 = Q8Constraint;
-        prob.Constraints.Q9 = Q9Constraint;
-    end
+    prob.Constraints.Q1 = Q1Constraint;
+    prob.Constraints.Q2 = Q2Constraint;
+    prob.Constraints.Q3 = Q3Constraint;
+    prob.Constraints.Q4 = Q4Constraint;
+    prob.Constraints.Q5 = Q5Constraint;
     prob.Constraints.L = LConstraint;
     % prob.Constraints.sphereConstraint = sphereConstraint; % Commented because otherwise prevents the optimization algorithm to converge
 
@@ -321,8 +243,8 @@ for i = 1:length(errorNLS)
     errorNormSVD(i) = norm(errorSVD(i,:));
 end
 cdfplot(errorNorm.*1e3); hold on;
-cdfplot(errorNormSVD.*1e2); hold off;
-xlabel('RMS error [cm]'); ylabel('Empirical cumulative distribution function'); %xlim([0,50]);
+cdfplot(errorNormSVD.*1e3); hold off;
+xlabel('RMS error [mm]'); ylabel('Empirical cumulative distribution function'); xlim([0,50]);
 legend('Non-linear estimator of X','Linear estimator of P_{r,i} + SVD');
 
 

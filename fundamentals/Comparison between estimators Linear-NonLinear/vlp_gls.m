@@ -12,6 +12,8 @@ function d_hat = vlp_gls(nt, Praw, m, sigma2)
 
 [N,n]  = size(Praw);
 mu_hat = mean(Praw,1).';          % μ̂_i  (n×1)
+mu_hat = min(max(mu_hat, 0.00000000001), 1000); % Limites minimos para la potencia media.
+
 mu1    = mu_hat(1);
 beta   = (mu_hat(2:end)/mu1).^(1/m);      % (n-1)×1
 

@@ -22,7 +22,7 @@ tic;
 % Opciones: 
 %   'fixed'  - Utiliza posiciones fijas en grid de testbed (como en analyze_PEB_vs_theta_half.m)
 %   'random' - Utiliza 1000 posiciones aleatorias (como en main_3D_withNoise.m)
-receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
+receiver_mode = 'FIXE';  % Cambiar aquí para seleccionar el modo deseado
 
 % Control para filtrado de valores imaginarios
 % true: elimina todos los valores imaginarios para estadísticas más precisas
@@ -413,7 +413,7 @@ fprintf('\nTiempo de ejecución: %.2f segundos\n', tiempo_ejecucion);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Altura a la que se visualizará la potencia
-altura_analisis = 0.8;  % [m] - Altura a la que se analiza la potencia (puede modificarse)
+altura_analisis = 1.0;  % [m] - Altura a la que se analiza la potencia (puede modificarse)
 
 % Solo proceder con el análisis si estamos en modo 'fixed'
 if strcmp(receiver_mode, 'fixed')
@@ -441,24 +441,15 @@ if strcmp(receiver_mode, 'fixed')
         % Recopilamos datos para todas las orientaciones primero
         potencias_orientaciones = cell(N_or, 1);
         
-        % Encontrar los índices de posición que corresponden a la altura seleccionada
-        indices_posiciones_altura = find(indices_altura);
-        
         for i_or = 1:N_or
             % Inicializar matriz de potencia
             P_matrix = zeros(length(unique_Y), length(unique_X));
             
-            % Llenar matriz de potencia para cada posición a la altura especificada
-            for idx = 1:length(indices_posiciones_altura)
-                i_pos = indices_posiciones_altura(idx);
-                
-                % Encontrar posición en la rejilla (grid)
-                x_pos = X_r(i_pos);
-                y_pos = Y_r(i_pos);
-                
-                % Encontrar los índices más cercanos en la rejilla
-                [~, idx_x] = min(abs(unique_X - x_pos));
-                [~, idx_y] = min(abs(unique_Y - y_pos));
+            % Llenar matriz de potencia
+            for i_pos = find(indices_altura)'
+                % Encontrar índices en la rejilla
+                [~, idx_x] = min(abs(X_r(i_pos) - unique_X));
+                [~, idx_y] = min(abs(Y_r(i_pos) - unique_Y));
                 
                 % Asignar valor de potencia media con ruido
                 P_matrix(idx_y, idx_x) = mean(P_r_noisy{i_pos, i_or});
