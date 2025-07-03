@@ -88,12 +88,13 @@ end
 L = 3; % Length of room [m]
 W = 3; % Width of room [m]
 Hmax = 1.2; % Maximum height [m]
-step = 0.2; % Step size [m]
+step=0.25
+stepH = 0.6; % Step size [m]
 
 if strcmp(receiver_mode, 'fixed')
     % Opción 1: Posiciones fijas (testbed grid de analyze_PEB_vs_theta_half.m)
     % Generate 3D grid of positions
-    [X, Y, Z] = meshgrid(-L/2:step:L/2, -W/2:step:W/2, 0:step:Hmax);
+    [X, Y, Z] = meshgrid(-L/2:step:L/2, -W/2:step:W/2, 0:stepH:Hmax);
     
     % Convert to vector form
     X_r = X(:)';
@@ -362,22 +363,33 @@ fprintf('GLS: %.2f veces CRLB\n', rmseGLS/rmseCRLB);
 
 %% 7. Visualization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+close all
+
+load('SVD_K3.mat')
+errorNormWLS_K9 = load('K9_WLS.mat').filtered_errorNormWLS_Robust;
+errorNormGLS_K9 = load('K9_GLS.mat').filtered_errorNormGLS;
 
 % CDF plot
 figure(1)
-ecdf(filtered_errorNormWLS_Robust(:)*100,'Function','cdf'); hold on;
+hold on;
+ecdf(errorNormSVD(:)*100,'Function','cdf');
 ecdf(filtered_errorNormGLS(:)*100,'Function','cdf');
-ecdf(errorNormCRLB(:)*100,'Function','cdf');
+ecdf(filtered_errorNormWLS_Robust(:)*100,'Function','cdf'); 
+[f2, x2] = ecdf(errorNormGLS_K9(:)*100,'Function','cdf');
+h2 = stairs(x2, f2, '--', 'LineWidth', 1);
+
+[f1, x1] = ecdf(errorNormWLS_K9(:)*100,'Function','cdf');
+h1 = stairs(x1, f1, '--', 'LineWidth', 1);
+%ecdf(errorNormCRLB(:)*100,'Function','cdf');
+
 grid on;
 axis([0 16 0 1])
-xlabel('Error de posicionamiento [cm]'); ylabel('CDF');
-legend('WLS', 'GLS', 'CRLB (límite teórico)','Location', 'southeast');
-if filter_imaginary
-    title('Comparativa de estimadores WLS y GLS (sin valores imaginarios)');
-else
-    title('Comparativa de estimadores WLS y GLS (incluyendo valores imaginarios)');
-end
+xlabel('Error de posicionamiento [cm]','interpreter','latex');
+ylabel('CDF','Interpreter','latex');
+legend('K=3','K=5 (GLS)', 'K=5 (WLS)', 'K=9 (GLS)','K=9 (WLS)','Location', 'southeast','interpreter','latex');
 
+
+%%
 % 3D scatter plot
 figure(2)
 plot3(realPos(:,1), realPos(:,2), realPos(:,3),'ko', 'MarkerSize', 2); hold on;
@@ -389,20 +401,20 @@ if filter_imaginary
     % Mostrar solo posiciones GLS reales (filtradas)
     plot3(estPosGLS(valid_indices_GLS,1), estPosGLS(valid_indices_GLS,2), estPosGLS(valid_indices_GLS,3), 'cd', 'MarkerSize', 2);
     
-    title_text = 'Distribución espacial de posiciones estimadas (sin valores imaginarios)';
 else
     % Mostrar todas las posiciones (usando valores reales)
-    plot3(estPosWLS_Robust(:,1), estPosWLS_Robust(:,2), estPosWLS_Robust(:,3), 'ms', 'MarkerSize', 2);
-    plot3(estPosGLS(:,1), estPosGLS(:,2), estPosGLS(:,3), 'cd', 'MarkerSize', 2);
+    plot3(estPosWLS_Robust(:,1), estPosWLS_Robust(:,2), estPosWLS_Robust(:,3), 'rs', 'MarkerSize', 2);
+    plot3(estPosGLS(:,1), estPosGLS(:,2), estPosGLS(:,3), 'bd', 'MarkerSize', 2);
     
-    title_text = 'Distribución espacial de posiciones estimadas (todas)';
 end
 
-xlabel('X [m]'); ylabel('Y [m]'); zlabel('Z [m]');
-legend('Posición real', 'WLS', 'GLS');
+xlabel('X [m]','Interpreter','latex');
+ylabel('Y [m]','Interpreter','latex');
+zlabel('Z [m]','Interpreter','latex');
+legend('Reference', 'WLS', 'GLS','Interpreter','latex');
 axis([-L/2 L/2 -W/2 W/2 min(Z_r)-0.1 max(Z_r)+0.1])
 grid on;
-title(title_text);
+view(44.6,17.28);
 
 % Tiempo de ejecución
 tiempo_ejecucion = toc;
