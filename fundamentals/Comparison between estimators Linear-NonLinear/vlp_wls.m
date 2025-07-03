@@ -26,6 +26,8 @@ beta_hat = (mu_hat(2:end) / mu1).^(1/m);   % (n-1)×1
 denom = beta_hat.^2 .* ( mu_hat(2:end).^(-2) + mu1^(-2) );
 w     = 1 ./ denom;                 % (n-1)×1  (constante común omitida)
 
+w = w/max(w);
+
 % ---- 3. matriz M
 M = zeros(3);
 for i = 2:n
