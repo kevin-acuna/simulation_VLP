@@ -35,11 +35,14 @@ N_or = 5;  % Número de orientaciones
 step = 0.05; % Step size [m]
 H_analysis = 0.8;
 
+SNR_umbral_lin = 1e-6; %dB
+SNR_umbral_db = 10*log10(SNR_umbral_lin);
+
 %% 1. System Parameters (from analyze_PEB_vs_theta_half.m with theta_half=45°)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Number of samples per orientation
-N_samples=1000;
+N_samples=1;
 
 % LED Parameters
 theta_half = 45;                        % Semi-ángulo a media potencia (45°)
@@ -62,10 +65,12 @@ C = -P_t*(m_t+1)*A_det/(2*pi);         % Factor de normalización
 % Configurations
 orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
 orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-orientations_K5 = [0.48, 294.81,57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14];
-%orientations_K5 = [0.48, 294.81,30.57, 87.79, 30.71, 358.55, 30.17, 177.68, 30.72, 268.14];
 
-% orientations_K5 = [0.48, 294.81, 85, 87.79, 85, 358.55, 85, 177.68, 85, 268.14];
+% theta = 57
+% orientations_K5 = [0.48, 294.81, 57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14];
+
+% theta = 30
+orientations_K5 = [0.48, 294.81, 30, 87.79, 30, 358.55, 30, 177.68, 30, 268.14];
 
 orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
 orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
@@ -149,19 +154,20 @@ for i_pos = 1:N_pos
         [~, P_r{i_pos,i_dir}, v_tr(i_pos,:), d_tr(i_pos,1)] = OWC_LOS_channel(x, y, z, param_t, param_r);
         
         % Add noise to received power - 1000 noise realizations
-        P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,N_samples))*10^6;
+        P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,N_samples)); %uW
         
-        % Calculate SNR
-        SNR{i_pos,i_dir} = 10*log10((R_pd*P_r{i_pos,i_dir})^2/sigma2);
-        SNR_avg = [SNR_avg, 10*log10((R_pd*P_r{i_pos,i_dir})^2/sigma2)];
+        % Calculate SNR-lineal
+        SNR_lin{i_pos,i_dir} = ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2));
+        SNR_avg = [SNR_avg, ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2))];
     end
 end
 
 % Replace -Inf SNR values with -80 dB for averaging
-pos_negInf = isinf(SNR_avg);
-SNR_avg(pos_negInf) = -80;
-average_SNR = mean(SNR_avg);
-fprintf('Promedio SNR: %.2f dB\n', average_SNR);
+pos_negInf = isinf(SNR_avg); %dB
+SNR_avg(pos_negInf) = -80; %dB
+average_SNR_lin = mean(SNR_avg);
+average_SNR_db = 10*log10(average_SNR_lin);
+fprintf('Promedio SNR: %.2f dB\n', average_SNR_db);
 
 
 %% 8. Visualización de potencia recibida para cada orientación
@@ -186,7 +192,7 @@ if strcmp(receiver_mode, 'fixed')
         [X_grid, Y_grid] = meshgrid(unique_X, unique_Y);
         
         % Crear figura con subfiguras para cada orientación
-        figure(3);
+        figure(1);
         
         % Encontrar los valores mínimos y máximos de potencia para normalizar la escala
         min_power = Inf;
@@ -198,10 +204,13 @@ if strcmp(receiver_mode, 'fixed')
         % Encontrar los índices de posición que corresponden a la altura seleccionada
         indices_posiciones_altura = find(indices_altura);
         
+        Coverage_matrix = 0;
+
         for i_or = 1:N_or
             % Inicializar matriz de potencia
             P_matrix = zeros(length(unique_Y), length(unique_X));
-            
+            SNR_matrix = zeros(length(unique_Y), length(unique_X));
+        
             % Llenar matriz de potencia para cada posición a la altura especificada
             for idx = 1:length(indices_posiciones_altura)
                 i_pos = indices_posiciones_altura(idx);
@@ -216,8 +225,16 @@ if strcmp(receiver_mode, 'fixed')
                 
                 % Asignar valor de potencia media con ruido
                 P_matrix(idx_y, idx_x) = mean(P_r_noisy{i_pos, i_or});
+                SNR_matrix(idx_y, idx_x) = mean(SNR_lin{i_pos, i_or});
+                
             end
             
+            % Evaluación de la cobertura
+            Coverage = (SNR_matrix > SNR_umbral_lin);
+            Coverage_matrix = Coverage_matrix + Coverage;
+            % Evaluacion del SNR util
+            % SNR_util = 
+
             % Guardar matriz de potencia
             potencias_orientaciones{i_or} = P_matrix;
             
@@ -256,6 +273,12 @@ if strcmp(receiver_mode, 'fixed')
             view(45, 30);
         end
         
+        
+
+        figure(2)
+        surf(X_grid, Y_grid, Coverage_matrix,'LineWidth',0.1);
+        view(0,90);
+
     else
         fprintf('No hay puntos de análisis en la altura Z = %.2f m\n', altura_analisis);
     end

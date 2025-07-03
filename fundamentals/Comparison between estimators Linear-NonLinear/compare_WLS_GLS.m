@@ -16,7 +16,7 @@
 close all;
 clear variables;
 clc;
-tic;
+
 
 % Seleccionar modo de posiciones del receptor
 % Opciones: 
@@ -30,7 +30,7 @@ receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
 filter_imaginary = false;  % Cambiar a false para mantener todos los valores
 
 rng(42)
-N_or = 5;  % Número de orientaciones
+N_or = 9;  % Número de orientaciones
 
 %% 1. System Parameters (from analyze_PEB_vs_theta_half.m with theta_half=45°)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,6 +60,7 @@ C = -P_t*(m_t+1)*A_det/(2*pi);         % Factor de normalización
 orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
 orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
 orientations_K5 = [0.48, 294.81,57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14];
+% orientations_K5 = [0.48, 294.81,30, 87.79,30, 358.55, 30, 177.68, 30, 268.14];
 % orientations_K5 = [0.48, 294.81,30.57, 87.79, 30.71, 358.55, 30.17, 177.68, 30.72, 268.14];
 % orientations_K5 = [0.48, 294.81, 85, 87.79, 85, 358.55, 85, 177.68, 85, 268.14];
 orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
@@ -88,8 +89,14 @@ end
 L = 3; % Length of room [m]
 W = 3; % Width of room [m]
 Hmax = 1.2; % Maximum height [m]
-step=0.25
-stepH = 0.6; % Step size [m]
+
+% Parametros para el estudio 
+step = 0.2; % step X,Y
+stepH = 0.2; % Step size [m]
+
+% % Parametros para la Figura Comparacion de posiciones estimadas vs reales
+% step = 0.25; % step X,Y
+% stepH = 0.6; % Step size [m]
 
 if strcmp(receiver_mode, 'fixed')
     % Opción 1: Posiciones fijas (testbed grid de analyze_PEB_vs_theta_half.m)
@@ -164,6 +171,9 @@ fprintf('Promedio SNR: %.2f dB\n', average_SNR);
 %% 4. Position Estimation using WLS Robust and GLS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+time_WLS=[];
+time_GLS=[];
+
 for i_pos = 1:N_pos
     x_real = X_r(i_pos); y_real = Y_r(i_pos); z_real = Z_r(i_pos); % Posición real del receptor
     
@@ -175,9 +185,15 @@ for i_pos = 1:N_pos
     for i_dir = 1:N_or
         P_raw(:, i_dir) = P_r_noisy{i_pos, i_dir}; % N_samples muestras de potencia para cada orientación
     end
-    if(i_pos==1568)
-        kevin=1;
-    end
+
+    % % =============================
+    % %Por propocitos de debug (usar el breakpoint)
+    % if(i_pos==1568)
+    %     kevin=1; 
+    % end
+    % % =============================
+
+    tic;
     % Obtener dirección usando el método WLS 
     [d_hat_robust, ~, ~] = vlp_wls(n_t', P_raw, m_t);
     
@@ -193,12 +209,14 @@ for i_pos = 1:N_pos
     
     % Posición final combinando dirección WLS robusta con distancia
     estPosWLS_Robust(i_pos,:) = T + (v_tr_est_WLS_Robust.*d_tr_est_WLS_Robust);
-    
+    tiempo_ejecucion = toc;
+    time_WLS = [time_WLS; tiempo_ejecucion];
+
     %---------------------------------------------------------------------------------------%
     % Case 6: GLS (Generalized Least Squares) con matriz de covarianza completa
     %---------------------------------------------------------------------------------------%
     % Usar mismo P_raw definido antes
-    
+    tic;
     % Obtener dirección usando el método GLS (con matriz de covarianza completa)
     [d_hat_gls] = vlp_gls(n_t', P_raw, m_t, sigma2);
     
@@ -214,6 +232,8 @@ for i_pos = 1:N_pos
     
     % Posición final combinando dirección GLS con distancia por beamsteering
     estPosGLS(i_pos,:) = T + (v_tr_est_GLS.*d_tr_est_GLS);
+    tiempo_ejecucion = toc;
+    time_GLS = [time_GLS; tiempo_ejecucion];
 end
 
 %% 5. Error Calculation and CRLB Bound
@@ -361,32 +381,6 @@ fprintf('\n-- Ratio respecto al CRLB --\n');
 fprintf('WLS: %.2f veces CRLB\n', rmseWLS_Robust/rmseCRLB);
 fprintf('GLS: %.2f veces CRLB\n', rmseGLS/rmseCRLB);
 
-%% 7. Visualization
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-close all
-
-load('SVD_K3.mat')
-errorNormWLS_K9 = load('K9_WLS.mat').filtered_errorNormWLS_Robust;
-errorNormGLS_K9 = load('K9_GLS.mat').filtered_errorNormGLS;
-
-% CDF plot
-figure(1)
-hold on;
-ecdf(errorNormSVD(:)*100,'Function','cdf');
-ecdf(filtered_errorNormGLS(:)*100,'Function','cdf');
-ecdf(filtered_errorNormWLS_Robust(:)*100,'Function','cdf'); 
-[f2, x2] = ecdf(errorNormGLS_K9(:)*100,'Function','cdf');
-h2 = stairs(x2, f2, '--', 'LineWidth', 1);
-
-[f1, x1] = ecdf(errorNormWLS_K9(:)*100,'Function','cdf');
-h1 = stairs(x1, f1, '--', 'LineWidth', 1);
-%ecdf(errorNormCRLB(:)*100,'Function','cdf');
-
-grid on;
-axis([0 16 0 1])
-xlabel('Error de posicionamiento [cm]','interpreter','latex');
-ylabel('CDF','Interpreter','latex');
-legend('K=3','K=5 (GLS)', 'K=5 (WLS)', 'K=9 (GLS)','K=9 (WLS)','Location', 'southeast','interpreter','latex');
 
 
 %%
@@ -417,7 +411,7 @@ grid on;
 view(44.6,17.28);
 
 % Tiempo de ejecución
-tiempo_ejecucion = toc;
+
 fprintf('\nTiempo de ejecución: %.2f segundos\n', tiempo_ejecucion);
 
 
