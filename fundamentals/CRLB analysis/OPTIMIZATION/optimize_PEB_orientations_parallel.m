@@ -13,7 +13,7 @@ rng('default');
 
 % ======================== CONFIGURATION ========================
 
-K_orientations = [4,5,6,7]; % Number of LED orientations to optimize
+K_orientations = [6,8,9,10]; % Number of LED orientations to optimize
 system_params.optimization_metric = 'rms';     % 'mean', 'max', 'rms', 'percentile_90'
 L = 3; W = 3; 
 Hmax = 1.2; step = 0.2;
