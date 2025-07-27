@@ -1,23 +1,5 @@
-
-%% Compare WLS Robust and GLS Estimators for VLP
-% Este script compara los estimadores WLS y GLS para VLP,
-% correspondientes a los casos 5 y 6 del archivo main_3D_withNoise.m
-% Usa parámetros del sistema de analyze_PEB_vs_theta_half.m pero solo con theta_half=45°
-%
-% Author: Kevin Acuña
-% Date: July 2025
-
-
-% Escenarios con problemas:
-% 1. Cuando tenemos N=9 el WLS presenta errores considerables.
-% 2. El comportamiento comparativo del RMS del CRLB debe de considerarse.
-%    - Quitar en la grafica el CDF del CRLB.
-%    - Comparar el RMSE de CRLB.
-
-close all;
-clear variables;
-clc;
-tic;
+close all; clear variables; clc;  
+rng(42)
 
 % Seleccionar modo de posiciones del receptor
 % Opciones: 
@@ -30,13 +12,47 @@ receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
 % false: mantiene todos los valores (comportamiento original)
 filter_imaginary = false;  % Cambiar a false para mantener todos los valores
 
-rng(42)
+% ============================================================================
+% Hiperparametros de configuracion importante
+% ============================================================================
 N_or = 5;  % Número de orientaciones
-step = 0.05; % Step size [m]
-H_analysis = 0.8;
+
+% Varianza AWGN [A²]
+sigma2 = 30e6*10^(-21.0); 
+% sigma2 = 30e6*10^(-30.0); % sin ruido 
+
+% Rango de alturas para análisis en hiperparámetros
+H_range = 0.8; % [m] - Alturas para análisis en grid [0.6 0.8 1]
+altura_analisis = 0.8;  % Altura a la que se visualizará la potencia
 
 SNR_umbral_lin = 1e-6; %dB
 SNR_umbral_db = 10*log10(SNR_umbral_lin);
+
+T = [0, 0, 2];                         % Posición de la fuente de luz (origen)
+step = 0.05; % Step size [m]
+
+% ============================================================================
+% Set de orientaciones optimizadas
+% Use optimized orientations for K from the CRLB analysis
+% [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
+% ============================================================================
+
+% Configuration estudiada con K=5.
+% orientations_K5 = [0.48, 294.81, 57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14]; % theta = 57
+% orientations_K5 = [0.48, 294.81, 30, 87.79, 30, 358.55, 30, 177.68, 30, 268.14]; % theta = 30
+orientations_K5 = [0.48, 0, 50.5, 0, 50.5, 90, 50.5, 180, 50.5, 270]; % theta = 50
+
+% Todas las otras configuracioens
+orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
+orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
+orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
+orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
+orientations_K8 = [32.76, 218.19, 28.47, 61.48, 51.87, 178.18, 35.72, 25.47, 51.63, 338.81, 57.74, 273.57, 49.66, 106.23, 18.14, 243.22];
+orientations_K9 = [26.09, 251.86, 64.05, 261.27, 60.74, 358.44, 57.22, 187.22, 63.10, 175.67, 11.75, 76.79, 44.54, 119.76, 58.20, 85.09, 25.17, 304.81];
+all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9};
+K_values = [3, 4, 5, 6, 7, 8, 9];
+
+
 
 %% 1. System Parameters (from analyze_PEB_vs_theta_half.m with theta_half=45°)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,7 +63,6 @@ N_samples=1;
 % LED Parameters
 theta_half = 45;                        % Semi-ángulo a media potencia (45°)
 P_t = 0.405;                           % Potencia óptica transmitida [W]
-T = [0, 0, 2];                         % Posición de la fuente de luz (origen)
 m_t = -log(2)./log(cosd(theta_half));  % Orden lambertiano
 
 % Photodetector Parameters
@@ -57,27 +72,9 @@ A_det = p*q*N_det;                     % Área sensible del fotoreceptor [m²]
 R_pd = 0.63;                           % Fotosensibilidad del fotodiodo [A/W]
 FOV = 85;                              % Campo de visión del fotoreceptor [°]
 n_r = [0, 0, 1];                       % Vector normal del fotoreceptor
-sigma2 = 30e6*10^(-21.0);     % Varianza AWGN [A²]
+
 C = -P_t*(m_t+1)*A_det/(2*pi);         % Factor de normalización
 
-% Use optimized orientations for K=5 from the CRLB analysis
-% [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
-% Configurations
-orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
-orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-
-% theta = 57
-% orientations_K5 = [0.48, 294.81, 57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14];
-
-% theta = 30
-orientations_K5 = [0.48, 294.81, 30, 87.79, 30, 358.55, 30, 177.68, 30, 268.14];
-
-orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
-orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
-orientations_K8 = [32.76, 218.19, 28.47, 61.48, 51.87, 178.18, 35.72, 25.47, 51.63, 338.81, 57.74, 273.57, 49.66, 106.23, 18.14, 243.22];
-orientations_K9 = [26.09, 251.86, 64.05, 261.27, 60.74, 358.44, 57.22, 187.22, 63.10, 175.67, 11.75, 76.79, 44.54, 119.76, 58.20, 85.09, 25.17, 304.81];
-all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9};
-K_values = [3, 4, 5, 6, 7, 8, 9];
 
 % Convert spherical orientation angles to cartesian vectors
 n_t = zeros(N_or, 3);
@@ -101,7 +98,7 @@ Hmax = 1.2; % Maximum height [m]
 if strcmp(receiver_mode, 'fixed')
     % Opción 1: Posiciones fijas (testbed grid de analyze_PEB_vs_theta_half.m)
     % Generate 3D grid of positions
-    [X, Y, Z] = meshgrid(-L/2:step:L/2, -W/2:step:W/2, H_analysis);
+    [X, Y, Z] = meshgrid(-L/2:step:L/2, -W/2:step:W/2, H_range);
     
     % Convert to vector form
     X_r = X(:)';
@@ -157,14 +154,16 @@ for i_pos = 1:N_pos
         P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,N_samples)); %uW
         
         % Calculate SNR-lineal
-        SNR_lin{i_pos,i_dir} = ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2));
-        SNR_avg = [SNR_avg, ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2))];
+        SNR_lin{i_pos,i_dir} = ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2)); %lineal
+        SNR_avg = [SNR_avg, ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2))]; %lineal
     end
 end
 
+% Analisis cuando el SNR registrado esta en dB
 % Replace -Inf SNR values with -80 dB for averaging
-pos_negInf = isinf(SNR_avg); %dB
-SNR_avg(pos_negInf) = -80; %dB
+% pos_negInf = isinf(SNR_avg); %dB 
+% SNR_avg(pos_negInf) = -80; %dB
+
 average_SNR_lin = mean(SNR_avg);
 average_SNR_db = 10*log10(average_SNR_lin);
 fprintf('Promedio SNR: %.2f dB\n', average_SNR_db);
@@ -173,14 +172,12 @@ fprintf('Promedio SNR: %.2f dB\n', average_SNR_db);
 %% 8. Visualización de potencia recibida para cada orientación
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Altura a la que se visualizará la potencia
-altura_analisis = 0.8;  % [m] - Altura a la que se analiza la potencia (puede modificarse)
 
 % Solo proceder con el análisis si estamos en modo 'fixed'
 if strcmp(receiver_mode, 'fixed')
-    % Encontrar índices de receptores en la altura especificada
-    indices_altura = abs(Z_r - altura_analisis) < 0.001;  % Tolerancia pequeña
-    
+
+    indices_altura = (Z_r == altura_analisis);  % Comparación exacta
+
     if sum(indices_altura) > 0
         % Extraer coordenadas X,Y en esa altura
         X_slice = X_r(indices_altura);

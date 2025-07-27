@@ -65,7 +65,9 @@ fprintf('- Optimization metric: %s\n\n', system_params.optimization_metric);
 %PEB Result (RMS): 0.089687 m/ 0.074201
 
 % orientation_set = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-orientation_set = [57.57, 87.79, 57.71, 358.55,57.17,177.68,0.48,294.81, 55.72,268.14];
+% orientation_set = [0.48,294.81, 57.57, 87.79, 57.71, 358.55,57.17,177.68, 55.72,268.14];
+% orientation_set = [0.48,294.81, 30, 87.79, 32, 358.55,29,177.68, 33,268.14];
+orientation_set = [0,0, 50.5, 0, 50.5, 90,50.5,180, 50.5,270];
 
 % Display the configuration
 K = length(orientation_set) / 2;

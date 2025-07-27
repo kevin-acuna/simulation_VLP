@@ -10,6 +10,18 @@
 
 clear; clc; close all;
 
+% ======================== PARALLEL SETUP ========================
+% Setup parallel pool with 4 cores for acceleration
+fprintf('Setting up parallel computing pool...\n');
+if isempty(gcp('nocreate'))
+    % Create parallel pool with 4 workers
+    pool = parpool('local', 4);
+    fprintf('Parallel pool created with %d workers.\n', pool.NumWorkers);
+else
+    pool = gcp;
+    fprintf('Using existing parallel pool with %d workers.\n', pool.NumWorkers);
+end
+
 % Get current date/time for log filename
 current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
 
@@ -57,7 +69,7 @@ system_params.debug_mode = false;               % Set to true to show detailed w
 % Define receiver positions for testing (3D testbed)
 % Create a grid of positions at different heights
 
-L = 3; W = 3; Hmax = 1.2;
+L = 2; W = 2; Hmax = 1.2;
 step = 0.2; 
 
 x_range = -L/2:step:L/2;
@@ -112,7 +124,7 @@ for k_idx = 1:length(K_orientations)
     for i = 1:nvars
         if mod(i, 2) == 1 % Odd indices are theta values (elevation)
             lb(i) = 0;   % Minimum elevation angle [degrees]
-            ub(i) = 65;  % Maximum elevation angle [degrees]
+            ub(i) = 80;  % Maximum elevation angle [degrees]
         else % Even indices are rho values (azimuth)
             lb(i) = 0;   % Minimum azimuth angle [degrees]
             ub(i) = 360; % Maximum azimuth angle [degrees]
@@ -135,25 +147,33 @@ for k_idx = 1:length(K_orientations)
 %         'OutputFcn', @PEB_monitor, ...
 %         'UseParallel', false); % Set to true if Parallel Computing Toolbox available
     
+    % Optimized GA options for parallel execution
     options = optimoptions('ga', ...
-        'PopulationSize', 200, ...
-        'MaxGenerations', 50, ...
+        'PopulationSize', 300, ...
+        'MaxGenerations', 100, ...
         'CrossoverFraction', 0.8, ...
         'MutationFcn', @mutationadaptfeasible, ...
         'Display', 'iter', ...
         'PlotFcn', {@gaplotbestf}, ...
         'OutputFcn', @PEB_monitor, ...
-        'UseParallel', false); % Set to true if Parallel Computing Toolbox available
+        'UseParallel', true, ...             % ENABLED for 4-core acceleration
+        'UseVectorized', false);             % Optimized for parallel objective function calls
 
     % Create objective function handle
     objective_func = @(x) PEB_objective(x, system_params, receiver_positions);
     
     %% Run optimization
-    fprintf('Starting GA optimization...\n');
+    fprintf('Starting GA optimization with parallel processing...\n');
+    fprintf('Population size: %d, Max generations: %d\n', ...
+        options.PopulationSize, options.MaxGenerations);
+    fprintf('Using %d parallel workers for acceleration\n', pool.NumWorkers);
+    
+    % Start timing
+    parallel_start_time = tic;
     [xOpt, fvalOpt, exitflag, output] = ga(objective_func, nvars, ...
         A, b, Aeq, beq, lb, ub, nonlcon, options);
     
-    optimization_time = toc;
+    optimization_time = toc(parallel_start_time);
     
     %% Process and save results
     fprintf('\n' + string(repmat('-', 1, 50)) + '\n');
@@ -232,4 +252,12 @@ end
 fprintf('\nOptimization completed at: %s\n', datestr(now));
 fprintf('Log file saved to: %s\n', log_filename);
 diary off;
+
+% ======================== PARALLEL CLEANUP ========================
+% Clean up parallel pool
+fprintf('\nCleaning up parallel computing resources...\n');
+if ~isempty(gcp('nocreate'))
+    delete(gcp('nocreate'));
+    fprintf('Parallel pool closed successfully.\n');
+end
 
