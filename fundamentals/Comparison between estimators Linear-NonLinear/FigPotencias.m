@@ -31,6 +31,9 @@ SNR_umbral_db = 10*log10(SNR_umbral_lin);
 T = [0, 0, 2];                         % Posición de la fuente de luz (origen)
 step = 0.05; % Step size [m]
 
+% Number of samples per orientation
+N_samples=100;
+
 % ============================================================================
 % Set de orientaciones optimizadas
 % Use optimized orientations for K from the CRLB analysis
@@ -57,8 +60,7 @@ K_values = [3, 4, 5, 6, 7, 8, 9];
 %% 1. System Parameters (from analyze_PEB_vs_theta_half.m with theta_half=45°)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Number of samples per orientation
-N_samples=1;
+
 
 % LED Parameters
 theta_half = 45;                        % Semi-ángulo a media potencia (45°)
