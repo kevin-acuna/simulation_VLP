@@ -111,7 +111,7 @@ switch flag
         % Draw unit sphere (lower hemisphere)
         [X, Y, Z] = sphere(20);
         Z = -abs(Z); % Only lower hemisphere
-        surf(X*0.3, Y*0.3, Z*0.3, 'FaceAlpha', 0.1, 'EdgeAlpha', 0.1, 'FaceColor', [0.7 0.7 0.7]);
+        surf(X*0.3, Y*0.3, Z*0.3, 'FaceAlpha', 0.1, 'EdgeAlpha', 0.1, 'FaceColor', [0.7 0.7 0.7], 'DisplayName', '');
         
         % Formatting
         xlabel('X'); ylabel('Y'); zlabel('Z');

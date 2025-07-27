@@ -6,10 +6,23 @@
 %
 % Based on the theoretical work on Position Error Bound for VLP systems
 % Author: Kevin Acuña
-% Date: 2025
+% Date: 27/07/2025
 
 clear; clc; close all;
+rng('default');
 
+% ======================== CONFIGURATION ========================
+
+K_orientations = [3,4]; % Number of LED orientations to optimize
+system_params.optimization_metric = 'rms';     % 'mean', 'max', 'rms', 'percentile_90'
+L = 3; W = 3; 
+Hmax = 1.2; step = 0.2;
+max_elevation_angle = 80; % Maximum elevation angle for LED orientations [degrees] 
+results_dir = 'optimization/room_3x3';
+
+% ===============================================================
+
+%%
 % ======================== PARALLEL SETUP ========================
 % Setup parallel pool with 4 cores for acceleration
 fprintf('Setting up parallel computing pool...\n');
@@ -22,28 +35,6 @@ else
     fprintf('Using existing parallel pool with %d workers.\n', pool.NumWorkers);
 end
 
-% Get current date/time for log filename
-current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
-
-%% ======================== CONFIGURATION ========================
-
-% Random seed for reproducibility
-rng('default');
-
-% Number of LED orientations to optimize
-K_orientations = [5]; % Test different numbers of orientations
-
-% Create results directory
-results_dir = 'test_optimization_K5/PEB_optimization';
-if ~exist(results_dir, 'dir')
-    mkdir(results_dir);
-end
-
-% Create and start log file
-log_filename = fullfile(results_dir, sprintf('optimization_log_%s.txt', current_datetime));
-diary(log_filename);
-fprintf('Log file started: %s\n', log_filename);
-fprintf('Date and time: %s\n\n', datestr(now));
 
 %% ======================== SYSTEM PARAMETERS ========================
 
@@ -60,7 +51,7 @@ system_params.sigma2 = (10^(-21.0))*(30e6);     % Noise variance per sample [W²
 system_params.N = 1000;                         % Number of samples per orientation
 
 % Optimization parameters
-system_params.optimization_metric = 'percentile_90';     % 'mean', 'max', 'rms', 'percentile_90'
+
 system_params.penalize_extreme_angles = false;   % Penalize very vertical/horizontal orientations
 system_params.debug_mode = false;               % Set to true to show detailed warnings
 
@@ -69,8 +60,6 @@ system_params.debug_mode = false;               % Set to true to show detailed w
 % Define receiver positions for testing (3D testbed)
 % Create a grid of positions at different heights
 
-L = 2; W = 2; Hmax = 1.2;
-step = 0.2; 
 
 x_range = -L/2:step:L/2;
 y_range = -W/2:step:W/2;
@@ -96,21 +85,81 @@ fprintf('Position range: X ∈ [%.1f, %.1f], Y ∈ [%.1f, %.1f], Z ∈ [%.1f, %.
 
 %% ======================== OPTIMIZATION LOOP ========================
 
-optimization_results = struct();
-
 for k_idx = 1:length(K_orientations)
     K = K_orientations(k_idx);
     
-    fprintf('\n' + string(repmat('=', 1, 60)) + '\n');
-    fprintf('OPTIMIZING FOR K = %d ORIENTATIONS\n', K);
-    fprintf(string(repmat('=', 1, 60)) + '\n');
+    % Store all optimization results
+    optimization_results = struct();
     
+    % Get current date/time for log filename
+    current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
+    
+    % Create results directory
+    if ~exist(results_dir, 'dir')
+        mkdir(results_dir);
+    end
+
     % Create subdirectory for this K value
     k_results_dir = fullfile(results_dir, sprintf('K_%d', K));
     if ~exist(k_results_dir, 'dir')
         mkdir(k_results_dir);
     end
+
+    % Create and start log file in results directory
+    log_filename = fullfile(results_dir, sprintf('K_%d', K), sprintf('optimization_log_%s.txt', current_datetime));
+    diary(log_filename);
+    fprintf('======================================================================\n');
+    fprintf('VLP SYSTEM OPTIMIZATION LOG\n');
+    fprintf('======================================================================\n');
+    fprintf('Log file started: %s\n', log_filename);
+    fprintf('Date and time: %s\n\n', datestr(now));
     
+    % Print detailed system configuration
+    fprintf('======================================================================\n');
+    fprintf('SYSTEM CONFIGURATION\n');
+    fprintf('======================================================================\n');
+    
+    % Print evaluation matrix (testbed dimensions)
+    fprintf('EVALUATION TESTBED:\n');
+    fprintf('  Room dimensions: L = %.1f m, W = %.1f m\n', L, W);
+    fprintf('  Height range: H = 0 to %.1f m\n', Hmax);
+    fprintf('  Grid resolution: step = %.1f m\n', step);
+    fprintf('  Total evaluation points: %d positions\n', size(receiver_positions, 2));
+    fprintf('  Position range:\n');
+    fprintf('    X ∈ [%.1f, %.1f] m\n', min(receiver_positions(1,:)), max(receiver_positions(1,:)));
+    fprintf('    Y ∈ [%.1f, %.1f] m\n', min(receiver_positions(2,:)), max(receiver_positions(2,:)));
+    fprintf('    Z ∈ [%.1f, %.1f] m\n', min(receiver_positions(3,:)), max(receiver_positions(3,:)));
+    
+    % Print optimization parameters
+    fprintf('\nOPTIMIZATION PARAMETERS:\n');
+    fprintf('  K values to optimize: [%s]\n', num2str(K_orientations));
+    fprintf('  Elevation angle range: 0° to %.0f° (allowed range for LED orientations)\n', max_elevation_angle);
+    fprintf('  Azimuth angle range: 0° to 360° (full rotation allowed)\n');
+    fprintf('  Optimization metric: %s\n', system_params.optimization_metric);
+    fprintf('  Parallel processing: %d workers\n', pool.NumWorkers);
+    fprintf('  Population size: 300\n');
+    fprintf('  Max generations: 150\n\n');
+    
+    % Print LED system parameters
+    fprintf('LED TRANSMITTER CONFIGURATION:\n');
+    fprintf('  Position: [%.1f, %.1f, %.1f] m\n', system_params.T(1), system_params.T(2), system_params.T(3));
+    fprintf('  Transmitted power: %.3f W\n', system_params.Pt);
+    fprintf('  Half-power angle: %.1f°\n', rad2deg(system_params.theta_half));
+    fprintf('  Lambertian order: %.2f\n', system_params.m);
+    fprintf('  Photodiode area: %.2e m²\n', system_params.A_det);
+    fprintf('  Receiver FOV: %.1f°\n', rad2deg(system_params.Psi_FOV));
+    fprintf('  Noise variance: %.2e W²\n', system_params.sigma2);
+    fprintf('  Samples per orientation: %d\n\n', system_params.N);
+
+
+    fprintf('\n' + string(repmat('=', 1, 60)) + '\n');
+    fprintf('OPTIMIZING FOR K = %d ORIENTATIONS\n', K);
+    fprintf(string(repmat('=', 1, 60)) + '\n');
+    
+
+    
+
+
     %% GA Setup
     tic;
     
@@ -124,7 +173,7 @@ for k_idx = 1:length(K_orientations)
     for i = 1:nvars
         if mod(i, 2) == 1 % Odd indices are theta values (elevation)
             lb(i) = 0;   % Minimum elevation angle [degrees]
-            ub(i) = 80;  % Maximum elevation angle [degrees]
+            ub(i) = max_elevation_angle;  % Maximum elevation angle [degrees]
         else % Even indices are rho values (azimuth)
             lb(i) = 0;   % Minimum azimuth angle [degrees]
             ub(i) = 360; % Maximum azimuth angle [degrees]
@@ -150,7 +199,7 @@ for k_idx = 1:length(K_orientations)
     % Optimized GA options for parallel execution
     options = optimoptions('ga', ...
         'PopulationSize', 300, ...
-        'MaxGenerations', 100, ...
+        'MaxGenerations', 150, ...
         'CrossoverFraction', 0.8, ...
         'MutationFcn', @mutationadaptfeasible, ...
         'Display', 'iter', ...
@@ -223,35 +272,36 @@ for k_idx = 1:length(K_orientations)
     if ~isempty(fig_evolution)
         figure(fig_evolution);
         saveas(fig_evolution, fullfile(k_results_dir, 'angle_evolution.fig'));
-        saveas(fig_evolution, fullfile(k_results_dir, 'angle_evolution.png'));
     end
     
     fig_3d = findobj('Type', 'figure', 'Name', 'PEB Optimization - 3D Orientations');
     if ~isempty(fig_3d)
         figure(fig_3d);
         saveas(fig_3d, fullfile(k_results_dir, 'orientations_3d.fig'));
-        saveas(fig_3d, fullfile(k_results_dir, 'orientations_3d.png'));
     end
     
     fig_ga = findobj('Type', 'figure', 'Name', 'Genetic Algorithm');
     if ~isempty(fig_ga)
         figure(fig_ga);
         saveas(fig_ga, fullfile(k_results_dir, 'ga_convergence.fig'));
-        saveas(fig_ga, fullfile(k_results_dir, 'ga_convergence.png'));
     end
     
     % Store in overall results
     optimization_results.(sprintf('K_%d', K)) = result_data;
+    
+
+
+    % Close the log file
+    fprintf('\nOptimization completed at: %s\n', datestr(now));
+    fprintf('Log file saved to: %s\n', log_filename);
+    diary off;
     
     % Clean up for next iteration
     %close all;
     pause(1); % Brief pause to ensure proper cleanup
 end
 
-% Close the log file
-fprintf('\nOptimization completed at: %s\n', datestr(now));
-fprintf('Log file saved to: %s\n', log_filename);
-diary off;
+
 
 % ======================== PARALLEL CLEANUP ========================
 % Clean up parallel pool
