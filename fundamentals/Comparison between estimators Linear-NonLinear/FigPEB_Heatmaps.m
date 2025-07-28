@@ -354,10 +354,98 @@ if strcmp(modo_analisis, 'comparativo')
     cb = colorbar;
     ylabel(cb, '$\Delta$ PEB [m]', 'Interpreter', 'latex', 'FontSize', 10);
     
+    % === FIGURA 4: Gráfica de violin comparativa ===
+    figure(4);
+    set(gcf, 'Position', [200, 200, 800, 600]);
+    
+    % Preparar datos para violin plot
+    data_combined = [valid_peb_opt(:); valid_peb_rand(:)];
+    groups = [ones(length(valid_peb_opt), 1); 2*ones(length(valid_peb_rand), 1)];
+    group_labels = {'Optimizadas', 'Aleatorias'};
+    
+    % Crear violin plot usando histogramas y curvas suaves
+    hold on;
+    
+    % Configuraciones para el violin plot
+    violin_width = 0.3;
+    x_positions = [1, 2];
+    colors = [0.2, 0.6, 1.0; 1.0, 0.4, 0.2];  % Azul y naranja
+    
+    for i = 1:2
+        if i == 1
+            data_subset = valid_peb_opt;
+        else
+            data_subset = valid_peb_rand;
+        end
+        
+        % Calcular densidad usando histograma
+        [counts, edges] = histcounts(data_subset, 50);
+        bin_centers = (edges(1:end-1) + edges(2:end)) / 2;
+        
+        % Normalizar para crear forma de violin
+        counts_norm = counts / max(counts) * violin_width;
+        
+        % Crear las dos mitades del violin
+        x_left = x_positions(i) - counts_norm;
+        x_right = x_positions(i) + counts_norm;
+        
+        % Dibujar el violin
+        fill([x_left, fliplr(x_right)], [bin_centers, fliplr(bin_centers)], ...
+             colors(i,:), 'FaceAlpha', 0.7, 'EdgeColor', colors(i,:)*0.8, 'LineWidth', 1.5);
+        
+        % Añadir línea central (mediana)
+        median_val = median(data_subset);
+        plot([x_positions(i)-violin_width*0.8, x_positions(i)+violin_width*0.8], ...
+             [median_val, median_val], 'k-', 'LineWidth', 3);
+        
+        % Añadir marcadores de cuartiles
+        q25 = prctile(data_subset, 25);
+        q75 = prctile(data_subset, 75);
+        plot([x_positions(i)-violin_width*0.6, x_positions(i)+violin_width*0.6], ...
+             [q25, q25], 'k-', 'LineWidth', 2);
+        plot([x_positions(i)-violin_width*0.6, x_positions(i)+violin_width*0.6], ...
+             [q75, q75], 'k-', 'LineWidth', 2);
+        
+        % Añadir línea de rango intercuartil
+        plot([x_positions(i), x_positions(i)], [q25, q75], 'k-', 'LineWidth', 2);
+        
+        % Añadir punto para la media
+        mean_val = mean(data_subset);
+        plot(x_positions(i), mean_val, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'white', 'LineWidth', 2);
+    end
+    
+    % Configurar ejes y etiquetas
+    xlim([0.4, 2.6]);
+    xticks(x_positions);
+    xticklabels(group_labels);
+    ylabel('PEB [m]', 'Interpreter', 'latex', 'FontSize', 14);
+    xlabel('Tipo de Orientaciones', 'Interpreter', 'latex', 'FontSize', 14);
+    title(sprintf('Distribuci\''on de PEB - Violin Plot (Z = %.2f m)', altura_analisis), ...
+          'Interpreter', 'none', 'FontSize', 16, 'FontWeight', 'bold');
+    
+    % Añadir grid y formato
+    grid on;
+    set(gca, 'FontSize', 12);
+    
+    % Añadir leyenda para explicar los elementos
+    legend_text = {sprintf('Mediana: %.4f / %.4f m', median(valid_peb_opt), median(valid_peb_rand)), ...
+                   sprintf('Media: %.4f / %.4f m', mean(valid_peb_opt), mean(valid_peb_rand)), ...
+                   sprintf('Q25-Q75: [%.4f-%.4f] / [%.4f-%.4f] m', ...
+                          prctile(valid_peb_opt,25), prctile(valid_peb_opt,75), ...
+                          prctile(valid_peb_rand,25), prctile(valid_peb_rand,75))};
+    
+    % Añadir texto informativo
+    text(0.6, max([valid_peb_opt(:); valid_peb_rand(:)])*0.95, legend_text, ...
+         'FontSize', 10, 'BackgroundColor', 'white', 'EdgeColor', 'black', ...
+         'VerticalAlignment', 'top');
+    
+    hold off;
+    
     fprintf('\n=== VISUALIZACIONES COMPARATIVAS GENERADAS ===\n');
     fprintf('Figura 1: Mapas de calor 2D comparativos\n');
     fprintf('Figura 2: Superficies 3D comparativas\n');
     fprintf('Figura 3: Mapa de diferencias PEB\n');
+    fprintf('Figura 4: Violin plot - Distribucion de PEB\n');
     fprintf('==============================================\n');
     
 else
