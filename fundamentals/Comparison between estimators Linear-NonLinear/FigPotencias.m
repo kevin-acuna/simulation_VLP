@@ -18,21 +18,24 @@ filter_imaginary = false;  % Cambiar a false para mantener todos los valores
 N_or = 5;  % Número de orientaciones
 
 % Varianza AWGN [A²]
-sigma2 = 30e6*10^(-21.0); 
+SNR_target_db = 10;
+SNR_target_lin =10^(SNR_target_db/10);
+
+sigma2 = 30e6*10^(-21.0)*10^0.392*10*(1/SNR_target_lin);
 % sigma2 = 30e6*10^(-30.0); % sin ruido 
 
 % Rango de alturas para análisis en hiperparámetros
-H_range = 0.8; % [m] - Alturas para análisis en grid [0.6 0.8 1]
+H_range = [0:0.2:1.2]; % [m] - Alturas para análisis en grid [0.6 0.8 1]
 altura_analisis = 0.8;  % Altura a la que se visualizará la potencia
 
 SNR_umbral_lin = 1e-6; %dB
 SNR_umbral_db = 10*log10(SNR_umbral_lin);
 
 T = [0, 0, 2];                         % Posición de la fuente de luz (origen)
-step = 0.05; % Step size [m]
+step = 0.1; % Step size [m]
 
 % Number of samples per orientation
-N_samples=100;
+N_samples=1000;
 
 % ============================================================================
 % Set de orientaciones optimizadas
@@ -43,12 +46,12 @@ N_samples=100;
 % Configuration estudiada con K=5.
 % orientations_K5 = [0.48, 294.81, 57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14]; % theta = 57
 % orientations_K5 = [0.48, 294.81, 30, 87.79, 30, 358.55, 30, 177.68, 30, 268.14]; % theta = 30
-orientations_K5 = [0.48, 0, 50.5, 0, 50.5, 90, 50.5, 180, 50.5, 270]; % theta = 50
+orientations_K5 = [0, 0, 50.5, 0, 50.5, 90, 50.5, 180, 50.5, 270]; % theta = 50
 
 % Todas las otras configuracioens
 orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
 orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
+orientations_K6 = [17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
 orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
 orientations_K8 = [32.76, 218.19, 28.47, 61.48, 51.87, 178.18, 35.72, 25.47, 51.63, 338.81, 57.74, 273.57, 49.66, 106.23, 18.14, 243.22];
 orientations_K9 = [26.09, 251.86, 64.05, 261.27, 60.74, 358.44, 57.22, 187.22, 63.10, 175.67, 11.75, 76.79, 44.54, 119.76, 58.20, 85.09, 25.17, 304.81];
@@ -178,7 +181,7 @@ fprintf('Promedio SNR: %.2f dB\n', average_SNR_db);
 % Solo proceder con el análisis si estamos en modo 'fixed'
 if strcmp(receiver_mode, 'fixed')
 
-    indices_altura = (Z_r == altura_analisis);  % Comparación exacta
+    indices_altura = (abs(Z_r - altura_analisis)<1e-7);  % Comparación exacta
 
     if sum(indices_altura) > 0
         % Extraer coordenadas X,Y en esa altura

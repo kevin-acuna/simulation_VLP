@@ -16,24 +16,28 @@ end
 
 %% ======================== CONFIGURATION ========================
 
-sigma2_base = (10^(-21.0))*(30e6);
-sigma2_values = sigma2_base:sigma2_base:10*sigma2_base; % Multiply by bandwidth (30e6)
+SNR_dB = -20:1:20;
+SNR_lin =10.^(SNR_dB/10);
+
+sigma2_base = (10^(-21.0))*(30e6)*2.466*10; %Para 10dB : 2.466
+sigma2_values = sigma2_base*(1./SNR_lin);
+% sigma2_values = sigma2_base:sigma2_base:10*sigma2_base; % Multiply by bandwidth (30e6)
 
 % Define sets of orientations for different K values
 % Format: [theta1, rho1, theta2, rho2, ...] where theta is elevation and rho is azimuth
 
-% Configurations
-orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
-orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-orientations_K5 = [57.57, 87.79, 57.71, 358.55,57.17,177.68,0.48,294.81, 55.72,268.14];
-orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
-orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
-orientations_K8 = [32.76, 218.19, 28.47, 61.48, 51.87, 178.18, 35.72, 25.47, 51.63, 338.81, 57.74, 273.57, 49.66, 106.23, 18.14, 243.22];
-orientations_K9 = [64.05, 261.27, 60.74, 358.44, 57.22, 187.22, 26.09, 251.86, 63.10, 175.67, 11.75, 76.79, 44.54, 119.76, 58.20, 85.09, 25.17, 304.81];
+orientations_K3=[35.40,140.13,33.31,36.38,29.58,262.70];
+orientations_K4=[38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
+orientations_K5=[50.55,89.96,50.66,179.99,50.37,359.93,0.10,211.14,50.59,269.96];
+orientations_K6=[17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
+orientations_K7=[58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
+orientations_K8=[51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];
+orientations_K9=[56.92,178.69,36.54,266.83,33.86,182.29,2.51,28.15,42.20,78.36,53.07,97.46,57.91,359.73,37.07,355.08,58.23,272.07];
+orientations_K10=[56.00,3.61,53.20,182.48,54.93,356.82,11.94,38.06,61.28,270.34,50.17,91.30,47.56,174.73,43.39,89.36,32.54,277.55,15.14,255.31];
 
 % Store all orientation sets in a cell array
-all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9};
-K_values = [3, 4, 5, 6, 7, 8, 9];
+all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
+K_values = [3, 4, 5, 6, 7, 8, 9, 10];
 
 %% ======================== SYSTEM PARAMETERS ========================
 % (Same as in optimize_PEB_orientations.m)
@@ -146,20 +150,21 @@ for j = 1:length(K_values)
     K = K_values(j);
     
     % Plot PEB vs noise level for this K value (with linear axes)
-    plot(sigma2_values, peb_results(:, j)*100, markers{min(j,length(markers))}, 'Color', colors(j,:), ...
-        'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'w');
+    plot(SNR_dB, peb_results(:, j)*100, markers{min(j,length(markers))}, 'Color', colors(j,:), ...
+        'LineWidth', 1, 'MarkerSize', 2, 'MarkerFaceColor', 'w');
     
     legend_entries{j} = sprintf('K=%d', K);
 end
+% set( gca, 'YScale', 'log' );
 
 % Add labels, title, grid, and legend
-xlabel('Noise Variance $\sigma^2(\mathrm{W}^2)$', 'FontSize', 12,'interpreter', 'latex');
-ylabel('Overal PEB error $\mathrm{PEB_{90\%}}$(cm)', 'FontSize', 12, 'interpreter', 'latex');
+xlabel('$\mathrm{SNR^{*}(dB)}$', 'FontSize', 12,'interpreter', 'latex');
+ylabel('$\mathrm{PEB_{90\%}}$(cm)', 'FontSize', 12, 'interpreter', 'latex');
 grid on;
-legend(legend_entries, 'Location', 'northwest', 'FontSize', 10,'Interpreter','latex');
+legend(legend_entries, 'Location', 'best', 'FontSize', 10,'Interpreter','latex');
 
 % Set specific X-axis limits to start from first sigma2 and end at last sigma2
-xlim([sigma2_values(1), sigma2_values(end)]);
+xlim([SNR_dB(1), SNR_dB(end)]);
 
 % Adjust Y-axis limits to have some margin
 y_min = min(peb_results(:)*100) * 0.95;
