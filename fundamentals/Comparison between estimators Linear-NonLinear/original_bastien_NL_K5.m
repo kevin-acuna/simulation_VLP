@@ -31,7 +31,7 @@ N_or = 5; % Number of orientations considered by the non-linear least square est
 %------------------------------------------%
 % LIGHT SOURCES CORE SIMULATION PARAMETERS %
 %------------------------------------------%
-theta_half = 45; % 60; % Semi-angle at half-power [°]
+theta_half = 45; %
 P_t = 0.405; % 1; % Transmitted optical power [W]
 
 L = 3; W = 3; H = 2; Hmax=1.2; % Full length, width and height of the room [m]
@@ -45,21 +45,20 @@ L = 3; W = 3; H = 2; Hmax=1.2; % Full length, width and height of the room [m]
 %------------------------%
 T = [0 0 0]; x_n = T(1); y_n = T(2); z_n = T(3); % Positions of the light source (origin of the main frame)
 m_t = -log(2)./log(cosd(theta_half)); % Lambertian order of emission
-% Use optimized orientations for K=3 to K=9 from the CRLB analysis
+
+% Use optimized orientations for K=3 to K=10 from the CRLB analysis
 % [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
-% Configurations
-orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
-orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-
-% orientations_K5 = [0.48, 294.81,30.57, 87.79, 30.71, 358.55, 30.17, 177.68, 30.72, 268.14];
+% orientations_K5 = [0.48, 294.81,30, 87.79, 30, 358.55,30, 177.68, 30, 268.14];
 % orientations_K5 = [0.48, 294.81,57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14];
-incl=30;
-orientations_K5 = [0.48, 294.81,incl, 87.79, incl, 358.55,incl, 177.68, incl, 268.14];
+orientations_K3=[35.40,140.13,33.31,36.38,29.58,262.70];
+orientations_K4=[38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
+orientations_K5=[0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+orientations_K6=[17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
+orientations_K7=[58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
+orientations_K8=[51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];
+orientations_K9=[0,28.15,56.92,178.69,36.54,266.83,33.86,182.29,42.20,78.36,53.07,97.46,57.91,359.73,37.07,355.08,58.23,272.07];
+orientations_K10=[56.00,3.61,53.20,182.48,54.93,356.82,11.94,38.06,61.28,270.34,50.17,91.30,47.56,174.73,43.39,89.36,32.54,277.55,15.14,255.31];
 
-orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
-orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
-orientations_K8 = [32.76, 218.19, 28.47, 61.48, 51.87, 178.18, 35.72, 25.47, 51.63, 338.81, 57.74, 273.57, 49.66, 106.23, 18.14, 243.22];
-orientations_K9 = [26.09, 251.86, 64.05, 261.27, 60.74, 358.44, 57.22, 187.22, 63.10, 175.67, 11.75, 76.79, 44.54, 119.76, 58.20, 85.09, 25.17, 304.81];
 all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9};
 K_values = [3, 4, 5, 6, 7, 8, 9];
 
@@ -231,4 +230,4 @@ cdfplot(errorNorm.*1e2); hold on;
 xlabel('RMS error [cm]'); ylabel('Empirical cumulative distribution function'); xlim([0 10])
 legend('Non-linear estimator of X','Location','best');
 
-save 'K5_NL.mat' errorNorm time_NL
+% save 'K5_NL.mat' errorNorm time_NL

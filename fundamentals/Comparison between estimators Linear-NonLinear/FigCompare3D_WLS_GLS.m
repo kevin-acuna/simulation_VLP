@@ -4,7 +4,7 @@
 % Usa parámetros del sistema de analyze_PEB_vs_theta_half.m pero solo con theta_half=45°
 %
 % Author: Kevin Acuña
-% Date: July 2025
+% Date: 28/07/2025
 
 
 % Escenarios con problemas:
@@ -12,10 +12,25 @@
 % 2. El comportamiento comparativo del RMS del CRLB debe de considerarse.
 %    - Quitar en la grafica el CDF del CRLB.
 %    - Comparar el RMSE de CRLB.
+close all;clear variables;clc;
 
-close all;
-clear variables;
-clc;
+% =================================================
+% PARAMETROS A CONFIGURAR
+% =================================================
+rng(42); % Repetibilidad
+N_or = 9;  % Número de orientaciones
+
+% Define common parameters
+L = 3; % Length of room [m]
+W = 3; % Width of room [m]
+Hmax = 1.2; % Maximum height [m]
+
+% Parametros para el estudio 
+step = 0.2; % step en X,Y
+stepH = 0.2; % Step size [m]
+% % Parametros para la Figura Comparacion de posiciones estimadas vs reales
+% step = 0.25; % step X,Y
+% stepH = 0.6; % Step size [m]
 
 
 % Seleccionar modo de posiciones del receptor
@@ -29,8 +44,23 @@ receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
 % false: mantiene todos los valores (comportamiento original)
 filter_imaginary = false;  % Cambiar a false para mantener todos los valores
 
-rng(42)
-N_or = 9;  % Número de orientaciones
+
+
+% Use optimized orientations for K=5 from the CRLB analysis
+% [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
+% Configurations
+orientations_K3=[35.40,140.13,33.31,36.38,29.58,262.70];
+orientations_K4=[38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
+orientations_K5=[0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+orientations_K6=[17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
+orientations_K7=[58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
+orientations_K8=[51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];
+orientations_K9=[0,28.15,56.92,178.69,36.54,266.83,33.86,182.29,42.20,78.36,53.07,97.46,57.91,359.73,37.07,355.08,58.23,272.07];
+orientations_K10=[56.00,3.61,53.20,182.48,54.93,356.82,11.94,38.06,61.28,270.34,50.17,91.30,47.56,174.73,43.39,89.36,32.54,277.55,15.14,255.31];
+
+all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
+K_values = [3, 4, 5, 6, 7, 8, 9, 10];
+
 
 %% 1. System Parameters (from analyze_PEB_vs_theta_half.m with theta_half=45°)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,22 +84,7 @@ n_r = [0, 0, 1];                       % Vector normal del fotoreceptor
 sigma2 = 30e6*10^(-21.0);     % Varianza AWGN [A²]
 C = -P_t*(m_t+1)*A_det/(2*pi);         % Factor de normalización
 
-% Use optimized orientations for K=5 from the CRLB analysis
-% [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
-% Configurations
-orientations_K3 = [36.93, 56.20, 35.42, 176.85, 33.39, 296.52];
-orientations_K4 = [36.87, 17.59, 41.59, 198.61, 42.40, 108.42, 39.37, 293.57];
-orientations_K5 = [0.48, 294.81,57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14];
 
-orientations_K6 = [53.23, 179.80, 58.97, 355.37, 48.42, 97.78, 49.58, 268.13, 19.80, 252.81, 25.95, 39.19];
-orientations_K7 = [27.60, 355.20, 49.75, 182.12, 51.74, 280.40, 39.06, 251.04, 58.92, 352.88, 16.73, 71.81, 42.72, 104.45];
-orientations_K8 = [32.76, 218.19, 28.47, 61.48, 51.87, 178.18, 35.72, 25.47, 51.63, 338.81, 57.74, 273.57, 49.66, 106.23, 18.14, 243.22];
-%orientations_K9 = [11.75, 76.79, 26.09, 251.86, 64.05, 261.27, 60.74, 358.44, 57.22, 187.22, 63.10, 175.67, 44.54, 119.76, 58.20, 85.09, 25.17, 304.81];
-orientations_K9 = [0, 76.79, 26.09, 251.86, 64.05, 261.27, 60.74, 358.44, 57.22, 187.22, 63.10, 175.67, 44.54, 119.76, 58.20, 85.09, 25.17, 304.81];
-
-
-all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9};
-K_values = [3, 4, 5, 6, 7, 8, 9];
 
 % Convert spherical orientation angles to cartesian vectors
 n_t = zeros(N_or, 3);
@@ -84,19 +99,6 @@ end
 
 %% 3. Generate Receiver Positions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Define common parameters
-L = 3; % Length of room [m]
-W = 3; % Width of room [m]
-Hmax = 1.2; % Maximum height [m]
-
-% Parametros para el estudio 
-step = 0.2; % step X,Y
-stepH = 0.2; % Step size [m]
-
-% % Parametros para la Figura Comparacion de posiciones estimadas vs reales
-% step = 0.25; % step X,Y
-% stepH = 0.6; % Step size [m]
 
 if strcmp(receiver_mode, 'fixed')
     % Opción 1: Posiciones fijas (testbed grid de analyze_PEB_vs_theta_half.m)
@@ -156,17 +158,15 @@ for i_pos = 1:N_pos
         % Add noise to received power - 1000 noise realizations
         P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,N_samples));
         
-        % Calculate SNR
-        SNR{i_pos,i_dir} = 10*log10((R_pd*P_r{i_pos,i_dir})^2/sigma2);
-        SNR_avg = [SNR_avg, 10*log10((R_pd*P_r{i_pos,i_dir})^2/sigma2)];
+        % Calculate SNR-lineal
+        SNR_lin{i_pos,i_dir} = ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2)); %lineal
+        SNR_avg = [SNR_avg, ((R_pd*P_r{i_pos,i_dir})^2/(sigma2*R_pd^2))]; %lineal
     end
 end
 
-% Replace -Inf SNR values with -80 dB for averaging
-pos_negInf = isinf(SNR_avg);
-SNR_avg(pos_negInf) = -80;
-average_SNR = mean(SNR_avg);
-fprintf('Promedio SNR: %.2f dB\n', average_SNR);
+average_SNR_lin = mean(SNR_avg);
+average_SNR_db = 10*log10(average_SNR_lin);
+fprintf('Promedio SNR: %.2f dB\n', average_SNR_db);
 
 %% 4. Position Estimation using WLS Robust and GLS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
