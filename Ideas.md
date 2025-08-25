@@ -1,9 +1,11 @@
 #### Pendientes
 
+* [ ] Realizar las simulaciones para el caso de optimización por cada método.
+* [ ] Observaciones en el Paper
+* [ ] Definicion del SNR (mix entre Optical y Electrical)
 * [ ] INTRODUCCIÓN :  Aqui añadir una tabla con la comparativa de distintos métodos de Single VLP.
 * [ ] RESULTADOS: Aqui sería ideal presentar una tabla comparativa de los principales resultados con otros métodos.
 * [ ] Corregir las observaciones de LUC, BASTIEN, HONGYU
-* [ ] Realizar las simulaciones para el caso de optimización por cada método.
 
 #### Redacción
 
@@ -16,7 +18,26 @@
 
 ---
 
+JOURNALS TARGET
+
+IEEE Transactions on Instrumentation and Measurement (TIM)
+
+IEEE Transactions on Wireless Communications (TWC)
+
+IEEE Transactions on Communications (TCOM)
+
+Journal of Lightwave Technology (JLT)
+
+Applied Optics
+
+---
+
 #### PROPUESTAS DE PAPERS Y DE TRABAJOS
+
+* Estudio teórico (optimización) y SIMULACIONES de estimación de la posición en 3D empleando N-PD.
+* Estudio teórico (optimización), SIMULACIONES y EXPERIMENTAL de la estimación de posición 3D empleando 1PD y N-Transmisores en BeamStearing (N < 4 sería ideal para obtener ventaja frente a las estructuras tradicionales del VLP).
+  * Comentario: Este planteamiento debe pensarse con más detenimiento porque la ventaja de usar Single-VLP es el número de Transmisores, pero si este aumenta entonces debe de justificarse su respectivas ventajas ya no solo frente a un Single-VLP sino tambien a un Tradicional VLP (4 Tx fijos)
+* asdasd
 
 #### PLAN DE TRABAJO
 
