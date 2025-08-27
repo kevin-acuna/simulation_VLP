@@ -14,21 +14,23 @@
 * [ ] Redactar las CONCLUSIONES
 * [ ] Llegar a 25 REFERENCIAS
 
-
-
 ---
 
 JOURNALS TARGET
 
-IEEE Transactions on Instrumentation and Measurement (TIM)
 
-IEEE Transactions on Wireless Communications (TWC)
+| Journal                                                    | Time       | Impact Factor | Documents (VLP) | Comment | Experiment                |
+| ---------------------------------------------------------- | ---------- | ------------- | --------------- | ------- | ------------------------- |
+| IEEE Transactions on Instrumentation and Measurement (TIM) | 21w (5m)   | 5.9 (Q1)     | 14 (2025: 1)    | Good    | Yes (mostly)              |
+| IEEE Transactions on Wireless Communications (TWC)         | 35w (9m)   | 10.7 (Q1)    | 10 (2025: 0)    | -       |                           |
+| IEEE Transactions on Communications (TCOM)                 | 32w (8m)   | 8.3 (Q1)     | 11 (2025: 3)    | Good    | Experiments / Simulations |
+| Journal of Lightwave Technology (JLT)                      | 15.9w (4m) | 4.8 (Q1)      | 21 (2025: 2)    | Good    | Yes (mostly)              |
+| Applied Optics                                             | -          | -             | -               | -       |                           |
+| IEEE Transactions on Broadcasting                          | 17w (4m)   | 4.8 (Q1)     | 4 (2025: 0)     | -       |                           |
+| IEEE Transactions on Green Communications and Networking   | 27w (7m)   | 6.7 (Q1)      | 2 (2025: 2)     | New     |                           |
 
-IEEE Transactions on Communications (TCOM)
 
-Journal of Lightwave Technology (JLT)
 
-Applied Optics
 
 ---
 
