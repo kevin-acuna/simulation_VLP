@@ -18,7 +18,6 @@
 
 JOURNALS TARGET
 
-
 | Journal                                                    | Time       | Impact Factor | Documents (VLP) | Comment | Experiment                |
 | ---------------------------------------------------------- | ---------- | ------------- | --------------- | ------- | ------------------------- |
 | IEEE Transactions on Instrumentation and Measurement (TIM) | 21w (5m)   | 5.9 (Q1)     | 14 (2025: 1)    | Good    | Yes (mostly)              |
@@ -28,9 +27,6 @@ JOURNALS TARGET
 | Applied Optics                                             | -          | -             | -               | -       |                           |
 | IEEE Transactions on Broadcasting                          | 17w (4m)   | 4.8 (Q1)     | 4 (2025: 0)     | -       |                           |
 | IEEE Transactions on Green Communications and Networking   | 27w (7m)   | 6.7 (Q1)      | 2 (2025: 2)     | New     |                           |
-
-
-
 
 ---
 
