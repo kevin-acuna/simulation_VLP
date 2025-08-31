@@ -9,6 +9,15 @@ rng(42)
 N_pos = 1000; % Number of random Rx positions simulated
 d_pd   = 0.20; % separación [m]
 
+R_pd = 0.63; % Photosensitivity of the photodiode [A/W]
+sigma2 = 30e6*10^(-22)/R_pd^2; % AWGN variance [A²]
+
+N_or = 9; % Number of orientations considered by the non-linear least square estimator
+
+% L = 2.4; W = 2.4; H = 2; % Full length, width and height of the room [m]
+L = 2; W = 2; H = 2; % Full length, width and height of the room [m]
+
+
 %% 1. Simulation Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                    Main Simulation Parameters                     %%%%
@@ -19,10 +28,9 @@ d_pd   = 0.20; % separación [m]
 theta_half = 45; % 60; % Semi-angle at half-power [°]
 P_t = 0.405; % 1; % Transmitted optical power [W]
 orientationMode = 'deterministic'; % 'randomEqual'
-N_or = 9; % Number of orientations considered by the non-linear least square estimator
+
 theta = 30; % Main angle of orientation (only for deterministic mode) [°]
-L = 2.4; W = 2.4; H = 2; % Full length, width and height of the room [m]
-% L = 2; W = 2; H = 2.5; % Full Length, width and height of the room [m]
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                          AP Parameters                            %%%%
@@ -62,11 +70,11 @@ end
 p = 4.8e-3; q = 5.5e-3; % Dimensions of the rectangular photodiode [m]
 N_det = 1; % Number of photodiodes
 A_det = p*q*N_det; % Photoreceiver sensitive area [m²]
-R_pd = 0.63; % Photosensitivity of the photodiode [A/W]
+
 FOV = 85; % Fielf-of-view of the photoreceiver [°]
 n_r = [0, 0, 1]; % Normal vector of the photoreceiver
 alpha = n_r(1,1); beta = n_r(1,2); gamma = n_r(1,3); % Cartesian coordinates of the normal vector of the photoreceiver
-sigma2 = 30e6*10^(-22.0)/R_pd^2; % AWGN variance [A²]
+
 C = -P_t*(m_t+1)*A_det/(2*pi); % Normalization factor
 
 %---------------------------%
@@ -95,7 +103,7 @@ d_tr = zeros(N_pos,1); % Real absolute distance between Tx and Rx
 
 %% ----- Parámetros del par de fotodiodos --------------------------
 
-phi_s  = 30*pi/180; % orientación arbitraria del receptor (test)
+phi_s  = 45*pi/180; % orientación arbitraria del receptor (test)
 s_vec  = d_pd * [ cos(phi_s); sin(phi_s); 0 ]; % vector de separación 3-D
 
 P_r1 = cell(N_pos,N_or); % Received power at PD-1
@@ -199,19 +207,117 @@ end
 realPos = [X_r.' Y_r.' Z_r.'];    % vector de centros reales
 err     = vecnorm(realPos - R_hat,2,2);
 
+% Calcular métricas de error
+RMSE = sqrt(mean(err.^2));           % Root Mean Square Error
+APE = mean(err);                      % Average Position Error
+std_err = std(err);                   % Standard deviation of error
+median_err = median(err);             % Median error
+
 % Calcular percentil 90 para los tres métodos
 [f_RMS, x_RMS] = ecdf(err(:));
 idx90 = find(f_RMS<0.9, 1, 'last');
-cdf90_RMS_cm = x_RMS(idx90)*100 % cm
+cdf90_RMS = x_RMS(idx90);
 
+% Mostrar métricas en consola
+fprintf('\n========== MÉTRICAS DE ERROR ==========\n');
+fprintf('RMSE (Root Mean Square Error): %.4f m (%.2f cm)\n', RMSE, RMSE*100);
+fprintf('APE (Average Position Error):  %.4f m (%.2f cm)\n', APE, APE*100);
+fprintf('Percentil 90:                   %.4f m (%.2f cm)\n', cdf90_RMS, cdf90_RMS*100);
+fprintf('========================================\n\n');
+
+% Figura 1: CDF del error
 figure(1)
 cdfplot(err.*100); hold on;
-xlabel('RMS error [cm]'); ylabel('Empirical cumulative distribution function'); 
-legend('2PD');
+xlabel('Position error [cm]'); ylabel('Empirical cumulative distribution function'); 
 
+% Añadir líneas verticales para las métricas principales
+xline(cdf90_RMS*100, 'b--', 'LineWidth', 1.5);
+
+% Añadir título con información adicional
+title(sprintf('CDF del error de posicionamiento - N_{pos}=%d, N_{or}=%d', N_pos, N_or));
+grid on;
+
+
+size_points = 10;
+% Figura 2: Comparación posiciones reales vs estimadas (Vista 3D)
+figure(2)
+clf;
+
+% Graficar posiciones reales
+scatter3(realPos(:,1), realPos(:,2), realPos(:,3), size_points, 'b', 'filled');
+hold on;
+
+% Graficar posiciones estimadas
+scatter3(R_hat(:,1), R_hat(:,2), R_hat(:,3), size_points, 'r', '^');
+
+% Dibujar líneas de error entre posiciones reales y estimadas
+for i = 1:min(N_pos, 100)  % Limitar a 100 líneas para claridad visual
+    plot3([realPos(i,1), R_hat(i,1)], ...
+          [realPos(i,2), R_hat(i,2)], ...
+          [realPos(i,3), R_hat(i,3)], 'k-', 'LineWidth', 0.5, 'Color', [0.5 0.5 0.5 0.3]);
+end
+
+% Dibujar el LED en el origen
+scatter3(0, 0, 0, 200, 'k', 'pentagram', 'filled');
+
+% Configuración de la figura
+xlabel('X [m]'); ylabel('Y [m]'); zlabel('Z [m]');
+title(sprintf('Posiciones Reales vs Estimadas (RMSE=%.2fcm, APE=%.2fcm)', RMSE*100, APE*100));
+legend('Posición Real', 'Posición Estimada', 'Location', 'best');
+grid on;
+axis equal;
+view(45, 30);
+xlim([-L/2, L/2]); ylim([-W/2, W/2]); zlim([-H, 0]);
+
+% Figura 3: Vista XY (planta)
+figure(3)
+clf;
+
+% Graficar proyecciones XY
+scatter(realPos(:,1), realPos(:,2), size_points, 'b', 'filled');
+hold on;
+scatter(R_hat(:,1), R_hat(:,2), size_points, 'r', '^');
+
+% Dibujar líneas de error en XY
+for i = 1:min(N_pos, 100)
+    plot([realPos(i,1), R_hat(i,1)], ...
+         [realPos(i,2), R_hat(i,2)], 'k-', 'LineWidth', 0.5, 'Color', [0.5 0.5 0.5 0.3]);
+end
+
+% LED en el origen
+scatter(0, 0, 200, 'k', 'pentagram', 'filled');
+
+xlabel('X [m]'); ylabel('Y [m]');
+title(sprintf('Vista XY - Posiciones Reales vs Estimadas (N_{pos}=%d)', N_pos));
+legend('Posición Real', 'Posición Estimada', 'Location', 'best');
+grid on;
+axis equal;
+xlim([-L/2, L/2]); ylim([-W/2, W/2]);
+
+% % Figura 4: Histograma del error
+% figure(4)
+% clf;
+% histogram(err.*100, 30, 'FaceColor', [0.2 0.6 1], 'EdgeColor', 'black');
+% hold on;
+% 
+% % Añadir líneas verticales para métricas
+% xline(APE*100, 'r-', 'LineWidth', 2, 'Label', sprintf('APE=%.2fcm', APE*100));
+% xline(RMSE*100, 'b-', 'LineWidth', 2, 'Label', sprintf('RMSE=%.2fcm', RMSE*100));
+% xline(median_err*100, 'g-', 'LineWidth', 2, 'Label', sprintf('Mediana=%.2fcm', median_err*100));
+% 
+% xlabel('Error de posición [cm]');
+% ylabel('Número de muestras');
+% title(sprintf('Distribución del Error de Posicionamiento (N_{or}=%d)', N_or));
+% legend('show', 'Location', 'northeast');
+% grid on;
+
+% Mostrar información adicional
+fprintf('\nRango de posiciones simuladas:\n');
+fprintf('X: [%.2f, %.2f] m\n', min(X_r), max(X_r));
+fprintf('Y: [%.2f, %.2f] m\n', min(Y_r), max(Y_r));
+fprintf('Z: [%.2f, %.2f] m\n', min(Z_r), max(Z_r));
 
 toc;
-
 
 %% Appendix: Functions used by the main scipt
 function [H0, P_r_LOS, v_tr, d_tr] = OWC_LOS_channel(x, y, z, param_t, param_r)
