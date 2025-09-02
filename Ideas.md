@@ -14,6 +14,11 @@
 * [ ] Redactar las CONCLUSIONES
 * [ ] Llegar a 25 REFERENCIAS
 
+#### Preguntas a resolver:
+
+* Como armonizar las ideas en un escenario beamstearing de OWP y OWC para lograr un ISAC beamstearing y evitar perder el LOS (habitualmente requiero orientaciones heterogeneas para OWP como una "epilepsia", mientras que para "OWC" seria mejor que siga al usuario (puede tener pausas y mirar a cada usuario? es decir el link TX-RX1, Tx-Rx2, Tx-Rx3, ... puede hacerse en diferentes instantes y sin perder performance o BER ? ) ya que de ser el caso entonces podemos anunciar un escenario con N robots (N>=5) donde el mismo link LOS de comunicacion genera informacion para auto-localizarse, es decir con N-robots se no es necesario escoger las N-orientaciones fijas, sino que se puede usar las N-orientaciones que apuntan hacia los N-robots y asi poder estimar la posicion a cada instante de itempo).
+
+
 ---
 
 JOURNALS TARGET

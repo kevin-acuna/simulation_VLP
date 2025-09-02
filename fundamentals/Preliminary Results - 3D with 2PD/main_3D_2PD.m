@@ -10,7 +10,7 @@ N_pos = 1000; % Number of random Rx positions simulated
 d_pd   = 0.20; % separación [m]
 
 R_pd = 0.63; % Photosensitivity of the photodiode [A/W]
-sigma2 = 30e6*10^(-22)/R_pd^2; % AWGN variance [A²]
+sigma2 = 30e6*10^(-21)/R_pd^2; % AWGN variance [A²]
 
 N_or = 9; % Number of orientations considered by the non-linear least square estimator
 
