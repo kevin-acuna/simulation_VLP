@@ -6,6 +6,8 @@
 * [ ] INTRODUCCIÓN :  Aqui añadir una tabla con la comparativa de distintos métodos de Single VLP.
 * [ ] RESULTADOS: Aqui sería ideal presentar una tabla comparativa de los principales resultados con otros métodos.
 * [ ] Corregir las observaciones de LUC, BASTIEN, HONGYU
+* [ ] Añadir un parrafo para discutir el SNR.
+* [ ] Me falto conversar sobre el ajuste del modelo lambertiano con uno polinomico.
 
 #### Redacción
 
@@ -18,6 +20,13 @@
 
 * Como armonizar las ideas en un escenario beamstearing de OWP y OWC para lograr un ISAC beamstearing y evitar perder el LOS (habitualmente requiero orientaciones heterogeneas para OWP como una "epilepsia", mientras que para "OWC" seria mejor que siga al usuario (puede tener pausas y mirar a cada usuario? es decir el link TX-RX1, Tx-Rx2, Tx-Rx3, ... puede hacerse en diferentes instantes y sin perder performance o BER ? ) ya que de ser el caso entonces podemos anunciar un escenario con N robots (N>=5) donde el mismo link LOS de comunicacion genera informacion para auto-localizarse, es decir con N-robots se no es necesario escoger las N-orientaciones fijas, sino que se puede usar las N-orientaciones que apuntan hacia los N-robots y asi poder estimar la posicion a cada instante de itempo).
 
+**Ideas generales (discusion with Bastien):**
+
+* Eventualmente podría ser una técnica TDMA para el caso de transmistir información beam-steering, de ese modo se puede transmitir a diferentes usuarios en franjas de tiempo.
+* Otra idea es la de mantener el OFDM en una especie de Clusters, donde para hacer el posicionamiento se este apuntando al centro de estos cluster alrededor del punto del receptor (K-orientaciones), manteniendo asi la LOS con los receptores en ese cluster. Para otros clusters habrian otros beam-steearing ISAC.
+* En el proyecto OPTI-6G para la demostración debo de plantear eventualmente cual sera la arquitectura.
+* En el proyecto OPTI-6G se tendrá eventualmente de OLEDCOMM los receptores que tendran salida para OWC y RSS para OWP. Esos se pueden reutilizar en diferntes aplicaciones.
+* Aprender a usar el AGW (equipo que genera señales) serviría para conectar al AP PCB Circular de OLEDCOMM; asi se puede tener tambien integrado la comunicacion y posicion para propositos CIENTIFICOS del ISAC, a su vez contamos con un medidor para las caracteristicas del UE donde se tendra que leer potencia AC (considerandose como varianza) porque esta despues de un pasabanda que elimina la parte de la señal DC.
 
 ---
 
