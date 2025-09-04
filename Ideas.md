@@ -27,6 +27,7 @@
 * En el proyecto OPTI-6G para la demostración debo de plantear eventualmente cual sera la arquitectura.
 * En el proyecto OPTI-6G se tendrá eventualmente de OLEDCOMM los receptores que tendran salida para OWC y RSS para OWP. Esos se pueden reutilizar en diferntes aplicaciones.
 * Aprender a usar el AGW (equipo que genera señales) serviría para conectar al AP PCB Circular de OLEDCOMM; asi se puede tener tambien integrado la comunicacion y posicion para propositos CIENTIFICOS del ISAC, a su vez contamos con un medidor para las caracteristicas del UE donde se tendra que leer potencia AC (considerandose como varianza) porque esta despues de un pasabanda que elimina la parte de la señal DC.
+* Es factible traer recursos humanos por 6 meses para que trabajen, con un sueldo de Ingeniero Investigador.
 
 ---
 
