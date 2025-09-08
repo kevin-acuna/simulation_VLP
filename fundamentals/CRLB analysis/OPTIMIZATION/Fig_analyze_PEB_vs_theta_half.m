@@ -149,19 +149,19 @@ for i = 1:length(theta_half_deg)
         'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'w');
     
     % Create legend entry
-    legend_entries{i} = sprintf('\\theta_{1/2} = %d°', theta_half);
+    legend_entries{i} = sprintf('\\Phi_{1/2} = %d°', theta_half);
 end
 
 % Add labels, title, grid, and legend
-xlabel('Number of Orientations (K)', 'FontSize', 12,'interpreter', 'latex');
-ylabel('Overal PEB error $\mathrm{PEB_{90\%}}$(cm)', 'FontSize', 12,'interpreter', 'latex');
+xlabel('Number of orientations (K)', 'FontSize', 14,'interpreter', 'latex');
+ylabel('$\mathrm{PEB_{90\%}}$[cm]', 'FontSize', 14,'interpreter', 'latex');
 grid on;
 legend(legend_entries, 'Location', 'northeast', 'FontSize', 11);
 axis([3,9,0,10])
 
 % Format the axes for better readability
 ax = gca;
-ax.FontSize = 11;
+ax.FontSize = 12;
 ax.TickLabelInterpreter="latex"
 ax.GridLineStyle = ':';
 ax.GridAlpha = 0.3;
@@ -169,7 +169,7 @@ ax.GridAlpha = 0.3;
 hold off;
 
 % Save the figure to the results directory
-saveas(fig, fullfile(results_dir, sprintf('PEB_vs_theta_half_%s.fig', current_datetime)));
-saveas(fig, fullfile(results_dir, sprintf('PEB_vs_theta_half_%s.png', current_datetime)));
+filebase = fullfile(results_dir, sprintf('PEB_vs_theta_half_%s', current_datetime));
+exportgraphics(gcf, [filebase '.png'], 'Resolution', 600);
 
 fprintf('Analysis complete. Figure saved in %s\n', results_dir);
