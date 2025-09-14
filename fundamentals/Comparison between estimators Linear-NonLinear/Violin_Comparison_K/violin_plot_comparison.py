@@ -112,7 +112,6 @@ def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=
         save_path (str): Ruta para guardar la figura
         figsize (tuple): Tamaño de la figura
     """
-    print("\n🎨 Generando violin plot dividido...")
     
     # Configurar figura
     fig, ax = plt.subplots(figsize=figsize, dpi=300)
@@ -127,8 +126,8 @@ def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=
     
     for i, k in enumerate(k_values):
         # Datos para este K
-        data_opt = df[(df['K'] == k) & (df['Type'] == 'Optimizadas')]['PEB'].values
-        data_rand = df[(df['K'] == k) & (df['Type'] == 'Aleatorias')]['PEB'].values
+        data_opt = df[(df['K'] == k) & (df['Type'] == 'Optimizadas')]['PEB'].values*100
+        data_rand = df[(df['K'] == k) & (df['Type'] == 'Aleatorias')]['PEB'].values*100
         
         x_center = k
         
@@ -227,10 +226,10 @@ def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=
     
     # Configuración de ejes y etiquetas
     ax.set_xlim(min(k_values) - 0.8, max(k_values) + 0.8)
-    ax.set_ylim(0,0.1)
+    ax.set_ylim(0,10)
     ax.set_xticks(k_values)
     ax.set_xlabel('Number of Orientations (K)', fontsize=14, fontweight='bold')
-    ax.set_ylabel('Position Error Bound (PEB) [m]', fontsize=14, fontweight='bold')
+    ax.set_ylabel('Position Error Bound (PEB) [cm]', fontsize=14, fontweight='bold')
     ax.set_title('Point-wise PEB Distribution: Optimized vs Random LED Orientations', 
                 fontsize=16, fontweight='bold', pad=20)
     
@@ -277,23 +276,9 @@ def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=
     return fig, ax
 
 def main():
-    """Main function"""
-    print("🎯 VIOLIN PLOT COMPARISON - PEB Analysis")
-    print("=" * 50)
-    print("🔄 Loading data from CSV files...")
     df = load_and_process_data()
-    
-    if df is None:
-        print("❌ Unable to load data. Exiting...")
-        return
-    
-    # Create split violin plot
     fig, ax = create_split_violin_plot(df)
-    
-    # Show plot
     plt.show()
     
-    print("\n✅ Analysis completed successfully!")
-
 if __name__ == "__main__":
     main()
