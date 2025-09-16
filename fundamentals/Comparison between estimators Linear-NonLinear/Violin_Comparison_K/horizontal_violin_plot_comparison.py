@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
-Violin Plot Comparison: Optimized vs Random LED Orientations
-===========================================================
+Horizontal Violin Plot Comparison: Optimized vs Random LED Orientations
+======================================================================
 
-Script para generar violin plots estéticos comparando orientaciones optimizadas 
-vs aleatorias usando datos PEB de archivos CSV.
+Script para generar violin plots horizontales estéticos comparando orientaciones 
+optimizadas vs aleatorias usando datos PEB de archivos CSV.
 
-Cada violin muestra la distribución RMS de valores PEB:
-- Lado izquierdo: Orientaciones optimizadas
-- Lado derecho: Orientaciones aleatorias
+Cada violin muestra la distribución RMS de valores PEB en orientación horizontal:
+- Lado superior: Orientaciones optimizadas
+- Lado inferior: Orientaciones aleatorias
+- Eje X: PEB [cm]
+- Eje Y: Number of orientations (K)
 
 Author: VLP Analysis Team
 Date: 2025
@@ -74,7 +76,7 @@ def load_and_process_data(csv_optimized='PEB_optimizadas.csv', csv_random='PEB_a
                         'K': k,
                         'PEB': value,
                         'Type': 'Optimizadas',
-                        'Position': k - 0.15  # Ligeramente a la izquierda
+                        'Position': k - 0.15  # Ligeramente arriba
                     })
         
         # Datos aleatorios para este K
@@ -86,7 +88,7 @@ def load_and_process_data(csv_optimized='PEB_optimizadas.csv', csv_random='PEB_a
                         'K': k,
                         'PEB': value,
                         'Type': 'Aleatorias',
-                        'Position': k + 0.15  # Ligeramente a la derecha
+                        'Position': k + 0.15  # Ligeramente abajo
                     })
     
     # Convertir a DataFrame
@@ -102,10 +104,10 @@ def load_and_process_data(csv_optimized='PEB_optimizadas.csv', csv_random='PEB_a
     
     return df_combined
 
-def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=(14, 8)):
+def create_horizontal_split_violin_plot(df, save_path='horizontal_violin_comparison_peb.png', figsize=(8, 14)):
     """
-    Crea un violin plot dividido estético donde cada K tiene un violin con
-    mitad izquierda (optimizadas) y mitad derecha (aleatorias).
+    Crea un violin plot horizontal dividido estético donde cada K tiene un violin con
+    mitad superior (optimizadas) y mitad inferior (aleatorias).
     
     Args:
         df (pd.DataFrame): DataFrame con datos procesados
@@ -129,54 +131,54 @@ def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=
         data_opt = df[(df['K'] == k) & (df['Type'] == 'Optimizadas')]['PEB'].values*100
         data_rand = df[(df['K'] == k) & (df['Type'] == 'Aleatorias')]['PEB'].values*100
         
-        x_center = k
+        y_center = k
         
-        # Crear violin dividido manualmente
+        # Crear violin dividido manualmente en orientación horizontal
         if len(data_opt) > 10 and len(data_rand) > 10:
             
             # Usar histogramas para representación fiel de distribuciones no gaussianas
             
-            # Rango Y común para ambas distribuciones
-            y_min = min(np.concatenate([data_opt, data_rand]))
-            y_max = max(np.concatenate([data_opt, data_rand]))
+            # Rango X común para ambas distribuciones (ahora PEB está en X)
+            x_min = min(np.concatenate([data_opt, data_rand]))
+            x_max = max(np.concatenate([data_opt, data_rand]))
             
             # Número de bins adaptativo basado en la cantidad de datos
             n_bins = min(int(np.sqrt(len(data_opt))), 60)  # Entre 10-60 bins
             n_bins = 500
 
-            # Histograma para optimizadas (lado izquierdo)
-            counts_opt, bins_opt = np.histogram(data_opt, bins=n_bins, range=(y_min, y_max), density=True)
+            # Histograma para optimizadas (lado superior)
+            counts_opt, bins_opt = np.histogram(data_opt, bins=n_bins, range=(x_min, x_max), density=True)
             bin_centers_opt = (bins_opt[:-1] + bins_opt[1:]) / 2
             
             # Suavizar ligeramente los bins para evitar escalones abruptos
-            y_range = np.linspace(y_min, y_max, 200)
-            density_opt = np.interp(y_range, bin_centers_opt, counts_opt)
+            x_range = np.linspace(x_min, x_max, 200)
+            density_opt = np.interp(x_range, bin_centers_opt, counts_opt)
 
             # Aplicar un filtro suave para eliminar puntas y mejorar visualización
             density_opt = gaussian_filter1d(density_opt, sigma=2.0)
             density_opt = density_opt / np.max(density_opt) * 0.4  # Normalizar ancho
             
-            # Histograma para aleatorias (lado derecho)
-            counts_rand, bins_rand = np.histogram(data_rand, bins=n_bins, range=(y_min, y_max), density=True)
+            # Histograma para aleatorias (lado inferior)
+            counts_rand, bins_rand = np.histogram(data_rand, bins=n_bins, range=(x_min, x_max), density=True)
             bin_centers_rand = (bins_rand[:-1] + bins_rand[1:]) / 2
             
             # Suavizar ligeramente los bins
-            density_rand = np.interp(y_range, bin_centers_rand, counts_rand)
+            density_rand = np.interp(x_range, bin_centers_rand, counts_rand)
             density_rand = gaussian_filter1d(density_rand, sigma=2.0)
             density_rand = density_rand / np.max(density_rand) * 0.4  # Normalizar ancho
             
-            # Crear mitad izquierda (optimizadas)
-            x_left = x_center - density_opt
-            x_center_line = np.full_like(y_range, x_center)
+            # Crear mitad superior (optimizadas)
+            y_top = y_center + density_opt
+            y_center_line = np.full_like(x_range, y_center)
             
-            ax.fill_betweenx(y_range, x_left, x_center_line,
+            ax.fill_between(x_range, y_center_line, y_top,
                            facecolor=colors['Optimizadas'], alpha=0.6,
                            edgecolor='black', linewidth=1)
             
-            # Crear mitad derecha (aleatorias)
-            x_right = x_center + density_rand
+            # Crear mitad inferior (aleatorias)
+            y_bottom = y_center - density_rand
             
-            ax.fill_betweenx(y_range, x_center_line, x_right,
+            ax.fill_between(x_range, y_bottom, y_center_line,
                            facecolor=colors['Aleatorias'], alpha=0.6,
                            edgecolor='black', linewidth=1)
             
@@ -184,54 +186,55 @@ def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=
             q1_opt, median_opt, q3_opt = np.percentile(data_opt, [25, 50, 75])
             q1_rand, median_rand, q3_rand = np.percentile(data_rand, [25, 50, 75])
             
-            # Boxplot estilizado para optimizadas (lado izquierdo)
-            box_width = 0.08
-            box_center_opt = x_center - 0.1
+            # Boxplot estilizado para optimizadas (lado superior)
+            box_height = 0.08
+            box_center_opt = y_center + 0.1
             
             # Caja del boxplot (optimizadas)
-            box_opt = plt.Rectangle((box_center_opt - box_width/2, q1_opt), 
-                                   box_width, q3_opt - q1_opt,
+            box_opt = plt.Rectangle((q1_opt, box_center_opt - box_height/2), 
+                                   q3_opt - q1_opt, box_height,
                                    facecolor=colors['Optimizadas'], edgecolor='black', 
                                    linewidth=0.6, alpha=1)
             ax.add_patch(box_opt)
             
             # Línea de mediana (optimizadas)
-            ax.plot([box_center_opt - box_width/2, box_center_opt + box_width/2], 
-                   [median_opt, median_opt], 'k-', linewidth=0.6)
+            ax.plot([median_opt, median_opt], 
+                   [box_center_opt - box_height/2, box_center_opt + box_height/2], 
+                   'k-', linewidth=0.6)
             
             # Whiskers (optimizadas)
             p5_opt, p95_opt = np.percentile(data_opt, [5, 95])
-            ax.plot([box_center_opt, box_center_opt], [q3_opt, p95_opt], 'k-', linewidth=0.6)
-            ax.plot([box_center_opt, box_center_opt], [q1_opt, p5_opt], 'k-', linewidth=0.6)
+            ax.plot([q3_opt, p95_opt], [box_center_opt, box_center_opt], 'k-', linewidth=0.6)
+            ax.plot([q1_opt, p5_opt], [box_center_opt, box_center_opt], 'k-', linewidth=0.6)
 
             
-            # Boxplot estilizado para aleatorias (lado derecho)
-            box_center_rand = x_center + 0.1
+            # Boxplot estilizado para aleatorias (lado inferior)
+            box_center_rand = y_center - 0.1
             
             # Caja del boxplot (aleatorias)
-            box_rand = plt.Rectangle((box_center_rand - box_width/2, q1_rand), 
-                                    box_width, q3_rand - q1_rand,
+            box_rand = plt.Rectangle((q1_rand, box_center_rand - box_height/2), 
+                                    q3_rand - q1_rand, box_height,
                                     facecolor=colors['Aleatorias'], edgecolor='black', 
                                     linewidth=0.6, alpha=1)
             ax.add_patch(box_rand)
             
             # Línea de mediana (aleatorias)
-            ax.plot([box_center_rand - box_width/2, box_center_rand + box_width/2], 
-                   [median_rand, median_rand], 'k-', linewidth=0.6)
+            ax.plot([median_rand, median_rand], 
+                   [box_center_rand - box_height/2, box_center_rand + box_height/2], 
+                   'k-', linewidth=0.6)
             
             # Whiskers (aleatorias)
             p5_rand, p95_rand = np.percentile(data_rand, [5, 95])
-            ax.plot([box_center_rand, box_center_rand], [q3_rand, p95_rand], 'k-', linewidth=0.6)
-            ax.plot([box_center_rand, box_center_rand], [q1_rand, p5_rand], 'k-', linewidth=0.6)
+            ax.plot([q3_rand, p95_rand], [box_center_rand, box_center_rand], 'k-', linewidth=0.6)
+            ax.plot([q1_rand, p5_rand], [box_center_rand, box_center_rand], 'k-', linewidth=0.6)
     
-    # Configuración de ejes y etiquetas
-    ax.set_xlim(min(k_values)-0.45, max(k_values)+0.45)
-    ax.set_ylim(0,10)
-    ax.set_xticks(k_values)
-    ax.set_xlabel('Number of Orientations (K)', fontsize=14, fontweight='bold')
-    ax.set_ylabel('PEB [cm]', fontsize=14, fontweight='bold')
-    ax.set_title('Point-wise PEB Distribution: Optimized vs Random LED Orientations', 
-                fontsize=16, fontweight='bold', pad=20)
+    # Configuración de ejes y etiquetas (intercambiados para orientación horizontal)
+    ax.set_ylim(min(k_values)-0.45, max(k_values)+0.45)
+    ax.set_xlim(0, 10)
+    ax.set_yticks(k_values)
+    ax.invert_yaxis()  # Invertir eje Y para mostrar K en orden ascendente (3,4,5...9)
+    ax.set_ylabel('Number of Orientations (K)', fontsize=14, fontweight='bold')
+    ax.set_xlabel('PEB [cm]', fontsize=14, fontweight='bold')
     
     # Grid y estética
     ax.grid(True, alpha=0.3, linestyle='-', linewidth=0.8)
@@ -276,9 +279,28 @@ def create_split_violin_plot(df, save_path='violin_comparison_peb.png', figsize=
     return fig, ax
 
 def main():
+    """
+    Función principal que ejecuta la generación del violin plot horizontal.
+    """
+    print("🎻 Generando Violin Plot Horizontal - PEB vs K")
+    print("=" * 50)
+    
+    # Cargar y procesar datos
     df = load_and_process_data()
-    fig, ax = create_split_violin_plot(df)
-    plt.show()
+    
+    if df is not None:
+        # Crear violin plot horizontal
+        fig, ax = create_horizontal_split_violin_plot(df)
+        #plt.show()
+        
+        print("\n✅ Proceso completado exitosamente!")
+        print("📈 El violin plot horizontal muestra:")
+        print("   • Eje X: PEB [cm]")
+        print("   • Eje Y: Number of Orientations (K)")
+        print("   • Mitad superior: Orientaciones optimizadas")
+        print("   • Mitad inferior: Orientaciones aleatorias")
+    else:
+        print("❌ No se pudieron cargar los datos")
     
 if __name__ == "__main__":
     main()
