@@ -18,6 +18,9 @@ modo_analisis = 'comparativo';  % Cambiar aquí para seleccionar el modo
 
 % Parámetros del sistema
 sigma2 = 30e6*10^(-21.0);         % Varianza AWGN [A²]
+R_pd = 0.63;                       % Responsividad del fotodiodo [A/W]
+sigma2_w = sigma2*R_pd^2;
+
 altura_analisis = 0.8;            % Altura específica para análisis [m]
 step = 0.05;                      % Step size para grid [m]
 T = [0, 0, 2];                    % Posición del LED (origen) [m]
@@ -31,7 +34,6 @@ p = 4.8e-3; q = 5.5e-3;               % Dimensiones del fotodiodo rectangular [m
 N_det = 1;                             % Número de fotodiodos
 A_det = p*q*N_det;                     % Área sensible del fotoreceptor [m²]
 FOV = deg2rad(85);                % Campo de visión del receptor [rad]
-R_pd = 0.63;                       % Responsividad del fotodiodo [A/W]
 
 % Parámetros de la habitación (testbed)
 L = 3; W = 3;                     % Dimensiones de la habitación [m]
@@ -40,7 +42,7 @@ L = 3; W = 3;                     % Dimensiones de la habitación [m]
 % Configuración de orientaciones
 % ============================================================================
 % [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
-orientations_K5_optimized = [0.48, 0, 50.5, 0, 50.5, 90, 50.5, 180, 50.5, 270];
+orientations_K5_optimized = [0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
 
 % Generar orientaciones aleatorias para comparación
 rng(40);  % Semilla fija para reproducibilidad
@@ -196,22 +198,22 @@ if strcmp(modo_analisis, 'comparativo')
     if ~isempty(valid_peb_opt) && ~isempty(valid_peb_rand)
         fprintf('\n=== ESTADÍSTICAS COMPARATIVAS DEL PEB ===\n');
         fprintf('\n--- ORIENTACIONES OPTIMIZADAS ---\n');
-        fprintf('PEB mínimo: %.4f m\n', min(valid_peb_opt));
-        fprintf('PEB máximo: %.4f m\n', max(valid_peb_opt));
-        fprintf('PEB promedio: %.4f m\n', mean(valid_peb_opt));
-        fprintf('PEB mediano: %.4f m\n', median(valid_peb_opt));
-        fprintf('PEB RMS: %.4f m\n', sqrt(mean(valid_peb_opt.^2)));
-        fprintf('PEB percentile-90: %.4f m\n', prctile(valid_peb_opt, 90));
-        fprintf('Desviación estándar: %.4f m\n', std(valid_peb_opt));
+        fprintf('PEB mínimo: %.4f cm\n', min(valid_peb_opt)*100);
+        fprintf('PEB máximo: %.4f cm\n', max(valid_peb_opt)*100);
+        fprintf('PEB promedio: %.4f cm\n', mean(valid_peb_opt)*100);
+        fprintf('PEB mediano: %.4f cm\n', median(valid_peb_opt)*100);
+        fprintf('PEB RMS: %.4f cm\n', sqrt(mean(valid_peb_opt.^2))*100);
+        fprintf('PEB percentile-90: %.4f cm\n', prctile(valid_peb_opt, 90)*100);
+        fprintf('Desviación estándar: %.4f cm\n', std(valid_peb_opt)*100);
         
         fprintf('\n--- ORIENTACIONES ALEATORIAS ---\n');
-        fprintf('PEB mínimo: %.4f m\n', min(valid_peb_rand));
-        fprintf('PEB máximo: %.4f m\n', max(valid_peb_rand));
-        fprintf('PEB promedio: %.4f m\n', mean(valid_peb_rand));
-        fprintf('PEB mediano: %.4f m\n', median(valid_peb_rand));
-        fprintf('PEB RMS: %.4f m\n', sqrt(mean(valid_peb_rand.^2)));
-        fprintf('PEB percentile-90: %.4f m\n', prctile(valid_peb_rand, 90));
-        fprintf('Desviación estándar: %.4f m\n', std(valid_peb_rand));
+        fprintf('PEB mínimo: %.4f cm\n', min(valid_peb_rand)*100);
+        fprintf('PEB máximo: %.4f cm\n', max(valid_peb_rand)*100);
+        fprintf('PEB promedio: %.4f cm\n', mean(valid_peb_rand)*100);
+        fprintf('PEB mediano: %.4f cm\n', median(valid_peb_rand)*100);
+        fprintf('PEB RMS: %.4f cm\n', sqrt(mean(valid_peb_rand.^2))*100);
+        fprintf('PEB percentile-90: %.4f cm\n', prctile(valid_peb_rand, 90)*100);
+        fprintf('Desviación estándar: %.4f cm\n', std(valid_peb_rand)*100);
         
         fprintf('\n--- MEJORA RELATIVA (Optimizadas vs Aleatorias) ---\n');
         mejora_promedio = (mean(valid_peb_rand) - mean(valid_peb_opt)) / mean(valid_peb_rand) * 100;
@@ -232,13 +234,13 @@ else
     
     if ~isempty(valid_peb)
         fprintf('\n=== ESTADÍSTICAS DEL PEB ===\n');
-        fprintf('PEB mínimo: %.4f m\n', min(valid_peb));
-        fprintf('PEB máximo: %.4f m\n', max(valid_peb));
-        fprintf('PEB promedio: %.4f m\n', mean(valid_peb));
-        fprintf('PEB mediano: %.4f m\n', median(valid_peb));
-        fprintf('PEB RMS: %.4f m\n', sqrt(mean(valid_peb.^2)));
-        fprintf('PEB percentile-90: %.4f m\n', prctile(valid_peb, 90));
-        fprintf('Desviación estándar: %.4f m\n', std(valid_peb));
+        fprintf('PEB mínimo: %.4f cm\n', min(valid_peb)*100);
+        fprintf('PEB máximo: %.4f cm\n', max(valid_peb)*100);
+        fprintf('PEB promedio: %.4f cm\n', mean(valid_peb)*100);
+        fprintf('PEB mediano: %.4f cm\n', median(valid_peb)*100);
+        fprintf('PEB RMS: %.4f cm\n', sqrt(mean(valid_peb.^2))*100);
+        fprintf('PEB percentile-90: %.4f cm\n', prctile(valid_peb, 90)*100);
+        fprintf('Desviación estándar: %.4f cm\n', std(valid_peb)*100);
         fprintf('Posiciones válidas: %d de %d (%.1f%%)\n', ...
                 length(valid_peb), N_pos, 100*length(valid_peb)/N_pos);
     else
@@ -253,10 +255,14 @@ end
 if strcmp(modo_analisis, 'comparativo')
     % Modo comparativo: crear visualizaciones lado a lado
     
-    % Determinar escala común para ambas visualizaciones
+    % Determinar escala común para ambas visualizaciones (convertir a cm)
     all_valid_peb = [valid_peb_opt(:); valid_peb_rand(:)];
-    min_peb_global = min(all_valid_peb);
-    max_peb_global = max(all_valid_peb);
+    min_peb_global = min(all_valid_peb) * 100;
+    max_peb_global = max(all_valid_peb) * 100;
+    
+    % Convertir matrices PEB a centímetros
+    PEB_matrix_optimized = PEB_matrix_optimized * 100;
+    PEB_matrix_random = PEB_matrix_random * 100;
     
     % === FIGURA 1: Mapas de calor 2D comparativos ===
     figure(1);
@@ -268,10 +274,10 @@ if strcmp(modo_analisis, 'comparativo')
     set(gca, 'YDir', 'normal');
     colormap(jet);
     caxis([min_peb_global, max_peb_global]);
-    colorbar;
+    cb1 = colorbar;
+    ylabel(cb1, 'PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 11);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 11);
-    title('PEB - Orientaciones Optimizadas', 'Interpreter', 'latex', 'FontSize', 12);
     hold on;
     plot(T(1), T(2), 'w*', 'MarkerSize', 12, 'LineWidth', 2);
     plot(T(1), T(2), 'k*', 'MarkerSize', 10, 'LineWidth', 1);
@@ -283,18 +289,17 @@ if strcmp(modo_analisis, 'comparativo')
     set(gca, 'YDir', 'normal');
     colormap(jet);
     caxis([min_peb_global, max_peb_global]);
-    colorbar;
+    cb2 = colorbar;
+    ylabel(cb2, 'PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 11);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 11);
-    title('PEB - Orientaciones Aleatorias', 'Interpreter', 'latex', 'FontSize', 12);
+    
     hold on;
     plot(T(1), T(2), 'w*', 'MarkerSize', 12, 'LineWidth', 2);
     plot(T(1), T(2), 'k*', 'MarkerSize', 10, 'LineWidth', 1);
     axis([-1.5,1.5,-1.5,1.5,-inf,inf]); grid on; set(gca, 'FontSize', 9);
     
-    % Título general
-    sgtitle(sprintf('Comparacion PEB - Altura Z = %.2f m', altura_analisis), ...
-            'Interpreter', 'none', 'FontSize', 14, 'FontWeight', 'bold');
+
     
     % === FIGURA 2: Superficies 3D comparativas ===
     figure(2);
@@ -308,10 +313,10 @@ if strcmp(modo_analisis, 'comparativo')
     zlim([0, max_peb_global]);  % Fijar rango Z desde 0 al máximo
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 11);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 11);
-    zlabel('PEB [m]', 'Interpreter', 'latex', 'FontSize', 11);
-    title('Superficie 3D - Optimizadas', 'Interpreter', 'latex', 'FontSize', 12);
+    zlabel('PEB [cm]', 'Interpreter', 'latex', 'FontSize', 11);
     view(44.7,35.23); grid on; set(gca, 'FontSize', 9);
-    colorbar;
+    cb3 = colorbar;
+    ylabel(cb3, 'PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
     
     % Subfigura 2: Superficie aleatoria
     subplot(1, 2, 2);
@@ -321,20 +326,17 @@ if strcmp(modo_analisis, 'comparativo')
     zlim([0, max_peb_global]);  % Fijar rango Z desde 0 al máximo
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 11);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 11);
-    zlabel('PEB [m]', 'Interpreter', 'latex', 'FontSize', 11);
-    title('Superficie 3D - Aleatorias', 'Interpreter', 'latex', 'FontSize', 12);
+    zlabel('PEB [cm]', 'Interpreter', 'latex', 'FontSize', 11);
     view(44.7,35.23); grid on; set(gca, 'FontSize', 9);
-    colorbar;
+    cb4 = colorbar;
+    ylabel(cb4, 'PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
     
-    % Título general
-    sgtitle(sprintf('Superficies 3D Comparativas - Altura Z = %.2f m', altura_analisis), ...
-            'Interpreter', 'none', 'FontSize', 14, 'FontWeight', 'bold');
-    
+
     % === FIGURA 3: Mapa de diferencias ===
     figure(3);
     set(gcf, 'Position', [750, 300, 800, 600]);
     
-    % Calcular diferencia (aleatorias - optimizadas)
+    % Calcular diferencia (aleatorias - optimizadas) - ya están en cm
     PEB_diff = PEB_matrix_random - PEB_matrix_optimized;
     
     imagesc(x_range, y_range, PEB_diff);
@@ -343,26 +345,54 @@ if strcmp(modo_analisis, 'comparativo')
     colorbar;
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 12);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 12);
-    title(sprintf('Diferencia PEB (Aleatorias - Optimizadas) - Z = %.2f m', altura_analisis), ...
-          'Interpreter', 'latex', 'FontSize', 14);
-    
+
     hold on;
     plot(T(1), T(2), 'w*', 'MarkerSize', 15, 'LineWidth', 2);
     plot(T(1), T(2), 'k*', 'MarkerSize', 12, 'LineWidth', 1);
     axis equal; grid on; set(gca, 'FontSize', 10);
     
     cb = colorbar;
-    ylabel(cb, '$\Delta$ PEB [m]', 'Interpreter', 'latex', 'FontSize', 10);
+    ylabel(cb, '$\Delta$ PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
     
+    
+    % ============================================================================
+    % GUARDAR FIGURAS
+    % ============================================================================
+    % Crear carpeta para guardar figuras
+    output_folder = 'FigPEB_Heatmaps';
+    if ~exist(output_folder, 'dir')
+        mkdir(output_folder);
+    end
+    
+    % Configurar fondo blanco y alta resolución para todas las figuras
+    figure(1);
+    set(gcf, 'Color', 'white');
+    print(fullfile(output_folder, 'PEB_Heatmaps_2D_Comparativo.png'), '-dpng', '-r300');
+    
+    figure(2);
+    set(gcf, 'Color', 'white');
+    print(fullfile(output_folder, 'PEB_Superficies_3D_Comparativo.png'), '-dpng', '-r300');
+    
+    figure(3);
+    set(gcf, 'Color', 'white');
+    print(fullfile(output_folder, 'PEB_Diferencias.png'), '-dpng', '-r300');
     
     fprintf('\n=== VISUALIZACIONES COMPARATIVAS GENERADAS ===\n');
     fprintf('Figura 1: Mapas de calor 2D comparativos\n');
     fprintf('Figura 2: Superficies 3D comparativas\n');
     fprintf('Figura 3: Mapa de diferencias PEB\n');
+    fprintf('\n=== FIGURAS GUARDADAS ===\n');
+    fprintf('Carpeta: %s\n', output_folder);
+    fprintf('- PEB_Heatmaps_2D_Comparativo.png (300 DPI)\n');
+    fprintf('- PEB_Superficies_3D_Comparativo.png (300 DPI)\n');
+    fprintf('- PEB_Diferencias.png (300 DPI)\n');
     fprintf('==============================================\n');
     
 else
     % Modo descriptivo: visualizaciones originales
+    
+    % Convertir matriz PEB a centímetros
+    PEB_matrix = PEB_matrix * 100;
     
     % Usar log scale para mejor visualización si hay gran rango de valores
     if max(valid_peb)/min(valid_peb) > 100
@@ -386,15 +416,13 @@ else
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 12);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 12);
     if use_log_scale
-        title(sprintf('Mapa de Calor PEB (log_{10}) - Altura Z = %.2f m', altura_analisis), ...
-              'Interpreter', 'latex', 'FontSize', 14);
+
         cb = colorbar;
-        ylabel(cb, 'log_{10}(PEB) [log_{10}(m)]', 'Interpreter', 'latex', 'FontSize', 10);
+        ylabel(cb, 'log_{10}(PEB) [log_{10}(cm)]', 'Interpreter', 'latex', 'FontSize', 10);
     else
-        title(sprintf('Mapa de Calor PEB - Altura Z = %.2f m', altura_analisis), ...
-              'Interpreter', 'latex', 'FontSize', 14);
+
         cb = colorbar;
-        ylabel(cb, 'PEB [m]', 'Interpreter', 'latex', 'FontSize', 10);
+        ylabel(cb, 'PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
     end
     
     hold on;
@@ -414,14 +442,13 @@ else
     
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 12);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 12);
-    zlabel('PEB [m]', 'Interpreter', 'latex', 'FontSize', 12);
-    title(sprintf('Superficie 3D del PEB - Altura Z = %.2f m', altura_analisis), ...
-          'Interpreter', 'latex', 'FontSize', 14);
+    zlabel('PEB [cm]', 'Interpreter', 'latex', 'FontSize', 12);
+
     
     view(44.7,35.23); grid on; set(gca, 'FontSize', 10);
     
     cb = colorbar;
-    ylabel(cb, 'PEB [m]', 'Interpreter', 'latex', 'FontSize', 10);
+    ylabel(cb, 'PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
     
     % === FIGURA 3: Vista superior ===
     figure(3);
@@ -435,21 +462,47 @@ else
     
     xlabel('X [m]', 'Interpreter', 'latex', 'FontSize', 12);
     ylabel('Y [m]', 'Interpreter', 'latex', 'FontSize', 12);
-    title(sprintf('PEB - Vista Superior (Z = %.2f m)', altura_analisis), ...
-          'Interpreter', 'latex', 'FontSize', 14);
+
     
     hold on;
-    plot3(T(1), T(2), max(valid_peb)*1.1, 'w*', 'MarkerSize', 15, 'LineWidth', 2);
-    plot3(T(1), T(2), max(valid_peb)*1.1, 'k*', 'MarkerSize', 12, 'LineWidth', 1);
+    plot3(T(1), T(2), max(valid_peb)*100*1.1, 'w*', 'MarkerSize', 15, 'LineWidth', 2);
+    plot3(T(1), T(2), max(valid_peb)*100*1.1, 'k*', 'MarkerSize', 12, 'LineWidth', 1);
     
     grid on; set(gca, 'FontSize', 10);
     
     cb = colorbar;
-    ylabel(cb, 'PEB [m]', 'Interpreter', 'latex', 'FontSize', 10);
+    ylabel(cb, 'PEB [cm]', 'Interpreter', 'latex', 'FontSize', 10);
+    
+    % ============================================================================
+    % GUARDAR FIGURAS
+    % ============================================================================
+    % Crear carpeta para guardar figuras
+    output_folder = 'FigPEB_Heatmaps';
+    if ~exist(output_folder, 'dir')
+        mkdir(output_folder);
+    end
+    
+    % Configurar fondo blanco y alta resolución para todas las figuras
+    figure(1);
+    set(gcf, 'Color', 'white');
+    print(fullfile(output_folder, 'PEB_Heatmap_2D.png'), '-dpng', '-r300');
+    
+    figure(2);
+    set(gcf, 'Color', 'white');
+    print(fullfile(output_folder, 'PEB_Superficie_3D.png'), '-dpng', '-r300');
+    
+    figure(3);
+    set(gcf, 'Color', 'white');
+    print(fullfile(output_folder, 'PEB_Vista_Superior.png'), '-dpng', '-r300');
     
     fprintf('\n=== VISUALIZACIONES GENERADAS ===\n');
     fprintf('Figura 1: Mapa de calor 2D (vista plana)\n');
     fprintf('Figura 2: Superficie 3D (perspectiva)\n');
     fprintf('Figura 3: Superficie 3D (vista superior)\n');
+    fprintf('\n=== FIGURAS GUARDADAS ===\n');
+    fprintf('Carpeta: %s\n', output_folder);
+    fprintf('- PEB_Heatmap_2D.png (300 DPI)\n');
+    fprintf('- PEB_Superficie_3D.png (300 DPI)\n');
+    fprintf('- PEB_Vista_Superior.png (300 DPI)\n');
     fprintf('=====================================\n');
 end

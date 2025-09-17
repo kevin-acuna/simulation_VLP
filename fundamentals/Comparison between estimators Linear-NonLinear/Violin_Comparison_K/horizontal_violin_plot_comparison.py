@@ -496,23 +496,24 @@ def create_horizontal_split_violin_plot(df, save_path='horizontal_violin_compari
     print(f"  ✓ Figura guardada: {save_path}")
     
     # Mostrar estadísticas
-    print("\n📊 Estadísticas por K:")
-    print("=" * 60)
-    print(f"{'K':<3} {'Opt_Mean':<10} {'Opt_Std':<10} {'Rand_Mean':<11} {'Rand_Std':<10} {'Mejora%':<8}")
-    print("-" * 60)
+    print("\n📊 Estadísticas por K (en centímetros):")
+    print("=" * 75)
+    print(f"{'K':<3} {'Opt_Mean[cm]':<12} {'Opt_Std[cm]':<12} {'Rand_Mean[cm]':<13} {'Rand_Std[cm]':<12} {'Mejora%':<8}")
+    print("-" * 75)
     
     for k in sorted(df['K'].unique()):
         opt_data = df[(df['K'] == k) & (df['Type'] == 'Optimizadas')]['PEB']
         rand_data = df[(df['K'] == k) & (df['Type'] == 'Aleatorias')]['PEB']
         
         if len(opt_data) > 0 and len(rand_data) > 0:
-            opt_mean = np.mean(opt_data)
-            opt_std = np.std(opt_data)
-            rand_mean = np.mean(rand_data)
-            rand_std = np.std(rand_data)
-            mejora = (rand_mean - opt_mean) / rand_mean * 100
+            # Convertir a centímetros para mostrar estadísticas
+            opt_mean_cm = np.mean(opt_data) * 100
+            opt_std_cm = np.std(opt_data) * 100
+            rand_mean_cm = np.mean(rand_data) * 100
+            rand_std_cm = np.std(rand_data) * 100
+            mejora = (rand_mean_cm - opt_mean_cm) / rand_mean_cm * 100
             
-            print(f"{k:<3} {opt_mean:<10.6f} {opt_std:<10.6f} {rand_mean:<11.6f} {rand_std:<10.6f} {mejora:<8.1f}")
+            print(f"{k:<3} {opt_mean_cm:<12.3f} {opt_std_cm:<12.3f} {rand_mean_cm:<13.3f} {rand_std_cm:<12.3f} {mejora:<8.1f}")
     
     return fig, ax
 
