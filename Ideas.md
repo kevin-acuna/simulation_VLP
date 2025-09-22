@@ -49,11 +49,15 @@ JOURNALS TARGET
 
 * **(19/09/2025)** "*Estimación de posiciones basado en modulación de la orientación para un canal NO-LAMBERTIANO"*: En este escenario se considera que el LED tiene un patron de emisión NO Lambertiano y eso hace que se modifique cos(phi)^m por f(phi) donde f(phi) tiene que ser aproximado. En una revisión simple se encontro : que u(phi) = log(f(phi))  y se podria aproximar a  u(phi)=**α**+**β**s donde s=nt ⁣⋅ ⁣d.
 * (19/09/2025) "Caso de estudio: Estimación 2D single-LED single-PD con estimadores lineales GLS, WLS" Estudio del ratio lineal, simiulación en 1D, linealidad del ratio beta, estimación en 2D empleando modulacion de la orientación con beta, empleando LS y con WLS. Los graficos y analisis se encuentran en fundamentals/LogRatios/1D,2D.m
-* (19/09/2025) Applicar **Machine Learning** a todo lo relativo a Single-LED Single-PD Visible Light Positioning. Incluso con datos sintéticos. Además aplicar **ROBOTICA** en el paper y **SISTEMAS DE CONTROL** a fin de hacerlo más interesante. Ver si se aplica también alguna técnica de **IMAGE PROCESSING**.
+* (19/09/2025) Applicar **Machine Learning** a todo lo relativo a Single-LED Single-PD Visible Light Positioning. Incluso con datos sintéticos. Además aplicar **ROBOTICA** en el paper y **SISTEMAS DE CONTROL** a fin de hacerlo más interesante. Ver si se aplica también alguna técnica de **IMAGE PROCESSING** y además aplicar **SIGNAL PROCESSING** en algo de TEORIA, SIMULACION E IMPLEMENTACIÓN.
 * Estudio teórico (optimización) y SIMULACIONES de estimación de la posición en 3D empleando N-PD.
 * Estudio teórico (optimización), SIMULACIONES y EXPERIMENTAL de la estimación de posición 3D empleando 1PD y N-Transmisores en BeamStearing (N < 4 sería ideal para obtener ventaja frente a las estructuras tradicionales del VLP).
   * Comentario: Este planteamiento debe pensarse con más detenimiento porque la ventaja de usar Single-VLP es el número de Transmisores, pero si este aumenta entonces debe de justificarse su respectivas ventajas ya no solo frente a un Single-VLP sino tambien a un Tradicional VLP (4 Tx fijos)
 * asdasd
+
+#### PROPUESTAS DE TRABAJO EN LA PASANTIA
+
+* Sub-Centimeter Indoor Optical Wireless Positioning Using An Optimized Machine Learning Technique. https://www.repository.cam.ac.uk/items/f12f5d6d-8c27-429a-831c-3818e4a486a7
 
 #### PLAN DE TRABAJO
 
