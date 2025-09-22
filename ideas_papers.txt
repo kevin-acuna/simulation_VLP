@@ -1,0 +1,11 @@
+
+(22/09/2025) Idea:
+Trabajar en el análisis de ratios para la estimación de la posición en 2D. 
+Empleando el analisis y mostrar imagenes del comportamiento del ratios especialmente su linealidad cuando \nt_1 = [0,0,-1].
+En ese escenario el espacio de soluciones es una linea por cada 2 ratios y al tener 2 pares se puede resolver. Aumentar los pares
+te brinda una mejor estimación debido a que se emplea WLS para las ecuaciones redundantes.
+[Esperar la respuesta en 3D GLS - Journal].
+
+
+
+

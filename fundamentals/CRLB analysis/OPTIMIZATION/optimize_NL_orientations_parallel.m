@@ -1,14 +1,25 @@
-% Fork de optimize_PEB_orientations_parallel
-% Optimización de la posicion para el NL case
+% optimize_PEB_orientations.m
+% Genetic Algorithm optimization of LED orientations to minimize Position Error Bound (PEB)
+% 
+% This script optimizes the set of LED orientations for a Single LED VLP system
+% using the theoretical CRLB framework to minimize positioning errors.
+%
+% Based on the theoretical work on Position Error Bound for VLP systems
+% Author: Kevin Acuña
+% Date: 27/07/2025
+
 clear; clc; close all;
 rng('default');
 
 % ======================== CONFIGURATION ========================
-K_orientations = [5]; % Number of LED orientations to optimize
+
+K_orientations = [6,8,9,10]; % Number of LED orientations to optimize
 system_params.optimization_metric = 'rms';     % 'mean', 'max', 'rms', 'percentile_90'
-L = 3; W = 3; Hmax = 1.2; step = 0.2;
+L = 3; W = 3; 
+Hmax = 1.2; step = 0.2;
 max_elevation_angle = 80; % Maximum elevation angle for LED orientations [degrees] 
-results_dir = 'optimization/NL';
+results_dir = 'optimization/room_3x3';
+
 % ===============================================================
 
 %%
@@ -23,6 +34,7 @@ else
     pool = gcp;
     fprintf('Using existing parallel pool with %d workers.\n', pool.NumWorkers);
 end
+
 
 %% ======================== SYSTEM PARAMETERS ========================
 
@@ -44,6 +56,11 @@ system_params.penalize_extreme_angles = false;   % Penalize very vertical/horizo
 system_params.debug_mode = false;               % Set to true to show detailed warnings
 
 %% ======================== TEST SCENARIO ========================
+
+% Define receiver positions for testing (3D testbed)
+% Create a grid of positions at different heights
+
+
 x_range = -L/2:step:L/2;
 y_range = -W/2:step:W/2;
 z_heights = 0:step:Hmax; % Different receiver heights
@@ -52,7 +69,10 @@ receiver_positions = [];
 for z = z_heights
     for x = x_range
         for y = y_range
+            % Skip positions too close to the LED (directly underneath)
+            % if sqrt(x^2 + y^2) > 0.3
                 receiver_positions = [receiver_positions, [x; y; z]];
+            % end
         end
     end
 end
@@ -136,6 +156,10 @@ for k_idx = 1:length(K_orientations)
     fprintf('OPTIMIZING FOR K = %d ORIENTATIONS\n', K);
     fprintf(string(repmat('=', 1, 60)) + '\n');
     
+
+    
+
+
     %% GA Setup
     tic;
     
@@ -160,6 +184,17 @@ for k_idx = 1:length(K_orientations)
     A = []; b = [];
     Aeq = []; beq = [];
     nonlcon = [];
+    
+    % GA options
+%     options = optimoptions('ga', ...
+%         'PopulationSize', 200, ...
+%         'MaxGenerations', 200, ...
+%         'CrossoverFraction', 0.8, ...
+%         'MutationFcn', @mutationadaptfeasible, ...
+%         'Display', 'iter', ...
+%         'PlotFcn', {@gaplotbestf}, ...
+%         'OutputFcn', @PEB_monitor, ...
+%         'UseParallel', false); % Set to true if Parallel Computing Toolbox available
     
     % Optimized GA options for parallel execution
     options = optimoptions('ga', ...
