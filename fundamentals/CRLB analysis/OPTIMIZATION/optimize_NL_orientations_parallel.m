@@ -1,25 +1,20 @@
-% optimize_PEB_orientations.m
-% Genetic Algorithm optimization of LED orientations to minimize Position Error Bound (PEB)
-% 
-% This script optimizes the set of LED orientations for a Single LED VLP system
-% using the theoretical CRLB framework to minimize positioning errors.
-%
-% Based on the theoretical work on Position Error Bound for VLP systems
-% Author: Kevin Acuña
-% Date: 27/07/2025
-
+% Fork de optimize_PEB_orientations_parallel
+% Optimización de la posicion para el NL case
 clear; clc; close all;
 rng('default');
 
+% Añadir path para OWC_LOS_channel si no está disponible
+if ~exist('OWC_LOS_channel', 'file')
+    addpath('../../Comparison between estimators Linear-NonLinear');
+end
+
 % ======================== CONFIGURATION ========================
-
-K_orientations = [6,8,9,10]; % Number of LED orientations to optimize
-system_params.optimization_metric = 'rms';     % 'mean', 'max', 'rms', 'percentile_90'
+K_orientations = [5]; % Number of LED orientations to optimize
+system_params.optimization_metric = 'rms';     
 L = 3; W = 3; 
-Hmax = 1.2; step = 0.2;
+Hmax = 1.2; step = 0.4;
 max_elevation_angle = 80; % Maximum elevation angle for LED orientations [degrees] 
-results_dir = 'optimization/room_3x3';
-
+results_dir = 'optimization/NL';
 % ===============================================================
 
 %%
@@ -34,7 +29,6 @@ else
     pool = gcp;
     fprintf('Using existing parallel pool with %d workers.\n', pool.NumWorkers);
 end
-
 
 %% ======================== SYSTEM PARAMETERS ========================
 
@@ -69,10 +63,7 @@ receiver_positions = [];
 for z = z_heights
     for x = x_range
         for y = y_range
-            % Skip positions too close to the LED (directly underneath)
-            % if sqrt(x^2 + y^2) > 0.3
                 receiver_positions = [receiver_positions, [x; y; z]];
-            % end
         end
     end
 end
@@ -185,20 +176,21 @@ for k_idx = 1:length(K_orientations)
     Aeq = []; beq = [];
     nonlcon = [];
     
-    % GA options
-%     options = optimoptions('ga', ...
-%         'PopulationSize', 200, ...
-%         'MaxGenerations', 200, ...
-%         'CrossoverFraction', 0.8, ...
-%         'MutationFcn', @mutationadaptfeasible, ...
-%         'Display', 'iter', ...
-%         'PlotFcn', {@gaplotbestf}, ...
-%         'OutputFcn', @PEB_monitor, ...
-%         'UseParallel', false); % Set to true if Parallel Computing Toolbox available
-    
     % Optimized GA options for parallel execution
+    % options = optimoptions('ga', ...
+    %     'PopulationSize', 300, ...
+    %     'MaxGenerations', 150, ...
+    %     'CrossoverFraction', 0.8, ...
+    %     'MutationFcn', @mutationadaptfeasible, ...
+    %     'Display', 'iter', ...
+    %     'PlotFcn', {@gaplotbestf}, ...
+    %     'OutputFcn', @PEB_monitor, ...
+    %     'UseParallel', true, ...             % ENABLED for 4-core acceleration
+    %     'UseVectorized', false);             % Optimized for parallel objective function calls
+
+        % Optimized GA options for parallel execution
     options = optimoptions('ga', ...
-        'PopulationSize', 300, ...
+        'PopulationSize', 100, ...
         'MaxGenerations', 150, ...
         'CrossoverFraction', 0.8, ...
         'MutationFcn', @mutationadaptfeasible, ...
@@ -208,8 +200,9 @@ for k_idx = 1:length(K_orientations)
         'UseParallel', true, ...             % ENABLED for 4-core acceleration
         'UseVectorized', false);             % Optimized for parallel objective function calls
 
+
     % Create objective function handle
-    objective_func = @(x) PEB_objective(x, system_params, receiver_positions);
+    objective_func = @(x) NL_objective_function(x, system_params, receiver_positions);
     
     %% Run optimization
     fprintf('Starting GA optimization with parallel processing...\n');
@@ -229,7 +222,7 @@ for k_idx = 1:length(K_orientations)
     fprintf('OPTIMIZATION RESULTS FOR K = %d\n', K);
     fprintf(string(repmat('-', 1, 50)) + '\n');
     fprintf('Execution time: %.2f seconds\n', optimization_time);
-    fprintf('Best PEB achieved: %.6f m\n', fvalOpt);
+    fprintf('Best RMS error achieved: %.6f m\n', fvalOpt);
     fprintf('Exit flag: %d\n', exitflag);
     
     % Display optimal orientations
@@ -257,7 +250,7 @@ for k_idx = 1:length(K_orientations)
     result_data.K = K;
     result_data.optimal_angles = xOpt;
     result_data.optimal_orientations_3D = optimal_orientations;
-    result_data.best_PEB = fvalOpt;
+    result_data.best_RMS = fvalOpt;
     result_data.optimization_time = optimization_time;
     result_data.exitflag = exitflag;
     result_data.output = output;

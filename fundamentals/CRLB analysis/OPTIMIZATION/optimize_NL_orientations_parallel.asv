@@ -3,12 +3,18 @@
 clear; clc; close all;
 rng('default');
 
+% Añadir path para OWC_LOS_channel si no está disponible
+if ~exist('OWC_LOS_channel', 'file')
+    addpath('../../Comparison between estimators Linear-NonLinear');
+end
+
 % ======================== CONFIGURATION ========================
-K_orientations = [5,9]; % Number of LED orientations to optimize
-system_params.optimization_metric = 'rms';     % 'mean', 'max', 'rms', 'percentile_90'
-L = 3; W = 3; Hmax = 1.2; step = 0.2;
+K_orientations = [5]; % Number of LED orientations to optimize
+system_params.optimization_metric = 'rms';     
+L = 3; W = 3; 
+Hmax = 1.2; step = 0.4;
 max_elevation_angle = 80; % Maximum elevation angle for LED orientations [degrees] 
-results_dir = 'optimization/room_3x3';
+results_dir = 'optimization/NL';
 % ===============================================================
 
 %%
@@ -44,6 +50,11 @@ system_params.penalize_extreme_angles = false;   % Penalize very vertical/horizo
 system_params.debug_mode = false;               % Set to true to show detailed warnings
 
 %% ======================== TEST SCENARIO ========================
+
+% Define receiver positions for testing (3D testbed)
+% Create a grid of positions at different heights
+
+
 x_range = -L/2:step:L/2;
 y_range = -W/2:step:W/2;
 z_heights = 0:step:Hmax; % Different receiver heights
@@ -136,6 +147,10 @@ for k_idx = 1:length(K_orientations)
     fprintf('OPTIMIZING FOR K = %d ORIENTATIONS\n', K);
     fprintf(string(repmat('=', 1, 60)) + '\n');
     
+
+    
+
+
     %% GA Setup
     tic;
     
@@ -174,7 +189,7 @@ for k_idx = 1:length(K_orientations)
         'UseVectorized', false);             % Optimized for parallel objective function calls
 
     % Create objective function handle
-    objective_func = @(x) PEB_objective(x, system_params, receiver_positions);
+    objective_func = @(x) NL_objective_function(x, system_params, receiver_positions);
     
     %% Run optimization
     fprintf('Starting GA optimization with parallel processing...\n');
@@ -194,7 +209,7 @@ for k_idx = 1:length(K_orientations)
     fprintf('OPTIMIZATION RESULTS FOR K = %d\n', K);
     fprintf(string(repmat('-', 1, 50)) + '\n');
     fprintf('Execution time: %.2f seconds\n', optimization_time);
-    fprintf('Best PEB achieved: %.6f m\n', fvalOpt);
+    fprintf('Best RMS error achieved: %.6f m\n', fvalOpt);
     fprintf('Exit flag: %d\n', exitflag);
     
     % Display optimal orientations
@@ -222,7 +237,7 @@ for k_idx = 1:length(K_orientations)
     result_data.K = K;
     result_data.optimal_angles = xOpt;
     result_data.optimal_orientations_3D = optimal_orientations;
-    result_data.best_PEB = fvalOpt;
+    result_data.best_RMS = fvalOpt;
     result_data.optimization_time = optimization_time;
     result_data.exitflag = exitflag;
     result_data.output = output;

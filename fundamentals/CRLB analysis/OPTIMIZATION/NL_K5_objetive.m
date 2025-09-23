@@ -1,19 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This script simulates a 3D beamsteering-based positioning system using a 
-% single steerable optical source, which orientation can be changed 
-% from 3 to 9 times while considering additive white Gaussian noise 
-% independant from the received signal of interest at the single-photodiode 
-% level. Two methods for estimating the receiver's position are
-% implemented:
-% 1. Direct estimation of the receivers coordinates from the observed
-% received power using non-linear least square optimization
-% 2. Indirect estimation of the receivers coordinates via direct estimation
-% of the received optical power using the MVU (and here efficient) least
-% square estimator, and then sigular value decomposition.
-% More details in '20250521 - Notes positionnement 3D (V0.2).pdf'
-%
-% B. Béchadergue - LISV - May 2025
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 close all;
 clear variables;
 clc;
@@ -37,7 +21,7 @@ receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
 theta_half = 45; %
 P_t = 0.405; % 1; % Transmitted optical power [W]
 L = 3; W = 3; H = 2; Hmax=1.2; % Full length, width and height of the room [m]
-step = 0.4; stepH=0.4;
+step = 0.8; stepH=0.6;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                          AP Parameters                            %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,11 +33,10 @@ m_t = -log(2)./log(cosd(theta_half)); % Lambertian order of emission
 
 % Use optimized orientations for K=3 to K=10 from the CRLB analysis
 % [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
-orientations_K5 = [0.48, 294.81,30, 87.79, 30, 358.55,30, 177.68, 30, 268.14];
-% orientations_K5 = [0.48, 294.81,57.57, 87.79, 57.71, 358.55, 57.17, 177.68, 55.72, 268.14];
 orientations_K3=[35.40,140.13,33.31,36.38,29.58,262.70];
 orientations_K4=[38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
-% orientations_K5=[0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+% orientations_K5 = [0.48, 294.81,30, 87.79, 30, 358.55,30, 177.68, 30, 268.14];
+orientations_K5=[0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
 orientations_K6=[17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
 orientations_K7=[58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
 orientations_K8=[51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];
@@ -239,6 +222,8 @@ errorNLS = realPos - estPos;
 for i = 1:length(errorNLS)
     errorNorm(i) = norm(errorNLS(i,:));
 end
+
+rms_error = sqrt(mean(errorNorm.^2))
 
 %% 
 figure(1)
