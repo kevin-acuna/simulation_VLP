@@ -11,6 +11,10 @@ N_or = 5; % Number of orientations considered by the non-linear least square est
 %   'random' - Utiliza N_pos posiciones aleatorias (como en main_3D_withNoise.m)
 receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
 
+if ~exist('OWC_LOS_channel', 'file')
+    addpath('../../Comparison between estimators Linear-NonLinear');
+end
+
 %% 1. Simulation Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                    Main Simulation Parameters                     %%%%
@@ -21,7 +25,8 @@ receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
 theta_half = 45; %
 P_t = 0.405; % 1; % Transmitted optical power [W]
 L = 3; W = 3; H = 2; Hmax=1.2; % Full length, width and height of the room [m]
-step = 0.8; stepH=0.6;
+% step = 0.8; stepH=0.6;
+step = 0.2; stepH=0.2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                          AP Parameters                            %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,12 +36,16 @@ step = 0.8; stepH=0.6;
 T = [0 0 0]; x_n = T(1); y_n = T(2); z_n = T(3); % Positions of the light source (origin of the main frame)
 m_t = -log(2)./log(cosd(theta_half)); % Lambertian order of emission
 
+
+
 % Use optimized orientations for K=3 to K=10 from the CRLB analysis
 % [theta1, rho1, theta2, rho2, ...] donde theta es elevación y rho es azimuth
 orientations_K3=[35.40,140.13,33.31,36.38,29.58,262.70];
 orientations_K4=[38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
-% orientations_K5 = [0.48, 294.81,30, 87.79, 30, 358.55,30, 177.68, 30, 268.14];
-orientations_K5=[0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+%orientations_K5 = [0.48, 294.81,30, 87.79, 30, 358.55,30, 177.68, 30, 268.14];
+%orientations_K5=[0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+orientations_K5=[21,42,21,341,23,174,25,247,21,112];
+
 orientations_K6=[17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
 orientations_K7=[58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
 orientations_K8=[51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];

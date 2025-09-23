@@ -12,6 +12,9 @@ errorNormNL_K9 = load('K9_NL.mat').errorNorm;
 errorNormCRLB_K5 = load('K5_CRLB.mat').errorNormCRLB;
 errorNormCRLB_K9 = load('K9_CRLB.mat').errorNormCRLB;
 
+
+errorNormNL_K5_optimized = load('K5_NL_optimized.mat').errorNorm;
+
 % CDF plot
 figure(1)
 hold on;
@@ -20,7 +23,7 @@ lw_9 = 0.2;
 [f2, x2] = ecdf(errorNormSVD_K3(:)*100,'Function','cdf');stairs(x2, f2, '-', 'LineWidth', 0.5,'Color',[0.9290, 0.6940, 0.1250]);
 [f2, x2] = ecdf(errorNormGLS_K5(:)*100,'Function','cdf');stairs(x2, f2, '-', 'LineWidth', lw_5,'Color',[0, 0.4470, 0.7410]);
 [f1, x1] = ecdf(errorNormWLS_K5(:)*100,'Function','cdf');stairs(x1, f1, '-', 'LineWidth', lw_5,'Color',[0.8500, 0.3250, 0.0980]);
-[f3, x3] = ecdf(errorNormNL_K5(:)*100,'Function','cdf'); stairs(x3, f3, '-', 'LineWidth', lw_5,'Color',[0.4940, 0.1840, 0.5560]);
+[f3, x3] = ecdf(errorNormNL_K5_optimized(:)*100,'Function','cdf'); stairs(x3, f3, '-', 'LineWidth', lw_5,'Color',[0.4940, 0.1840, 0.5560]);
 [f4, x4] = ecdf(errorNormCRLB_K5(:)*100,'Function','cdf'); stairs(x4, f4, '-', 'LineWidth', lw_5,'Color',[0.4660, 0.6740, 0.1880]);
 
 [f2, x2] = ecdf(errorNormGLS_K9(:)*100,'Function','cdf');stairs(x2, f2, '--', 'LineWidth', lw_9,'Color',[0, 0.4470, 0.7410]);
