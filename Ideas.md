@@ -58,6 +58,7 @@ JOURNALS TARGET
 #### PROPUESTAS DE TRABAJO EN LA PASANTIA
 
 * Sub-Centimeter Indoor Optical Wireless Positioning Using An Optimized Machine Learning Technique. https://www.repository.cam.ac.uk/items/f12f5d6d-8c27-429a-831c-3818e4a486a7
+* Desarrollar este GIMBAL modular: https://www.zaber.com/products/gimbal-stages/X-G-RST-DE/specs?part=X-G-RST300-DE50SR10
 
 #### PLAN DE TRABAJO
 
