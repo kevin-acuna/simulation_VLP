@@ -20,7 +20,7 @@ errorNormGLS_K9 = load('K9_GLS_fixed.mat').filtered_errorNormGLS;
 errorNormNL_K5 = load('K5_NL_optimized_fixed.mat').errorNorm;
 % errorNormNL_K5 = load('K5_NL.mat').errorNorm;
 
-errorNormNL_K9 = load('K9_NL.mat').errorNorm;
+errorNormNL_K9 = load('K9_NL_optimized_fixed.mat').errorNorm;
 %errorNormNL_K9_optimized = load('K9_NL_optimized.mat').errorNorm;
 
 
@@ -55,7 +55,7 @@ avg_time_K5_GLS = mean((load('K5_GLS_fixed.mat').time_GLS)*1000);
 avg_time_K5_NL = mean((load('K5_NL_optimized_fixed.mat').time_NL)*1000);
 avg_time_K9_WLS = mean((load('K9_WLS_fixed.mat').time_WLS)*1000);
 avg_time_K9_GLS = mean((load('K9_GLS_fixed.mat').time_GLS)*1000);
-avg_time_K9_NL = mean((load('K9_NL.mat').time_NL)*1000);
+avg_time_K9_NL = mean((load('K9_NL_optimized_fixed.mat').time_NL)*1000);
 
 % Organizar datos por método y configuración (coherente con figura 1)
 tiempos_K5 = [avg_time_K5_GLS, avg_time_K5_WLS, avg_time_K5_NL];
@@ -132,3 +132,131 @@ legend([bar1, bar2, bar3], {'GLS', 'WLS', 'NL'}, 'Location', 'northeast', ...
        'Interpreter', 'latex', 'FontSize', 10);
 
 hold off;
+
+
+%%
+
+%% Cálculo de métricas: RMSE, CDF_90%, APE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fprintf('======================================================================\n');
+fprintf('MÉTRICAS DE RENDIMIENTO POR MÉTODO\n');
+fprintf('======================================================================\n\n');
+
+% Función para calcular CDF 90%
+calculate_cdf90 = @(data) prctile(data*100, 90); % Percentil 90 en cm
+
+% --- K=3 (SVD) ---
+rmse_SVD_K3 = sqrt(mean(errorNormSVD_K3.^2));
+cdf90_SVD_K3 = calculate_cdf90(errorNormSVD_K3);
+ape_SVD_K3 = mean(errorNormSVD_K3);
+
+fprintf('K=3 (SVD):\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_SVD_K3, rmse_SVD_K3*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_SVD_K3);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_SVD_K3, ape_SVD_K3*100);
+
+% --- K=5 Methods ---
+fprintf('K=5 METHODS:\n');
+fprintf('----------------------------------------\n');
+
+% GLS K=5
+rmse_GLS_K5 = sqrt(mean(errorNormGLS_K5.^2));
+cdf90_GLS_K5 = calculate_cdf90(errorNormGLS_K5);
+ape_GLS_K5 = mean(errorNormGLS_K5);
+
+fprintf('GLS K=5:\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_GLS_K5, rmse_GLS_K5*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_GLS_K5);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_GLS_K5, ape_GLS_K5*100);
+
+% WLS K=5
+rmse_WLS_K5 = sqrt(mean(errorNormWLS_K5.^2));
+cdf90_WLS_K5 = calculate_cdf90(errorNormWLS_K5);
+ape_WLS_K5 = mean(errorNormWLS_K5);
+
+fprintf('WLS K=5:\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_WLS_K5, rmse_WLS_K5*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_WLS_K5);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_WLS_K5, ape_WLS_K5*100);
+
+% NL K=5
+rmse_NL_K5 = sqrt(mean(errorNormNL_K5.^2));
+cdf90_NL_K5 = calculate_cdf90(errorNormNL_K5);
+ape_NL_K5 = mean(errorNormNL_K5);
+
+fprintf('NL K=5:\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_NL_K5, rmse_NL_K5*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_NL_K5);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_NL_K5, ape_NL_K5*100);
+
+% CRLB K=5 (límite teórico)
+rmse_CRLB_K5 = sqrt(mean(errorNormCRLB_K5.^2));
+cdf90_CRLB_K5 = calculate_cdf90(errorNormCRLB_K5);
+ape_CRLB_K5 = mean(errorNormCRLB_K5);
+
+fprintf('CRLB K=5 (límite teórico):\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_CRLB_K5, rmse_CRLB_K5*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_CRLB_K5);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_CRLB_K5, ape_CRLB_K5*100);
+
+% --- K=9 Methods ---
+fprintf('K=9 METHODS:\n');
+fprintf('----------------------------------------\n');
+
+% GLS K=9
+rmse_GLS_K9 = sqrt(mean(errorNormGLS_K9.^2));
+cdf90_GLS_K9 = calculate_cdf90(errorNormGLS_K9);
+ape_GLS_K9 = mean(errorNormGLS_K9);
+
+fprintf('GLS K=9:\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_GLS_K9, rmse_GLS_K9*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_GLS_K9);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_GLS_K9, ape_GLS_K9*100);
+
+% WLS K=9
+rmse_WLS_K9 = sqrt(mean(errorNormWLS_K9.^2));
+cdf90_WLS_K9 = calculate_cdf90(errorNormWLS_K9);
+ape_WLS_K9 = mean(errorNormWLS_K9);
+
+fprintf('WLS K=9:\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_WLS_K9, rmse_WLS_K9*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_WLS_K9);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_WLS_K9, ape_WLS_K9*100);
+
+% NL K=9
+rmse_NL_K9 = sqrt(mean(errorNormNL_K9.^2));
+cdf90_NL_K9 = calculate_cdf90(errorNormNL_K9);
+ape_NL_K9 = mean(errorNormNL_K9);
+
+fprintf('NL K=9:\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_NL_K9, rmse_NL_K9*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_NL_K9);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_NL_K9, ape_NL_K9*100);
+
+% CRLB K=9 (límite teórico)
+rmse_CRLB_K9 = sqrt(mean(errorNormCRLB_K9.^2));
+cdf90_CRLB_K9 = calculate_cdf90(errorNormCRLB_K9);
+ape_CRLB_K9 = mean(errorNormCRLB_K9);
+
+fprintf('CRLB K=9 (límite teórico):\n');
+fprintf('  RMSE: %.4f m (%.2f cm)\n', rmse_CRLB_K9, rmse_CRLB_K9*100);
+fprintf('  CDF 90%%: %.2f cm\n', cdf90_CRLB_K9);
+fprintf('  APE: %.4f m (%.2f cm)\n\n', ape_CRLB_K9, ape_CRLB_K9*100);
+
+% --- Resumen comparativo ---
+fprintf('======================================================================\n');
+fprintf('RESUMEN COMPARATIVO\n');
+fprintf('======================================================================\n');
+fprintf('Método\t\tRMSE (cm)\tCDF 90%% (cm)\tAPE (cm)\n');
+fprintf('----------------------------------------------------------------------\n');
+fprintf('SVD K=3\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_SVD_K3*100, cdf90_SVD_K3, ape_SVD_K3*100);
+fprintf('GLS K=5\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_GLS_K5*100, cdf90_GLS_K5, ape_GLS_K5*100);
+fprintf('WLS K=5\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_WLS_K5*100, cdf90_WLS_K5, ape_WLS_K5*100);
+fprintf('NL K=5\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_NL_K5*100, cdf90_NL_K5, ape_NL_K5*100);
+fprintf('CRLB K=5\t%.2f\t\t%.2f\t\t%.2f\n', rmse_CRLB_K5*100, cdf90_CRLB_K5, ape_CRLB_K5*100);
+fprintf('GLS K=9\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_GLS_K9*100, cdf90_GLS_K9, ape_GLS_K9*100);
+fprintf('WLS K=9\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_WLS_K9*100, cdf90_WLS_K9, ape_WLS_K9*100);
+fprintf('NL K=9\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_NL_K9*100, cdf90_NL_K9, ape_NL_K9*100);
+fprintf('CRLB K=9\t%.2f\t\t%.2f\t\t%.2f\n', rmse_CRLB_K9*100, cdf90_CRLB_K9, ape_CRLB_K9*100);
+fprintf('======================================================================\n\n');
