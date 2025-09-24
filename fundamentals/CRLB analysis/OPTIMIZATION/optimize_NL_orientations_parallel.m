@@ -9,7 +9,7 @@ if ~exist('OWC_LOS_channel', 'file')
 end
 
 % ======================== CONFIGURATION ========================
-K_orientations = [5]; % Number of LED orientations to optimize
+K_orientations = [9]; % Number of LED orientations to optimize
 system_params.optimization_metric = 'rms';     
 L = 3; W = 3; 
 Hmax = 1.2; step = 0.4;
@@ -23,7 +23,7 @@ results_dir = 'optimization/NL';
 fprintf('Setting up parallel computing pool...\n');
 if isempty(gcp('nocreate'))
     % Create parallel pool with 4 workers
-    pool = parpool('local', 4);
+    pool = parpool('local', 24);
     fprintf('Parallel pool created with %d workers.\n', pool.NumWorkers);
 else
     pool = gcp;
