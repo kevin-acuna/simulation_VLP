@@ -19,7 +19,7 @@ close all;clear variables;clc;
 % =================================================
 rng(42); % Repetibilidad
 N_or = 9;  % Número de orientaciones
-save_files = 1;
+save_files = 0;
 
 % Define common parameters
 L = 3; % Length of room [m]

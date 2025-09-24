@@ -18,7 +18,13 @@ close all;
 clear variables;
 clc;
 tic;
-rng(42);
+
+% Opciones: 
+%   'fixed'  - Utiliza posiciones fijas en grid de testbed (como en analyze_PEB_vs_theta_half.m)
+%   'random' - Utiliza N_pos posiciones aleatorias (como en main_3D_withNoise.m)
+receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
+
+
 %% 1. Simulation Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                    Main Simulation Parameters                     %%%%
@@ -30,6 +36,7 @@ theta_half = 45; % 60; % Semi-angle at half-power [°]
 P_t = 0.405; % 1; % Transmitted optical power [W]
 N_or = 3; % Number of orientations considered by the non-linear least square estimator
 L = 3; W = 3; H = 2; Hmax=1.2; % Full length, width and height of the room [m]
+step=0.2; stepH=0.2;
 % L = 2; W = 2; H = 2.5; % Full Length, width and height of the room [m]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,10 +104,28 @@ C = -P_t*(m_t+1)*A_det/(2*pi); % Normalization factor
 %---------------------------%
 % RECEIVER PLANE PARAMETERS %
 %---------------------------%
-N_pos = 1000; % Number of random Rx positions simulated
-X_r = -L/2 + L.*rand(1,N_pos); % x-axis Rx coordinate
-Y_r = -W/2 + W.*rand(1,N_pos); % y-axis Rx coordinate
-Z_r = -(0.8+Hmax*rand(1,N_pos)); % x-axis Rx coordinate (random altitudes)
+
+
+if strcmp(receiver_mode, 'fixed')
+    % Opción 1: Posiciones fijas
+    % Generate 3D grid of positions
+    [X, Y, Z] = meshgrid(-L/2:step:L/2, -W/2:step:W/2, -H:stepH:-(H-Hmax));
+    % Convert to vector form
+    X_r = X(:)';
+    Y_r = Y(:)';
+    Z_r = Z(:)';
+    % Count the number of positions
+    N_pos = length(X_r);     
+    fprintf('Usando %d posiciones fijas en grid (testbed)\n', N_pos);
+else
+    % Opción 2: Posiciones aleatorias
+    N_pos = 1000; % Number of random Rx positions simulated
+    fprintf('Usando %d posiciones aleatorias\n', N_pos);
+    X_r = -L/2 + L.*rand(1,N_pos); % x-axis Rx coordinate
+    Y_r = -W/2 + W.*rand(1,N_pos); % y-axis Rx coordinate
+    Z_r = -(0.8+Hmax*rand(1,N_pos)); % x-axis Rx coordinate (random altitudes)
+end
+
 
 param_r = {A_det, n_r, FOV}; % Vector of the Rx parameters used for channel simulation
 
@@ -136,9 +161,21 @@ for i_pos = 1:N_pos
     %---------------------------------------------------------------------------------------%
     % Case 2: Indirect position estimation with with estimation of the received power + SVD %      
     %---------------------------------------------------------------------------------------%
-    K_ij = (mean(P_r_noisy{i_pos,1})./mean(P_r_noisy{i_pos,2})).^(1/m_t);
-    K_jk = (mean(P_r_noisy{i_pos,2})./mean(P_r_noisy{i_pos,3})).^(1/m_t);
-    K_ik = (mean(P_r_noisy{i_pos,1})./mean(P_r_noisy{i_pos,3})).^(1/m_t);
+    mPrn_1 = mean(P_r_noisy{i_pos,1});
+    mPrn_1 = min(max(mPrn_1, 0.00000000001), 1000);
+    mPrn_2 = mean(P_r_noisy{i_pos,2});
+    mPrn_2 = min(max(mPrn_2, 0.00000000001), 1000);
+    mPrn_3 = mean(P_r_noisy{i_pos,3});
+    mPrn_3 = min(max(mPrn_3, 0.00000000001), 1000);
+
+    K_ij = (mPrn_1./mPrn_2).^(1/m_t);
+    K_jk = (mPrn_2./mPrn_3).^(1/m_t);
+    K_ik = (mPrn_1./mPrn_3).^(1/m_t);
+    
+
+    % K_ij = (abs(mean(P_r_noisy{i_pos,1}))./abs(mean(P_r_noisy{i_pos,2}))).^(1/m_t);
+    % K_jk = (abs(mean(P_r_noisy{i_pos,2}))./abs(mean(P_r_noisy{i_pos,3}))).^(1/m_t);
+    % K_ik = (abs(mean(P_r_noisy{i_pos,1}))./abs(mean(P_r_noisy{i_pos,3}))).^(1/m_t);
     alpha_ij = a_i - K_ij*a_j;
     alpha_jk = a_j - K_jk*a_k;
     alpha_ik = a_i - K_ik*a_k;
@@ -180,12 +217,23 @@ realPos = [X_r ; Y_r ; Z_r];
 
 errorSVD = realPos' - estPosSVD;
 for i = 1:length(errorSVD)
-    
     errorNormSVD(i) = norm(errorSVD(i,:));
 end
+figure(1)
 cdfplot(errorNormSVD.*1e2); hold off;
 xlabel('RMS error [cm]'); ylabel('Empirical cumulative distribution function'); xlim([0 20])
 legend('Non-linear estimator of X','Linear estimator of P_{r,i} + SVD','Location','best');
+
+
+rms_error = sqrt(mean(errorNormSVD.^2))
+
+%% 
+figure(2)
+plot3(X_r , Y_r , Z_r, 'ok')
+hold on
+plot3(estPosSVD(:,1),estPosSVD(:,2),estPosSVD(:,3),'ob')
+
+save 'SVD_K3.mat' errorNormSVD 
 
 
 %% Appendix: Functions used by the main scipt
@@ -212,3 +260,5 @@ else
 end
 P_r_LOS = P_t*H0;
 end
+
+
