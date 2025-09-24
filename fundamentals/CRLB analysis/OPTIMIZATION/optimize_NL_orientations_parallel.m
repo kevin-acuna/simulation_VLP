@@ -11,6 +11,10 @@ end
 % ======================== CONFIGURATION ========================
 K_orientations = [9]; % Number of LED orientations to optimize
 system_params.optimization_metric = 'rms';     
+
+PopulationSize = 80;
+MaxGenerations = 200;
+
 L = 3; W = 3; 
 Hmax = 1.2; step = 0.4;
 max_elevation_angle = 80; % Maximum elevation angle for LED orientations [degrees] 
@@ -128,8 +132,8 @@ for k_idx = 1:length(K_orientations)
     fprintf('  Azimuth angle range: 0° to 360° (full rotation allowed)\n');
     fprintf('  Optimization metric: %s\n', system_params.optimization_metric);
     fprintf('  Parallel processing: %d workers\n', pool.NumWorkers);
-    fprintf('  Population size: 300\n');
-    fprintf('  Max generations: 150\n\n');
+    fprintf('  Population size: %d \n', PopulationSize);
+    fprintf('  Max generations: %d \n\n', MaxGenerations);
     
     % Print LED system parameters
     fprintf('LED TRANSMITTER CONFIGURATION:\n');
@@ -176,29 +180,17 @@ for k_idx = 1:length(K_orientations)
     Aeq = []; beq = [];
     nonlcon = [];
     
-    % Optimized GA options for parallel execution
-    % options = optimoptions('ga', ...
-    %     'PopulationSize', 300, ...
-    %     'MaxGenerations', 150, ...
-    %     'CrossoverFraction', 0.8, ...
-    %     'MutationFcn', @mutationadaptfeasible, ...
-    %     'Display', 'iter', ...
-    %     'PlotFcn', {@gaplotbestf}, ...
-    %     'OutputFcn', @PEB_monitor, ...
-    %     'UseParallel', true, ...             % ENABLED for 4-core acceleration
-    %     'UseVectorized', false);             % Optimized for parallel objective function calls
-
         % Optimized GA options for parallel execution
     options = optimoptions('ga', ...
-        'PopulationSize', 100, ...
-        'MaxGenerations', 150, ...
+        'PopulationSize', PopulationSize, ... % Configurable population size
+        'MaxGenerations', MaxGenerations, ... % Configurable max generations
         'CrossoverFraction', 0.8, ...
         'MutationFcn', @mutationadaptfeasible, ...
         'Display', 'iter', ...
         'PlotFcn', {@gaplotbestf}, ...
-        'OutputFcn', @PEB_monitor, ...
-        'UseParallel', true, ...             % ENABLED for 4-core acceleration
-        'UseVectorized', false);             % Optimized for parallel objective function calls
+        'OutputFcn', @NL_monitor, ...
+        'UseParallel', true, ...             % ENABLED for parallel acceleration
+        'UseVectorized', false);             
 
 
     % Create objective function handle
@@ -209,6 +201,7 @@ for k_idx = 1:length(K_orientations)
     fprintf('Population size: %d, Max generations: %d\n', ...
         options.PopulationSize, options.MaxGenerations);
     fprintf('Using %d parallel workers for acceleration\n', pool.NumWorkers);
+    fprintf('Orientation values will be logged for each generation\n');
     
     % Start timing
     parallel_start_time = tic;
@@ -261,13 +254,13 @@ for k_idx = 1:length(K_orientations)
     save(fullfile(k_results_dir, 'optimization_results.mat'), 'result_data');
     
     % Save figures
-    fig_evolution = findobj('Type', 'figure', 'Name', 'PEB Optimization - Angle Evolution');
+    fig_evolution = findobj('Type', 'figure', 'Name', 'NL Optimization - Angle Evolution');
     if ~isempty(fig_evolution)
         figure(fig_evolution);
         saveas(fig_evolution, fullfile(k_results_dir, 'angle_evolution.fig'));
     end
     
-    fig_3d = findobj('Type', 'figure', 'Name', 'PEB Optimization - 3D Orientations');
+    fig_3d = findobj('Type', 'figure', 'Name', 'NL Optimization - 3D Orientations');
     if ~isempty(fig_3d)
         figure(fig_3d);
         saveas(fig_3d, fullfile(k_results_dir, 'orientations_3d.fig'));
