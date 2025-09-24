@@ -18,8 +18,7 @@ close all;clear variables;clc;
 % PARAMETROS A CONFIGURAR
 % =================================================
 rng(42); % Repetibilidad
-N_or = 9;  % Número de orientaciones
-save_files = 1;
+N_or = 5;  % Número de orientaciones
 
 % Define common parameters
 L = 3; % Length of room [m]
@@ -415,8 +414,6 @@ view(44.6,17.28);
 
 fprintf('\nTiempo de ejecución: %.2f segundos\n', tiempo_ejecucion);
 
-if save_files==1
-    save(sprintf('K%d_CRLB_fixed.mat', N_or), 'errorNormCRLB')
-    save(sprintf('K%d_GLS_fixed.mat', N_or), 'filtered_errorNormGLS', 'time_GLS')
-    save(sprintf('K%d_WLS_fixed.mat', N_or), 'filtered_errorNormWLS', 'time_WLS')
-end
+
+save 'K5_GLS_fixed.mat' filtered_errorNormGLS time_GLS
+save 'K5_WLS_fixed.mat' filtered_errorNormWLS time_WLS
