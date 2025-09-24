@@ -9,7 +9,7 @@ if ~exist('OWC_LOS_channel', 'file')
 end
 
 % ======================== CONFIGURATION ========================
-K_orientations = [9]; % Number of LED orientations to optimize
+K_orientations = [5]; % Number of LED orientations to optimize
 system_params.optimization_metric = 'rms';     
 
 PopulationSize = 80;
