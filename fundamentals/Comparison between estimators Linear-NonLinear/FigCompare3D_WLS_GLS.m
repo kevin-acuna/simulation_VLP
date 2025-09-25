@@ -27,11 +27,11 @@ W = 3; % Width of room [m]
 Hmax = 1.2; % Maximum height [m]
 
 % Parametros para el estudio 
-step = 0.2; % step en X,Y
-stepH = 0.2; % Step size [m]
+% step = 0.2; % step en X,Y
+% stepH = 0.2; % Step size [m]
 % % Parametros para la Figura Comparacion de posiciones estimadas vs reales
-% step = 0.25; % step X,Y
-% stepH = 0.6; % Step size [m]
+step = 0.25; % step X,Y
+stepH = 0.6; % Step size [m]
 
 
 % Seleccionar modo de posiciones del receptor
@@ -409,9 +409,14 @@ zlabel('Z [m]','Interpreter','latex');
 legend('Reference', 'WLS', 'GLS','Interpreter','latex');
 axis([-L/2 L/2 -W/2 W/2 min(Z_r)-0.1 max(Z_r)+0.1])
 grid on;
-view(44.6,17.28);
-
+% view(44.6,17.28);
+view(68.96,16.08);
 % Tiempo de ejecución
+
+figure(2);
+set(gcf, 'Color', 'white');
+print('Fig_Comparison.png', '-dpng', '-r300');
+
 
 fprintf('\nTiempo de ejecución: %.2f segundos\n', tiempo_ejecucion);
 

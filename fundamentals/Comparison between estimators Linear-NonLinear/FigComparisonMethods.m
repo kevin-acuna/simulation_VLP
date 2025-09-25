@@ -44,7 +44,7 @@ lw_9 = 0.2;
 
 grid on;
 axis([0 16 0 1])
-xlabel('Positioning Error (cm)','interpreter','latex');
+xlabel('Positioning Error [cm]','interpreter','latex');
 ylabel('CDF','Interpreter','latex');
 legend('K=3','K=5 (GLS)', 'K=5 (WLS)','K=5 (NL)', 'K=5 (PEB)', 'K=9 (GLS)','K=9 (WLS)','K=9 (NL)', 'K=9 (PEB)', 'Location', 'best','interpreter','latex');
 
@@ -90,8 +90,8 @@ xticklabels({'GLS', 'WLS', 'NL', 'GLS', 'WLS', 'NL'});
 set(gca, 'TickLabelInterpreter', 'latex');
 
 % Etiquetas y formato
-ylabel('Average Time per Estimation (ms)', 'Interpreter', 'latex');
-xlabel('Method and Configuration', 'Interpreter', 'latex');
+ylabel('Average time per estimation [ms]', 'Interpreter', 'latex');
+xlabel('Method and configuration', 'Interpreter', 'latex');
 
 % Añadir líneas de separación visual entre K=5 y K=9
 xline(4, '--', 'Alpha', 0.3, 'LineWidth', 1);
@@ -100,7 +100,7 @@ xline(4, '--', 'Alpha', 0.3, 'LineWidth', 1);
 all_times = [tiempos_K5, tiempos_K9];
 all_pos = [pos_K5, pos_K9];
 for i = 1:length(all_times)
-    text(all_pos(i), all_times(i), sprintf('%.2f', all_times(i)), ...
+    text(all_pos(i), all_times(i), sprintf('%.3f', all_times(i)), ...
          'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', ...
          'FontSize', 10, 'Interpreter', 'latex');
 end
@@ -128,8 +128,7 @@ ylim([1e-2, 2e+2]);
 set(gca, 'YScale', 'log');
 
 % Leyenda coherente con figura 1
-legend([bar1, bar2, bar3], {'GLS', 'WLS', 'NL'}, 'Location', 'northeast', ...
-       'Interpreter', 'latex', 'FontSize', 10);
+%legend([bar1, bar2, bar3], {'GLS', 'WLS', 'NL'}, 'Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 10);
 
 hold off;
 
@@ -260,3 +259,18 @@ fprintf('WLS K=9\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_WLS_K9*100, cdf90_WLS_K9, ape_
 fprintf('NL K=9\t\t%.2f\t\t%.2f\t\t%.2f\n', rmse_NL_K9*100, cdf90_NL_K9, ape_NL_K9*100);
 fprintf('CRLB K=9\t%.2f\t\t%.2f\t\t%.2f\n', rmse_CRLB_K9*100, cdf90_CRLB_K9, ape_CRLB_K9*100);
 fprintf('======================================================================\n\n');
+
+
+
+
+
+figure(1);
+set(gcf, 'Color', 'white');
+print('Fig_CDF.png', '-dpng', '-r300');
+
+figure(2);
+set(gcf, 'Color', 'white');
+print('Fig_Time.png', '-dpng', '-r300');
+
+
+
