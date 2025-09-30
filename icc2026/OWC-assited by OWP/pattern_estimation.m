@@ -12,7 +12,7 @@ lamb =cosd(phi).^1.5;
 figure(1)
 hold on
 plot(datasheet(:,1), datasheet(:,2)/100,'LineWidth',3,'DisplayName','Datasheet')
-plot(phi,lamb)
+plot(phi,lamb,'DisplayName','Lambertian')
 legend
 grid minor
 
