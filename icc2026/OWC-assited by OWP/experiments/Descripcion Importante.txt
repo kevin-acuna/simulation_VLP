@@ -1,0 +1,8 @@
+Descripcion de los archivos de la base de datos:
+
+Archivo:
+- noise_PD_off_axis_X.csv:
+    Se registro con el LED encendido, cuarto apagado, pero la fuente de +15/-15V
+    que alimenta al PCB del PD estaba apagado. Aún asi se registro información interesante
+    respecto del comportamiento del ruido. Puede servir para analizar la
+    varianza del ruido y verificar si esa varianza se mantiene cuando si hay datos registrados.
