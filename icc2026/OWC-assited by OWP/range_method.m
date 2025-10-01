@@ -1,11 +1,14 @@
 clear all, close all, clc
 
+% Important
+phi_max = 40; % maximo phi
+
 % Parámetros
 z = 0.76;      % altura del receptor
 H = 2;        % altura transmisor
 h = H - z;    % diferencia vertical
 
-tilt = 30;                % inclinación [deg]
+tilt = 20;                % inclinación [deg]
 azimuth_1 = 0;            % azimut [deg]
 azimuth_2 = 90;            % azimut [deg]
 
@@ -31,7 +34,7 @@ d_unit = d ./ d_norm;
 cos_phi = n_t' * d_unit;        % 2xN (emisión para ambos modos)
 phi     = acosd(cos_phi);        % 2xN
 
-phi_c = phi<=40;
+phi_c = (phi<=phi_max);
 R_nt1 = R(:,phi_c(1,:)==1);
 R_nt2 = R(:,phi_c(2,:)==1);
 R_nt3 = R(:,phi_c(3,:)==1);
@@ -39,17 +42,15 @@ R_filter = R(:,sum(phi_c,1)==3);
 length(R_filter)
 
 
-    % Rangos en X e Y
-    x_min = min(R_filter(1,:));  x_max = max(R_filter(1,:)); x_max-x_min
-    y_min = min(R_filter(2,:));  y_max = max(R_filter(2,:)); y_max-y_min
-    z0    = R_filter(3,1);       % misma Z que los puntos filtrados (todos iguales)
+% Rangos en X e Y
+x_min = min(R_filter(1,:));  x_max = max(R_filter(1,:)); x_max-x_min
+y_min = min(R_filter(2,:));  y_max = max(R_filter(2,:)); y_max-y_min
+z0    = R_filter(3,1);       % misma Z que los puntos filtrados (todos iguales)
 
-    % ---------- (A) Rectángulo mínimo alineado a ejes ----------
-    Xr = [x_min, x_max, x_max, x_min, x_min];
-    Yr = [y_min, y_min, y_max, y_max, y_min];
-    Zr = z0 * ones(1,5);
-
-
+% ---------- (A) Rectángulo mínimo alineado a ejes ----------
+Xr = [x_min, x_max, x_max, x_min, x_min];
+Yr = [y_min, y_min, y_max, y_max, y_min];
+Zr = z0 * ones(1,5);
 
 
 figure(1)
@@ -62,3 +63,6 @@ plot3(0,0,0.76,'o','LineWidth',2,'Color','k')
 plot3(Xr, Yr, Zr, '-','LineWidth',2,'Color','k')
 axis([-2 2 -2 2 0 2])
 grid minor
+
+% ref. como angulo angulo que forma el vector n_t_1 con en la esquina
+phi_corner = acosd(h/sqrt(x_max^2 + y_max^2 + h^2))

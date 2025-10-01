@@ -1,0 +1,52 @@
+1. El patron de irradiacion real del LED no es lambertiano.
+2. Hasta 40° sigue el patron lambertiano con un m=1.5
+3. Se puede entonces obtener un rango donde el método de estimación
+   basado en el ratio es aplicable y funciona mejor
+4. Figura que compare:
+
+- Patron de irradiacion experimental.
+- Patron de irradiacion de datasheet.
+- Patron de irradiación obtenido de la estimación multi-polinomica de la curva del datasheet.
+- Patron de irradiacion teorico lambertiano con m optimo.
+
+Hipotesis: El patron de radiación del LED sigue el datasheet y no el lambertiano.
+Solución: - Buscar un LED con patron Lambertiano.
+          - Adapatar el modelo del estimador.
+
+4. Se requiere una optimización mediante GA con la busqueda del set de orientaciones
+   optimo para un determinado testbed teniendo en cuenta el RMSE de la estimación de posicion mediante
+   el método de ratios y considerando como patron de radiacion la función del
+   datasheet para obtener los resultados esperados.
+5. Figura que muestre 3 imagenes:
+
+- Ground True
+- Experimental: Estimación mediante el uso del ratio con la data experiemntal.
+- Simulación: Estimación mediante el uso del ratio con la data simulada
+  pero considerando el patron de radiacion del datasheet (o experimental).
+- Simulación: Estimación mediante el uso del ratio con la data simulada
+  pero considerando el patron de radiacion lambertiano (ideal).
+
+Conclusion:
+
+- El patron de sensitividad del fotodiodo tampoco es lambertiano pero no importa
+  debido a que se elimina con el calculo del ratio. Pero es IMPORTANTE tener
+  en cuenta el FOV. En nuestro caso es de 60° (FOV=60°) fuera de eso la
+  potencia recibida será 0 a pesar de que apunte directamente.
+- Se debe tomar en cuenta el patron de radiación del LED definitivamente
+  sea en ajustas en el modelo del estimador lineal o en simulaciones, sea
+  en determinar el area de covertura o obtener los angulos de orientación.
+- para   trabajar en la region mas parecida a la lambertiana se deben de emplear
+  angulos de baja inclinación como 20°, de modo en que los puntos mas alejados
+  del testbed no superen una diferencia de 40° o max 60°.
+- El método de un apunte fino se hace muy RELEVANTE debido principalmente
+  a que los angulos phi del receptor seran menores a 40° y seguirían el patron
+  de irradiacion lambertiana que haria valida la teoria del modelo de ratios.
+
+
+Se ha hecho un analisis de fit con AI y se obtienen estas 3 funciones relevantes:
+
+![1759343219418](image/comentario/1759343219418.png)
+
+Muy interesante porque el fit lo hacen bastante cercano, una función "super-gausseano"
+
+![1759343246363](image/comentario/1759343246363.png)

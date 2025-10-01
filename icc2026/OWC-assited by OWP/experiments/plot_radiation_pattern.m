@@ -12,16 +12,20 @@ data = readtable('radiation_pattern_axis_X.csv');
 angulo_grados = data.angulo_grados;
 voltaje = data.voltaje;
 
+% ajuste de voltaje
+voltaje = -voltaje;
+
 fprintf('Datos cargados: %d mediciones\n', length(voltaje));
 fprintf('Rango de ángulos: %.1f° a %.1f°\n', min(angulo_grados), max(angulo_grados));
 
 %% Gráfica 1: Todos los datos (angulo_grados vs voltaje)
-figure('Name', 'Patrón de Radiación - Todos los Datos', 'Position', [100 100 800 600]);
+figure(1);
+hold on
+
 plot(angulo_grados, voltaje, '.', 'MarkerSize', 4, 'Color', [0.2 0.4 0.8]);
-grid on;
-xlabel('Ángulo (grados)', 'FontSize', 12, 'FontWeight', 'bold');
-ylabel('Voltaje (V)', 'FontSize', 12, 'FontWeight', 'bold');
-title('Patrón de Radiación Eje X - Todas las Mediciones', 'FontSize', 14, 'FontWeight', 'bold');
+grid minor;
+xlabel('angle (degree)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('voltage (V)', 'FontSize', 12, 'FontWeight', 'bold');
 set(gca, 'FontSize', 11);
 
 % Estadísticas básicas
@@ -42,7 +46,7 @@ num_muestras = zeros(size(angulos_unicos));
 
 for i = 1:length(angulos_unicos)
     idx = angulo_grados == angulos_unicos(i);
-    voltaje_medio(i) = mean(voltaje(idx));
+    voltaje_medio(i) = median(voltaje(idx));
     voltaje_std(i) = std(voltaje(idx));
     num_muestras(i) = sum(idx);
 end
@@ -51,20 +55,10 @@ fprintf('Número de ángulos únicos: %d\n', length(angulos_unicos));
 fprintf('Muestras por ángulo: min=%d, max=%d, promedio=%.1f\n', ...
     min(num_muestras), max(num_muestras), mean(num_muestras));
 
-% Graficar valores medios
-figure('Name', 'Patrón de Radiación - Valores Medios', 'Position', [150 150 800 600]);
-hold on;
 
 % Graficar con barras de error (desviación estándar)
-errorbar(angulos_unicos, voltaje_medio, voltaje_std, 'o-', ...
-    'LineWidth', 2, 'MarkerSize', 6, 'MarkerFaceColor', [0.8 0.2 0.2], ...
-    'Color', [0.8 0.2 0.2], 'CapSize', 4);
+plot(angulos_unicos, voltaje_medio,'LineWidth', 2)
 
-grid on;
-xlabel('Ángulo (grados)', 'FontSize', 12, 'FontWeight', 'bold');
-ylabel('Voltaje Medio (V)', 'FontSize', 12, 'FontWeight', 'bold');
-title('Patrón de Radiación Eje X - Valores Medios por Ángulo', 'FontSize', 14, 'FontWeight', 'bold');
-legend('Media ± Desviación Estándar', 'Location', 'best', 'FontSize', 10);
 set(gca, 'FontSize', 11);
 hold off;
 
@@ -81,9 +75,9 @@ fprintf('Desviación estándar promedio: %.6f V\n', mean(voltaje_std));
 fprintf('\nGuardando resultados...\n');
 
 % Guardar tabla con valores medios
-result_table = table(angulos_unicos, voltaje_medio, voltaje_std, num_muestras, ...
-    'VariableNames', {'Angulo_grados', 'Voltaje_Medio_V', 'Desviacion_Std_V', 'Num_Muestras'});
-% writetable(result_table, 'radiation_pattern_axis_X_medias.csv');
+result_table = table(angulos_unicos, voltaje_medio, ...
+    'VariableNames', {'Angulo_grados', 'Voltaje_Medio_V'});
+% writetable(result_table, 'experiment_axis_X.csv');
 fprintf('Tabla de valores medios guardada en: radiation_pattern_axis_X_medias.csv\n');
 
 fprintf('\n¡Análisis completado!\n');
