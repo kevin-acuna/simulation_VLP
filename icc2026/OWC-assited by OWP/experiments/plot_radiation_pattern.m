@@ -6,7 +6,7 @@ clear; close all; clc;
 
 %% Cargar datos
 fprintf('Cargando datos del archivo CSV...\n');
-data = readtable('radiation_pattern_axis_X.csv');
+data = readtable('radiation_pattern_axis_Y.csv');
 
 % Extraer columnas
 angulo_grados = data.angulo_grados;

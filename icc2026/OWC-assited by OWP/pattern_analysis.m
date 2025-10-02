@@ -5,6 +5,7 @@ datasheet = csvread('pattern_smoothed_3.csv',1,0);
 experiment = csvread('experiment_axis_X.csv',1,0);
 
 % processing experiments
+experiment(:,1)=experiment(:,1)-1;
 experiment(:,2)= experiment(:,2)/max(experiment(:,2));
 
 % estimacion por lambertianos
@@ -15,7 +16,7 @@ lamb =cosd(phi).^1.5;
 figure(1)
 hold on
 plot(datasheet(:,1), datasheet(:,2)/100,'LineWidth',3,'DisplayName','Datasheet')
-plot(experiment(:,1)-1,experiment(:,2) ,'LineWidth',1,'DisplayName','Experimental')
+plot(experiment(:,1), experiment(:,2) ,'LineWidth',1,'DisplayName','Experimental')
 
 plot(phi,lamb,'DisplayName','Lambertian')
 legend
