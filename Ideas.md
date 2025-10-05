@@ -53,7 +53,7 @@ JOURNALS TARGET
 * (25/09/2025) Recordar que tenemos simulación respecto al trackeo del AP apuntando al UE basado en la maximización de la derivada (gradiant ascense). Lo que puede emplearse para maximización del SNR en OWC. A modo de trackeo.
 * (25/09/2025) **Coperativo VLC y VLP** (no como ISAC) sino como coperación entre estos. Ref [Visible Light Integrated Positioning and Communication: A Multi-Task Federated Learning Framework].
 * ![1758820906312](image/Ideas/1758820906312.png)
-* 
+* **(05/10/2025) [IMPORTANTE]** Estudiar como mejora el desempeño de los algoritmos si se emplea la curva de los datasheets en vez de una aproximación lambertiana. Se puede plantear un pipieline para eso. De modo en que el primer paso sea el de obtener la curva a partir de un screenshot de la datasheet (anexar programa en github) y despues de ello realizar sus propias estimaciones empleando RSS. La problematica actual es que mucho se usa el lambertiano cuando no esta bien ya que el LED tiene una lente adicional al chip.
 * Estudio teórico (optimización) y SIMULACIONES de estimación de la posición en 3D empleando N-PD.
 * Estudio teórico (optimización), SIMULACIONES y EXPERIMENTAL de la estimación de posición 3D empleando 1PD y N-Transmisores en BeamStearing (N < 4 sería ideal para obtener ventaja frente a las estructuras tradicionales del VLP).
   * Comentario: Este planteamiento debe pensarse con más detenimiento porque la ventaja de usar Single-VLP es el número de Transmisores, pero si este aumenta entonces debe de justificarse su respectivas ventajas ya no solo frente a un Single-VLP sino tambien a un Tradicional VLP (4 Tx fijos)
