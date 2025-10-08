@@ -22,7 +22,7 @@ fprintf('Total de posiciones únicas: %d\n\n', n_positions);
 % Cartesian coordinates of the orientations vectors
 n_t(1,:)=[0,0,-1];
 
-n_t(2,:)=[-sind(18),0,-cosd(18)]; 
+n_t(2,:)=[-sind(20),0,-cosd(20)]; 
 % Calibrar este angulo, verificar!, en 15 el error es pequeño
 % esto puede deberse a una inclinación o algun desfase, etc.
 
@@ -37,7 +37,7 @@ m_t = 1.52; %mejor con un background de V_bg = 0.04; nt_2=18
 V_bg = 0.04;
 results = [];
 
-% for m_t = 1:0.01:2  % puedo añadir la busqueda para el menor RMSE
+% for m_t = 1:0.01:4  % puedo añadir la busqueda para el menor RMSE
 for m_t = 1.52
 
 pos_true = zeros(n_positions,3);
@@ -122,6 +122,10 @@ fprintf('APE: %.2f cm\n', mean(errors));
 fprintf('MAX: %.2f cm\n', max(errors));
 fprintf('MIN: %.2f cm\n', min(errors));
 
+bed = [-0.75,0.75,-0.75,0.75];
+step= 0.25;
+[TbX,TbY] = meshgrid(bed(1):step:bed(2), bed(3):step:bed(2) );
+
 
 figure(1)
 hold on
@@ -129,7 +133,7 @@ hold on
 plot3(pos_true(:,1),pos_true(:,2),pos_true(:,3),'ko','DisplayName','true','MarkerFaceColor',colorsMATLAB(1,:))
 plot3(pos_est_owp(:,1),pos_est_owp(:,2),pos_est_owp(:,3),'o','DisplayName','est')
 % Graficar posiciones del transmisor
-plot3(T(1),T(2),T(3),'o','DisplayName','Transmisor T')
+plot3(T(1),T(2),T(3),'ko','DisplayName','Transmisor T','MarkerFaceColor',colorsMATLAB(4,:))
 plot3(T_c(1),T_c(2),T_c(3),'o','DisplayName','Centro T_c')
 
 % Añadir líneas punteadas entre posición real y estimada
@@ -139,8 +143,20 @@ for i = 1:n_positions
           [pos_true(i,3), pos_est_owp(i,3)], ...
           'k--');
 end
+plot(TbX,TbY,'o','Color',[0.2 0.2 0.2 0.5],'LineWidth',0.5)
 
-axis([-1 1 -1 1 -2 0])
+r_phi_c=h*tand(40);
+%circulo de referencia
+
+viscircles(T(1:2)', r_phi_c, 'Color', [0.2 0.2 0.2 0.5],'LineWidth',0.2)
+
+text( T(1)+r_phi_c , T(2), 'phi=40', ...
+     'HorizontalAlignment', 'center', ...
+     'VerticalAlignment', 'middle', ...
+     'FontSize', 10, ...
+     'Color', [0.2 0.2 0.2 0.5]);
+
+axis([-2 2 -2 2 -2 0])
 xlabel('X [m]')
 ylabel('Y [m]')
 zlabel('Z [m]')

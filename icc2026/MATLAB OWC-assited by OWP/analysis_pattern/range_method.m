@@ -4,11 +4,11 @@ clear all, close all, clc
 phi_max = 40; % maximo phi
 
 % Parámetros
-z = 0.76;      % altura del receptor
+z = 0.75;      % altura del receptor
 H = 2;        % altura transmisor
 h = H - z;    % diferencia vertical
 
-tilt = 20;                % inclinación [deg]
+tilt = 30;                % inclinación [deg]
 azimuth_1 = 0;            % azimut [deg]
 azimuth_2 = 90;            % azimut [deg]
 
@@ -59,7 +59,7 @@ plot3(R_nt1(1,:),R_nt1(2,:),R_nt1(3,:),'o','LineWidth',1)
 plot3(R_nt2(1,:),R_nt2(2,:),R_nt2(3,:),'o','LineWidth',1)
 plot3(R_nt3(1,:),R_nt3(2,:),R_nt3(3,:),'o','LineWidth',1)
 plot3(R_filter(1,:),R_filter(2,:),R_filter(3,:),'o','LineWidth',1)
-plot3(0,0,0.76,'o','LineWidth',2,'Color','k')
+plot3(0,0,0.75,'o','LineWidth',2,'Color','k')
 plot3(Xr, Yr, Zr, '-','LineWidth',2,'Color','k')
 axis([-2 2 -2 2 0 2])
 grid minor

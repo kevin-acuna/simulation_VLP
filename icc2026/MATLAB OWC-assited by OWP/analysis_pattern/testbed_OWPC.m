@@ -10,7 +10,7 @@ colorsMATLAB = [0.0000 0.4470 0.7410 ;...
 
 % Asumiendo un phi = [0, 20, 20].
 
-t_OWP = [-0.30,-0.30, 2];
+t_OWP = [-0.40,-0.40, 2];
 t_OWC = [0, 0, 2];
 
 % testbed
