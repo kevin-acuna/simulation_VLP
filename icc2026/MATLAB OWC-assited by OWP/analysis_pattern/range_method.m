@@ -8,7 +8,7 @@ z = 0.75;      % altura del receptor
 H = 2;        % altura transmisor
 h = H - z;    % diferencia vertical
 
-tilt = 30;                % inclinación [deg]
+tilt = 20;                % inclinación [deg]
 azimuth_1 = 0;            % azimut [deg]
 azimuth_2 = 90;            % azimut [deg]
 
@@ -66,3 +66,9 @@ grid minor
 
 % ref. como angulo angulo que forma el vector n_t_1 con en la esquina
 phi_corner = acosd(h/sqrt(x_max^2 + y_max^2 + h^2))
+
+
+%%
+figure(1);
+set(gcf, 'Color', 'white');
+print(fullfile('figures', 'coverture.png'), '-dpng', '-r300');

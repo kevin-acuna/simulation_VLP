@@ -36,5 +36,6 @@ plot3(t_OWP(1),t_OWP(2),t_OWP(3),'o','LineWidth',2, 'Color',  colorsMATLAB(2,:))
 plot3(t_OWC(1),t_OWC(2),t_OWC(3),'o','LineWidth',2, 'Color',  colorsMATLAB(5,:))
 plot3(R(1,:),R(2,:),R(3,:),'o','LineWidth',0.75, 'Color',  colorsMATLAB(1,:))
 plot3(Xr, Yr, Zr, '-','LineWidth',1,'Color','k')
-axis([-2 2 -2 2 0 2]);
+axis([-1 1 -1 1 0 2]);
+legend('OWP','OWC','dataset','testbed')
 grid minor;

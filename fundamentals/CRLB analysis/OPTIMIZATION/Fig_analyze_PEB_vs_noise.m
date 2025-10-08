@@ -17,7 +17,7 @@ end
 %% ======================== CONFIGURATION ========================
 
 SNR_dB = -20:1:20;
-SNR_lin =10.^(SNR_dB/10);
+SNR_lin = 10.^(SNR_dB/10);
 
 sigma2_base = (10^(-21.0))*(30e6)*2.466*10; %Para 10dB : 2.466
 sigma2_values = sigma2_base*(1./SNR_lin);
@@ -182,8 +182,9 @@ hold off;
 % Save the figure to the results directory
 % saveas(fig, fullfile(results_dir, sprintf('PEB_vs_noise_analysis_%s.fig', current_datetime)));
 % saveas(fig, fullfile(results_dir, sprintf('PEB_vs_noise_analysis_%s.png', current_datetime)));
+%%
 
 figure(1);
 set(gcf, 'Color', 'white');
-print(fullfile(results_dir, 'PEB_vs_SNR.png'), '-dpng', '-r300');
+print(fullfile(results_dir, 'PEB_vs_SNR_zoom.png'), '-dpng', '-r300');
 fprintf('Analysis complete. Figure saved in %s\n', results_dir);

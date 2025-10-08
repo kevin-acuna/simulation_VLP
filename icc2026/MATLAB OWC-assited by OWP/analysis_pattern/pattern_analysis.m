@@ -5,11 +5,11 @@ datasheet = csvread('pattern_smoothed_3.csv',1,0);
 experiment = csvread('experiment_axis_X.csv',1,0);
 
 % processing experiments
-experiment(:,1)=experiment(:,1)-1;
+experiment(:,1)=experiment(:,1)-2;
 experiment(:,2)= experiment(:,2)/max(experiment(:,2));
 
 % estimacion por lambertianos
-phi = 0:0.5:90;
+phi = -90:0.5:90;
 lamb =cosd(phi).^1.5;
 
 
@@ -46,7 +46,13 @@ for phi = phi_range
 end
 
 plot(phi_range,i_est, 'LineWidth',4,'DisplayName','Polinomial','LineStyle',':')
-xline(0,  'r--', 'x=0');
-xline(46, 'r--', 'x=46');
-xline(58, 'r--', 'x=58');
+xline(40,  'r--', '\phi=40','DisplayName','\phi_{edge}');
+% xline(0,  'r--', 'x=0');
+% xline(46, 'r--', 'x=46');
+% xline(58, 'r--', 'x=58');
+
+%%
+figure(1);
+set(gcf, 'Color', 'white');
+print(fullfile('figures', 'pattern.png'), '-dpng', '-r300');
 

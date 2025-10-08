@@ -19,6 +19,7 @@ data.medida_daq = -data.medida_daq;
 %% 1. Obtener posiciones únicas
 % Extraer las posiciones (x, y, z) únicas
 unique_positions = unique(data(:, {'x', 'y', 'z'}), 'rows');
+% unique_positions = unique_positions(10,:);
 fprintf('Total de posiciones únicas: %d\n', height(unique_positions));
 disp(unique_positions);
 
@@ -70,12 +71,14 @@ for k = 1:3
                  p, pos_x, pos_y, pos_z));
             
             idx_acumulado = idx_acumulado + n_muestras;
+%             axis([-inf inf 0 5 ])
         end
     end
     
     ylabel(sprintf('K%d', k));
     %title(sprintf('Orientación K_%d: inclinación=%.1f°, azimuth=%.1f°', k, incl, azim));
-    legend('Location', 'best', 'FontSize', 8);
+    %legend('Location', 'best', 'FontSize', 8);
+    legend('Location', 'eastoutside', 'FontSize', 8);
     hold off;
 end
 

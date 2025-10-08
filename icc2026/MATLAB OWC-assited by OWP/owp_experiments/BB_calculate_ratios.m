@@ -160,7 +160,10 @@ axis([-2 2 -2 2 -2 0])
 xlabel('X [m]')
 ylabel('Y [m]')
 zlabel('Z [m]')
-%legend('Location','best')
+legend('ground truth','estimation','AP OWP')
 grid minor
 
-
+%%
+figure(1);
+set(gcf, 'Color', 'white');
+print(fullfile('figures', 'estimation.png'), '-dpng', '-r300');
