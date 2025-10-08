@@ -148,7 +148,7 @@ plot(TbX,TbY,'o','Color',[0.2 0.2 0.2 0.5],'LineWidth',0.5)
 r_phi_c=h*tand(40);
 %circulo de referencia
 
-viscircles(T(1:2)', r_phi_c, 'Color', [0.2 0.2 0.2 0.5],'LineWidth',0.2)
+viscircles(T(1:2)', r_phi_c, 'Color', [0.2 0.2 0.2 0.5],'LineWidth',0.2);
 
 text( T(1)+r_phi_c , T(2), 'phi=40', ...
      'HorizontalAlignment', 'center', ...

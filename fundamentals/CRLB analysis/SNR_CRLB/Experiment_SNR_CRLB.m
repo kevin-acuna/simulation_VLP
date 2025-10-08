@@ -5,6 +5,7 @@
 clear; close all; clc;
 
 rng(42); % For reproducibility
+save_fig = 0;
 
 %% Parameters setup
 % SNR range to evaluate
@@ -152,8 +153,10 @@ title('Average RMSE vs. SNR based on CRLB Analysis (1000 Positions)');
 set(gca, 'FontSize', 12);
 
 % Save the figure
-saveas(gcf, 'CRLB_SNR_analysis.fig');
-saveas(gcf, 'CRLB_SNR_analysis.png');
+if save_fig == 1
+    saveas(gcf, 'CRLB_SNR_analysis.fig');
+    saveas(gcf, 'CRLB_SNR_analysis.png');
+end
 
 % Figure 2: Distribution of Position Error Bounds at different SNRs
 figure;
@@ -182,9 +185,10 @@ legend(legend_entries, 'Location', 'southeast');
 set(gca, 'FontSize', 12);
 
 % Save the figure
-saveas(gcf, 'CRLB_SNR_distribution.fig');
-saveas(gcf, 'CRLB_SNR_distribution.png');
-
+if save_fig == 1
+    saveas(gcf, 'CRLB_SNR_distribution.fig');
+    saveas(gcf, 'CRLB_SNR_distribution.png');
+end
 % Figure 3: Boxplot of Position Error Bounds
 figure;
 valid_data = PEB_positions;
@@ -196,11 +200,15 @@ ylim([0, 0.05]); % Adjust as needed for better visualization
 grid on;
 
 % Save the figure
-saveas(gcf, 'CRLB_SNR_boxplot.fig');
-saveas(gcf, 'CRLB_SNR_boxplot.png');
+if save_fig == 1
+    saveas(gcf, 'CRLB_SNR_boxplot.fig');
+    saveas(gcf, 'CRLB_SNR_boxplot.png');
+    
+    % Save the detailed results
+    save('CRLB_SNR_results.mat', 'SNR_dB_range', 'RMSE_CRLB', 'PEB_positions', 'X_r', 'Y_r', 'Z_r', 'N_or');
+end
 
-% Save the detailed results
-save('CRLB_SNR_results.mat', 'SNR_dB_range', 'RMSE_CRLB', 'PEB_positions', 'X_r', 'Y_r', 'Z_r', 'N_or');
+
 
 fprintf('Analysis complete. Results saved.\n');
 
