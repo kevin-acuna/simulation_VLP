@@ -15,7 +15,10 @@ h = 2 - 0.75;
 % Set of K-orientation (K=3)
 % inclination, azimuth
 % set = [20,180,0,0,20,270];
-set = [30,225,50,200,50,245]; % Cover another cuarter
+% set = [30,225,50,200,50,245]; % Cover another cuarter
+% set = [29.0000  225.0000   59.0000  207.0000   59.0000  243.0000];
+set = [66.0000  225.0000   32.0000  200.0000   32.0000  250.0000];
+
 Ndir = length(set)/2;
 
 for i_dir = 1:Ndir
@@ -33,8 +36,8 @@ end
 n_r = [0,0,1];
 
 % create points to evaluate
-x = -0.75:0.25:0.75;
-y = -0.75:0.25:0.75;
+x = -1:0.25:0;
+y = -1:0.25:0;
 [px,py] = meshgrid(x,y);
 px = px(:); py=py(:);
 pos = [px,py];
