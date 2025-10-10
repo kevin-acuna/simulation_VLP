@@ -1,9 +1,12 @@
-function rmse = model(set)
+function rmse = model(set,Q,gridstep,modeltype)
+% set: set of orientation (inclination, azimuth, ...)
+% Q : area of working
+% grid : steps in the testbed
 
 % Intrasture
 T = [0.4,0.4,0];
 h = 2 - 0.75;
-
+FOV = 60;
 % Set of K-orientation (K=3)
 % inclination, azimuth
 Ndir = length(set)/2;
@@ -23,8 +26,8 @@ end
 n_r = [0,0,1];
 
 % create points to evaluate
-x = -1:0.25:0;
-y = -1:0.25:0;
+x = Q(1):gridstep:Q(2);
+y = Q(3):gridstep:Q(4);
 [px,py] = meshgrid(x,y);
 px = px(:); py=py(:);
 pos = [px,py];
@@ -37,8 +40,10 @@ m = 1.52;
 p = 4.8e-3; q = 5.5e-3; 
 N_det = 1; 
 A_det = p*q*N_det;
+Relec = 1e6;
 
 sigma2 = 30e6*10^(-21.0);
+sigma2 = 0;
 
 % Model
 S=cell(Npos,Ndir);
@@ -48,17 +53,29 @@ for i_pos = 1:Npos
         R = [pos(i_pos,:),-h];
         v_tr = (R-T)./norm(R-T);
         d = norm(R-T);
+
         cos_phi = dot(n_t(i_dir,:),v_tr);
         phi = acosd(cos_phi);
-        cos_psi = dot(n_r,-v_tr);
         
-        C = (m+1)*A_det/(2*pi); % constant
-        %g_phi = cos_phi^m; % modelo de irradianza del LED
-        g_phi = irradiance(phi,'poly');
+        cos_psi = dot(n_r,-v_tr);
+        psi = acosd(cos_psi);
 
-        h_LOS = C*g_phi*cos_psi./d^2;
+        C = (m+1)*A_det/(2*pi); % constant
+        if strcmp(modeltype,'datasheet')
+            g_phi = irradiance(phi,'poly');
+        elseif strcmp(modeltype,'lambertian')
+            g_phi = cos_phi^m; % modelo lambertiano
+        else
+            g_phi = cos_phi^m; % modelo lambertiano
+        end
+        
+        if psi <= FOV
+            h_LOS = C*g_phi*cos_psi./d^2;
+        else
+            h_LOS = 0;
+        end
         w = sqrt(sigma2).*randn(1,1000);
-        S{i_pos,i_dir} = Rp*Pt*h_LOS + w;
+        S{i_pos,i_dir} = Relec*(Rp*Pt*h_LOS + w);
     end
 end
 
