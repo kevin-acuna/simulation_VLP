@@ -1,5 +1,11 @@
 clc, clear all, close all
 
+% Conclusion:
+% Se logra estimar con 4cm de error SI SOLO SI
+% se ajusta las orientaciones para el area
+% se elije el m_t apropiado entre 1.4 y 2
+% se hace ajustes sobre la orientacion del transmisor 
+%    ya que existen angulos que afectan bastante la estimación.
 colorsMATLAB = [0.0000 0.4470 0.7410 ;... 
                 0.8500 0.3250 0.0980 ;...
                 0.9290 0.6940 0.1250 ;...
@@ -19,15 +25,26 @@ fprintf('Total de posiciones únicas: %d\n\n', n_positions);
 % ===============================================
 % IMPORTANTE: CALIBRACIÓN DE LAS ORIENTACIONES
 % ===============================================
-% Cartesian coordinates of the orientations vectors
-n_t(1,:)=[0,0,-1];
 
-n_t(2,:)=[-sind(20),0,-cosd(20)]; 
-% Calibrar este angulo, verificar!, en 15 el error es pequeño
-% esto puede deberse a una inclinación o algun desfase, etc.
+% % Cartesian coordinates of the orientations vectors
+% n_t(1,:)=[0,0,-1];
+% n_t(2,:)=[-sind(20),0,-cosd(20)]; 
+% % Calibrar este angulo, verificar!, en 15 el error es pequeño
+% % esto puede deberse a una inclinación o algun desfase, etc.
+% n_t(3,:)=[0,-sind(20),-cosd(20)];
 
-n_t(3,:)=[0,-sind(20),-cosd(20)];
+% Orientaciones en formato [incl,azimuth,..]
+% set = [38  207   60  181   60  233]; % real
+set = [33  207   60  181   60  233]; % ajustado para mejor resultado
 
+Ndir = length(set)/2;
+for i_dir = 1:Ndir
+    incl = set(i_dir*2-1);
+    azim = set(i_dir*2);
+    n_t(i_dir,:)=[sind(incl)*cosd(azim), sind(incl)*sind(azim), -cosd(incl)];
+end
+
+%%
 a_i = n_t(1,1); b_i = n_t(1,2); c_i = n_t(1,3);
 a_j = n_t(2,1); b_j = n_t(2,2); c_j = n_t(2,3);
 a_k = n_t(3,1); b_k = n_t(3,2); c_k = n_t(3,3);
@@ -38,7 +55,7 @@ V_bg = 0.04;
 results = [];
 
 % for m_t = 1:0.01:4  % puedo añadir la busqueda para el menor RMSE
-for m_t = 1.52
+for m_t = 1.7
 
 pos_true = zeros(n_positions,3);
 pos_est_owp = zeros(n_positions,3);
@@ -164,6 +181,6 @@ legend('ground truth','estimation','AP OWP')
 grid minor
 
 %%
-figure(1);
-set(gcf, 'Color', 'white');
-print(fullfile('figures', 'estimation.png'), '-dpng', '-r300');
+% figure(1);
+% set(gcf, 'Color', 'white');
+% print(fullfile('figures', 'estimation.png'), '-dpng', '-r300');

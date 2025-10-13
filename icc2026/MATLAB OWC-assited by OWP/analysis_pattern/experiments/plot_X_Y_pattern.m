@@ -1,13 +1,19 @@
 clear; close all; clc;
 
+% Eje descentrado/alineado.
+
 % Cargar datos
 x_data = readtable('radiation_pattern_axis_X.csv');
-x_angulo = x_data.angulo_grados-1;
+x_angulo = x_data.angulo_grados;
 x_voltaje = -x_data.voltaje;
 
 y_data = readtable('radiation_pattern_axis_Y.csv');
-y_angulo = (y_data.angulo_grados+2);
+y_angulo = (y_data.angulo_grados);
 y_voltaje = -y_data.voltaje;
+
+% Simetria
+y_angulo = y_angulo;
+
 
 % Figure
 figure(1);

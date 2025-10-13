@@ -34,7 +34,7 @@ for i_Q = 1:NQ
     end
     
     try
-    set_opt(i_Q,:) = results(find(results(:,1)==min(results(:,1))),:);
+        set_opt(i_Q,:) = results(find(results(:,1)==min(results(:,1))),:);
     catch
         a=1
     end

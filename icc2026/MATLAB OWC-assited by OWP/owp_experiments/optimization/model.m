@@ -31,6 +31,9 @@ y = Q(3):gridstep:Q(4);
 [px,py] = meshgrid(x,y);
 px = px(:); py=py(:);
 pos = [px,py];
+
+% pos=pos(3:end,:);
+
 Npos = size(pos,1);
 
 % Parameters
@@ -43,7 +46,6 @@ A_det = p*q*N_det;
 Relec = 1e6;
 
 sigma2 = 30e6*10^(-21.0);
-sigma2 = 0;
 
 % Model
 S=cell(Npos,Ndir);

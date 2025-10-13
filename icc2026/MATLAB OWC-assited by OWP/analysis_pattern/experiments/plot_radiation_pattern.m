@@ -6,7 +6,7 @@ clear; close all; clc;
 
 %% Cargar datos
 fprintf('Cargando datos del archivo CSV...\n');
-data = readtable('radiation_pattern_axis_Y.csv');
+data = readtable('radiation_pattern_axis_X.csv');
 
 % Extraer columnas
 angulo_grados = data.angulo_grados;
@@ -72,12 +72,12 @@ fprintf('Promedio global: %.6f V\n', mean(voltaje_medio));
 fprintf('Desviación estándar promedio: %.6f V\n', mean(voltaje_std));
 
 %% Guardar resultados
-fprintf('\nGuardando resultados...\n');
-
-% Guardar tabla con valores medios
-result_table = table(angulos_unicos, voltaje_medio, ...
-    'VariableNames', {'Angulo_grados', 'Voltaje_Medio_V'});
-% writetable(result_table, 'experiment_axis_X.csv');
-fprintf('Tabla de valores medios guardada en: radiation_pattern_axis_X_medias.csv\n');
-
-fprintf('\n¡Análisis completado!\n');
+% fprintf('\nGuardando resultados...\n');
+% 
+% % Guardar tabla con valores medios
+% result_table = table(angulos_unicos, voltaje_medio, ...
+%     'VariableNames', {'Angulo_grados', 'Voltaje_Medio_V'});
+% % writetable(result_table, 'experiment_axis_X.csv');
+% fprintf('Tabla de valores medios guardada en: radiation_pattern_axis_X_medias.csv\n');
+% 
+% fprintf('\n¡Análisis completado!\n');

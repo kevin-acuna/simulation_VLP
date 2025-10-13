@@ -11,7 +11,7 @@ colorsMATLAB = [0.0000 0.4470 0.7410 ;...
 % Intrasture
 T = [0.4,0.4,0];
 h = 2 - 0.75;
-Q = [-0.75 0.75 -0.75 0.75];
+
 grid = 0.25;
 
 % Set of K-orientation (K=3)
@@ -21,8 +21,13 @@ grid = 0.25;
 % set = [29.0000  225.0000   59.0000  207.0000   59.0000  243.0000];
 % set = [66.0000  225.0000   32.0000  200.0000   32.0000  250.0000];
 % %Q=[-1,0,-1,0]
-set = [12.0000  225.0000   30.0000  210.0000   30.0000  240.0000]; %Q= testbed
 
+% Q = [-0.75 0.75 -0.75 0.75];
+% set = [12.0000  225.0000   30.0000  210.0000   30.0000  240.0000]; %Q= testbed
+
+Q = [-1.50 -0.75 -0.75 0.00];
+set = [38.0000  207   60.0000  181   60.0000  233];
+% set = [22.0000  206.9395   65.0000  180.9395   65.0000  232.9395];
 Ndir = length(set)/2;
 
 for i_dir = 1:Ndir
@@ -38,6 +43,7 @@ end
 
 
 n_r = [0,0,1];
+FOV = 60;
 
 % create points to evaluate
 x = Q(1):grid:Q(2);
@@ -54,8 +60,10 @@ m = 1.52;
 p = 4.8e-3; q = 5.5e-3; 
 N_det = 1; 
 A_det = p*q*N_det;
+Relec = 7e6;
 
 sigma2 = 30e6*10^(-21.0);
+
 
 % Model
 S=cell(Npos,Ndir);
@@ -67,19 +75,26 @@ for i_pos = 1:Npos
         d = norm(R-T);
         cos_phi = dot(n_t(i_dir,:),v_tr);
         phi = acosd(cos_phi);
+
         cos_psi = dot(n_r,-v_tr);
+        psi = acosd(cos_psi);
         
         C = (m+1)*A_det/(2*pi); % constant
         %g_phi = cos_phi^m; % modelo de irradianza del LED
         g_phi = irradiance(phi,'poly');
 
-        h_LOS = C*g_phi*cos_psi./d^2;
+        if psi <= FOV
+            h_LOS = C*g_phi*cos_psi./d^2;
+        else
+            h_LOS = 0;
+        end
         w = sqrt(sigma2).*randn(1,1000);
-        S{i_pos,i_dir} = Rp*Pt*h_LOS + w;
+        S{i_pos,i_dir} = Relec*(Rp*Pt*h_LOS + w);
     end
 end
 
 
+%%
 pos_est = zeros(Npos,3);
 for i_pos = 1:Npos
     
@@ -92,6 +107,9 @@ for i_pos = 1:Npos
     pos_est(i_pos,:) = T + escale*n_d;
 
 end
+
+errors = sqrt(sum((pos - pos_est(:,1:2)).^2, 2))*100;
+rmse = sqrt(mean(errors.^2));
 
 %%
 
@@ -111,10 +129,15 @@ for i = 1:Npos
           'k--');
 end
 
-r_phi_c=h*tand(40);
-%circulo de referencia
 
-viscircles(T(1:2), r_phi_c, 'Color', [0.2 0.2 0.2 0.5],'LineWidth',0.2);
+r_psi = h*tand(38);
+viscircles(T(1:2), r_psi, 'Color', [0.2 0.2 0.2 0.5],'LineWidth',0.2);
+
+
+r_psi_FOV=h*tand(60);
+viscircles(T(1:2), r_psi_FOV, 'Color', [0.2 0.2 0.2 0.5],'LineWidth',0.2);
+
+%circulo de referencia
 
 axis([-2 2 -2 2 -2 0])
 xlabel('X [m]')

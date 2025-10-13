@@ -5,7 +5,7 @@ datasheet = csvread('pattern_smoothed_3.csv',1,0);
 experiment = csvread('experiment_axis_X.csv',1,0);
 
 % processing experiments
-experiment(:,1)=experiment(:,1)-2;
+% experiment(:,1)=experiment(:,1)-1.5; %ajuste manual
 experiment(:,2)= experiment(:,2)/max(experiment(:,2));
 
 % estimacion por lambertianos
@@ -52,7 +52,7 @@ xline(40,  'r--', '\phi=40','DisplayName','\phi_{edge}');
 % xline(58, 'r--', 'x=58');
 
 %%
-figure(1);
-set(gcf, 'Color', 'white');
-print(fullfile('figures', 'pattern.png'), '-dpng', '-r300');
+% figure(1);
+% set(gcf, 'Color', 'white');
+% print(fullfile('figures', 'pattern.png'), '-dpng', '-r300');
 
