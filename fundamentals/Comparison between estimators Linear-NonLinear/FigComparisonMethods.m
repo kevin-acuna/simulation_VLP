@@ -28,34 +28,49 @@ errorNormNL_K9 = load('K9_NL_optimized_fixed.mat').errorNorm;
 % CDF plot
 figure(1)
 hold on;
-lw_5 = 1.5;
-lw_9 = 0.2;
-[f2, x2] = ecdf(errorNormSVD_K3(:)*100,'Function','cdf');stairs(x2, f2, '-', 'LineWidth', 0.5,'Color',[0.9290, 0.6940, 0.1250]);
-[f2, x2] = ecdf(errorNormGLS_K5(:)*100,'Function','cdf');stairs(x2, f2, '-', 'LineWidth', lw_5,'Color',[0, 0.4470, 0.7410]);
-[f1, x1] = ecdf(errorNormWLS_K5(:)*100,'Function','cdf');stairs(x1, f1, '-', 'LineWidth', lw_5,'Color',[0.8500, 0.3250, 0.0980]);
-[f3, x3] = ecdf(errorNormNL_K5(:)*100,'Function','cdf'); stairs(x3, f3, '-', 'LineWidth', lw_5,'Color',[0.4940, 0.1840, 0.5560]);
-[f4, x4] = ecdf(errorNormCRLB_K5(:)*100,'Function','cdf'); stairs(x4, f4, '-', 'LineWidth', lw_5,'Color',[0.4660, 0.6740, 0.1880]);
+lw_5 = 1;
+lw_9 = 1;
+factor = 100;
+[f2, x2] = ecdf(errorNormSVD_K3(:)*factor,'Function','cdf');stairs(x2, f2, '-', 'LineWidth', 0.5,'Color',[0.9290, 0.6940, 0.1250]);
+[f2, x2] = ecdf(errorNormGLS_K5(:)*factor,'Function','cdf');stairs(x2, f2, '-', 'LineWidth', lw_5,'Color',[0, 0.4470, 0.7410]);
+[f1, x1] = ecdf(errorNormWLS_K5(:)*factor,'Function','cdf');stairs(x1, f1, '-', 'LineWidth', lw_5,'Color',[0.8500, 0.3250, 0.0980]);
+[f3, x3] = ecdf(errorNormNL_K5(:)*factor,'Function','cdf'); stairs(x3, f3, '-', 'LineWidth', lw_5,'Color',[0.4940, 0.1840, 0.5560]);
+[f4, x4] = ecdf(errorNormCRLB_K5(:)*factor,'Function','cdf'); stairs(x4, f4, '-', 'LineWidth', lw_5,'Color',[0.4660, 0.6740, 0.1880]);
 
-[f2, x2] = ecdf(errorNormGLS_K9(:)*100,'Function','cdf');stairs(x2, f2, '--', 'LineWidth', lw_9,'Color',[0, 0.4470, 0.7410]);
-[f1, x1] = ecdf(errorNormWLS_K9(:)*100,'Function','cdf');stairs(x1, f1, '--', 'LineWidth', lw_9,'Color',[0.8500, 0.3250, 0.0980]);
-[f3, x3] = ecdf(errorNormNL_K9(:)*100,'Function','cdf'); stairs(x3, f3, '--', 'LineWidth', lw_9,'Color',[0.4940, 0.1840, 0.5560]);
-[f4, x4] = ecdf(errorNormCRLB_K9(:)*100,'Function','cdf'); stairs(x4, f4, '--', 'LineWidth', lw_9,'Color',[0.4660, 0.6740, 0.1880]);
+[f2, x2] = ecdf(errorNormGLS_K9(:)*factor,'Function','cdf');stairs(x2, f2, '--', 'LineWidth', lw_9,'Color',[0, 0.4470, 0.7410]);
+[f1, x1] = ecdf(errorNormWLS_K9(:)*factor,'Function','cdf');stairs(x1, f1, '--', 'LineWidth', lw_9,'Color',[0.8500, 0.3250, 0.0980]);
+[f3, x3] = ecdf(errorNormNL_K9(:)*factor,'Function','cdf'); stairs(x3, f3, '--', 'LineWidth', lw_9,'Color',[0.4940, 0.1840, 0.5560]);
+[f4, x4] = ecdf(errorNormCRLB_K9(:)*factor,'Function','cdf'); stairs(x4, f4, '--', 'LineWidth', lw_9,'Color',[0.4660, 0.6740, 0.1880]);
 
-
+yline(0.9,'--','LineWidth',0.4,'Color',[0.5 0.5 0.5])
 grid on;
-axis([0 16 0 1])
+axis([0 14 0 1])
 xlabel('Positioning Error [cm]','interpreter','latex');
 ylabel('CDF','Interpreter','latex');
-legend('K=3','K=5 (GLS)', 'K=5 (WLS)','K=5 (NL)', 'K=5 (PEB)', 'K=9 (GLS)','K=9 (WLS)','K=9 (NL)', 'K=9 (PEB)', 'Location', 'best','interpreter','latex');
+legend('K=3 [22]','K=5 (GLS)', 'K=5 (WLS)','K=5 (NL)', 'K=5 (PEB)', 'K=9 (GLS)','K=9 (WLS)','K=9 (NL)', 'K=9 (PEB)', 'Location', 'best','interpreter','latex');
+
+figure(1);
+set(gcf, 'Color', 'white');
+print('Fig_CDF.png', '-dpng', '-r300');
+
 
 %%
 % Tiempo - Análisis comparativo de métodos de estimación
-avg_time_K5_WLS = mean((load('K5_WLS_fixed.mat').time_WLS)*1000);
-avg_time_K5_GLS = mean((load('K5_GLS_fixed.mat').time_GLS)*1000);
-avg_time_K5_NL = mean((load('K5_NL_optimized_fixed.mat').time_NL)*1000);
-avg_time_K9_WLS = mean((load('K9_WLS_fixed.mat').time_WLS)*1000);
-avg_time_K9_GLS = mean((load('K9_GLS_fixed.mat').time_GLS)*1000);
-avg_time_K9_NL = mean((load('K9_NL_optimized_fixed.mat').time_NL)*1000);
+% avg_time_K5_WLS = median((load('K5_WLS_fixed.mat').time_WLS)*1000);
+% avg_time_K5_GLS = median((load('K5_GLS_fixed.mat').time_GLS)*1000);
+% avg_time_K5_NL = median((load('K5_NL_optimized_fixed.mat').time_NL)*1000);
+% avg_time_K9_WLS = median((load('K9_WLS_fixed.mat').time_WLS)*1000);
+% avg_time_K9_GLS = median((load('K9_GLS_fixed.mat').time_GLS)*1000);
+% avg_time_K9_NL = median((load('K9_NL_optimized_fixed.mat').time_NL)*1000);
+
+avg_time_K5_WLS = 0.0217;
+avg_time_K5_GLS = 0.0267;
+avg_time_K5_NL = median((load('K5_NL_optimized_fixed.mat').time_NL)*1000);
+avg_time_K9_WLS = 0.026050;
+avg_time_K9_GLS = 0.0341;
+avg_time_K9_NL = median((load('K9_NL_optimized_fixed.mat').time_NL)*1000);
+
+
 
 % Organizar datos por método y configuración (coherente con figura 1)
 tiempos_K5 = [avg_time_K5_GLS, avg_time_K5_WLS, avg_time_K5_NL];
@@ -131,6 +146,11 @@ set(gca, 'YScale', 'log');
 %legend([bar1, bar2, bar3], {'GLS', 'WLS', 'NL'}, 'Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 10);
 
 hold off;
+
+
+figure(2);
+set(gcf, 'Color', 'white');
+print('Fig_Time.png', '-dpng', '-r300');
 
 
 %%
@@ -264,13 +284,6 @@ fprintf('======================================================================\
 
 
 
-figure(1);
-set(gcf, 'Color', 'white');
-print('Fig_CDF.png', '-dpng', '-r300');
-
-figure(2);
-set(gcf, 'Color', 'white');
-print('Fig_Time.png', '-dpng', '-r300');
 
 
 

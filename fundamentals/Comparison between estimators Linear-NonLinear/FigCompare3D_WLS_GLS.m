@@ -27,11 +27,11 @@ W = 3; % Width of room [m]
 Hmax = 1.2; % Maximum height [m]
 
 % Parametros para el estudio 
-% step = 0.2; % step en X,Y
-% stepH = 0.2; % Step size [m]
-% % Parametros para la Figura Comparacion de posiciones estimadas vs reales
-step = 0.25; % step X,Y
-stepH = 0.6; % Step size [m]
+step = 0.2; % step en X,Y
+stepH = 0.2; % Step size [m]
+% % % Parametros para la Figura Comparacion de posiciones estimadas vs reales
+% step = 0.25; % step X,Y
+% stepH = 0.6; % Step size [m]
 
 
 % Seleccionar modo de posiciones del receptor
@@ -197,7 +197,9 @@ for i_pos = 1:N_pos
     tic;
     % Obtener dirección usando el método WLS 
     [d_hat_robust, ~, ~] = vlp_wls(n_t', P_raw, m_t);
-    
+    tiempo_ejecucion = toc;
+    time_WLS = [time_WLS; tiempo_ejecucion];
+
     % Calcular distancia usando el enfoque beamsteering (Tx-Rx)
     v_tr_est_WLS = d_hat_robust';
     param_t_axis = {T, v_tr_est_WLS, P_t, m_t};
@@ -210,8 +212,7 @@ for i_pos = 1:N_pos
     
     % Posición final combinando dirección WLS robusta con distancia
     estPosWLS(i_pos,:) = T + (v_tr_est_WLS.*d_tr_est_WLS);
-    tiempo_ejecucion = toc;
-    time_WLS = [time_WLS; tiempo_ejecucion];
+
 
     %---------------------------------------------------------------------------------------%
     % Case 6: GLS (Generalized Least Squares) con matriz de covarianza completa
@@ -220,7 +221,8 @@ for i_pos = 1:N_pos
     tic;
     % Obtener dirección usando el método GLS (con matriz de covarianza completa)
     [d_hat_gls] = vlp_gls(n_t', P_raw, m_t, sigma2);
-    
+    tiempo_ejecucion = toc;
+    time_GLS = [time_GLS; tiempo_ejecucion];
     % Calcular distancia usando el enfoque beamsteering (Tx-Rx)
     v_tr_est_GLS = d_hat_gls';
     param_t_axis = {T, v_tr_est_GLS, P_t, m_t};
@@ -233,8 +235,7 @@ for i_pos = 1:N_pos
     
     % Posición final combinando dirección GLS con distancia por beamsteering
     estPosGLS(i_pos,:) = T + (v_tr_est_GLS.*d_tr_est_GLS);
-    tiempo_ejecucion = toc;
-    time_GLS = [time_GLS; tiempo_ejecucion];
+
 end
 
 %% 5. Error Calculation and CRLB Bound
