@@ -18,7 +18,7 @@ Date: 2025
 # CONFIGURACIÓN PRINCIPAL
 # =============================================================================
 # Flag para elegir orientación del plot
-PLOT_ORIENTATION = 'horizontal'  # Opciones: 'horizontal' o 'vertical'
+PLOT_ORIENTATION = 'vertical'  # Opciones: 'horizontal' o 'vertical'
 # =============================================================================
 
 import pandas as pd
@@ -109,7 +109,7 @@ def load_and_process_data(csv_optimized='PEB_optimizadas.csv', csv_random='PEB_a
     
     return df_combined
 
-def create_vertical_split_violin_plot(df, save_path='vertical_violin_comparison_peb.png', figsize=(12, 8), box_width=0.1):
+def create_vertical_split_violin_plot(df, save_path='vertical_violin_comparison_peb.png', figsize=(10, 4), box_width=0.1):
     """
     Crea un violin plot vertical dividido estético donde cada K tiene un violin con
     mitad izquierda (optimizadas) y mitad derecha (aleatorias).
@@ -243,7 +243,7 @@ def create_vertical_split_violin_plot(df, save_path='vertical_violin_comparison_
     
     # Configuración de ejes y etiquetas para orientación vertical
     ax.set_xlim(min(k_values)-0.45, max(k_values)+0.45)
-    ax.set_ylim(0, 10)
+    ax.set_ylim(0, 6.05)
     ax.set_xticks(k_values)
     
     # Etiquetas con formato journal
@@ -252,8 +252,8 @@ def create_vertical_split_violin_plot(df, save_path='vertical_violin_comparison_
     
     # Mejorar ticks
     ax.tick_params(axis='both', which='major', labelsize=16)
-    ax.set_yticks(np.arange(0, 11, 1))
-    ax.set_yticks(np.arange(0, 11, 0.5), minor=True)
+    ax.set_yticks(np.arange(0, 6.05, 1))
+    ax.set_yticks(np.arange(0, 6.05, 0.5), minor=True)
     
     # Grid profesional
     ax.grid(True, alpha=0.3, linestyle='-', linewidth=0.5, color='gray')
