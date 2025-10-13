@@ -83,11 +83,11 @@ fprintf('\nCalculating PEB for different theta_half values and orientations...\n
 peb_results = zeros(length(K_values), length(theta_half_deg));
 
 % Create a log file
-current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
-log_filename = fullfile(results_dir, sprintf('PEB_vs_theta_half_%s.txt', current_datetime));
-diary(log_filename);
-fprintf('Log file started: %s\n', log_filename);
-fprintf('Date and time: %s\n\n', datestr(now));
+% current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
+% log_filename = fullfile(results_dir, sprintf('PEB_vs_theta_half_%s.txt', current_datetime));
+% diary(log_filename);
+% fprintf('Log file started: %s\n', log_filename);
+% fprintf('Date and time: %s\n\n', datestr(now));
 
 % Loop through each theta_half value
 for i = 1:length(theta_half_deg)
@@ -125,7 +125,7 @@ diary off;
 close all
 
 % Create the figure
-fig = figure('Position', [100, 100, 800, 600]);
+fig = figure('Position', [100, 100, 800, 400]);
 
 % Plot styles for different theta_half values
 markers = {'o-', 's-', 'd-'};
@@ -146,7 +146,7 @@ for i = 1:length(theta_half_deg)
     
     % Plot PEB vs K for this theta_half value
     plot(K_values, peb_results(:, i)*100, markers{min(i,length(markers))}, 'Color', colors(i,:), ...
-        'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'w');
+        'LineWidth', 1, 'MarkerSize', 6);
     
     % Create legend entry
     legend_entries{i} = sprintf('\\Phi_{1/2} = %d°', theta_half);
@@ -156,20 +156,25 @@ end
 xlabel('Number of orientations (K)', 'FontSize', 14,'interpreter', 'latex');
 ylabel('$\mathrm{PEB_{90\%}}$[cm]', 'FontSize', 14,'interpreter', 'latex');
 grid on;
-legend(legend_entries, 'Location', 'northeast', 'FontSize', 11);
+legend(legend_entries, 'Location', 'northeast', 'FontSize', 12);
 axis([3,9,0,10])
 
 % Format the axes for better readability
 ax = gca;
-ax.FontSize = 12;
+ax.FontSize = 14;
 ax.TickLabelInterpreter="latex"
 ax.GridLineStyle = ':';
 ax.GridAlpha = 0.3;
 
+ax = gca;           % obtiene el objeto de ejes actual
+ax.Box = 'on';      % activa el marco completo
+ax.LineWidth = 1; % grosor del borde
+
 hold off;
 
-% Save the figure to the results directory
-filebase = fullfile(results_dir, sprintf('PEB_vs_theta_half_%s', current_datetime));
-exportgraphics(gcf, [filebase '.png'], 'Resolution', 600);
+%%
 
+figure(1);
+set(gcf, 'Color', 'white');
+print(fullfile(results_dir, 'PEB_vs_theta_half.png'), '-dpng', '-r300');
 fprintf('Analysis complete. Figure saved in %s\n', results_dir);

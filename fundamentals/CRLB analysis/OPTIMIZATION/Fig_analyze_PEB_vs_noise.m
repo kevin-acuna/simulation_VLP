@@ -16,7 +16,7 @@ end
 
 %% ======================== CONFIGURATION ========================
 
-SNR_dB = -20:1:20;
+SNR_dB = -30:5:30;
 SNR_lin = 10.^(SNR_dB/10);
 
 sigma2_base = (10^(-21.0))*(30e6)*2.466*10; %Para 10dB : 2.466
@@ -83,11 +83,11 @@ fprintf('\nCalculating PEB for different noise levels and orientations...\n');
 peb_results = zeros(length(sigma2_values), length(K_values));
 
 % Create a log file
-current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
-log_filename = fullfile(results_dir, sprintf('PEB_vs_noise_analysis_%s.txt', current_datetime));
-diary(log_filename);
-fprintf('Log file started: %s\n', log_filename);
-fprintf('Date and time: %s\n\n', datestr(now));
+% current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
+% log_filename = fullfile(results_dir, sprintf('PEB_vs_noise_analysis_%s.txt', current_datetime));
+% diary(log_filename);
+% fprintf('Log file started: %s\n', log_filename);
+% fprintf('Date and time: %s\n\n', datestr(now));
 
 % Loop through each noise level
 for i = 1:length(sigma2_values)
@@ -150,32 +150,32 @@ for j = 1:length(K_values)
     
     % Plot PEB vs noise level for this K value (with linear axes)
     plot(SNR_dB, peb_results(:, j)*100, markers{min(j,length(markers))}, 'Color', colors(j,:), ...
-        'LineWidth', 1, 'MarkerSize', 2, 'MarkerFaceColor', 'w');
+        'LineWidth', 1, 'MarkerSize', 5);
     
     legend_entries{j} = sprintf('K=%d', K);
 end
 % set( gca, 'YScale', 'log' );
 
 % Add labels, title, grid, and legend
-xlabel('$\mathrm{SNR[dB]}$', 'FontSize', 12,'interpreter', 'latex');
-ylabel('$\mathrm{PEB_{90\%}}$[cm]', 'FontSize', 12, 'interpreter', 'latex');
+xlabel('$\mathrm{SNR[dB]}$', 'FontSize', 14,'interpreter', 'latex');
+ylabel('$\mathrm{PEB_{90\%}}$[cm]', 'FontSize', 14, 'interpreter', 'latex');
 grid on;
-legend(legend_entries, 'Location', 'best', 'FontSize', 10,'Interpreter','latex');
+legend(legend_entries, 'Location', 'best', 'FontSize', 12,'Interpreter','latex');
 
 % Set specific X-axis limits to start from first sigma2 and end at last sigma2
 xlim([SNR_dB(1), SNR_dB(end)]);
-
-% Adjust Y-axis limits to have some margin
-y_min = min(peb_results(:)*100) * 0.95;
-y_max = max(peb_results(:)*100) * 1.05;
-ylim([y_min, y_max]);
+ylim([1e-1 1e3])
 
 % Format the axes for better readability
 ax = gca;
-ax.FontSize = 11;
+ax.FontSize = 14;
 ax.GridLineStyle = ':';
 ax.GridAlpha = 0.3;
 ax.TickLabelInterpreter="latex";
+
+set(gca, 'YScale', 'log')
+box on
+ax.LineWidth = 1;
 
 hold off;
 
@@ -186,5 +186,5 @@ hold off;
 
 figure(1);
 set(gcf, 'Color', 'white');
-print(fullfile(results_dir, 'PEB_vs_SNR_zoom.png'), '-dpng', '-r300');
+print(fullfile(results_dir, 'PEB_vs_SNR.png'), '-dpng', '-r300');
 fprintf('Analysis complete. Figure saved in %s\n', results_dir);

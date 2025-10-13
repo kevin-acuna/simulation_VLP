@@ -49,12 +49,17 @@ xlabel('Positioning Error [cm]','interpreter','latex');
 ylabel('CDF','Interpreter','latex');
 legend('K=3 [22]','K=5 (GLS)', 'K=5 (WLS)','K=5 (NL)', 'K=5 (PEB)', 'K=9 (GLS)','K=9 (WLS)','K=9 (NL)', 'K=9 (PEB)', 'Location', 'best','interpreter','latex');
 
-figure(1);
-set(gcf, 'Color', 'white');
-print('Fig_CDF.png', '-dpng', '-r300');
+ax = gca;           % obtiene el objeto de ejes actual
+ax.Box = 'on';      % activa el marco completo
+ax.LineWidth = 1; % grosor del borde
+
+% figure(1);
+% set(gcf, 'Color', 'white');
+% print('Fig_CDF.png', '-dpng', '-r300');
 
 
 %%
+close all 
 % Tiempo - Análisis comparativo de métodos de estimación
 % avg_time_K5_WLS = median((load('K5_WLS_fixed.mat').time_WLS)*1000);
 % avg_time_K5_GLS = median((load('K5_GLS_fixed.mat').time_GLS)*1000);
@@ -74,10 +79,11 @@ avg_time_K9_NL = median((load('K9_NL_optimized_fixed.mat').time_NL)*1000);
 
 % Organizar datos por método y configuración (coherente con figura 1)
 tiempos_K5 = [avg_time_K5_GLS, avg_time_K5_WLS, avg_time_K5_NL];
-tiempos_K9 = [avg_time_K9_GLS, avg_time_K9_WLS, 97.7];
+tiempos_K9 = [avg_time_K9_GLS, avg_time_K9_WLS, avg_time_K9_NL];
 
 % Gráfico de barras agrupadas para comparativa de tiempos
-figure(2)
+fig = figure('Position', [100, 100, 800, 400]);
+% figure(2)
 hold on;
 
 % Crear posiciones para las barras
@@ -88,16 +94,16 @@ pos_K9 = [5, 6, 7];  % Separación para K=9
 color_GLS = [0, 0.4470, 0.7410];      % Azul
 color_WLS = [0.8500, 0.3250, 0.0980]; % Naranja  
 color_NL = [0.4940, 0.1840, 0.5560];  % Púrpura
-
+withbar = 0.6;
 % Crear barras para K=5
-bar1 = bar(pos_K5(1), tiempos_K5(1), 'FaceColor', color_GLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
-bar2 = bar(pos_K5(2), tiempos_K5(2), 'FaceColor', color_WLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
-bar3 = bar(pos_K5(3), tiempos_K5(3), 'FaceColor', color_NL, 'EdgeColor', 'k', 'LineWidth', 0.5);
+bar1 = bar(pos_K5(1), tiempos_K5(1), withbar ,'FaceColor', color_GLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
+bar2 = bar(pos_K5(2), tiempos_K5(2), withbar ,'FaceColor', color_WLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
+bar3 = bar(pos_K5(3), tiempos_K5(3), withbar ,'FaceColor', color_NL, 'EdgeColor', 'k', 'LineWidth', 0.5);
 
 % Crear barras para K=9 (GLS, WLS y NL disponibles)
-bar4 = bar(pos_K9(1), tiempos_K9(1), 'FaceColor', color_GLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
-bar5 = bar(pos_K9(2), tiempos_K9(2), 'FaceColor', color_WLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
-bar6 = bar(pos_K9(3), tiempos_K9(3), 'FaceColor', color_NL, 'EdgeColor', 'k', 'LineWidth', 0.5);
+bar4 = bar(pos_K9(1), tiempos_K9(1), withbar ,'FaceColor', color_GLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
+bar5 = bar(pos_K9(2), tiempos_K9(2), withbar ,'FaceColor', color_WLS, 'EdgeColor', 'k', 'LineWidth', 0.5);
+bar6 = bar(pos_K9(3), tiempos_K9(3), withbar ,'FaceColor', color_NL, 'EdgeColor', 'k', 'LineWidth', 0.5);
 
 % Configurar etiquetas del eje X
 xticks([pos_K5, pos_K9]);
@@ -117,18 +123,19 @@ all_pos = [pos_K5, pos_K9];
 for i = 1:length(all_times)
     text(all_pos(i), all_times(i), sprintf('%.3f', all_times(i)), ...
          'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', ...
-         'FontSize', 10, 'Interpreter', 'latex');
+         'FontSize', 14, 'Interpreter', 'latex');
 end
 
 % Añadir etiquetas de grupo
 text(2, max(all_times)*0.1, 'K = 5', 'HorizontalAlignment', 'center', ...
-     'FontSize', 12, 'FontWeight', 'bold', 'Interpreter', 'latex');
+     'FontSize', 14, 'FontWeight', 'bold', 'Interpreter', 'latex');
 text(6, max(all_times)*0.1, 'K = 9', 'HorizontalAlignment', 'center', ...
-     'FontSize', 12, 'FontWeight', 'bold', 'Interpreter', 'latex');
+     'FontSize', 14, 'FontWeight', 'bold', 'Interpreter', 'latex');
 
 % Configuración estética
 grid on;
 ax = gca;
+ax.FontSize = 14;
 ax.XGrid = 'off';  % Solo grid horizontal para mayor claridad
 ax.YGrid = 'on';
 ax.GridLineStyle = '-';
@@ -138,17 +145,19 @@ box on;
 
 % Ajustar límites para mejor visualización
 xlim([0.5, 7.5]);
-ylim([1e-2, 2e+2]);
+ylim([1e-2, 1e+3]);
 
 set(gca, 'YScale', 'log');
 
 % Leyenda coherente con figura 1
 %legend([bar1, bar2, bar3], {'GLS', 'WLS', 'NL'}, 'Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 10);
 
+ax.Box = 'on';      % activa el marco completo
+ax.LineWidth = 1; % grosor del borde
+
 hold off;
 
-
-figure(2);
+figure(1);
 set(gcf, 'Color', 'white');
 print('Fig_Time.png', '-dpng', '-r300');
 
