@@ -1,6 +1,5 @@
 % Construyo mi testbed de VLP
-clc, clear, close all
-run('vlp_testbed_def.m');        % Load to workspace the testbed
+%run('definitions.m');        
 
 AP_pos = vertcat(AP.pos);
 AP_n   = vertcat(AP.n_t);        % Nx3
@@ -8,6 +7,9 @@ AP_ids = {AP.id};                % 1xN
 
 UE_pos = UE.pos(:).';            % 1x3
 UE_n   = UE.n_r(:).';            % 1x3
+
+Nori = size(AP(1).set_n_t, 1);
+Nap  = numel(AP);
 
 figure('Color','w'); hold on; axis equal; grid on;
 xlabel('x [m]'); ylabel('y [m]'); zlabel('z [m]');
@@ -24,21 +26,27 @@ patch('XData',testbed.x([1 2 2 1]), ...
       'ZData',[testbed.z(2) testbed.z(2) testbed.z(2) testbed.z(2)], ...
       'FaceAlpha',0.05,'EdgeColor',[0.6 0.6 0.6]);
 
-plot3(AP_pos(:,1), AP_pos(:,2), AP_pos(:,3), 's', ...
-      'MarkerSize',10,'MarkerFaceColor',[0.2 0.5 1],'MarkerEdgeColor','k');
 
 
 L_arrow = 0.5;  % longitud visual de la flecha
-quiver3(AP_pos(:,1), AP_pos(:,2), AP_pos(:,3), ...
-        L_arrow*AP_n(:,1), L_arrow*AP_n(:,2), L_arrow*AP_n(:,3), ...
-        0, 'LineWidth',1.5,'Color',[0.2 0.5 1]);
 
-% Etiquetas de AP
-for k = 1:numel(AP)
-    text(AP_pos(k,1), AP_pos(k,2), AP_pos(k,3)+0.1, AP_ids{k}, ...
-        'HorizontalAlignment','center','VerticalAlignment','bottom', ...
-        'FontWeight','bold');
+for i_ap = 1:Nap
+    
+    plot3(AP(i_ap).pos(1), AP(i_ap).pos(2), AP(i_ap).pos(3), 's', ...
+      'MarkerSize',10,'MarkerFaceColor',[0.2 0.5 1],'MarkerEdgeColor','k');
+
+    for i_ori = 1:Nori
+        n_t = angles2vec( AP(i_ap).set_n_t(i_ori,:) );
+        quiver3(AP(i_ap).pos(1), AP(i_ap).pos(2), AP(i_ap).pos(3), ...
+                L_arrow*n_t(:,1), L_arrow*n_t(:,2), L_arrow*n_t(:,3), ...
+                0, 'LineWidth',1.5,'Color',[0.2 0.5 1]);
+    end
+
+    text(AP(i_ap).pos(1), AP(i_ap).pos(2), AP(i_ap).pos(3)+0.1, AP_ids{i_ap}, ...
+    'HorizontalAlignment','center','VerticalAlignment','bottom', ...
+    'FontWeight','bold');
 end
+
 
 % === (5) Plot de UE ===
 plot3(UE_pos(1), UE_pos(2), UE_pos(3), 'o', ...

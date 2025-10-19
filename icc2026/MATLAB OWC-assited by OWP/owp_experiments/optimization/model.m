@@ -1,11 +1,12 @@
-function rmse = model(set,Q,gridstep,modeltype)
+function rmse = model(set, Q, gridstep, modeltype)
 % set: set of orientation (inclination, azimuth, ...)
 % Q : area of working
 % grid : steps in the testbed
 
 % Intrasture
-T = [0.4,0.4,0];
-h = 2 - 0.75;
+%T = [0.4,0.4,0]; h = 2 - 0.75;
+T = [0, 0, 0]; h = 2.5-0.75;
+
 FOV = 60;
 % Set of K-orientation (K=3)
 % inclination, azimuth
@@ -39,7 +40,7 @@ Npos = size(pos,1);
 % Parameters
 Pt = 0.405;
 Rp = 0.6;
-m = 1.52;
+m = 2; %m = 1.52;
 p = 4.8e-3; q = 5.5e-3; 
 N_det = 1; 
 A_det = p*q*N_det;
