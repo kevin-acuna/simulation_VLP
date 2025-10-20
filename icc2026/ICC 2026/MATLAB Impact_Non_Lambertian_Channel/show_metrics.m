@@ -33,7 +33,7 @@ cmin = 0;
 figure; hold on
 plot(true_pos(:,1), true_pos(:,2), '.', 'Color', [0.3 0.3 0.3]);
 scatter(est_pos(:,1), est_pos(:,2), 12, err_cm, 'filled', ...
-    'MarkerFaceAlpha', 0.85);  % suaviza el punto
+    'MarkerFaceAlpha', 0.85);  % smooths the point
 
 colormap(turbo);
 caxis([cmin cmax]);            

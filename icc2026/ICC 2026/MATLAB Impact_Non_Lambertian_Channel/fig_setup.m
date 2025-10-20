@@ -1,4 +1,4 @@
-% Construyo mi testbed de VLP
+% Build my VLP testbed
 %run('definitions.m');        
 
 AP_pos = vertcat(AP.pos);
@@ -16,7 +16,7 @@ xlabel('x [m]'); ylabel('y [m]'); zlabel('z [m]');
 xlim(testbed.x); ylim(testbed.y); zlim(testbed.z);
 view(45,25);
 
-% Piso/techo (opcional)
+% Floor/ceiling (optional)
 patch('XData',testbed.x([1 2 2 1]), ...
       'YData',testbed.y([1 1 2 2]), ...
       'ZData',[UE.pos(3) UE.pos(3) UE.pos(3) UE.pos(3)], ...
@@ -28,7 +28,7 @@ patch('XData',testbed.x([1 2 2 1]), ...
 
 
 
-L_arrow = 0.5;  % longitud visual de la flecha
+L_arrow = 0.5;  % visual length of the arrow
 
 for i_ap = 1:Nap
     
@@ -48,7 +48,7 @@ for i_ap = 1:Nap
 end
 
 
-% === (5) Plot de UE ===
+% === (5) UE Plot ===
 plot3(UE_pos(1), UE_pos(2), UE_pos(3), 'o', ...
       'MarkerSize',9,'MarkerFaceColor',[1 0.4 0.1],'MarkerEdgeColor','k');
 quiver3(UE_pos(1), UE_pos(2), UE_pos(3), ...
@@ -58,26 +58,26 @@ text(UE_pos(1), UE_pos(2), UE_pos(3)+0.1, UE.id, ...
      'HorizontalAlignment','center','VerticalAlignment','bottom', ...
      'FontWeight','bold');
 
-% === (6) (Opcional) Cono FOV del UE ===
+% === (6) (Optional) UE FOV Cone ===
 drawFOVcone(UE_pos, UE_n, UE.FOV_deg, 0.6, [1 0.4 0.1]);  % L=0.6 m
 
-%% ===== Helper: dibuja un cono de FOV dado origen, normal y ángulo =====
+%% ===== Helper: draws a FOV cone given origin, normal and angle =====
 function h = drawFOVcone(origin, normal, FOV_deg, L, colorRGB)
-    % normaliza
+    % normalize
     n = normal(:)/norm(normal);
-    % base ortonormal {u,v,n}
+    % orthonormal basis {u,v,n}
     tmp = [1;0;0];
     if abs(dot(n,tmp)) > 0.9, tmp = [0;1;0]; end
     u = tmp - (n'*tmp)*n; u = u/norm(u);
     v = cross(n,u);
 
-    % geometría del cono
+    % cone geometry
     th = linspace(0, 2*pi, 50);
     alpha = deg2rad(FOV_deg);
     r = L * tan(alpha);
     circle = origin(:) + n*L + u*r.*cos(th) + v*r.*sin(th);
 
-    % malla de la superficie
+    % surface mesh
     Nring = numel(th);
     X = [origin(1)*ones(1,Nring); circle(1,:)];
     Y = [origin(2)*ones(1,Nring); circle(2,:)];
@@ -87,6 +87,6 @@ function h = drawFOVcone(origin, normal, FOV_deg, L, colorRGB)
     h = surf([X; X(1,:)], [Y; Y(1,:)], [Z; Z(1,:)], ...
              'FaceAlpha',0.08,'EdgeAlpha',0.15, ...
              'FaceColor',colorRGB, 'EdgeColor',colorRGB);
-    % aro de la base
+    % base ring
     plot3(circle(1,:), circle(2,:), circle(3,:), '-', 'Color', colorRGB, 'LineWidth',1.2);
 end

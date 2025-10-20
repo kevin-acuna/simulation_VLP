@@ -1,4 +1,4 @@
-% Parametro Fijos del experimento
+% Fixed experiment parameters
 
 testbed = struct( ... % testbed
   'x',          [-1.5 1.5], ...
@@ -9,19 +9,19 @@ testbed = struct( ... % testbed
 
 UE = struct( ... % User Equipment
   'id',          "PD1", ...
-  'delta_tilt',  10,...                  % INCERTIDUMBRE de la orientacion
-  'pos',         [0 0 0.75], ...         % altura del móvil/plano de prueba
-  'n_r'  ,       [0 0 1], ...            % PD mira hacia +z (al techo)
-  'A_det',       (2.65e-3)*(2.65e-3), ...               % área activa
-  'FOV_deg',     68, ...                 % campo de visión (semiángulo)
-  'Ts',          1.0, ...                % ganancia del filtro óptico
-  'g_ri',        1.0, ...                % ganancia concentrador (si no hay, =1)
+  'delta_tilt',  0,...                  % Orientation UNCERTAINTY
+  'pos',         [0 0 0.75], ...         % mobile height/test plane
+  'n_r'  ,       [0 0 1], ...            % PD looks towards +z (to the ceiling)
+  'A_det',       (2.65e-3)*(2.65e-3), ...               % active area
+  'FOV_deg',     68, ...                 % field of view (semi-angle)
+  'Ts',          1.0, ...                % optical filter gain
+  'g_ri',        1.0, ...                % concentrator gain (if none, =1)
   'R_pd',        0.62, ...                % Responsivity
   'label',       "BPX61" ...
 );
 
 channel = struct( ...
-  'sigma2',      30e6*10^(-23.0), ...
+  'sigma2',      1e-16, ...
   'model',      'lambertian'...
 );
 
