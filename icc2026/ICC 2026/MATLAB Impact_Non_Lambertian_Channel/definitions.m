@@ -13,7 +13,7 @@ UE = struct( ... % User Equipment
   'pos',         [0 0 0.75], ...         % altura del móvil/plano de prueba
   'n_r'  ,       [0 0 1], ...            % PD mira hacia +z (al techo)
   'A_det',       (2.65e-3)*(2.65e-3), ...               % área activa
-  'FOV_deg',     65, ...                 % campo de visión (semiángulo)
+  'FOV_deg',     68, ...                 % campo de visión (semiángulo)
   'Ts',          1.0, ...                % ganancia del filtro óptico
   'g_ri',        1.0, ...                % ganancia concentrador (si no hay, =1)
   'R_pd',        0.62, ...                % Responsivity
