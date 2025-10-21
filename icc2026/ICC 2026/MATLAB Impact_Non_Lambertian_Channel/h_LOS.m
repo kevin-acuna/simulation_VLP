@@ -15,8 +15,8 @@ psi = acosd(cos_psi);
 
 if (cos_phi > 0)
     if strcmp(modeltype,'datasheet')
-        R_phi =  irradiance(phi,'poly'); % Esto va de 0 a 1 !!!
-        % R_phi = (m+1)*irradiance(phi,'poly')/(2*pi);
+%         R_phi =  irradiance(phi,'poly'); % Esto va de 0 a 1 !!!
+        R_phi = (m+1)*irradiance(phi,'poly')/(2*pi);
     elseif strcmp(modeltype,'lambertian')
         R_phi = (m+1)*cos_phi^m/(2*pi); 
     else

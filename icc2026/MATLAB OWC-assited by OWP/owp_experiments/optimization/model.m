@@ -39,14 +39,14 @@ Npos = size(pos,1);
 
 % Parameters
 Pt = 0.405;
-Rp = 0.6;
+Rp = 0.62;
 m = 2; %m = 1.52;
 p = 4.8e-3; q = 5.5e-3; 
 N_det = 1; 
 A_det = p*q*N_det;
 Relec = 1e6;
 
-sigma2 = 30e6*10^(-21.0);
+sigma2 =  1e-16; %30e6*10^(-23.0);
 
 % Model
 S=cell(Npos,Ndir);
@@ -77,7 +77,7 @@ for i_pos = 1:Npos
         else
             h_LOS = 0;
         end
-        w = sqrt(sigma2).*randn(1,1000);
+        w = sqrt(sigma2).*randn(1,100);
         S{i_pos,i_dir} = Relec*(Rp*Pt*h_LOS + w);
     end
 end
@@ -91,7 +91,8 @@ for i_pos = 1:Npos
     V_n3 = mean(S{i_pos,3});  V_n3 = min(max(V_n3, 0.00000001), 100);
 
     try
-        n_d = estimate_direction([V_n1,V_n2,V_n3], n_t, m, 'svd');
+        m_opt = 1.5355;
+        n_d = estimate_direction([V_n1,V_n2,V_n3], n_t, m_opt, 'svd');
         escale = -h/n_d(3);
         pos_est(i_pos,:) = T + escale*n_d;
     catch
