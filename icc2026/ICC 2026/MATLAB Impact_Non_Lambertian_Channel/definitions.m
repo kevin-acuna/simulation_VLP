@@ -9,7 +9,7 @@ testbed = struct( ... % testbed
 
 UE = struct( ... % User Equipment
   'id',          "PD1", ...
-  'delta_tilt',  0,...                  % Orientation UNCERTAINTY
+  'delta_tilt',  10,...                  % Orientation UNCERTAINTY
   'pos',         [0 0 0.75], ...         % mobile height/test plane
   'n_r'  ,       [0 0 1], ...            % PD looks towards +z (to the ceiling)
   'A_det',       (2.65e-3)*(2.65e-3), ...               % active area

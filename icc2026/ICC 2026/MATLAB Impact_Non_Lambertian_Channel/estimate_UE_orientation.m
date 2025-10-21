@@ -43,7 +43,7 @@ function n_hat = estimate_UE_orientation(AP, UE, p_est_xyz, Pblock)
     end
 
     %s = mean(Pj.*d.^2./(C(1).*cos_th.^AP(1).m));
-    % --- Linear system in n:  [v1; v2] * n = -[s1; s2]
+    % --- Linear system in n:  -[v1; v2] * n = [s1; s2]
     A = -[v(1,:); v(2,:)];
     b = s(:);                                 % because cos_psi = n·(-v)
 
