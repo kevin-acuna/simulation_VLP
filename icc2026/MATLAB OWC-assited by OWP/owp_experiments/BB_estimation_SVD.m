@@ -22,6 +22,10 @@ T = [0.4,0.4,0]';
 T_c = [0,0,0]';
 fprintf('Total de posiciones únicas: %d\n\n', n_positions);
 
+% Area de trabajo
+Q = [0 1 0 1];
+
+
 % ===============================================
 % IMPORTANTE: CALIBRACIÓN DE LAS ORIENTACIONES
 % ===============================================
@@ -35,8 +39,9 @@ fprintf('Total de posiciones únicas: %d\n\n', n_positions);
 
 % Orientaciones en formato [incl,azimuth,..]
 % set = [38  207   60  181   60  233]; % real
-set = [33  207   60  181   60  233]; % ajustado para mejor resultado
+% set = [33  207   60  181   60  233]; % ajustado para mejor resultado
 
+set = [0 0 15 180 20 270];
 Ndir = length(set)/2;
 for i_dir = 1:Ndir
     incl = set(i_dir*2-1);
@@ -57,75 +62,82 @@ results = [];
 % for m_t = 1:0.01:4  % puedo añadir la busqueda para el menor RMSE
 for m_t = 1.7
 
-pos_true = zeros(n_positions,3);
-pos_est_owp = zeros(n_positions,3);
-
-% Evaluacion por cada posicion
-for p = 1:n_positions
-    pos_x = unique_positions.x(p);
-    pos_y = unique_positions.y(p);
-    pos_z = unique_positions.z(p);
+    pos_true = zeros(n_positions,3);
+    pos_est_owp = zeros(n_positions,3);
     
-    pos_true(p,:) = [pos_x, pos_y, -h ];
-    % Filtrar datos para esta posición
-    pos_data = data(data.x == pos_x & data.y == pos_y & data.z == pos_z, :);    
-    % Ordenar por orientación (asumiendo K1, K2, K3 en orden de inclinación y azimuth)
-    pos_data = sortrows(pos_data, {'inclinacion', 'azimuth'});
+    % Evaluacion por cada posicion
+    for p = 1:n_positions
+        pos_x = unique_positions.x(p);
+        pos_y = unique_positions.y(p);
+        pos_z = unique_positions.z(p);
+        
+        if inrangeQ( Q, pos_x, pos_y)
+            pos_true(p,:) = [pos_x, pos_y, -h ];
+            % Filtrar datos para esta posición
+            pos_data = data(data.x == pos_x & data.y == pos_y & data.z == pos_z, :);    
+            % Ordenar por orientación (asumiendo K1, K2, K3 en orden de inclinación y azimuth)
+            pos_data = sortrows(pos_data, {'inclinacion', 'azimuth'});
+            
+            % Extraer voltajes (mean) de la tabla
+            V_k1 = pos_data.mean(1) + V_bg;
+            V_k2 = pos_data.mean(2) + V_bg;
+            V_k3 = pos_data.mean(3) + V_bg;
+            
+            % Calcular ratios
+        %     b_k2_val = V_k2 / V_k1;
+        %     b_k3_val = V_k3 / V_k1;
+        
+        %     % Mostrar información
+        %     fprintf('Posición %d: (%.2f, %.2f, %.2f)\n', p, pos_x, pos_y, pos_z);
+        %     fprintf('  V_K1 = %.4f V\n', V_k1);
+        %     fprintf('  V_K2 = %.4f V\n', V_k2);
+        %     fprintf('  V_K3 = %.4f V\n', V_k3);
+        %     fprintf('  b_K2 = V_K2/V_K1 = %.4f\n', b_k2_val);
+        %     fprintf('  b_K3 = V_K3/V_K1 = %.4f\n\n', b_k3_val);
+        
+            
+            % Ratios
+            K_ij = (V_k1/V_k2)^(1/m_t);
+            K_jk = (V_k2/V_k3)^(1/m_t);
+            K_ik = (V_k1/V_k3)^(1/m_t);
+        
+            % Bastian SVD
+            alpha_ij = a_i - K_ij*a_j;
+            alpha_jk = a_j - K_jk*a_k;
+            alpha_ik = a_i - K_ik*a_k;
+            beta_ij = b_i - K_ij*b_j;
+            beta_jk = b_j - K_jk*b_k;
+            beta_ik = b_i - K_ik*b_k;
+            gamma_ij = c_i - K_ij*c_j;
+            gamma_jk = c_j - K_jk*c_k;
+            gamma_ik = c_i - K_ik*c_k;
+        
+            eigenVectorsSVD  = null( [alpha_ij, beta_ij, gamma_ij;
+                                              alpha_jk, beta_jk, gamma_jk;
+                                              alpha_ik, beta_ik, gamma_ik]);
+        
+        
+            n_d = -eigenVectorsSVD;
+            escale = -h/n_d(3);
+            pos_est_owp(p,:) = (T + escale*n_d)';
+        else
+            pos_est_owp(p,:) = [NaN, NaN, NaN ];
+        end
+    end
     
-    % Extraer voltajes (mean) de la tabla
-    V_k1 = pos_data.mean(1) + V_bg;
-    V_k2 = pos_data.mean(2) + V_bg;
-    V_k3 = pos_data.mean(3) + V_bg;
     
-    % Calcular ratios
-%     b_k2_val = V_k2 / V_k1;
-%     b_k3_val = V_k3 / V_k1;
 
-%     % Mostrar información
-%     fprintf('Posición %d: (%.2f, %.2f, %.2f)\n', p, pos_x, pos_y, pos_z);
-%     fprintf('  V_K1 = %.4f V\n', V_k1);
-%     fprintf('  V_K2 = %.4f V\n', V_k2);
-%     fprintf('  V_K3 = %.4f V\n', V_k3);
-%     fprintf('  b_K2 = V_K2/V_K1 = %.4f\n', b_k2_val);
-%     fprintf('  b_K3 = V_K3/V_K1 = %.4f\n\n', b_k3_val);
-
+    % Calcular errores
+    errors = sqrt(sum((pos_true - pos_est_owp).^2, 2))*100;
+    errors = errors(~isnan(errors));
+    rmse = sqrt(mean(errors.^2));
+    % fprintf('RMSE: %.2f cm\n', rmse);
+    % fprintf('APE: %.2f cm\n', mean(errors));
+    % fprintf('MAX: %.2f cm\n', max(errors));
+    % fprintf('MIN: %.2f cm\n', min(errors));
+    fprintf('RMSE: %.2f cm, m_t: %.2f \n', rmse, m_t);
     
-    % Ratios
-    K_ij = (V_k1/V_k2)^(1/m_t);
-    K_jk = (V_k2/V_k3)^(1/m_t);
-    K_ik = (V_k1/V_k3)^(1/m_t);
-
-    % Bastian SVD
-    alpha_ij = a_i - K_ij*a_j;
-    alpha_jk = a_j - K_jk*a_k;
-    alpha_ik = a_i - K_ik*a_k;
-    beta_ij = b_i - K_ij*b_j;
-    beta_jk = b_j - K_jk*b_k;
-    beta_ik = b_i - K_ik*b_k;
-    gamma_ij = c_i - K_ij*c_j;
-    gamma_jk = c_j - K_jk*c_k;
-    gamma_ik = c_i - K_ik*c_k;
-
-    eigenVectorsSVD  = null( [alpha_ij, beta_ij, gamma_ij;
-                                      alpha_jk, beta_jk, gamma_jk;
-                                      alpha_ik, beta_ik, gamma_ik]);
-
-
-    n_d = -eigenVectorsSVD;
-    escale = -h/n_d(3);
-    pos_est_owp(p,:) = (T + escale*n_d)';
-end
-
-% Calcular errores
-errors = sqrt(sum((pos_true - pos_est_owp).^2, 2))*100;
-rmse = sqrt(mean(errors.^2));
-% fprintf('RMSE: %.2f cm\n', rmse);
-% fprintf('APE: %.2f cm\n', mean(errors));
-% fprintf('MAX: %.2f cm\n', max(errors));
-% fprintf('MIN: %.2f cm\n', min(errors));
-fprintf('RMSE: %.2f cm, m_t: %.2f \n', rmse, m_t);
-
-results = [results; m_t rmse];
+    results = [results; m_t rmse];
 end
 
 best = results(find(results(:,2)==min(results(:,2))),:)
