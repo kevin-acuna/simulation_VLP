@@ -57,7 +57,7 @@ a_k = n_t(3,1); b_k = n_t(3,2); c_k = n_t(3,3);
 
 % m_t = 1.43; %mejor con un background de V_bg = 0; nt_2=20
 m_t = 1.52; %mejor con un background de V_bg = 0.04; nt_2=18
-V_bg = 0.04;
+V_bg = 0.0411;
 results = [];
 
 % for m_t = 1:0.01:4  % puedo añadir la busqueda para el menor RMSE

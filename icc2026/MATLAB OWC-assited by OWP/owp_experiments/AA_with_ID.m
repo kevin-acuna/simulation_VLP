@@ -11,17 +11,24 @@ colorsMATLAB = [0.0000 0.4470 0.7410 ;...
                 0.3010 0.7450 0.9330 ;...
                 0.6350 0.0780 0.1840];
 
-data = readtable('db_icc2026_randnr/data_20251027_202610.csv');
+data = readtable('db_icc2026_randnr/data_20251027_211112.csv');
 
 % Corregir el voltaje: aplicar el negativo del voltaje leído
 data.medida_daq = -data.medida_daq;
 
-%% 1. Obtener posiciones únicas
-% Extraer las posiciones (x, y, z) únicas
-unique_positions = unique(data(:, {'x', 'y', 'z'}), 'rows');
-% unique_positions = unique_positions(10,:);
-fprintf('Total de posiciones únicas: %d\n', height(unique_positions));
-disp(unique_positions);
+%% 1. Obtener sample_id únicos
+% Extraer los sample_id únicos (cada uno representa una medición única)
+unique_samples = unique(data.sample_id);
+fprintf('Total de muestras únicas (sample_id): %d\n', length(unique_samples));
+
+% Mostrar información de cada sample_id
+for i = 1:length(unique_samples)
+    sample_data = data(strcmp(data.sample_id, unique_samples{i}), :);
+    if height(sample_data) > 0
+        fprintf('Sample ID: %s - Pos: (%.2f, %.2f, %.2f)\n', ...
+                unique_samples{i}, sample_data.x(1), sample_data.y(1), sample_data.z(1));
+    end
+end
 
 %% 2. Identificar las orientaciones únicas (K_1, K_2, K_3)
 unique_orientations = unique(data(:, {'inclinacion', 'azimuth'}), 'rows');
@@ -50,26 +57,28 @@ for k = 1:3
     all_data = [];
     idx_acumulado = 0;
     
-    % Para cada posición única, concatenar sus muestras
-    for p = 1:height(unique_positions)
-        pos_x = unique_positions.x(p);
-        pos_y = unique_positions.y(p);
-        pos_z = unique_positions.z(p);
+    % Para cada sample_id único, concatenar sus muestras
+    for s = 1:length(unique_samples)
+        sample_id = unique_samples{s};
         
-        % Filtrar muestras para esta posición
-        muestras = data_orientacion(data_orientacion.x == pos_x & ...
-                                     data_orientacion.y == pos_y & ...
-                                     data_orientacion.z == pos_z, :);
+        % Filtrar muestras para este sample_id
+        muestras = data_orientacion(strcmp(data_orientacion.sample_id, sample_id), :);
         
         if height(muestras) > 0
             % Concatenar las muestras
             n_muestras = height(muestras);
             x_vals = (1:n_muestras) + idx_acumulado;
             sigma2 = [sigma2 var(muestras.medida_daq)];
-            % Graficar con color diferente para cada posición
-            plot(x_vals, muestras.medida_daq, '-', 'Color', colorsMATLAB(mod(p-1,7)+1,:), ...
-                 'MarkerSize', 6, 'DisplayName', sprintf('Pos %d: (%.2f,%.2f,%.2f)', ...
-                 p, pos_x, pos_y, pos_z));
+            
+            % Obtener información de posición para la leyenda
+            pos_x = muestras.x(1);
+            pos_y = muestras.y(1);
+            pos_z = muestras.z(1);
+            
+            % Graficar con color diferente para cada sample_id
+            plot(x_vals, muestras.medida_daq, '-', 'Color', colorsMATLAB(mod(s-1,7)+1,:), ...
+                 'MarkerSize', 6, 'DisplayName', sprintf('ID:%s (%.2f,%.2f,%.2f)', ...
+                 sample_id, pos_x, pos_y, pos_z));
             
             idx_acumulado = idx_acumulado + n_muestras;
 %             axis([-inf inf 0 5 ])
@@ -89,7 +98,8 @@ if save_mean
     fprintf('\n=== Calculando y guardando medias ===\n');
     
     % Inicializar arreglos para almacenar resultados
-    n_total = height(unique_positions) * height(unique_orientations);
+    n_total = length(unique_samples) * height(unique_orientations);
+    sample_id_vals = cell(n_total, 1);
     x_vals = zeros(n_total, 1);
     y_vals = zeros(n_total, 1);
     z_vals = zeros(n_total, 1);
@@ -100,20 +110,28 @@ if save_mean
     
     idx = 1;
     
-    % Para cada posición única (primero por posición)
-    for p = 1:height(unique_positions)
-        pos_x = unique_positions.x(p);
-        pos_y = unique_positions.y(p);
-        pos_z = unique_positions.z(p);
+    % Para cada sample_id único
+    for s = 1:length(unique_samples)
+        sample_id = unique_samples{s};
         
-        % Para cada orientación (luego por orientación)
+        % Obtener información de posición para este sample_id
+        sample_data = data(strcmp(data.sample_id, sample_id), :);
+        if height(sample_data) > 0
+            pos_x = sample_data.x(1);
+            pos_y = sample_data.y(1);
+            pos_z = sample_data.z(1);
+        else
+            continue;
+        end
+        
+        % Para cada orientación
         for k = 1:height(unique_orientations)
             incl = unique_orientations.inclinacion(k);
             azim = unique_orientations.azimuth(k);
             
-            % Filtrar datos para esta orientación y posición
-            muestras = data(data.inclinacion == incl & data.azimuth == azim & ...
-                           data.x == pos_x & data.y == pos_y & data.z == pos_z, :);
+            % Filtrar datos para esta orientación y sample_id
+            muestras = data(strcmp(data.sample_id, sample_id) & ...
+                           data.inclinacion == incl & data.azimuth == azim, :);
             
             if height(muestras) > 0
                 % Calcular la media y mediana
@@ -121,6 +139,7 @@ if save_mean
                 mediana = median(muestras.medida_daq);
                 
                 % Guardar en los arreglos
+                sample_id_vals{idx} = sample_id;
                 x_vals(idx) = pos_x;
                 y_vals(idx) = pos_y;
                 z_vals(idx) = pos_z;
@@ -134,7 +153,8 @@ if save_mean
         end
     end
     
-    % Recortar arreglos al tamaño real (en caso de que hubiera posiciones sin datos)
+    % Recortar arreglos al tamaño real (en caso de que hubiera sample_ids sin datos)
+    sample_id_vals = sample_id_vals(1:idx-1);
     x_vals = x_vals(1:idx-1);
     y_vals = y_vals(1:idx-1);
     z_vals = z_vals(1:idx-1);
@@ -144,12 +164,11 @@ if save_mean
     median_vals = median_vals(1:idx-1);
     
     % Crear tabla con los resultados
-    medias_table = table(x_vals, y_vals, z_vals, incl_vals, azim_vals, mean_vals, median_vals, ...
-                         'VariableNames', {'x', 'y', 'z', 'inclinacion', 'azimuth', 'mean', 'median'});
+    medias_table = table(sample_id_vals, x_vals, y_vals, z_vals, incl_vals, azim_vals, mean_vals, median_vals, ...
+                         'VariableNames', {'sample_id', 'x', 'y', 'z', 'inclinacion', 'azimuth', 'mean', 'median'});
     
     % Guardar en archivo CSV
     writetable(medias_table, 'database.csv');
 else
     fprintf('\n=== save_mean = false: No se guardaron las medias ===\n');
 end
-
