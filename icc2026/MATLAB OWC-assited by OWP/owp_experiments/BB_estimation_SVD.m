@@ -23,7 +23,7 @@ T_c = [0,0,0]';
 fprintf('Total de posiciones únicas: %d\n\n', n_positions);
 
 % Area de trabajo
-Q = [0 1 0 1];
+Q = [-1 1 -1 1];
 
 
 % ===============================================
@@ -41,7 +41,8 @@ Q = [0 1 0 1];
 % set = [38  207   60  181   60  233]; % real
 % set = [33  207   60  181   60  233]; % ajustado para mejor resultado
 
-set = [0 0 15 180 20 270];
+% set = [0 0 20 180 20 270]; % for "database" 
+set = [20 0 20 120 20 240]; % for "database icc2026" 
 Ndir = length(set)/2;
 for i_dir = 1:Ndir
     incl = set(i_dir*2-1);
@@ -60,7 +61,7 @@ V_bg = 0.04;
 results = [];
 
 % for m_t = 1:0.01:4  % puedo añadir la busqueda para el menor RMSE
-for m_t = 1.7
+for m_t = 1.53
 
     pos_true = zeros(n_positions,3);
     pos_est_owp = zeros(n_positions,3);
@@ -82,7 +83,17 @@ for m_t = 1.7
             V_k1 = pos_data.mean(1) + V_bg;
             V_k2 = pos_data.mean(2) + V_bg;
             V_k3 = pos_data.mean(3) + V_bg;
+
+            % Para "database"
+            % V_k1 = 1.02*V_k1;
+            % V_k2 = 0.9563*V_k2; %0.9438
+            % V_k3 = 1*V_k3;
             
+            % Para "database_icc2026"
+            V_k1 = 1.0625*V_k1;
+            V_k2 = 0.9815*V_k2;
+            V_k3 = 0.9616*V_k3;
+             
             % Calcular ratios
         %     b_k2_val = V_k2 / V_k1;
         %     b_k3_val = V_k3 / V_k1;
@@ -185,11 +196,11 @@ text( T(1)+r_phi_c , T(2), 'phi=40', ...
      'FontSize', 10, ...
      'Color', [0.2 0.2 0.2 0.5]);
 
-axis([-2 2 -2 2 -2 0])
+axis([Q(1)-0.2 Q(2)+0.2 Q(3)-0.2 Q(4)+0.2 -2 0])
 xlabel('X [m]')
 ylabel('Y [m]')
 zlabel('Z [m]')
-legend('ground truth','estimation','AP OWP')
+legend('ground truth','estimation','AP OWP','Location','best')
 grid minor
 
 %%

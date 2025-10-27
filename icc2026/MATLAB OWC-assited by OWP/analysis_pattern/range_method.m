@@ -1,4 +1,4 @@
-clear all, close all, clc
+clear , close , clc
 
 % Important
 phi_max = 40; % maximo phi
@@ -9,18 +9,20 @@ H = 2;        % altura transmisor
 h = H - z;    % diferencia vertical
 
 tilt = 20;                % inclinación [deg]
+tilt_1 = 20;
 azimuth_1 = 0;            % azimut [deg]
-azimuth_2 = 90;            % azimut [deg]
+azimuth_2 = 120;            % azimut [deg]
+azimuth_3 = 240;
 
 n_r = [0,0,1]';           % normal receptor (mirando al techo)
-n_t = [0,0,-1; ...
-       sind(tilt)*cosd(azimuth_1), sind(tilt)*sind(azimuth_1), -cosd(tilt);...
-       sind(tilt)*cosd(azimuth_2), sind(tilt)*sind(azimuth_2), -cosd(tilt)]'; % 3x2
+n_t = [sind(tilt_1)*cosd(azimuth_1), sind(tilt_1)*sind(azimuth_1), -cosd(tilt_1);...
+       sind(tilt)*cosd(azimuth_2), sind(tilt)*sind(azimuth_2), -cosd(tilt);...
+       sind(tilt)*cosd(azimuth_3), sind(tilt)*sind(azimuth_3), -cosd(tilt)]'; % 3x2
 
 T = [0,0,H]';             % posición del Tx
 
 % Grilla 2D
-dx = 0.05;
+dx = 0.01;
 Rx = -2:dx:2;
 Ry = -2:dx:2;
 [XX,YY] = meshgrid(Rx,Ry);
@@ -53,14 +55,25 @@ Yr = [y_min, y_min, y_max, y_max, y_min];
 Zr = z0 * ones(1,5);
 
 
+% ---------- (B) AREA DESEADA ----------
+x_min=-0.4; x_max=0.4;
+y_min=x_min;
+y_max=x_max;
+Xrd = [x_min, x_max, x_max, x_min, x_min];
+Yrd = [y_min, y_min, y_max, y_max, y_min];
+Zrd = z0 * ones(1,5);
+
+
+
 figure(1)
 hold on
-plot3(R_nt1(1,:),R_nt1(2,:),R_nt1(3,:),'o','LineWidth',1)
-plot3(R_nt2(1,:),R_nt2(2,:),R_nt2(3,:),'o','LineWidth',1)
-plot3(R_nt3(1,:),R_nt3(2,:),R_nt3(3,:),'o','LineWidth',1)
+plot3(R_nt1(1,:),R_nt1(2,:),R_nt1(3,:),'o','LineWidth',0.5)
+plot3(R_nt2(1,:),R_nt2(2,:),R_nt2(3,:),'o','LineWidth',0.5)
+plot3(R_nt3(1,:),R_nt3(2,:),R_nt3(3,:),'o','LineWidth',0.5)
 plot3(R_filter(1,:),R_filter(2,:),R_filter(3,:),'o','LineWidth',1)
 plot3(0,0,0.75,'o','LineWidth',2,'Color','k')
 plot3(Xr, Yr, Zr, '-','LineWidth',2,'Color','k')
+plot3(Xrd, Yrd, Zrd, '-','LineWidth',2,'Color','r')
 axis([-2 2 -2 2 0 2])
 grid minor
 

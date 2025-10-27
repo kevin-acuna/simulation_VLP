@@ -11,7 +11,7 @@ colorsMATLAB = [0.0000 0.4470 0.7410 ;...
                 0.3010 0.7450 0.9330 ;...
                 0.6350 0.0780 0.1840];
 
-data = readtable('database_raw.csv');
+data = readtable('database_icc2026/data_20251027_172047.csv');
 
 % Corregir el voltaje: aplicar el negativo del voltaje leído
 data.medida_daq = -data.medida_daq;
@@ -34,6 +34,7 @@ end
 %% 3. Crear gráfica con 3 subgráficas
 figure('Position', [100 100 1200 900]);
 
+sigma2=[];
 for k = 1:3
     subplot(3, 1, k);
     hold on;
@@ -64,7 +65,7 @@ for k = 1:3
             % Concatenar las muestras
             n_muestras = height(muestras);
             x_vals = (1:n_muestras) + idx_acumulado;
-            
+            sigma2 = [sigma2 var(muestras.medida_daq)];
             % Graficar con color diferente para cada posición
             plot(x_vals, muestras.medida_daq, '-', 'Color', colorsMATLAB(mod(p-1,7)+1,:), ...
                  'MarkerSize', 6, 'DisplayName', sprintf('Pos %d: (%.2f,%.2f,%.2f)', ...
@@ -76,6 +77,7 @@ for k = 1:3
     end
     
     ylabel(sprintf('K%d', k));
+    ylim([0 5]);
     %title(sprintf('Orientación K_%d: inclinación=%.1f°, azimuth=%.1f°', k, incl, azim));
     %legend('Location', 'best', 'FontSize', 8);
     legend('Location', 'eastoutside', 'FontSize', 8);
