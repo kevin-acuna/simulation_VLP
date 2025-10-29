@@ -11,7 +11,13 @@ colorsMATLAB = [0.0000 0.4470 0.7410 ;...
                 0.3010 0.7450 0.9330 ;...
                 0.6350 0.0780 0.1840];
 
-data = readtable('db_icc2026_randnr/data_20251028_121959.csv');
+data = readtable('db_icc2026_randnr/data_20251029_162859.csv');
+% data_20251028_121959 | robot :  0.00 0.4 
+% data_20251029_112748 | robot :  0.00 0.4 
+% data_20251029_120128 | robot : -0.25 0.4 
+% data_20251029_151741 | robot : -0.50 0.4 
+% data_20251029_154538 | robot : -0.50 0.4
+% data_20251029_162859 | robot : -0.4 0.4
 
 % Corregir el voltaje: aplicar el negativo del voltaje leído
 data.medida_daq = -data.medida_daq;
@@ -155,7 +161,7 @@ if save_mean
     
     % Recortar arreglos al tamaño real (en caso de que hubiera sample_ids sin datos)
     sample_id_vals = sample_id_vals(1:idx-1);
-    x_vals = x_vals(1:idx-1);
+    x_vals = x_vals(1:idx-1); % if data_20251029_120128 (+0.01 : pos-calibration)
     y_vals = y_vals(1:idx-1);
     z_vals = z_vals(1:idx-1);
     incl_vals = incl_vals(1:idx-1);

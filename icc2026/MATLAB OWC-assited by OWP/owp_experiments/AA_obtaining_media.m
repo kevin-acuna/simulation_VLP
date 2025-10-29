@@ -11,7 +11,7 @@ colorsMATLAB = [0.0000 0.4470 0.7410 ;...
                 0.3010 0.7450 0.9330 ;...
                 0.6350 0.0780 0.1840];
 
-data = readtable('db_icc2026_randnr/data_20251027_202610.csv');
+data = readtable('db_icc2026_randnr/data_20251029_112748.csv');
 
 % Corregir el voltaje: aplicar el negativo del voltaje leído
 data.medida_daq = -data.medida_daq;

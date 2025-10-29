@@ -6,7 +6,7 @@ data = readtable('database.csv');
 h    = 2 - 0.75; % diferencia de alturas entre T y R.
 T    = [0.4,0.4,0]';
 T_c  = [0,0,0]';
-Q    = [-1 1 -1 1]; % Area de trabajo
+Q    = [0 0.8 0 0.8]; % Area de trabajo
 % =================================================================
 
 colorsMATLAB = [0.0000 0.4470 0.7410 ;... 
