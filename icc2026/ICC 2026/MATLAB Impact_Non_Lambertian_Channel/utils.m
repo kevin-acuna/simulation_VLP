@@ -1,0 +1,9 @@
+
+h = gcf;                      % obtiene el handle de la figura activa
+set(h,'Units','pixels');      % opcional: asegura unidades en píxeles
+set(h,'Position',[100 100 250 250]);  % [x y ancho alto]
+%set(h,'Position',[100 100 600 600]);  % [x y ancho alto]
+
+set(gcf, 'Color', 'white');
+print('Figures/heatmap/figure.png', '-dpng', '-r300');
+

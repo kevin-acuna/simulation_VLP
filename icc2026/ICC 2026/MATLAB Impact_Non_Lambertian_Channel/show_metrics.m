@@ -31,15 +31,17 @@ cmax = prctile(err_cm, 95);   % avoid outliers
 cmin = 0;
 
 figure; hold on
+
 plot(true_pos(:,1), true_pos(:,2), '.', 'Color', [0.3 0.3 0.3]);
 scatter(est_pos(:,1), est_pos(:,2), 12, err_cm, 'filled', ...
     'MarkerFaceAlpha', 0.85);  % smooths the point
 
+cmax=8;
 colormap(turbo);
 caxis([cmin cmax]);            
 cb = colorbar; ylabel(cb, 'Error [cm]');
 xlabel('x [m]'); ylabel('y [m]');
 box on;
-axis equal; grid on
-xlim([testbed.x(1)-0.2, testbed.x(2)+0.2])
-ylim([testbed.y(1)-0.2, testbed.y(2)+0.2])
+axis equal;
+xlim([testbed.x(1)-0.1, testbed.x(2)+0.1])
+ylim([testbed.y(1)-0.1, testbed.y(2)+0.1])
