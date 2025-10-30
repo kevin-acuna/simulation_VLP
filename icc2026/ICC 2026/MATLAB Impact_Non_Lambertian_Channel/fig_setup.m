@@ -59,7 +59,11 @@ text(UE_pos(1), UE_pos(2), UE_pos(3)+0.1, UE.id, ...
      'FontWeight','bold');
 
 % === (6) (Optional) UE FOV Cone ===
-drawFOVcone(UE_pos, UE_n, UE.FOV_deg, 0.6, [1 0.4 0.1]);  % L=0.6 m
+drawFOVcone(UE_pos, UE_n, UE.FOV_deg, 0.3, [1 0.4 0.1]);  % L=0.6 m
+zticks(0:0.5:2.5);
+view([-45,25])
+box on
+
 
 %% ===== Helper: draws a FOV cone given origin, normal and angle =====
 function h = drawFOVcone(origin, normal, FOV_deg, L, colorRGB)

@@ -161,7 +161,7 @@ if save_mean
     
     % Recortar arreglos al tamaño real (en caso de que hubiera sample_ids sin datos)
     sample_id_vals = sample_id_vals(1:idx-1);
-    x_vals = x_vals(1:idx-1); % if data_20251029_120128 (+0.01 : pos-calibration)
+    x_vals = x_vals(1:idx-1)+0.02; % if data_20251029_120128 (+0.01 : pos-calibration)
     y_vals = y_vals(1:idx-1);
     z_vals = z_vals(1:idx-1);
     incl_vals = incl_vals(1:idx-1);

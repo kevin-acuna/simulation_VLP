@@ -22,13 +22,11 @@ unique_samples = unique(data.sample_id);
 n_positions = length(unique_samples);
 
 fprintf('Total de mediciones únicas (sample_id): %d\n\n', n_positions);
-
-% set = [0 0 20 180 20 270]; % for "database" 
-set = [20 0 20 120 20 240]; % for "database icc2026" 
-Ndir = length(set)/2;
+orientation_set = [20 0 20 120 20 240]; % for "database icc2026" 
+Ndir = length(orientation_set)/2;
 for i_dir = 1:Ndir
-    incl = set(i_dir*2-1);
-    azim = set(i_dir*2);
+    incl = orientation_set(i_dir*2-1);
+    azim = orientation_set(i_dir*2);
     n_t(i_dir,:)=[sind(incl)*cosd(azim), sind(incl)*sind(azim), -cosd(incl)];
 end
 
@@ -69,11 +67,6 @@ for m_t = 1.53
             V_k2 = pos_data.mean(2) + V_bg;
             V_k3 = pos_data.mean(3) + V_bg;
 
-            % Para "database"
-            % V_k1 = 1.02*V_k1;
-            % V_k2 = 0.9563*V_k2; %0.9438
-            % V_k3 = 1*V_k3;
-            
             % Para "database_icc2026"
             V_k1 = 1.0625*V_k1;
             V_k2 = 0.9815*V_k2;
@@ -120,17 +113,11 @@ for m_t = 1.53
             pos_est_owp(p,:) = [NaN, NaN, NaN ];
         end
     end
-    
-    
 
     % Calcular errores
     errors = sqrt(sum((pos_true - pos_est_owp).^2, 2))*100;
     errors = errors(~isnan(errors));
     rmse = sqrt(mean(errors.^2));
-    % fprintf('RMSE: %.2f cm\n', rmse);
-    % fprintf('APE: %.2f cm\n', mean(errors));
-    % fprintf('MAX: %.2f cm\n', max(errors));
-    % fprintf('MIN: %.2f cm\n', min(errors));
     fprintf('RMSE: %.2f cm, m_t: %.2f \n', rmse, m_t);
     
     results = [results; m_t rmse];
@@ -141,54 +128,44 @@ m_t = best(1)
 
 %%
 disp("================================================")
+
+errors = sqrt(sum((pos_true - pos_est_owp).^2, 2))*100;
+errors = errors(~isnan(errors));
+RMSE = sqrt(mean(errors.^2));
+APE = mean(errors);
+CDF90 = prctile(errors, 90);
 fprintf('m_t: %.2f \n', m_t);
-fprintf('RMSE: %.2f cm\n', rmse);
-fprintf('APE: %.2f cm\n', mean(errors));
+fprintf('RMSE: %.2f cm\n', RMSE);
+fprintf('APE: %.2f cm\n', APE);
+fprintf('CDF90: %.2f cm\n', CDF90);
 fprintf('MAX: %.2f cm\n', max(errors));
 fprintf('MIN: %.2f cm\n', min(errors));
 
-bed = [-0.75,0.75,-0.75,0.75];
-step= 0.25;
-[TbX,TbY] = meshgrid(bed(1):step:bed(2), bed(3):step:bed(2) );
-
-
+%%
+close
+    
 figure(1)
-hold on
-% Graficar posiciones
-plot3(pos_true(:,1),pos_true(:,2),pos_true(:,3),'ko','DisplayName','true','MarkerFaceColor',colorsMATLAB(1,:))
-plot3(pos_est_owp(:,1),pos_est_owp(:,2),pos_est_owp(:,3),'o','DisplayName','est')
-% Graficar posiciones del transmisor
-plot3(T(1),T(2),T(3),'ko','DisplayName','Transmisor T','MarkerFaceColor',colorsMATLAB(4,:))
-plot3(T_c(1),T_c(2),T_c(3),'o','DisplayName','Centro T_c')
+box on, grid on, hold on
+
+plot3(pos_est_owp(:,1),pos_est_owp(:,2),pos_est_owp(:,3),...
+     'ko','MarkerFaceColor',colorsMATLAB(5,:),'MarkerSize',4)
+plot3(pos_true(:,1),pos_true(:,2),pos_true(:,3),...
+     'ko','MarkerFaceColor',colorsMATLAB(1,:),'MarkerSize',4)
+plot3(T(1),T(2),T(3),...
+     'kp','MarkerFaceColor',colorsMATLAB(2,:),'MarkerSize',8)
 
 % Añadir líneas punteadas entre posición real y estimada
 for i = 1:n_positions
     plot3([pos_true(i,1), pos_est_owp(i,1)], ...
           [pos_true(i,2), pos_est_owp(i,2)], ...
           [pos_true(i,3), pos_est_owp(i,3)], ...
-          'k--');
+          '-','LineWidth', 0.25,'Color',[0 0 0 0.25]);
 end
-plot(TbX,TbY,'o','Color',[0.2 0.2 0.2 0.5],'LineWidth',0.5)
 
-r_phi_c=h*tand(40);
-%circulo de referencia
-
-viscircles(T(1:2)', r_phi_c, 'Color', [0.2 0.2 0.2 0.5],'LineWidth',0.2);
-
-text( T(1)+r_phi_c , T(2), 'phi=40', ...
-     'HorizontalAlignment', 'center', ...
-     'VerticalAlignment', 'middle', ...
-     'FontSize', 10, ...
-     'Color', [0.2 0.2 0.2 0.5]);
-
-axis([Q(1)-0.2 Q(2)+0.2 Q(3)-0.2 Q(4)+0.2 -2 0])
-xlabel('X [m]')
-ylabel('Y [m]')
+axis([0 0.8 0 0.8 -2 0])
+xlabel('X [m]'), xticks(0:0.1:0.8)
+ylabel('Y [m]'), yticks(0:0.1:0.8)
 zlabel('Z [m]')
-legend('ground truth','estimation','AP OWP','Location','best')
-grid minor
+legend('Estimated','Ground-truth','LED','Location','eastoutside','Box','off')
 
-%%
-% figure(1);
-% set(gcf, 'Color', 'white');
-% print(fullfile('figures', 'estimation.png'), '-dpng', '-r300');
+
