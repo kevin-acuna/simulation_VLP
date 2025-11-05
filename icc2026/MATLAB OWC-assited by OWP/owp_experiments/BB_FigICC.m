@@ -42,9 +42,9 @@ results = [];
 % for m_t = 1:0.01:4  % puedo añadir la busqueda para el menor RMSE
 for m_t = 1.53
 
-    pos_true = zeros(n_positions,3);
-    pos_est_owp = zeros(n_positions,3);
-    
+    pos_true     = zeros(n_positions,3);
+    pos_est_owp  = nan(n_positions,3);  
+
     % Evaluacion por cada sample_id
     for p = 1:n_positions
         sample_id = unique_samples{p};
@@ -71,20 +71,7 @@ for m_t = 1.53
             V_k1 = 1.0625*V_k1;
             V_k2 = 0.9815*V_k2;
             V_k3 = 0.9616*V_k3;
-             
-            % Calcular ratios
-        %     b_k2_val = V_k2 / V_k1;
-        %     b_k3_val = V_k3 / V_k1;
-        
-        %     % Mostrar información
-        %     fprintf('Posición %d: (%.2f, %.2f, %.2f)\n', p, pos_x, pos_y, pos_z);
-        %     fprintf('  V_K1 = %.4f V\n', V_k1);
-        %     fprintf('  V_K2 = %.4f V\n', V_k2);
-        %     fprintf('  V_K3 = %.4f V\n', V_k3);
-        %     fprintf('  b_K2 = V_K2/V_K1 = %.4f\n', b_k2_val);
-        %     fprintf('  b_K3 = V_K3/V_K1 = %.4f\n\n', b_k3_val);
-        
-            
+                 
             % Ratios
             K_ij = (V_k1/V_k2)^(1/m_t);
             K_jk = (V_k2/V_k3)^(1/m_t);
@@ -109,8 +96,10 @@ for m_t = 1.53
             n_d = -eigenVectorsSVD;
             escale = -h/n_d(3);
             pos_est_owp(p,:) = (T + escale*n_d)';
+
         else
             pos_est_owp(p,:) = [NaN, NaN, NaN ];
+
         end
     end
 
@@ -125,6 +114,7 @@ end
 
 best = results(find(results(:,2)==min(results(:,2))),:)
 m_t = best(1)
+
 
 %%
 disp("================================================")
@@ -142,8 +132,55 @@ fprintf('MAX: %.2f cm\n', max(errors));
 fprintf('MIN: %.2f cm\n', min(errors));
 
 %%
-close
-    
+
+%% === DISPERSION INTRA-POSICION (WRMS 2D) ==========================
+% Construimos una tabla con: sample_id | x_true,y_true | x_est,y_est
+estimates = table( ...
+    unique_samples, ...
+    pos_true(:,1), pos_true(:,2), ...
+    pos_est_owp(:,1), pos_est_owp(:,2), ...
+    'VariableNames', {'sample_id','x_true','y_true','x_est','y_est'});
+
+% Filtramos filas con estimación NaN (fuera de Q o estimación fallida)
+valid_rows = ~any(isnan(estimates{:, {'x_est','y_est'}}), 2);
+estimates  = estimates(valid_rows, :);
+
+% Agrupamos por la posición verdadera (x_true, y_true) en 2D
+% Redondeo a 4 decimales para evitar problemas de flotantes
+nd = 4;
+[grp, gx, gy] = findgroups(round(estimates.x_true, nd), round(estimates.y_true, nd));
+
+% Medias locales por grupo (promedio de las estimaciones en esa posición)
+mean_x = splitapply(@(v) mean(v, 'omitnan'), estimates.x_est, grp);
+mean_y = splitapply(@(v) mean(v, 'omitnan'), estimates.y_est, grp);
+n_per_group = splitapply(@numel, estimates.x_est, grp);
+
+% Expandimos las medias a cada fila y calculamos radios^2 en 2D
+mx = mean_x(grp);  my = mean_y(grp);
+dx = estimates.x_est - mx;
+dy = estimates.y_est - my;
+r2 = dx.^2 + dy.^2;
+
+% Solo consideramos grupos con al menos 2 estimaciones
+grp_valid_mask = n_per_group >= 2;
+row_valid_mask = grp_valid_mask(grp);
+
+% Grados de libertad agrupados: sum_p (E_p - 1)
+dof = sum(n_per_group(grp_valid_mask) - 1);
+
+if dof > 0
+    WRMS_2D = sqrt(sum(r2(row_valid_mask)) / dof);  % en metros
+    fprintf('WRMS 2D (dentro de posicion): %.2f cm (DOF=%d, grupos=%d)\n', ...
+        100*WRMS_2D, dof, sum(grp_valid_mask));
+else
+    WRMS_2D = NaN;
+    fprintf('WRMS 2D (dentro de posicion): N/A (no hay grupos con >=2 estimaciones)\n');
+end
+
+% (Opcional) Guarda la tabla para inspección
+% writetable(estimates, 'estimates_by_position.csv');
+
+%%
 figure(1)
 box on, grid on, hold on
 
