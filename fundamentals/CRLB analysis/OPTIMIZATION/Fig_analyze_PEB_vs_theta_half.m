@@ -153,9 +153,9 @@ for i = 1:length(theta_half_deg)
 end
 
 % Add labels, title, grid, and legend
-xlabel('Number of orientations (K)', 'FontSize', 14,'interpreter', 'latex');
-ylabel('$\mathrm{PEB_{90\%}}$[cm]', 'FontSize', 14,'interpreter', 'latex');
-grid on;
+xlabel('Number of orientations ($K$)', 'FontSize', 14,'interpreter', 'latex');
+ylabel('$\mathrm{PEB_{90\%}}$ [cm]', 'FontSize', 14,'interpreter', 'latex');
+grid minor;
 legend(legend_entries, 'Location', 'northeast', 'FontSize', 12);
 axis([3,9,0,10])
 

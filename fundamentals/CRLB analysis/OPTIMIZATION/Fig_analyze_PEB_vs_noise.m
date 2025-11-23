@@ -157,8 +157,8 @@ end
 % set( gca, 'YScale', 'log' );
 
 % Add labels, title, grid, and legend
-xlabel('$\mathrm{SNR[dB]}$', 'FontSize', 14,'interpreter', 'latex');
-ylabel('$\mathrm{PEB_{90\%}}$[cm]', 'FontSize', 14, 'interpreter', 'latex');
+xlabel('$\mathrm{SNR\,\,[dB]}$', 'FontSize', 14,'interpreter', 'latex');
+ylabel('$\mathrm{PEB_{90\%}\,[cm]}$', 'FontSize', 14, 'interpreter', 'latex');
 grid on;
 legend(legend_entries, 'Location', 'best', 'FontSize', 12,'Interpreter','latex');
 

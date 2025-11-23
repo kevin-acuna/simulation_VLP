@@ -14,6 +14,13 @@ Author: VLP Analysis Team
 Date: 2025
 """
 
+import matplotlib as mpl
+
+mpl.rcParams.update({
+    "mathtext.fontset": "stix",      # o 'dejavuserif'
+    "font.family": "STIXGeneral",    # misma familia para texto normal
+})
+
 # =============================================================================
 # CONFIGURACIÓN PRINCIPAL
 # =============================================================================
@@ -247,8 +254,8 @@ def create_vertical_split_violin_plot(df, save_path='vertical_violin_comparison_
     ax.set_xticks(k_values)
     
     # Etiquetas con formato journal
-    ax.set_xlabel('Number of Orientations (K)', fontsize=18, fontweight='normal')
-    ax.set_ylabel('Position Error Bound [cm]', fontsize=18, fontweight='normal')
+    ax.set_xlabel('Number of orientations ($K$)', fontsize=18, fontweight='normal')
+    ax.set_ylabel('PEB [cm]', fontsize=18, fontweight='normal')
     
     # Mejorar ticks
     ax.tick_params(axis='both', which='major', labelsize=16)
@@ -457,7 +464,7 @@ def create_horizontal_split_violin_plot(df, save_path='horizontal_violin_compari
     ax.invert_yaxis()  # Invertir eje Y para mostrar K en orden ascendente (3,4,5...9)
     
     # Etiquetas con formato journal
-    ax.set_ylabel('Number of Orientations (K)', fontsize=18, fontweight='normal')
+    ax.set_ylabel('Number of orientations (K)', fontsize=18, fontweight='normal')
     ax.set_xlabel('Position Error Bound [cm]', fontsize=18, fontweight='normal')
     
     # Mejorar ticks
@@ -534,7 +541,7 @@ def main():
             print("\n✅ Proceso completado exitosamente!")
             print("📈 El violin plot horizontal muestra:")
             print("   • Eje X: PEB [cm]")
-            print("   • Eje Y: Number of Orientations (K)")
+            print("   • Eje Y: Number of orientations (K)")
             print("   • Mitad superior: Orientaciones optimizadas")
             print("   • Mitad inferior: Orientaciones aleatorias")
             
@@ -543,7 +550,7 @@ def main():
             fig, ax = create_vertical_split_violin_plot(df)
             print("\n✅ Proceso completado exitosamente!")
             print("📈 El violin plot vertical muestra:")
-            print("   • Eje X: Number of Orientations (K)")
+            print("   • Eje X: Number of orientations (K)")
             print("   • Eje Y: PEB [cm]")
             print("   • Mitad izquierda: Orientaciones optimizadas")
             print("   • Mitad derecha: Orientaciones aleatorias")
