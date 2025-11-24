@@ -1,20 +1,14 @@
-#### Pendientes
 
-* [ ] Realizar las simulaciones para el caso de optimización por cada método.
-* [ ] Observaciones en el Paper
-* [ ] Definicion del SNR (mix entre Optical y Electrical)
-* [ ] INTRODUCCIÓN :  Aqui añadir una tabla con la comparativa de distintos métodos de Single VLP.
-* [ ] RESULTADOS: Aqui sería ideal presentar una tabla comparativa de los principales resultados con otros métodos.
-* [ ] Corregir las observaciones de LUC, BASTIEN, HONGYU
-* [ ] Añadir un parrafo para discutir el SNR.
-* [ ] Me falto conversar sobre el ajuste del modelo lambertiano con uno polinomico.
 
-#### Redacción
+**OPTI - 6G** 
 
-* [ ] Redactar la INTRODUCCION
-* [ ] Reredacción del ABSTRACT
-* [ ] Redactar las CONCLUSIONES
-* [ ] Llegar a 25 REFERENCIAS
+* Interes en realizar trabajos en **ISAC.**
+* Interés en presentar en congresos resultados. Muy interesados en mostrar papers durante el 2026.
+* Se planteo el crear un workshop en el área de LIFI. Muy interesante.
+* El estado del arte o review paper es un proyecto en Stand By. En algun momento se puede retomar.
+* OPORTUNIDAD : Comparación experimental entre métodos (tradicional apuntando hacia abajo) y beamsteering con la Universidad de Brunel.
+* Interés en AI. Machine Learning como algo interesante a explotar.
+* EXPLORACION DE LAS DIFERENCIAS NO LAMBERTIANAS SE VE CADA VEZ MAS INTERESANTE.
 
 #### Preguntas a resolver:
 
