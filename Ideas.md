@@ -1,6 +1,4 @@
-
-
-**OPTI - 6G** 
+**OPTI - 6G**
 
 * Interes en realizar trabajos en **ISAC.**
 * Interés en presentar en congresos resultados. Muy interesados en mostrar papers durante el 2026.
@@ -9,6 +7,7 @@
 * OPORTUNIDAD : Comparación experimental entre métodos (tradicional apuntando hacia abajo) y beamsteering con la Universidad de Brunel.
 * Interés en AI. Machine Learning como algo interesante a explotar.
 * EXPLORACION DE LAS DIFERENCIAS NO LAMBERTIANAS SE VE CADA VEZ MAS INTERESANTE.
+* Congresos de interés : EU CNC , SECOM
 
 #### Preguntas a resolver:
 
@@ -36,27 +35,6 @@ JOURNALS TARGET
 | Applied Optics                                             | -          | -             | -               | -       |                           |
 | IEEE Transactions on Broadcasting                          | 17w (4m)   | 4.8 (Q1)     | 4 (2025: 0)     | -       |                           |
 | IEEE Transactions on Green Communications and Networking   | 27w (7m)   | 6.7 (Q1)      | 2 (2025: 2)     | New     |                           |
-
----
-
-#### PROPUESTAS DE PAPERS
-
-* **(19/09/2025)** "*Estimación de posiciones basado en modulación de la orientación para un canal NO-LAMBERTIANO"*: En este escenario se considera que el LED tiene un patron de emisión NO Lambertiano y eso hace que se modifique cos(phi)^m por f(phi) donde f(phi) tiene que ser aproximado. En una revisión simple se encontro : que u(phi) = log(f(phi))  y se podria aproximar a  u(phi)=**α**+**β**s donde s=nt ⁣⋅ ⁣d.
-* (19/09/2025) "Caso de estudio: Estimación 2D single-LED single-PD con estimadores lineales GLS, WLS" Estudio del ratio lineal, simiulación en 1D, linealidad del ratio beta, estimación en 2D empleando modulacion de la orientación con beta, empleando LS y con WLS. Los graficos y analisis se encuentran en fundamentals/LogRatios/1D,2D.m
-* (19/09/2025) Applicar **Machine Learning** a todo lo relativo a Single-LED Single-PD Visible Light Positioning. Incluso con datos sintéticos. Además aplicar **ROBOTICA** en el paper y **SISTEMAS DE CONTROL** a fin de hacerlo más interesante. Ver si se aplica también alguna técnica de **IMAGE PROCESSING** y además aplicar **SIGNAL PROCESSING** en algo de TEORIA, SIMULACION E IMPLEMENTACIÓN.
-* (25/09/2025) Recordar que tenemos simulación respecto al trackeo del AP apuntando al UE basado en la maximización de la derivada (gradiant ascense). Lo que puede emplearse para maximización del SNR en OWC. A modo de trackeo.
-* (25/09/2025) **Coperativo VLC y VLP** (no como ISAC) sino como coperación entre estos. Ref [Visible Light Integrated Positioning and Communication: A Multi-Task Federated Learning Framework].
-* ![1758820906312](image/Ideas/1758820906312.png)
-* **(05/10/2025) [IMPORTANTE]** Estudiar como mejora el desempeño de los algoritmos si se emplea la curva de los datasheets en vez de una aproximación lambertiana. Se puede plantear un pipieline para eso. De modo en que el primer paso sea el de obtener la curva a partir de un screenshot de la datasheet (anexar programa en github) y despues de ello realizar sus propias estimaciones empleando RSS. La problematica actual es que mucho se usa el lambertiano cuando no esta bien ya que el LED tiene una lente adicional al chip.
-* Estudio teórico (optimización) y SIMULACIONES de estimación de la posición en 3D empleando N-PD.
-* Estudio teórico (optimización), SIMULACIONES y EXPERIMENTAL de la estimación de posición 3D empleando 1PD y N-Transmisores en BeamStearing (N < 4 sería ideal para obtener ventaja frente a las estructuras tradicionales del VLP).
-  * Comentario: Este planteamiento debe pensarse con más detenimiento porque la ventaja de usar Single-VLP es el número de Transmisores, pero si este aumenta entonces debe de justificarse su respectivas ventajas ya no solo frente a un Single-VLP sino tambien a un Tradicional VLP (4 Tx fijos)
-* asdasd
-
-#### PROPUESTAS DE TRABAJO EN LA PASANTIA
-
-* Sub-Centimeter Indoor Optical Wireless Positioning Using An Optimized Machine Learning Technique. https://www.repository.cam.ac.uk/items/f12f5d6d-8c27-429a-831c-3818e4a486a7
-* Desarrollar este GIMBAL modular: https://www.zaber.com/products/gimbal-stages/X-G-RST-DE/specs?part=X-G-RST300-DE50SR10
 
 #### PLAN DE TRABAJO
 
