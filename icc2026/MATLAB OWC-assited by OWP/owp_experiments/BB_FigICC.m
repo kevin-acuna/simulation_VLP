@@ -132,6 +132,13 @@ fprintf('MAX: %.2f cm\n', max(errors));
 fprintf('MIN: %.2f cm\n', min(errors));
 
 %%
+figure(1)
+cdfplot(errors);
+title('CDF');
+xlabel('Error (cm)');
+xlim([0 10])
+
+%%
 
 %% === DISPERSION INTRA-POSICION (WRMS 2D) ==========================
 % Construimos una tabla con: sample_id | x_true,y_true | x_est,y_est
@@ -181,7 +188,7 @@ end
 % writetable(estimates, 'estimates_by_position.csv');
 
 %%
-figure(1)
+figure(2)
 box on, grid on, hold on
 
 plot3(pos_est_owp(:,1),pos_est_owp(:,2),pos_est_owp(:,3),...
