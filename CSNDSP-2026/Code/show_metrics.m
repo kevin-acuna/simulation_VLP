@@ -36,7 +36,7 @@ plot(true_pos(:,1), true_pos(:,2), '.', 'Color', [0.3 0.3 0.3]);
 scatter(est_pos(:,1), est_pos(:,2), 12, err_cm, 'filled', ...
     'MarkerFaceAlpha', 0.85);  % smooths the point
 
-cmax=8;
+cmax=10;
 colormap(turbo);
 caxis([cmin cmax]);            
 cb = colorbar; ylabel(cb, 'Error [cm]');
