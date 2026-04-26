@@ -1,0 +1,55 @@
+Reviewer 2:
+
+1. - Debe ser clara la problemática que se quiere manejar. 
+   - Especialmente las limitaciones actuales existentes.
+
+Commentario:
+Estamos proponiendo un algoritmo que realice una estimación de manera cerrada de la dirección. Complementado con un ultimo paso adicional para obtener la posicion 3D mediante beamsteering en el receptor.
+
+2. OK
+3. Es confuso el "distance recovery". Especialmente con lo llamado como "beam-forming symmetry". Donde se requiere que el n_r = -n_^d. Que contradice el claim del Abstract.
+
+Comentario:
+Cambiar el abstract y la introducción. Haciendo enfasis en direction finding (el cual esel paso principal para beamsteering context).
+Agregar una seccion de Direction Finding results.
+
+5. 
+Comentario:
+- En el caso de NLS la orientacion debe ser conocida (para que las variables a encontrar sean x,y,z)
+- En el caso de Linear estimator la orientación si es arbitraria.
+
+
+APOYO: Ingresar todo el feedback a Claude y armar el plan de trabajo.
+
+Arquitectura actual:
+Arquitectura actual:
+I. INTRODUCTION
+II. SYSTEM MODEL AND PROPOSED 3D LOCALIZATION METHOD
+   A. System Model
+   B. General 3D Single-LED Positioning Procedure
+      1) Direction Finding
+      2) Distance Recovery
+III. POSITION ERROR BOUND [D-F + D-R]
+   A. Joint Statistical Model of the Observations
+   B. Log-Likelihood and Score Function
+   C. Fisher Information Matrix
+   D. Formal Definition of the PEB
+   E. Number of LED Orientations
+IV. OPTIMIZATION OF THE ORIENTATION SET [Direct 3D]
+V. NONLINEAR ESTIMATOR [D-F] --- PREGUNTA: ¿Como se obtiene la posicion 3D ?
+VI. LINEAR ESTIMATORS
+   A. Direction Estimation via GLS [D-F]
+   B. WLS as a Practical Simplification [D-F]
+   ** Aqui se debe mencionar que D-R es un metodo simplificado **
+VII. ESTIMATORS COMPARISON
+   A. Positioning Performance
+   B. Computational Complexity
+
+
+   [NEW] C. Orientation error analysis (CDF con diferentes valores de Rx orientation)
+[NEW] VIII. DIRECTION FINDING ANALYSIS
+
+
+IX. CONCLUSION AND FUTURE WORKS
+APPENDIX A: PROOF OF EQUATION (β_lin_gls)
+APPENDIX B: PROOF OF EQUATION (Cov_β_gls)
