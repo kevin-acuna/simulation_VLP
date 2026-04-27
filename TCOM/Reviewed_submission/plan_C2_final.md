@@ -530,7 +530,7 @@ u_y = [0,0,1]^T  ← INCORRECTO, debería ser [0,1,0]^T
 **Qué calcular**: Error angular `θ_err = acos(n̂_d · n_d)` en grados para GLS, WLS, NL
 **Datos**: Usar las mismas posiciones y ruido que `main_3D_withNoise.m`
 **Figura**: CDF del error angular para K=5 y K=9, con GLS, WLS, NL
-**Script base**: Modificar `main_3D_withNoise.m` para extraer `v_tr` (dirección real) y `d_hat` (dirección estimada), calcular ángulo entre ellos
+**Script base**: Basarse en `FigCompare3D_WLS_GLS.m` para extraer `v_tr` (dirección real) y `d_hat` (dirección estimada), calcular ángulo entre ellos
 **Esfuerzo**: Bajo (la dirección ya se estima; solo falta calcular el ángulo y plotear)
 
 ### SIM-2: Robustez a tilts aleatorios del PD
@@ -558,7 +558,7 @@ Para PEB y NL es un caso particular (evaluado para n_r = [0,0,1]).
 SIM-2 es el ÚNICO experimento que varía n_r.
 
 **Figura**: Curvas de RMSE angular vs θ_tilt, 3 curvas (GLS, WLS, NL)
-**Script**: Nuevo, basado en `main_3D_withNoise.m`
+**Script**: Nuevo, basado en `FigCompare3D_WLS_GLS.m`
 **Esfuerzo**: Medio (bucle sobre tilts + regenerar potencias)
 
 ### SIM-3: RMSE vs SNR para estimadores
@@ -568,7 +568,7 @@ SIM-2 es el ÚNICO experimento que varía n_r.
 2. Para cada SNR: ejecutar GLS, WLS, NL sobre posiciones del testbed
 3. Calcular RMSE 3D y comparar con PEB
 **Figura**: RMSE vs SNR con curvas GLS, WLS, NL, PEB para K=5
-**Script base**: Combinar `Experiment_SNR_CRLB.m` con los estimadores de `main_3D_withNoise.m`
+**Script base**: Combinar `Experiment_SNR_CRLB.m` con los estimadores de `FigCompare3D_WLS_GLS.m`
 **Esfuerzo**: Medio
 
 ---
@@ -612,7 +612,7 @@ Total: 10 figuras (8 existentes − 1 eliminada + 3 nuevas). Si el límite de fi
 | `vlp_wls.m` | Sin cambios |
 | `PEB_complete.m` | Sin cambios |
 | `original_bastien_NL_K9.m` | **CORREGIR** BUG-1 (sigma2), BUG-2 (normalización), BUG-3 (sphere constraint) |
-| `main_3D_withNoise.m` | **CORREGIR** BUG-4 (líneas 200, 290, 315: noise en distance recovery) |
+| `main_3D_withNoise.m` | **OBSOLETO** → `_archive/`. Superseded por `FigCompare3D_WLS_GLS.m` (que YA tiene DR noise correcto) |
 | **NUEVO**: `Fig_CDF_angular.m` | CDF de error angular para DF (SIM-1) |
 | **NUEVO**: `Fig_Robustness_tilt.m` | Robustez a tilts del PD (SIM-2) |
 | **NUEVO**: `Fig_RMSE_vs_SNR_estimators.m` | RMSE vs SNR para estimadores (SIM-3) |
@@ -623,7 +623,7 @@ Total: 10 figuras (8 existentes − 1 eliminada + 3 nuevas). Si el límite de fi
 
 ### Fase 0: Corrección de bugs (ANTES de todo lo demás)
 0a. [ ] Corregir BUG-1, BUG-2, BUG-3 en `original_bastien_NL_K9.m` (o crear versión corregida)
-0b. [ ] Corregir BUG-4 en `main_3D_withNoise.m` (líneas 200, 290, 315)
+0b. [ ] ~~BUG-4~~: `main_3D_withNoise.m` es OBSOLETO. `FigCompare3D_WLS_GLS.m` ya tiene DR noise correcto. No action needed.
 0c. [ ] Re-ejecutar NL para K=5 y K=9 → generar nuevos .mat
 0d. [ ] Re-ejecutar WLS/SVD → generar nuevos .mat
 0e. [ ] Comparar NL corregido vs GLS y CRLB → confirmar que GLS > NL > WLS (narrativa Comment #13)
