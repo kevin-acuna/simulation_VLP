@@ -1,0 +1,172 @@
+======================================================================
+VLP SYSTEM OPTIMIZATION LOG
+======================================================================
+Log file started: optimization\room_3x3\K_7\optimization_log_2025-07-27_18-29-56.txt
+Date and time: 27-Jul-2025 18:29:56
+
+======================================================================
+SYSTEM CONFIGURATION
+======================================================================
+EVALUATION TESTBED:
+  Room dimensions: L = 3.0 m, W = 3.0 m
+  Height range: H = 0 to 1.2 m
+  Grid resolution: step = 0.2 m
+  Total evaluation points: 1792 positions
+  Position range:
+    X ∈ [-1.5, 1.5] m
+    Y ∈ [-1.5, 1.5] m
+    Z ∈ [0.0, 1.2] m
+
+OPTIMIZATION PARAMETERS:
+  K values to optimize: [4  5  6  7]
+  Elevation angle range: 0° to 80° (allowed range for LED orientations)
+  Azimuth angle range: 0° to 360° (full rotation allowed)
+  Optimization metric: rms
+  Parallel processing: 4 workers
+  Population size: 300
+  Max generations: 150
+
+LED TRANSMITTER CONFIGURATION:
+  Position: [0.0, 0.0, 2.0] m
+  Transmitted power: 0.405 W
+  Half-power angle: 45.0°
+  Lambertian order: 2.00
+  Photodiode area: 2.64e-05 m²
+  Receiver FOV: 85.0°
+  Noise variance: 3.00e-14 W²
+  Samples per orientation: 1000
+
+
+============================================================
+OPTIMIZING FOR K = 7 ORIENTATIONS
+============================================================
+Starting GA optimization with parallel processing...
+Population size: 300, Max generations: 150
+Using 4 parallel workers for acceleration
+
+Single objective optimization:
+14 Variables
+
+Options:
+CreationFcn:       @gacreationuniform
+CrossoverFcn:      @crossoverscattered
+SelectionFcn:      @selectionstochunif
+MutationFcn:       @mutationadaptfeasible
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+    1              600         0.01438           9.837        0
+    2              885         0.01438           5.296        1
+    3             1170         0.01425            3.49        0
+    4             1455         0.01423           5.076        0
+    5             1740         0.01395           4.295        0
+    6             2025         0.01394           3.458        0
+    7             2310         0.01394           3.202        1
+    8             2595         0.01375           3.179        0
+    9             2880         0.01375           3.943        0
+   10             3165         0.01374           4.434        0
+   11             3450         0.01371           3.886        0
+   12             3735         0.01369           4.784        0
+   13             4020         0.01369           5.087        0
+   14             4305         0.01368           4.185        0
+   15             4590         0.01368           2.616        0
+   16             4875         0.01368           1.399        0
+   17             5160         0.01367          0.5776        0
+   18             5445         0.01367          0.2163        0
+   19             5730         0.01367          0.1873        0
+   20             6015         0.01366          0.1872        0
+   21             6300         0.01365          0.4314        0
+   22             6585         0.01365          0.2271        0
+   23             6870         0.01365          0.4422        0
+   24             7155         0.01365          0.4496        0
+   25             7440         0.01365         0.01366        0
+   26             7725         0.01364         0.01365        0
+   27             8010         0.01364         0.01365        0
+   28             8295         0.01364         0.01365        0
+   29             8580         0.01364         0.01365        0
+   30             8865         0.01363         0.01364        0
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+   31             9150         0.01363         0.01364        0
+   32             9435         0.01363         0.01364        0
+   33             9720         0.01363         0.01364        0
+   34            10005         0.01363         0.01363        0
+   35            10290         0.01363         0.01363        0
+   36            10575         0.01362         0.01363        0
+   37            10860         0.01362         0.01363        0
+   38            11145         0.01362         0.01363        0
+   39            11430         0.01362         0.01363        0
+   40            11715         0.01362         0.01363        0
+   41            12000         0.01362         0.01363        0
+   42            12285         0.01362         0.01362        0
+   43            12570         0.01362         0.01362        0
+   44            12855         0.01361         0.01362        0
+   45            13140         0.01361         0.01362        0
+   46            13425         0.01361         0.01362        0
+   47            13710         0.01361         0.01362        0
+   48            13995         0.01361         0.01362        0
+   49            14280         0.01361         0.01362        1
+   50            14565         0.01361         0.01362        2
+   51            14850         0.01361         0.01361        0
+   52            15135         0.01361         0.01361        0
+   53            15420         0.01361         0.01361        0
+   54            15705         0.01361         0.01361        0
+   55            15990         0.01361         0.01361        0
+   56            16275         0.01361         0.01361        0
+   57            16560         0.01361         0.01361        0
+   58            16845         0.01361         0.01361        0
+   59            17130         0.01361         0.01361        0
+   60            17415          0.0136         0.01361        0
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+   61            17700          0.0136         0.01361        0
+   62            17985          0.0136         0.01361        0
+   63            18270          0.0136         0.01361        0
+   64            18555          0.0136         0.01361        0
+   65            18840          0.0136         0.01361        0
+   66            19125          0.0136         0.01361        0
+   67            19410          0.0136          0.0136        0
+   68            19695          0.0136          0.0136        1
+   69            19980          0.0136          0.0136        0
+   70            20265          0.0136          0.0136        0
+   71            20550          0.0136          0.0136        0
+   72            20835          0.0136          0.0136        0
+   73            21120          0.0136          0.0136        0
+   74            21405          0.0136          0.0136        0
+   75            21690          0.0136          0.0136        0
+   76            21975         0.01359          0.0136        0
+ga stopped because the average change in the fitness value is less than options.FunctionTolerance.
+
+=== PEB Optimization Complete ===
+Final best PEB: 0.013594 m
+Total generations: 76
+
+Optimal LED orientations:
+LED 1: θ = 58.91°, ρ = 355.65°
+LED 2: θ = 53.77°, ρ = 170.74°
+LED 3: θ = 27.75°, ρ = 43.75°
+LED 4: θ = 5.36°, ρ = 305.88°
+LED 5: θ = 54.35°, ρ = 96.46°
+LED 6: θ = 35.10°, ρ = 220.04°
+LED 7: θ = 54.78°, ρ = 278.61°
+
+--------------------------------------------------
+OPTIMIZATION RESULTS FOR K = 7
+--------------------------------------------------
+Execution time: 225.81 seconds
+Best PEB achieved: 0.013594 m
+Exit flag: 1
+
+Optimal LED orientations:
+  LED 1: θ =  58.91°, ρ = 355.65° → n_t = [ 0.854, -0.065, -0.516]
+  LED 2: θ =  53.77°, ρ = 170.74° → n_t = [-0.796,  0.130, -0.591]
+  LED 3: θ =  27.75°, ρ =  43.75° → n_t = [ 0.336,  0.322, -0.885]
+  LED 4: θ =   5.36°, ρ = 305.88° → n_t = [ 0.055, -0.076, -0.996]
+  LED 5: θ =  54.35°, ρ =  96.46° → n_t = [-0.091,  0.807, -0.583]
+  LED 6: θ =  35.10°, ρ = 220.04° → n_t = [-0.440, -0.370, -0.818]
+  LED 7: θ =  54.78°, ρ = 278.61° → n_t = [ 0.122, -0.808, -0.577]
+
+Optimization completed at: 27-Jul-2025 18:33:42
+Log file saved to: optimization\room_3x3\K_7\optimization_log_2025-07-27_18-29-56.txt

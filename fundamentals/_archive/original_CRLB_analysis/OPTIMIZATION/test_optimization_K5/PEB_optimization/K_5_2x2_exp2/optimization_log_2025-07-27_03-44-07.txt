@@ -1,0 +1,129 @@
+Log file started: test_optimization_K5\PEB_optimization\optimization_log_2025-07-27_03-44-07.txt
+Date and time: 27-Jul-2025 03:44:07
+
+testbed 2x2
+0-85
+percentile_90
+cross_over 0.8
+
+Testing with 847 receiver positions
+Position range: X ∈ [-1.0, 1.0], Y ∈ [-1.0, 1.0], Z ∈ [0.0, 1.2]
+
+============================================================
+OPTIMIZING FOR K = 5 ORIENTATIONS
+============================================================
+Starting GA optimization with parallel processing...
+Population size: 300, Max generations: 100
+Using 4 parallel workers for acceleration
+
+Single objective optimization:
+10 Variable(s)
+
+Options:
+CreationFcn:       @gacreationuniform
+CrossoverFcn:      @crossoverscattered
+SelectionFcn:      @selectionstochunif
+MutationFcn:       @mutationadaptfeasible
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+    1              600         0.01425           3.395        0
+    2              885         0.01422            2.98        0
+    3             1170         0.01415            1.72        0
+    4             1455         0.01402           3.249        0
+    5             1740         0.01382           2.961        0
+    6             2025         0.01378           3.141        0
+    7             2310         0.01354           2.936        0
+    8             2595         0.01354           3.379        1
+    9             2880         0.01352           2.748        0
+   10             3165          0.0135           3.688        0
+   11             3450         0.01347            3.08        0
+   12             3735         0.01347           3.514        1
+   13             4020         0.01345            2.68        0
+   14             4305          0.0134           1.192        0
+   15             4590         0.01338           2.198        0
+   16             4875         0.01335           2.435        0
+   17             5160         0.01335           3.897        1
+   18             5445         0.01335           4.491        2
+   19             5730         0.01335           7.197        3
+   20             6015         0.01335           7.183        4
+   21             6300         0.01335           7.869        0
+   22             6585         0.01335           7.322        0
+   23             6870         0.01335           5.403        0
+   24             7155         0.01335           3.714        0
+   25             7440         0.01335           2.343        0
+   26             7725         0.01335           1.328        1
+   27             8010         0.01335           1.321        2
+   28             8295         0.01334          0.7655        0
+   29             8580         0.01334          0.2016        0
+   30             8865         0.01334         0.01337        0
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+   31             9150         0.01334         0.01337        1
+   32             9435         0.01334         0.01337        2
+   33             9720         0.01334         0.01336        0
+   34            10005         0.01334         0.01336        0
+   35            10290         0.01334         0.01336        0
+   36            10575         0.01334         0.01336        0
+   37            10860         0.01334         0.01336        1
+   38            11145         0.01334         0.01336        2
+   39            11430         0.01333         0.01335        0
+   40            11715         0.01333         0.01335        1
+   41            12000         0.01333         0.01335        2
+   42            12285         0.01333         0.01334        3
+   43            12570         0.01333         0.01334        0
+   44            12855         0.01333         0.01334        1
+   45            13140         0.01333         0.01334        2
+   46            13425         0.01333         0.01334        3
+   47            13710         0.01333         0.01334        0
+   48            13995         0.01333         0.01333        0
+   49            14280         0.01333         0.01333        0
+   50            14565         0.01333         0.01333        1
+   51            14850         0.01333         0.01333        0
+   52            15135         0.01333         0.01333        0
+   53            15420         0.01333         0.01334        1
+   54            15705         0.01333         0.01333        0
+   55            15990         0.01333         0.01334        1
+   56            16275         0.01333         0.01334        2
+   57            16560         0.01333         0.01333        3
+   58            16845         0.01333         0.01333        0
+   59            17130         0.01333         0.01333        1
+   60            17415         0.01333         0.01333        0
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+   61            17700         0.01333         0.01333        0
+   62            17985         0.01333         0.01333        1
+   63            18270         0.01333         0.01333        2
+   64            18555         0.01333         0.01333        3
+   65            18840         0.01333         0.01333        0
+Optimization terminated: average change in the fitness value less than options.FunctionTolerance.
+
+=== PEB Optimization Complete ===
+Final best PEB: 0.013330 m
+Total generations: 65
+
+Optimal LED orientations:
+LED 1: θ = 37.87°, ρ = 278.33°
+LED 2: θ = 40.45°, ρ = 101.82°
+LED 3: θ = 33.34°, ρ = 35.10°
+LED 4: θ = 31.12°, ρ = 355.29°
+LED 5: θ = 34.35°, ρ = 184.53°
+
+--------------------------------------------------
+OPTIMIZATION RESULTS FOR K = 5
+--------------------------------------------------
+Execution time: 99.85 seconds
+Best PEB achieved: 0.013330 m
+Exit flag: 1
+
+Optimal LED orientations:
+  LED 1: θ =  37.87°, ρ = 278.33° → n_t = [ 0.089, -0.607, -0.789]
+  LED 2: θ =  40.45°, ρ = 101.82° → n_t = [-0.133,  0.635, -0.761]
+  LED 3: θ =  33.34°, ρ =  35.10° → n_t = [ 0.450,  0.316, -0.835]
+  LED 4: θ =  31.12°, ρ = 355.29° → n_t = [ 0.515, -0.042, -0.856]
+  LED 5: θ =  34.35°, ρ = 184.53° → n_t = [-0.562, -0.045, -0.826]
+
+Optimization completed at: 27-Jul-2025 03:45:49
+Log file saved to: test_optimization_K5\PEB_optimization\optimization_log_2025-07-27_03-44-07.txt

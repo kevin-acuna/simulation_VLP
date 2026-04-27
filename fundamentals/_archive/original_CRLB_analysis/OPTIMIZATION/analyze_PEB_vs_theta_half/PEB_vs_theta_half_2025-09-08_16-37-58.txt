@@ -1,0 +1,32 @@
+Log file started: C:\Users\userlisv\Documents\Kevin\Journal simulations\simulation_VLP\fundamentals\CRLB analysis\OPTIMIZATION\analyze_PEB_vs_theta_half\PEB_vs_theta_half_2025-09-08_16-37-58.txt
+Date and time: 08-Sep-2025 16:37:58
+
+Processing theta_half = 30°...
+  K=3: PEB = 0.097612 m (calculated in 0.03 seconds)
+  K=4: PEB = 0.021799 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.018263 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.013981 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.012342 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.011452 m (calculated in 0.03 seconds)
+  K=9: PEB = 0.010743 m (calculated in 0.03 seconds)
+
+Processing theta_half = 45°...
+  K=3: PEB = 0.037135 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.027871 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.024220 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.022623 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.021322 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.020252 m (calculated in 0.02 seconds)
+  K=9: PEB = 0.019114 m (calculated in 0.03 seconds)
+
+Processing theta_half = 60°...
+  K=3: PEB = 0.053752 m (calculated in 0.02 seconds)
+  K=4: PEB = 0.044226 m (calculated in 0.02 seconds)
+  K=5: PEB = 0.042283 m (calculated in 0.02 seconds)
+  K=6: PEB = 0.038502 m (calculated in 0.02 seconds)
+  K=7: PEB = 0.035963 m (calculated in 0.02 seconds)
+  K=8: PEB = 0.032912 m (calculated in 0.02 seconds)
+  K=9: PEB = 0.032780 m (calculated in 0.02 seconds)
+
+Analysis completed at: 08-Sep-2025 16:37:58
+Log file saved in: C:\Users\userlisv\Documents\Kevin\Journal simulations\simulation_VLP\fundamentals\CRLB analysis\OPTIMIZATION\analyze_PEB_vs_theta_half

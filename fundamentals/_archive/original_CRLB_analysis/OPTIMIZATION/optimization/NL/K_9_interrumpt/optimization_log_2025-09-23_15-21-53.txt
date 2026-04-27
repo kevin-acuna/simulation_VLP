@@ -1,0 +1,115 @@
+======================================================================
+VLP SYSTEM OPTIMIZATION LOG
+======================================================================
+Log file started: optimization/NL/K_9/optimization_log_2025-09-23_15-21-53.txt
+Date and time: 23-Sep-2025 15:21:53
+
+======================================================================
+SYSTEM CONFIGURATION
+======================================================================
+EVALUATION TESTBED:
+  Room dimensions: L = 3.0 m, W = 3.0 m
+  Height range: H = 0 to 1.2 m
+  Grid resolution: step = 0.4 m
+  Total evaluation points: 256 positions
+  Position range:
+    X ∈ [-1.5, 1.3] m
+    Y ∈ [-1.5, 1.3] m
+    Z ∈ [0.0, 1.2] m
+
+OPTIMIZATION PARAMETERS:
+  K values to optimize: [9]
+  Elevation angle range: 0° to 80° (allowed range for LED orientations)
+  Azimuth angle range: 0° to 360° (full rotation allowed)
+  Optimization metric: rms
+  Parallel processing: 24 workers
+  Population size: 300
+  Max generations: 150
+
+LED TRANSMITTER CONFIGURATION:
+  Position: [0.0, 0.0, 2.0] m
+  Transmitted power: 0.405 W
+  Half-power angle: 45.0°
+  Lambertian order: 2.00
+  Photodiode area: 2.64e-05 m²
+  Receiver FOV: 85.0°
+  Noise variance: 3.00e-14 W²
+  Samples per orientation: 1000
+
+
+============================================================
+OPTIMIZING FOR K = 9 ORIENTATIONS
+============================================================
+Starting GA optimization with parallel processing...
+Population size: 100, Max generations: 150
+Using 24 parallel workers for acceleration
+
+Single objective optimization:
+18 Variables
+
+Options:
+CreationFcn:       @gacreationuniform
+CrossoverFcn:      @crossoverscattered
+SelectionFcn:      @selectionstochunif
+MutationFcn:       @mutationadaptfeasible
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+    1              200          0.0935          0.6998        0
+    2              300         0.05723            0.53        0
+    3              400         0.05165          0.3549        0
+    4              500         0.04423          0.2621        0
+    5              600         0.03183          0.1771        0
+    6              700         0.03267          0.1374        1
+    7              800         0.02822         0.09825        0
+    8              900         0.02629         0.07452        0
+    9             1000         0.02532         0.05688        0
+   10             1100         0.02272         0.04694        0
+   11             1200         0.02247         0.04063        0
+   12             1300         0.02169         0.03706        0
+   13             1400         0.02162         0.03094        0
+   14             1500         0.02019         0.02802        0
+   15             1600         0.02138         0.02743        1
+   16             1700         0.02084         0.02588        0
+   17             1800         0.02125         0.02565        1
+   18             1900         0.02082         0.02459        0
+   19             2000         0.02071         0.02462        0
+   20             2100         0.02082         0.02441        1
+   21             2200         0.02082         0.02347        0
+   22             2300         0.02036         0.02335        0
+   23             2400         0.02014          0.0229        0
+   24             2500         0.01968         0.02295        0
+   25             2600         0.01924         0.02266        0
+   26             2700         0.01994         0.02255        1
+   27             2800         0.01883         0.02233        0
+   28             2900         0.01946         0.02237        1
+   29             3000         0.01974         0.02226        2
+   30             3100         0.01859         0.02215        0
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+   31             3200         0.01901         0.02234        1
+   32             3300         0.01913         0.02215        2
+   33             3400         0.01971         0.02194        3
+   34             3500         0.01943         0.02171        0
+   35             3600         0.01986          0.0218        1
+   36             3700         0.01961         0.02173        0
+   37             3800         0.01866         0.02179        0
+   38             3900         0.01971         0.02193        1
+   39             4000         0.01882         0.02169        0
+   40             4100         0.01903          0.0216        1
+   41             4200          0.0191         0.02169        2
+   42             4300         0.01877         0.02174        0
+   43             4400         0.01886         0.02152        1
+   44             4500          0.0194         0.02159        2
+   45             4600         0.01869         0.02144        0
+   46             4700         0.01839         0.02127        0
+   47             4800         0.01805         0.02135        0
+   48             4900         0.01908         0.02138        1
+   49             5000         0.01932         0.02136        2
+   50             5100         0.01855         0.02112        0
+   51             5200         0.01788           0.021        0
+   52             5300         0.01873         0.02141        1
+   53             5400         0.01831         0.02105        0
+   54             5500         0.01864         0.02126        1
+   55             5600         0.01864         0.02106        0
