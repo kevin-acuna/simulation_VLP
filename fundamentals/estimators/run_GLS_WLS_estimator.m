@@ -19,56 +19,19 @@ close all; clear variables; clc;
 addpath('../core');
 
 % =================================================
-% HYPERPARAMETERS
+% HYPERPARAMETERS (only things that change per run)
 % =================================================
 rng(42);
-N_or = 5;          % Number of orientations (change to 5 or 9)
-save_files = 0;    % 1 = save .mat files to results/
+N_or = 5;              % Number of orientations (change to 5 or 9)
+save_files = 0;        % 1 = save .mat files to results/
+receiver_mode = 'fixed'; % 'fixed' (testbed grid) or 'random'
 
-% Room dimensions
-L = 3; W = 3; Hmax = 1.2;
-
-% Grid parameters
-step = 0.2;   % step in X,Y [m]
-stepH = 0.2;  % step in Z [m]
-
-% Receiver position mode: 'fixed' (testbed grid) or 'random' (1000 random)
-receiver_mode = 'fixed';
-
-% Filter imaginary values
-filter_imaginary = false;
-
-% =================================================
-% ORIENTATIONS (optimized via GA)
-% =================================================
-orientations_K3=[35.40,140.13,33.31,36.38,29.58,262.70];
-orientations_K4=[38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
-orientations_K5=[0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
-orientations_K6=[17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
-orientations_K7=[58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
-orientations_K8=[51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];
-orientations_K9=[0,28.15,56.92,178.69,36.54,266.83,33.86,182.29,42.20,78.36,53.07,97.46,57.91,359.73,37.07,355.08,58.23,272.07];
-orientations_K10=[56.00,3.61,53.20,182.48,54.93,356.82,11.94,38.06,61.28,270.34,50.17,91.30,47.56,174.73,43.39,89.36,32.54,277.55,15.14,255.31];
-
-all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
-K_values = [3, 4, 5, 6, 7, 8, 9, 10];
-
-%% 1. System Parameters
+%% 1. System Parameters (shared)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-N_samples = 1000;
-theta_half = 45;
-P_t = 0.405;
-T = [0, 0, 2];
-m_t = -log(2)./log(cosd(theta_half));
-
-p = 4.8e-3; q = 5.5e-3;
-N_det = 1;
-A_det = p*q*N_det;
-R_pd = 0.63;
-FOV = 85;
-n_r = [0, 0, 1];
-sigma2 = 30e6*10^(-21.0);
-C = -P_t*(m_t+1)*A_det/(2*pi);
+system_params;         % Loads: P_t, theta_half, m_t, A_det, R_pd, FOV, n_r,
+                       %        sigma2, C, L, W, Hmax, N_samples, step, stepH,
+                       %        all_orientations, K_values, etc.
+T = [0, 0, 2];        % LED position (GLS/WLS uses T at ceiling)
 
 % Convert orientations to cartesian vectors
 n_t = zeros(N_or, 3);

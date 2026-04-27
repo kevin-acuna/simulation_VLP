@@ -23,10 +23,12 @@ C = -P_t*(m_t+1)*A_det/(2*pi);        % Radiometric constant
 % Room
 L = 3; W = 3; Hmax = 1.2;
 
-% Samples
+% Samples and grid
 N_samples = 1000;
+step = 0.2;                            % Testbed X,Y step [m]
+stepH = 0.2;                           % Testbed Z step [m]
 
-% GA-optimized orientations [theta1, rho1, theta2, rho2, ...] in degrees
+% PEB-optimized orientations [theta1, rho1, theta2, rho2, ...] in degrees
 orientations_K3  = [35.40,140.13,33.31,36.38,29.58,262.70];
 orientations_K4  = [38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
 orientations_K5  = [0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
@@ -38,3 +40,10 @@ orientations_K10 = [56.00,3.61,53.20,182.48,54.93,356.82,11.94,38.06,61.28,270.3
 
 all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
 K_values = [3, 4, 5, 6, 7, 8, 9, 10];
+
+% NL-optimized orientations (GA with NL RMSE as objective)
+orientations_NL_K5 = [21,42,21,341,23,174,25,247,21,112];
+orientations_NL_K9 = [18.905,89.333,18.608,150.298,17.349,330.007,28.469,191.965,26.868,260.181,20.204,115.307,22.131,25.976,28.047,280.906,2.489,301.474];
+
+all_orientations_NL = {[], [], orientations_NL_K5, [], [], [], orientations_NL_K9};
+K_values_NL = [5, 9];

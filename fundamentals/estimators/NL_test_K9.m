@@ -2,66 +2,35 @@ close all;
 clear variables;
 clc;
 
+addpath('../core');
+
 rng(42);
 
-N_or = 9; % Number of orientations considered by the non-linear least square estimator
+N_or = 9; % Number of orientations
+receiver_mode = 'fixed';  % 'fixed' or 'random'
 
-% Opciones: 
-%   'fixed'  - Utiliza posiciones fijas en grid de testbed (como en analyze_PEB_vs_theta_half.m)
-%   'random' - Utiliza N_pos posiciones aleatorias (como en main_3D_withNoise.m)
-receiver_mode = 'fixed';  % Cambiar aquí para seleccionar el modo deseado
-
-if ~exist('OWC_LOS_channel', 'file')
-    addpath('../../Comparison between estimators Linear-NonLinear');
-end
-
-%% 1. Simulation Parameters
+%% 1. System Parameters (shared)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%                    Main Simulation Parameters                     %%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%------------------------------------------%
-% LIGHT SOURCES CORE SIMULATION PARAMETERS %
-%------------------------------------------%
-theta_half = 45; %
-P_t = 0.405; % 1; % Transmitted optical power [W]
-L = 3; W = 3; H = 2; Hmax=1.2; % Full length, width and height of the room [m]
-% step = 0.8; stepH=0.6;
-step = 0.2; stepH=0.2;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%                          AP Parameters                            %%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%------------------------%
-% LIGHT SOURCES GEOMETRY %
-%------------------------%
-T = [0 0 0]; x_n = T(1); y_n = T(2); z_n = T(3); % Positions of the light source (origin of the main frame)
-m_t = -log(2)./log(cosd(theta_half)); % Lambertian order of emission
+system_params;         % Loads: P_t, theta_half, m_t, A_det, R_pd, FOV, n_r,
+                       %        sigma2, C, L, W, Hmax, N_samples, step, stepH,
+                       %        all_orientations, orientations_NL_K5/K9, etc.
 
+% NL-specific: LED at origin, receiver below
+T = [0 0 0]; H = 2;
+alpha = n_r(1); beta = n_r(2); gamma = n_r(3);
 
+% Use NL-optimized orientations (override PEB orientations for K=9)
+orientations_K9 = orientations_NL_K9;
+all_orientations{7} = orientations_K9;
 
-% Use optimized orientations for K=3 to K=9 from the CRLB analysis
-% [elevación, azimuth, ...] 
-orientations_K3=[35.40,140.13,33.31,36.38,29.58,262.70];
-orientations_K4=[38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
-orientations_K5=[21,42,21,341,23,174,25,247,21,112]; %optimo por GA
-orientations_K6=[17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
-orientations_K7=[58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
-orientations_K8=[51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];
-%optimo por GA K=9:
-orientations_K9=[18.905,89.333,18.608,150.298,17.349,330.007,28.469,191.965,26.868,260.181,20.204,115.307,22.131,25.976,28.047,280.906,2.489,301.474];
-
-all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9};
-K_values = [3, 4, 5, 6, 7, 8, 9];
-
-% Convert spherical orientation angles to cartesian vectors
+% Convert orientations to cartesian vectors
 n_t = zeros(N_or, 3);
-% Using fixed optimized Tx orientation
 for i = 1:N_or
-    theta_i = all_orientations{N_or-2}(2*i-1);  % elevation angle
-    rho_i = all_orientations{N_or-2}(2*i);      % azimuth angle
-    % Convert from spherical to cartesian coordinates
-    n_t(i,1) = sind(theta_i) * cosd(rho_i);  % x component
-    n_t(i,2) = sind(theta_i) * sind(rho_i);  % y component
-    n_t(i,3) = -cosd(theta_i);               % z component (negative because pointing down)
+    theta_i = all_orientations{N_or-2}(2*i-1);
+    rho_i = all_orientations{N_or-2}(2*i);
+    n_t(i,1) = sind(theta_i) * cosd(rho_i);
+    n_t(i,2) = sind(theta_i) * sind(rho_i);
+    n_t(i,3) = -cosd(theta_i);
 end
 
 % Cartesian coordinates of the orientations vectors for K=9
@@ -75,26 +44,8 @@ a_o = n_t(7,1); b_o = n_t(7,2); c_o = n_t(7,3);
 a_p = n_t(8,1); b_p = n_t(8,2); c_p = n_t(8,3);
 a_q = n_t(9,1); b_q = n_t(9,2); c_q = n_t(9,3);
 
+%% 2. Receiver Positions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%                          Rx Parameters                            %%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%--------------------------%
-% PHOTODETECTOR PARAMETERS %
-%--------------------------%
-p = 4.8e-3; q = 5.5e-3; % Dimensions of the rectangular photodiode [m]
-N_det = 1; % Number of photodiodes
-A_det = p*q*N_det; % Photoreceiver sensitive area [m²]
-R_pd = 0.63; % Photosensitivity of the photodiode [A/W]
-FOV = 85; % Fielf-of-view of the photoreceiver [°]
-n_r = [0, 0, 1]; % Normal vector of the photoreceiver
-alpha = n_r(1,1); beta = n_r(1,2); gamma = n_r(1,3); % Cartesian coordinates of the normal vector of the photoreceiver
-sigma2 = 30e6*10^(-21.0);
-C = -P_t*(m_t+1)*A_det/(2*pi); % Normalization factor
-%---------------------------%
-% RECEIVER PLANE PARAMETERS %
-%---------------------------%
-
-
 if strcmp(receiver_mode, 'fixed')
     % Opción 1: Posiciones fijas
     % Generate 3D grid of positions
