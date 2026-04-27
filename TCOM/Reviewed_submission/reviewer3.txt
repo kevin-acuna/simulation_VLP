@@ -1,0 +1,34 @@
+Reviewer: 3
+
+Comments to the Author
+1. The authors should summarize and highlight the specific features of the beam-steered single-LED positioning problem, as research in optical wireless localization is already extensive and this distinction is central to the work's significance and motivation.
+
+
+2. If unique characteristics are not sufficiently distinct from existing multi-LED or multi-PD schemes, the authors should strengthen the motivation to clearly justify the transition to a single-source steering architecture.
+
+
+3. The authors should provide a detailed sensitivity analysis regarding the impact of synchronization errors between the transmitter's steering timing and the receiver's sampling intervals.
+
+
+4. The authors should supplement the current results with an analysis of positioning performance under different indoor reflection coefficients to evaluate the robustness of the model-based approach against multipath interference.
+
+
+5. The authors should include an experimental or simulation-based analysis of the system's performance when the receiver is not perfectly horizontal, as tilt is a common factor in practical mobile scenarios.
+
+
+6. The authors should analyze the impact of different ambient light power levels on the direction estimation stage to quantify the operational limits of the NIR-based positioning link.
+
+
+7. The authors should provide a more comprehensive comparison of the genetic algorithm's convergence efficiency against other global optimization heuristics to justify its selection for orientation-set design.
+
+
+8. The authors should clarify the physical constraints of the mechanical steering system and analyze how the maximum angular velocity of the beam-steerer affects the overall localization latency.
+
+
+9. The authors should analyze the Fisher Information Matrix rank conditions for cases where $K \ge 3$ but the chosen orientations are nearly coplanar, as this affects the practical deployment rules.
+
+
+10. The authors should analyze the error propagation from the direction-finding stage to the distance-recovery stage to explain the total system error budget more clearly.
+
+
+11. The authors should ensure that all notation and variable definitions in Section II-A are strictly consistent with the mathematical expressions used in the Appendices.
