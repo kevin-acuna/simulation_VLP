@@ -1,0 +1,40 @@
+%% System Parameters — Shared across estimator scripts
+% Run this script (or call it from another) to load all common parameters.
+% Usage: run('system_params.m')  or just: system_params
+
+% LED
+theta_half = 45;                        % Semi-angle at half power [deg]
+P_t = 0.405;                           % Transmitted optical power [W]
+m_t = -log(2)/log(cosd(theta_half));   % Lambertian order
+
+% Photodetector
+p = 4.8e-3; q = 5.5e-3;               % PD dimensions [m]
+A_det = p*q;                           % Sensitive area [m^2]
+R_pd = 0.63;                           % Responsivity [A/W]
+FOV = 85;                              % Field of view [deg]
+n_r = [0, 0, 1];                       % PD normal vector
+
+% Noise
+sigma2 = 30e6*10^(-21.0);             % AWGN variance [A^2]
+
+% Derived
+C = -P_t*(m_t+1)*A_det/(2*pi);        % Radiometric constant
+
+% Room
+L = 3; W = 3; Hmax = 1.2;
+
+% Samples
+N_samples = 1000;
+
+% GA-optimized orientations [theta1, rho1, theta2, rho2, ...] in degrees
+orientations_K3  = [35.40,140.13,33.31,36.38,29.58,262.70];
+orientations_K4  = [38.89,90.56,41.48,0.15,41.80,180.10,38.79,270.24];
+orientations_K5  = [0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+orientations_K6  = [17.19,306.94,54.55,266.13,22.49,140.37,52.23,360.00,52.41,84.05,55.76,185.16];
+orientations_K7  = [58.91,355.65,53.77,170.74,27.75,43.75,5.36,305.88,54.35,96.46,35.10,220.04,54.78,278.61];
+orientations_K8  = [51.82,89.38,61.50,268.26,27.32,316.99,6.46,318.34,57.76,5.84,53.65,171.30,37.97,200.35,39.27,91.12];
+orientations_K9  = [0,28.15,56.92,178.69,36.54,266.83,33.86,182.29,42.20,78.36,53.07,97.46,57.91,359.73,37.07,355.08,58.23,272.07];
+orientations_K10 = [56.00,3.61,53.20,182.48,54.93,356.82,11.94,38.06,61.28,270.34,50.17,91.30,47.56,174.73,43.39,89.36,32.54,277.55,15.14,255.31];
+
+all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
+K_values = [3, 4, 5, 6, 7, 8, 9, 10];
