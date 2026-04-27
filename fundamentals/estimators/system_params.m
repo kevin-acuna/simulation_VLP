@@ -15,7 +15,7 @@ FOV = 85;                              % Field of view [deg]
 n_r = [0, 0, 1];                       % PD normal vector
 
 % Noise
-sigma2 = 30e6*10^(-21.0);             % AWGN variance [A^2]
+sigma2 = 30e6*10^(-21.0);             % AWGN variance σ² = σ_w²/R_p² [W^2] (optical domain)
 
 % Derived
 C = -P_t*(m_t+1)*A_det/(2*pi);        % Radiometric constant
