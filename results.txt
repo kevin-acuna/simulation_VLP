@@ -1,0 +1,82 @@
+
+C:\Users\Owner\Documents\UVSQ\simulation_VLP\fundamentals\estimators\run_DF_comparison.m
+suboptimal: [0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+
+==== DIRECTION-FINDING RESULTS K=5 ====
+RMSE (deg)  — WLS: 0.977° | GLS: 0.709° | NL-MLE: 0.620° | DEB: 0.558°
+CDF90 (deg) — WLS: 1.102° | GLS: 1.003° | NL-MLE: 0.886° | DEB: 0.850°
+Mean (deg)  — WLS: 0.541° | GLS: 0.477° | NL-MLE: 0.432° | DEB: 0.483°
+
+COMPUTATIONAL LATENCY (Median Time per Position):
+  WLS   : 0.0470 ms
+  GLS   : 0.0431 ms
+  NL-MLE: 3.2597 ms
+>> 
+
+optimal: [0.10,74.22,65.68,269.84,65.73,179.90,65.91,359.82,65.88,89.91];
+==== DIRECTION-FINDING RESULTS K=5 ====
+RMSE (deg)  — WLS: 1.179° | GLS: 0.760° | NL-MLE: 0.560° | DEB: 0.518°
+CDF90 (deg) — WLS: 1.138° | GLS: 1.026° | NL-MLE: 0.802° | DEB: 0.751°
+Mean (deg)  — WLS: 0.587° | GLS: 0.508° | NL-MLE: 0.406° | DEB: 0.464°
+
+COMPUTATIONAL LATENCY (Median Time per Position):
+  WLS   : 0.0345 ms
+  GLS   : 0.0333 ms
+  NL-MLE: 3.0766 ms
+
+
+
+
+
+
+
+C:\Users\Owner\Documents\UVSQ\simulation_VLP\fundamentals\estimators\run_3D_comparison.m
+  ======================
+  3D estimation
+  ======================
+  Rng(42)
+suboptimal: [0.10,211.14,50.55,89.96,50.66,179.99,50.37,359.93,50.59,269.96];
+  ========================================================
+ 3D POSITIONING RESULTS (K=5)
+========================================================
+Method       RMSE[cm]  CDF90[cm]    APE[cm]
+GLS              2.71       3.83       1.79
+WLS              3.71       4.24       2.02
+NL-MLE           2.32       3.42       1.63
+PEB              1.55       2.48       1.34
+--------------------------------------------------------
+Latency — WLS: 0.0564 ms | GLS: 0.0569 ms | NL-MLE: 3.1187 ms
+
+Rng(41)
+Method       RMSE[cm]  CDF90[cm]    APE[cm]
+GLS              2.75       3.98       1.83
+WLS              3.90       4.11       2.00
+NL-MLE           2.30       3.52       1.63
+PEB              1.55       2.48       1.34
+--------------------------------------------------------
+Latency — WLS: 0.0531 ms | GLS: 0.0534 ms | NL-MLE: 2.9829 ms
+
+
+
+
+optimal: [0.10,74.22,65.68,269.84,65.73,179.90,65.91,359.82,65.88,89.91];
+Rng(42)
+========================================================
+ 3D POSITIONING RESULTS (K=5)
+========================================================
+Method       RMSE[cm]  CDF90[cm]    APE[cm]
+GLS              2.90       3.86       1.90
+WLS              4.65       4.27       2.19
+NL-MLE           2.12       3.18       1.53
+PEB              1.64       2.53       1.43
+--------------------------------------------------------
+Latency — WLS: 0.0517 ms | GLS: 0.0524 ms | NL-MLE: 3.1309 ms
+
+Rng(41)
+Method       RMSE[cm]  CDF90[cm]    APE[cm]
+GLS              2.91       4.06       1.95
+WLS              4.79       4.48       2.29
+NL-MLE           2.23       3.32       1.59
+PEB              1.64       2.53       1.43
+--------------------------------------------------------
+Latency — WLS: 0.0527 ms | GLS: 0.0529 ms | NL-MLE: 3.1084 ms
