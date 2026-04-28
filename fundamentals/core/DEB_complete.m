@@ -1,6 +1,26 @@
 function DEB = DEB_complete(R, nt_orientations, T, Pt, m, A_det, theta_half, Psi_FOV, sigma2, N)
-% DEB_complete - Direction Error Bound calculation for Single LED VLP system
-% Reparameterized with alpha = ln(eta) for perfect numerical conditioning.
+% DEB_complete - Direction Error Bound for Single LED VLP system
+%
+% Computes the CRLB for direction estimation from K measurements,
+% treating the amplitude eta = C*cos(psi)/d^2 as a nuisance parameter
+% (profiled out via Schur complement). Uses alpha = ln(eta) reparameterization.
+%
+% The DEB is the minimum achievable RMSE of ||n_hat_d - n_d|| for any
+% unbiased direction estimator using only the K direction-finding measurements.
+% For small errors: DEB ≈ angular RMSE in radians.
+%
+% INPUTS: Same signature as PEB_complete for compatibility.
+%   R, nt_orientations, T, Pt, m, A_det, theta_half*, Psi_FOV, sigma2, N
+%   (*theta_half is accepted for API compatibility but not used internally)
+%
+% OUTPUT:
+%   DEB : scalar, Direction Error Bound (unitless, ≈ radians for small errors)
+%
+% THEORY: See DEB_formulation.tex (Eqs. deb_FIM_compact, deb_Cang, DEB)
+%   Parameter vector: xi = [theta_d, phi_d, alpha=ln(eta)]
+%   FIM: I(xi) = (N*eta^2/sigma^2) * sum_i g_tilde_i * g_tilde_i'
+%   Angular CRLB: C_ang = [I^{-1}]_{1:2,1:2}  (Schur complement)
+%   DEB = sqrt(trace(J_sph * C_ang * J_sph'))
 
 %% Input validation
 if size(R, 1) ~= 3 || size(R, 2) ~= 1
@@ -33,7 +53,13 @@ end
 % Nuisance parameter: eta = (C * cos(psi)) / d^2
 C = (Pt * (m + 1) * A_det) / (2 * pi);
 cos_psi = (nr' * (-d_vec)) / d;       
-eta = (C * cos_psi) / d^2;            
+eta = (C * cos_psi) / d^2;
+
+% If eta <= 0, receiver is outside FOV → no direction information
+if eta <= 0
+    DEB = Inf;
+    return;
+end
 
 %% Jacobian of the Cartesian Unit Vector w.r.t Spherical Angles
 u_theta = [cos(theta_d)*cos(phi_d); 

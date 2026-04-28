@@ -17,6 +17,8 @@ M_trials = 10;         % Monte Carlo trials per position
 N_or = 5;               % Number of orientations
 save_files = 1;         
 receiver_mode = 'fixed';
+error_metric = 'angular'; % 'angular' = acos(dot) [exact, recommended for TCOM]
+                          % 'chordal' = ||n_hat - n|| [consistent with DEB definition]
 
 %% 1. System Parameters (shared)
 system_params;          
@@ -53,10 +55,15 @@ end
 param_r = {A_det, n_r, FOV};
 
 %% 3. Monte Carlo Simulation Core
-rmse_ang_WLS_pos = zeros(N_pos, 1);
+% Store BOTH metrics for each position (compute both, choose later for display)
+rmse_ang_WLS_pos = zeros(N_pos, 1);  % angular [deg]
 rmse_ang_GLS_pos = zeros(N_pos, 1);
 rmse_ang_NL_pos  = zeros(N_pos, 1);
-rmse_ang_DEB_pos = zeros(N_pos, 1);
+rmse_cho_WLS_pos = zeros(N_pos, 1);  % chordal [dimensionless]
+rmse_cho_GLS_pos = zeros(N_pos, 1);
+rmse_cho_NL_pos  = zeros(N_pos, 1);
+DEB_cho_pos      = zeros(N_pos, 1);  % DEB chordal [dimensionless]
+DEB_ang_pos      = zeros(N_pos, 1);  % DEB angular [degrees]
 
 time_WLS = 0; time_GLS = 0; time_NL = 0;
 rad2deg_factor = 180 / pi;
@@ -83,14 +90,17 @@ for i_pos = 1:N_pos
     % Calculate theoretical DEB
     deb_val = DEB_complete(R_real, n_t', T', P_t, m_t, A_det, deg2rad(theta_half), deg2rad(FOV), sigma2, N_samples);
     if isreal(deb_val) && isfinite(deb_val)
-        rmse_ang_DEB_pos(i_pos) = deb_val * rad2deg_factor;
+        DEB_cho_pos(i_pos) = deb_val;                    % chordal (native)
+        DEB_ang_pos(i_pos) = deb_val * rad2deg_factor;   % approx degrees
     else
-        rmse_ang_DEB_pos(i_pos) = NaN;
+        DEB_cho_pos(i_pos) = NaN;
+        DEB_ang_pos(i_pos) = NaN;
     end
     
-    err_WLS_mc = zeros(M_trials, 1);
-    err_GLS_mc = zeros(M_trials, 1);
-    err_NL_mc  = zeros(M_trials, 1);
+    % Store BOTH metrics per MC trial (negligible extra cost)
+    ang_WLS_mc = zeros(M_trials, 1); cho_WLS_mc = zeros(M_trials, 1);
+    ang_GLS_mc = zeros(M_trials, 1); cho_GLS_mc = zeros(M_trials, 1);
+    ang_NL_mc  = zeros(M_trials, 1); cho_NL_mc  = zeros(M_trials, 1);
     
     for mc = 1:M_trials
         P_raw = repmat(P_clean, N_samples, 1) + sqrt(sigma2) .* randn(N_samples, N_or);
@@ -100,15 +110,16 @@ for i_pos = 1:N_pos
         [d_hat_robust, ~, ~] = vlp_wls(n_t', P_raw, m_t);
         time_WLS = time_WLS + toc;
         v_est_wls = d_hat_robust' / norm(d_hat_robust); 
-        % Cálculo angular EXACTO (Nivel TCOM)
-        err_WLS_mc(mc) = acos(max(-1, min(1, v_true' * v_est_wls'))) * rad2deg_factor;
+        ang_WLS_mc(mc) = acos(max(-1, min(1, v_true' * v_est_wls'))) * rad2deg_factor;
+        cho_WLS_mc(mc) = norm(v_true - v_est_wls');
 
         % GLS
         tic;
         [d_hat_gls] = vlp_gls(n_t', P_raw, m_t, sigma2);
         time_GLS = time_GLS + toc;
         v_est_gls = d_hat_gls' / norm(d_hat_gls); 
-        err_GLS_mc(mc) = acos(max(-1, min(1, v_true' * v_est_gls'))) * rad2deg_factor;
+        ang_GLS_mc(mc) = acos(max(-1, min(1, v_true' * v_est_gls'))) * rad2deg_factor;
+        cho_GLS_mc(mc) = norm(v_true - v_est_gls');
 
         % NL-MLE
         tic;
@@ -130,29 +141,60 @@ for i_pos = 1:N_pos
         [sol, ~, ~] = fmincon(obj_fcn, x0, [], [], [], [], lb, ub, nonlcon, options_nl);
         
         v_est_nl = sol(1:3) / norm(sol(1:3)); 
-        err_NL_mc(mc) = acos(max(-1, min(1, v_true' * v_est_nl'))) * rad2deg_factor;
+        ang_NL_mc(mc) = acos(max(-1, min(1, v_true' * v_est_nl'))) * rad2deg_factor;
+        cho_NL_mc(mc) = norm(v_true - v_est_nl');
         time_NL = time_NL + toc;
     end
     
-    rmse_ang_WLS_pos(i_pos) = sqrt(mean(err_WLS_mc.^2));
-    rmse_ang_GLS_pos(i_pos) = sqrt(mean(err_GLS_mc.^2));
-    rmse_ang_NL_pos(i_pos)  = sqrt(mean(err_NL_mc.^2));
+    % Per-position RMSE (both metrics)
+    rmse_ang_WLS_pos(i_pos) = sqrt(mean(ang_WLS_mc.^2));
+    rmse_ang_GLS_pos(i_pos) = sqrt(mean(ang_GLS_mc.^2));
+    rmse_ang_NL_pos(i_pos)  = sqrt(mean(ang_NL_mc.^2));
+    rmse_cho_WLS_pos(i_pos) = sqrt(mean(cho_WLS_mc.^2));
+    rmse_cho_GLS_pos(i_pos) = sqrt(mean(cho_GLS_mc.^2));
+    rmse_cho_NL_pos(i_pos)  = sqrt(mean(cho_NL_mc.^2));
 end
 
 total_runs = N_pos * M_trials;
 
-%% 4. Display Results
-global_rmse_WLS = sqrt(mean(rmse_ang_WLS_pos.^2));
-global_rmse_GLS = sqrt(mean(rmse_ang_GLS_pos.^2));
-global_rmse_NL  = sqrt(mean(rmse_ang_NL_pos.^2));
-global_rmse_DEB = sqrt(nanmean(rmse_ang_DEB_pos.^2));
+%% 4. Display Results (selected metric)
+if strcmp(error_metric, 'angular')
+    r_WLS = rmse_ang_WLS_pos; r_GLS = rmse_ang_GLS_pos; r_NL = rmse_ang_NL_pos;
+    r_DEB = DEB_ang_pos;
+    unit_str = '°';
+else
+    r_WLS = rmse_cho_WLS_pos; r_GLS = rmse_cho_GLS_pos; r_NL = rmse_cho_NL_pos;
+    r_DEB = DEB_cho_pos;
+    unit_str = '';
+end
 
-fprintf('\n==== DIRECTION-FINDING RESULTS (MONTE CARLO K=%d) ====\n', N_or);
-fprintf('GLOBAL RMSE (deg)  — WLS: %.3f° | GLS: %.3f° | NL-MLE: %.3f° | DEB: %.3f°\n', global_rmse_WLS, global_rmse_GLS, global_rmse_NL, global_rmse_DEB);
-fprintf('\nCOMPUTATIONAL LATENCY (Avg Time per Run):\n');
-fprintf('  WLS   : %.4f ms\n', (time_WLS / total_runs) * 1000);
-fprintf('  GLS   : %.4f ms\n', (time_GLS / total_runs) * 1000);
-fprintf('  NL-MLE: %.4f ms\n', (time_NL / total_runs) * 1000);
+global_rmse_WLS = sqrt(mean(r_WLS.^2));
+global_rmse_GLS = sqrt(mean(r_GLS.^2));
+global_rmse_NL  = sqrt(mean(r_NL.^2));
+global_rmse_DEB = sqrt(nanmean(r_DEB.^2));
+
+cdf90_WLS = prctile(r_WLS, 90);
+cdf90_GLS = prctile(r_GLS, 90);
+cdf90_NL  = prctile(r_NL, 90);
+cdf90_DEB = prctile(r_DEB(~isnan(r_DEB)), 90);
+
+ape_WLS = mean(r_WLS); ape_GLS = mean(r_GLS); ape_NL = mean(r_NL);
+ape_DEB = nanmean(r_DEB);
+
+fprintf('\n========================================================\n');
+fprintf(' DIRECTION-FINDING RESULTS (K=%d, %d MC trials/pos, metric=%s)\n', N_or, M_trials, error_metric);
+fprintf('========================================================\n');
+fprintf('%-10s %12s %12s %12s\n', 'Method', ['RMSE[' unit_str ']'], ['CDF90[' unit_str ']'], ['APE[' unit_str ']']);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'GLS',    global_rmse_GLS, cdf90_GLS, ape_GLS);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'WLS',    global_rmse_WLS, cdf90_WLS, ape_WLS);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'NL-MLE', global_rmse_NL,  cdf90_NL,  ape_NL);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'DEB',    global_rmse_DEB, cdf90_DEB, ape_DEB);
+fprintf('--------------------------------------------------------\n');
+fprintf('Latency — WLS: %.4f ms | GLS: %.4f ms | NL-MLE: %.4f ms\n', ...
+    (time_WLS/total_runs)*1000, (time_GLS/total_runs)*1000, (time_NL/total_runs)*1000);
+if TEST_MODE
+    fprintf('\n⚠ TEST_MODE=true. For paper results: TEST_MODE=false, M_trials≥100\n');
+end
 
 %% 5. Comparative CDF Plot (Spatial RMSE)
 figure('Name', 'CDF of Spatial RMSE (Direction-Finding)', 'Position', [100, 100, 600, 500]);
@@ -163,10 +205,10 @@ color_wls = [0.8500, 0.3250, 0.0980];
 color_nl  = [0.4940, 0.1840, 0.5560];  
 color_deb = [0.4660, 0.6740, 0.1880];  
 
-[f, x] = ecdf(rmse_ang_GLS_pos); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_gls);
-[f, x] = ecdf(rmse_ang_WLS_pos); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_wls);
-[f, x] = ecdf(rmse_ang_NL_pos); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_nl);
-[f, x] = ecdf(rmse_ang_DEB_pos(~isnan(rmse_ang_DEB_pos))); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_deb);
+[f, x] = ecdf(r_GLS); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_gls);
+[f, x] = ecdf(r_WLS); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_wls);
+[f, x] = ecdf(r_NL);  stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_nl);
+[f, x] = ecdf(r_DEB(~isnan(r_DEB))); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_deb);
 
 yline(0.9, '--', 'LineWidth', 0.8, 'Color', [0.5 0.5 0.5]);
 
@@ -180,10 +222,14 @@ grid minor
 if save_files == 1
     results_dir = fullfile(fileparts(mfilename('fullpath')), 'results');
     if ~exist(results_dir, 'dir'), mkdir(results_dir); end
-    save(fullfile(results_dir, sprintf('K%d_DEB_ang_mc.mat', N_or)), 'rmse_ang_DEB_pos')
-    save(fullfile(results_dir, sprintf('K%d_GLS_ang_mc.mat', N_or)), 'rmse_ang_GLS_pos')
-    save(fullfile(results_dir, sprintf('K%d_WLS_ang_mc.mat', N_or)), 'rmse_ang_WLS_pos')
-    save(fullfile(results_dir, sprintf('K%d_NL_ang_mc.mat', N_or)), 'rmse_ang_NL_pos')
+    % Save ALL data: both metrics + DEB + timing + config
+    save(fullfile(results_dir, sprintf('K%d_DF_MC_results.mat', N_or)), ...
+        'rmse_ang_WLS_pos', 'rmse_ang_GLS_pos', 'rmse_ang_NL_pos', ...
+        'rmse_cho_WLS_pos', 'rmse_cho_GLS_pos', 'rmse_cho_NL_pos', ...
+        'DEB_cho_pos', 'DEB_ang_pos', 'time_WLS', 'time_GLS', 'time_NL', ...
+        'N_or', 'M_trials', 'N_pos', 'N_samples', 'total_runs', ...
+        'X_r', 'Y_r', 'Z_r', 'rad2deg_factor');
+    fprintf('Saved all results to %s\n', results_dir);
 end
 
 function F = mle_cost_function(vars, p_target, n_t, m_t)

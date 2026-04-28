@@ -17,6 +17,8 @@ rng(42);
 N_or = 5;               % Number of orientations
 save_files = 0;         % 1 = save .mat files to results/
 receiver_mode = 'fixed';% 'fixed' or 'random'
+error_metric = 'angular'; % 'angular' = acos(dot) [exact, recommended for TCOM]
+                         % 'chordal' = ||n_hat - n|| [consistent with DEB definition]
 
 %% 1. System Parameters (shared)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,16 +163,27 @@ for i = 1:N_pos
     % True direction vector
     v_true = (R_real - T') / norm(R_real - T');
     
-    % Empirical Errors: Chordal distance converted to degrees
-    errorAngWLS(i) = norm(v_true - v_tr_est_WLS(i,:)') * rad2deg_factor;
-    errorAngGLS(i) = norm(v_true - v_tr_est_GLS(i,:)') * rad2deg_factor;
-    errorAngNL(i)  = norm(v_true - v_tr_est_NL(i,:)')  * rad2deg_factor;
+    if strcmp(error_metric, 'angular')
+        % Angular error: acos(dot product) in degrees — geometrically exact
+        errorAngWLS(i) = acos(max(-1, min(1, v_true' * v_tr_est_WLS(i,:)'))) * rad2deg_factor;
+        errorAngGLS(i) = acos(max(-1, min(1, v_true' * v_tr_est_GLS(i,:)'))) * rad2deg_factor;
+        errorAngNL(i)  = acos(max(-1, min(1, v_true' * v_tr_est_NL(i,:)')))  * rad2deg_factor;
+    else
+        % Chordal distance: ||n_hat - n|| — dimensionless, NO degree conversion
+        errorAngWLS(i) = norm(v_true - v_tr_est_WLS(i,:)');
+        errorAngGLS(i) = norm(v_true - v_tr_est_GLS(i,:)');
+        errorAngNL(i)  = norm(v_true - v_tr_est_NL(i,:)');
+    end
     
-    % Theoretical DEB
+    % Theoretical DEB (always chordal: sqrt(E[||delta_n||^2]))
     deb_val = DEB_complete(R_real, n_t', T', P_t, m_t, A_det, deg2rad(theta_half), deg2rad(FOV), sigma2, N_samples);
     
     if isreal(deb_val) && isfinite(deb_val)
-        errorAngDEB(i) = deb_val * rad2deg_factor;
+        if strcmp(error_metric, 'angular')
+            errorAngDEB(i) = deb_val * rad2deg_factor; % chordal ≈ radians → degrees
+        else
+            errorAngDEB(i) = deb_val;                  % chordal, no conversion
+        end
     else
         errorAngDEB(i) = NaN;
     end
