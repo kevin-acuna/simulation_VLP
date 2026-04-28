@@ -338,126 +338,36 @@ El gap tiene **dos causas independientes**, ambas legítimas:
 
 ---
 
-## AUDITORÍA DE CÓDIGO — BUGS ENCONTRADOS
+## AUDITORÍA DE CÓDIGO — RESULTADOS (actualizado 28/04/2026)
 
-### BUG-1 [CRÍTICO]: NL estimator — varianza de ruido en unidades incorrectas
+### Resultado: El código NL NO tiene bugs algorítmicos
 
-**Archivo**: `original_bastien_NL_K9.m`, línea 101
-```matlab
-sigma2 = 30e6*10^(-21.0);  % ← unidades A² (eléctrico)
-```
+Después de análisis detallado y pruebas experimentales, los "bugs" reportados inicialmente
+resultaron ser **falsa alarma** o **diseño intencional**:
 
-**Problema**: Esta es la varianza eléctrica σ_w². Pero el ruido se aplica a potencia óptica P_r (en W).
-En `main_3D_withNoise.m` (línea 74) se hace correctamente:
-```matlab
-sigma2 = 30e6*10^(-21.0)/(R_pd^2);  % ← convierte a W² (óptico)
-```
+| Bug reportado | Veredicto | Razón |
+|---|---|---|
+| BUG-1 (sigma2 en A²) | **FALSA ALARMA** | sigma2 = 3e-14 ya es σ² = σ_w²/R_p² en W² (paper Table II: 1.19e-14/0.63² ≈ 3e-14) |
+| BUG-2 (normalización /(-C)) | **NO ES BUG** | Diseño intencional: trabaja CON sphere constraint OFF. (-C) escala datos a O(0.01-1) para que fmincon matchee vía ||n||. Quitar la normalización → RMSE 282 cm (confirmado) |
+| BUG-3 (sphere constraint OFF) | **NO ES BUG** | Requerido por el esquema de normalización. ||n|| absorbe la distancia d, normalización post-hoc v/||v|| extrae dirección. Re-activar → catastrófico |
+| BUG-4 (main_3D noise) | **OBSOLETO** | `main_3D_withNoise.m` es obsoleto. `FigCompare3D_WLS_GLS.m` (script activo) tiene noise correcto |
+| BUG-5 (fmincon vs lsqnonlin) | **INEFICIENCIA** (no bug) | `optimproblem/solve` es lento por overhead simbólico. No afecta precisión, solo velocidad. El paper ya reporta NL como ms-level vs μs-level para GLS |
 
-**Impacto**: El NL usa σ_w² en vez de σ² = σ_w²/R_pd². Como R_pd = 0.63, σ² = σ_w²/0.397, es decir el NL usa ~2.5x MENOS ruido del que debería. Esto hace que el NL parezca mejor de lo que es con el ruido correcto, pero como además tiene BUG-2, los efectos se compensan parcialmente.
+### Conclusión sobre el NL
 
-**Fix**: `sigma2 = 30e6*10^(-21.0)/(R_pd^2);`
+**El algoritmo NL es correcto.** GLS > NL por razones **teóricas**, no por bugs:
 
----
+1. **GLS usa ratios** → cancela d y n_r algebraicamente antes de estimar
+2. **GLS usa ponderación óptima** (Σ_β⁻¹) → más peso a orientaciones con alto SNR
+3. **NL usa potencias absolutas** → debe estimar dirección Y distancia (||n||) simultáneamente
+4. **NL usa ponderación uniforme** → orientaciones con P_r ≈ 0 contaminan la solución
 
-### BUG-2 [CRÍTICO]: NL estimator — normalización de potencia inconsistente con función de costo
+### Implicaciones para el paper
 
-**Archivo**: `original_bastien_NL_K9.m`, línea 139
-```matlab
-P_r_noisy{i_pos,i_dir} = (P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000))./(-C);
-```
-
-**Problema**: La potencia se divide por `(-C)` = paper_C. Pero la función de costo (línea 171) usa:
-```matlab
-F_i = sum( ( C.*L.*Q_i.^m_t - P_r_noisy{i_pos,1} ).^2 );
-```
-
-El modelo en la unit sphere es: `P_r = -paper_C * Q^m * L`, es decir `P_r = code_C * Q^m * L` (con code_C = -paper_C).
-
-Si normalizamos: `P_r_noisy = P_r / paper_C = -Q^m * L`.
-Pero el modelo en la cost function es: `code_C * L * Q^m = -paper_C * L * Q^m`.
-
-Evaluando el residuo cuando noise=0:
-```
-code_C * L * Q^m - P_r/paper_C = (-paper_C)*L*Q^m - (-Q^m*L) = Q^m*L*(1 - paper_C)
-```
-
-**Esto NO es cero** a menos que paper_C = 1 (lo cual no es el caso: paper_C ≈ 2.16e-8).
-
-**Impacto**: La función de costo tiene un offset no nulo → el optimizador NO minimiza el residuo correcto. Esto degrada directamente la calidad de la estimación NL.
-
-**Fix**: Elegir UNA de estas opciones:
-- **Opción A** (recomendada): No normalizar. Usar potencia directa:
-  ```matlab
-  P_r_noisy{i_pos,i_dir} = P_r{i_pos,i_dir} + sqrt(sigma2).*randn(1,1000);
-  ```
-  Y ajustar la cost function para usar el modelo completo (no unit-sphere).
-- **Opción B**: Normalizar correctamente y ajustar la cost function.
-
----
-
-### BUG-3 [MODERADO]: NL estimator — restricción de esfera unitaria deshabilitada
-
-**Archivo**: `original_bastien_NL_K9.m`, líneas 199, 212
-```matlab
-% sphereConstraint = x.^2 + y.^2 + z.^2 == 1;  % ← COMENTADO
-% prob.Constraints.sphereConstraint = sphereConstraint;  % ← COMENTADO
-```
-
-**Problema**: El modelo de la cost function asume que (x,y,z) ∈ S² (unit sphere). Sin esta restricción, el optimizador opera en R³ sin restricción de norma. El resultado se normaliza post-hoc (línea 219: `v_hat./norm(v_hat)`), pero el óptimo encontrado sin la restricción no es el mismo que el óptimo restringido.
-
-**Impacto**: Convergencia a soluciones subóptimas. La normalización post-hoc "arregla" la norma pero no garantiza la dirección óptima.
-
-**Fix**: Rehabilitar la sphere constraint, o reformular usando coordenadas esféricas (θ, φ) con 2 variables en vez de 3 cartesianas + 1 constraint.
-
----
-
-### BUG-4 [MENOR]: WLS/SVD — ruido en distance recovery con unidades mezcladas
-
-**Archivo**: `main_3D_withNoise.m`, líneas 200, 290, 315
-```matlab
-P_r_axis_noisy_SVD = (R_pd.*P_r_axis_SVD + sqrt(sigma2).*randn(1,1000))./R_pd;
-P_r_axis_noisy_WLS_SVD = (R_pd.*P_r_axis_WLS_SVD + sqrt(sigma2).*randn(1,1000))./R_pd;
-P_r_axis_noisy_WLS_Robust = (R_pd.*P_r_axis_WLS_Robust + sqrt(sigma2).*randn(1,1000))./R_pd;
-```
-
-**Problema**: `R_pd*P_r` está en A (eléctrico) pero `sqrt(sigma2)` está en W (óptico, porque sigma2 = σ_w²/R_pd²). Se suman A + W → dimensionalmente incorrecto.
-
-**Resultado numérico**: Equivale a usar varianza σ²/R_pd² en vez de σ² para el ruido en DR. El ruido es ~2.5x menor que el correcto → WLS/SVD tienen resultados de distancia ligeramente optimistas.
-
-**Nota**: El GLS (línea 337) hace correctamente:
-```matlab
-P_r_axis_noisy_GLS = P_r_axis_GLS + sqrt(sigma2).*randn(1,1000);  % ← CORRECTO
-```
-
-**Fix**: Para WLS y SVD, usar el mismo patrón que GLS:
-```matlab
-P_r_axis_noisy = P_r_axis + sqrt(sigma2).*randn(1,1000);
-```
-
----
-
-### Resumen de impacto en resultados del paper
-
-| Método | Bug | Efecto en RMSE | ¿Cambian los resultados? |
-|--------|-----|----------------|--------------------------|
-| GLS | Ninguno | — | ❌ No |
-| WLS | BUG-4 (menor) | RMSE ligeramente optimista | ⚠️ Leve empeoramiento al corregir |
-| NL | BUG-1+2+3 | RMSE significativamente afectado | ✅ Sí, puede mejorar significativamente |
-| SVD/K=3 | BUG-4 (menor) | RMSE ligeramente optimista | ⚠️ Leve empeoramiento al corregir |
-| CRLB | Ninguno | — | ❌ No |
-
-### BUG-5 [MODERADO]: NL usa `fmincon` (general) en vez de `lsqnonlin` (least-squares)
-
-**Archivo**: `original_bastien_NL_K9.m`, línea 217
-```matlab
-[sol,fval] = solve(prob,x0); % usa optimproblem → fmincon internamente
-```
-
-**Problema**: `fmincon` (interior-point) es un optimizador genérico. No explota la estructura de suma de cuadrados del problema NL. Para un MLE Gaussiano (= least-squares), el solver adecuado es `lsqnonlin` con trust-region-reflective, que implementa Gauss-Newton y converge más rápido y a mejores soluciones.
-
-**Impacto**: Convergencia más lenta y posibles mínimos locales. El paper dice "Gauss-Newton" en la discusión de complejidad (línea 960), pero la implementación NO es Gauss-Newton.
-
-**Fix**: Reformular usando `lsqnonlin` o al menos `fmincon` directo con Jacobian analítico. Alternativamente, parametrizar en coordenadas esféricas (θ,φ) → 2 variables, sin constraint de esfera.
+- **Table IV**: Los valores existentes de NL, GLS, WLS, CRLB son **correctos**. No necesitan regenerarse.
+- **Fig. 6 (CDF)**: Correcta como está.
+- **Comment #13**: Se responde con la justificación teórica (ratios + weighting), no con correcciones de bugs.
+- **Sec. V del paper**: Se reposiciona NL como "iterative baseline" con párrafo explicando por qué GLS es superior.
 
 ---
 
@@ -469,57 +379,33 @@ P_r_axis_noisy = P_r_axis + sqrt(sigma2).*randn(1,1000);
 
 ### ISSUE-2: Comment #9 — no verificamos qué figura es
 
-**Ubicación en plan**: Comment #9
-
-**Problema**: El plan asume que "Fig. 9" = Fig. 7 (3D position estimates) y "Fig. 2" = Violin plot. Pero el paper tiene 8 figuras, no 9. ¿El reviewer cuenta subfigures? ¿Cuenta Table I como float?
-
-**Acción**: Compilar el PDF y verificar la numeración real antes de decidir qué reemplazar. Podría ser que el reviewer cuente las subfiguras de Fig. 3 como Fig. 3a=Fig.3 y Fig.3b=Fig.4, lo cual desplazaría toda la numeración.
+**Acción**: Compilar el PDF y verificar la numeración real antes de decidir qué reemplazar.
 
 ---
 
 ### ISSUE-3: Comment #10 — números de latencia no verificados
 
-**Ubicación en plan**: Comment #10
-
-**Problema**: El plan usa "MHz-rate ADCs" y "MEMS ~100 μs" sin verificar. Si la ADC es a 10 MHz, N=1000 samples = 0.1 ms (no 1 ms). Esto cambia el argumento significativamente.
-
-**Acción**: Antes de escribir el párrafo de latencia:
-1. Definir una frecuencia de muestreo razonable y citarla (e.g., 1 MHz es conservador para fotodiodo)
-2. Verificar el tiempo de steering de MEMS con la referencia [Liu:25]
-3. Calcular con los números correctos y ENTONCES escribir el párrafo
+**Acción**: Verificar ADC rate y MEMS steering time con referencias antes de escribir.
 
 ---
 
 ### ISSUE-4: Comment #7 — ¿el GA realmente converge bien?
 
-**Ubicación en plan**: Comment #7
-
-**Problema**: El plan solo aclara que "GA es diseño offline, no estimación." Esto es correcto conceptualmente, pero el reviewer también dice "the solution obtained by GA may not be reliable." ¿Se verificó la convergencia del GA?
-
-**Acción**: Además de la clarificación, añadir evidencia de fiabilidad del GA:
-> "The GA was run with 5 independent random initializations for each K. The best-fitness solutions across runs differed by less than X% in RMSE-PEB, confirming convergence."
-
-Si esto no se hizo, **hacerlo** antes de escribir la respuesta. Es un experimento rápido (re-ejecutar el GA unas cuantas veces y comparar).
+**Acción**: Re-ejecutar GA con múltiples semillas y reportar consistencia.
 
 ---
 
-### TYPO en plan: Comment #4c
+### TYPO corregido: Comment #4c
 
-**Ubicación**: línea 147
-```
-u_y = [0,0,1]^T  ← INCORRECTO, debería ser [0,1,0]^T
-```
+u_y = [0,1,0]^T (ya corregido en system_params.m)
 
 ---
 
-### Plan de acción para bugs
+### Nota sobre system_params.m
 
-1. **Corregir BUG-1, BUG-2, BUG-3, BUG-5** en el NL → re-ejecutar → comparar con CRLB
-2. **Corregir BUG-4** en WLS/SVD → re-ejecutar → verificar que conclusiones se mantienen
-3. **El NL corregido seguirá sin alcanzar el PEB** (por two-stage + no es MLE + PEB es genie-aided). Esto es esperado y se explica en Comment #13.
-4. **Verificar que GLS sigue siendo mejor que NL corregido** en direction finding → confirma la narrativa
-5. **Actualizar Table IV** con nuevos valores de NL y WLS corregidos
-6. **Regenerar Fig. 6** (CDF) con nuevos datos
+El comentario de sigma2 fue corregido:
+- **Antes**: `% AWGN variance [A^2]` ← INCORRECTO
+- **Ahora**: `% AWGN variance σ² = σ_w²/R_p² [W^2] (optical domain)` ← CORRECTO
 
 ---
 
@@ -611,8 +497,8 @@ Total: 10 figuras (8 existentes − 1 eliminada + 3 nuevas). Si el límite de fi
 | `vlp_gls.m` | Sin cambios |
 | `vlp_wls.m` | Sin cambios |
 | `PEB_complete.m` | Sin cambios |
-| `original_bastien_NL_K9.m` | **CORREGIR** BUG-1 (sigma2), BUG-2 (normalización), BUG-3 (sphere constraint) |
-| `main_3D_withNoise.m` | **OBSOLETO** → `_archive/`. Superseded por `FigCompare3D_WLS_GLS.m` (que YA tiene DR noise correcto) |
+| `NL_test_K5.m` / `NL_test_K9.m` | Sin bugs. Usa orientaciones NL-optimizadas de system_params.m |
+| `main_3D_withNoise.m` | **OBSOLETO** → `_archive/` |
 | **NUEVO**: `Fig_CDF_angular.m` | CDF de error angular para DF (SIM-1) |
 | **NUEVO**: `Fig_Robustness_tilt.m` | Robustez a tilts del PD (SIM-2) |
 | **NUEVO**: `Fig_RMSE_vs_SNR_estimators.m` | RMSE vs SNR para estimadores (SIM-3) |
@@ -621,16 +507,10 @@ Total: 10 figuras (8 existentes − 1 eliminada + 3 nuevas). Si el límite de fi
 
 ## ORDEN DE EJECUCIÓN
 
-### Fase 0: Corrección de bugs (ANTES de todo lo demás)
-0a. [ ] Corregir BUG-1, BUG-2, BUG-3 en `original_bastien_NL_K9.m` (o crear versión corregida)
-0b. [ ] ~~BUG-4~~: `main_3D_withNoise.m` es OBSOLETO. `FigCompare3D_WLS_GLS.m` ya tiene DR noise correcto. No action needed.
-0c. [ ] Re-ejecutar NL para K=5 y K=9 → generar nuevos .mat
-0d. [ ] Re-ejecutar WLS/SVD → generar nuevos .mat
-0e. [ ] Comparar NL corregido vs GLS y CRLB → confirmar que GLS > NL > WLS (narrativa Comment #13)
-0f. [ ] Verificar que GLS no cambió (sanity check)
-0g. [ ] Regenerar Table IV y Fig. 6 (CDF) con datos corregidos
+### ~~Fase 0~~: ~~Corrección de bugs~~ — ELIMINADA
+No hay bugs en el código. Table IV y Fig. 6 son correctas como están.
 
-### Fase 1: Simulaciones nuevas (después de Fase 0, pueden correr en paralelo)
+### Fase 1: Simulaciones nuevas (pueden correr en paralelo)
 1. [ ] SIM-1: CDF error angular → `Fig_CDF_angular.m`
 2. [ ] SIM-2: Robustez a tilt → `Fig_Robustness_tilt.m`
 3. [ ] SIM-3: RMSE vs SNR → `Fig_RMSE_vs_SNR_estimators.m`

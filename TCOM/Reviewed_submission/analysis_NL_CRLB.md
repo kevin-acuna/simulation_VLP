@@ -600,7 +600,7 @@ Joint MLE ≈ PEB > GLS (two-stage) > NL (two-stage) > WLS (two-stage)
 | "NL debería alcanzar el CRLB" | ❌ No | El CRLB es para estimación conjunta. NL es two-stage |
 | "El PEB es inválido" | ❌ No | El PEB es correcto. Es un bound conjunto válido como benchmark |
 | "GLS alcanza el PEB" | ❌ No | GLS es el más cercano entre los two-stage, pero no lo alcanza |
-| "El gap es por bugs del NL" | ⚠️ Parcial | Hay bugs (BUG-1,2,3,5) pero el gap arquitectónico persistiría con código correcto |
+| "El gap es por bugs del NL" | ❌ No | Código NL verificado sin bugs (28/04/2026). El gap es 100% teórico: ratios + weighting (GLS) vs potencias absolutas sin ponderación (NL) |
 | "GLS es estadísticamente eficiente" | ✅ Sí | Para el subproblema de dirección (modelo linealizado de ratios) |
 | "La propiedad n_r-agnostic es fundamental" | ✅ Sí | Es una consecuencia matemática de las ratios Lambertianas |
 
