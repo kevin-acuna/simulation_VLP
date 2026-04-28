@@ -1,0 +1,112 @@
+% =========================================================================
+% Revised Section V: Nonlinear Direction-Finding Baseline
+% Replaces the original Section "Nonlinear Estimator" in IEEE_TCOM_RV1.tex
+% 
+% Key changes vs original:
+%   1. Reframed as "baseline" (not main contribution)
+%   2. Formulated as profile MLE for direction with eta as nuisance
+%   3. n_r-independent (eta absorbs cos(psi))
+%   4. Explicit sphere constraint
+%   5. Clarifies relationship to MLE and why GLS is preferred
+% =========================================================================
+
+% *******************************************
+\section{Nonlinear Direction-Finding Baseline}
+\label{sec:NoLineal}
+% *******************************************
+
+Before developing the closed-form estimators that constitute the main 
+contribution of this work, we present an iterative nonlinear least-squares 
+(NLS) approach that serves as a baseline for comparison.  This method 
+directly fits the Lambertian power model to the $K$ direction-finding 
+measurements and represents the class of numerical estimators commonly 
+employed in optical positioning~\cite{Qin2020,Ma2024}.
+
+\subsection{Direction-Finding Observation Model}
+
+From \eqref{eq:Pr_i}--\eqref{eq:cosines}, the noise-free mean power 
+at orientation~$i$ can be written as:
+\begin{equation}
+  \mu_i = \eta\,\bigl(\mathbf{n}_{t,i}\cdot\mathbf{n}_d\bigr)^{m},
+  \qquad i=1,\dots,K,
+  \label{eq:mu_eta}
+\end{equation}
+where
+\begin{equation}
+  \eta \triangleq \frac{C\cos\psi}{d^{2}}
+  \label{eq:eta_def}
+\end{equation}
+is a scalar \emph{nuisance amplitude} that absorbs the unknown distance 
+$d$ and the receiver-orientation factor 
+$\cos\psi = \mathbf{n}_r\!\cdot\!(-\mathbf{n}_d)$.  
+The only unknowns in~\eqref{eq:mu_eta} are the direction 
+$\mathbf{n}_d\!\in\!\mathbb{S}^{2}$ and the scalar~$\eta>0$; 
+crucially, the model does \emph{not} require knowledge of $\mathbf{n}_r$.
+
+\subsection{NLS Formulation}
+
+Given the sample means $\hat\mu_i = \bar P_{r,i}$ from~\eqref{eq:sampleMean}, 
+the NLS direction estimator jointly minimises the sum of squared residuals 
+over $\mathbf{n}_d$ and~$\eta$:
+\begin{equation}
+  \bigl(\hat{\mathbf{n}}_{d},\,\hat\eta\bigr)
+  = \arg\min_{\substack{\mathbf{n}_d\in\mathbb{S}^{2},\;\eta>0 \\
+                         \mathbf{n}_{t,i}\cdot\mathbf{n}_d\ge0,\;i=1,\dots,K}}
+    \sum_{i=1}^{K}
+    \bigl(\hat\mu_i - \eta\,(\mathbf{n}_{t,i}\cdot\mathbf{n}_d)^{m}\bigr)^{2}.
+  \label{eq:nls_cost}
+\end{equation}
+The constraint $\mathbf{n}_{t,i}\cdot\mathbf{n}_d\ge0$ enforces 
+$\cos\phi_i\ge0$ (LED illuminates the receiver), and the unit-sphere 
+constraint $\|\mathbf{n}_d\|=1$ restricts the search to directions.
+
+Under the i.i.d.\ Gaussian noise model of Section~\ref{sec:SystemModel}, 
+minimising~\eqref{eq:nls_cost} is equivalent to maximising the 
+\emph{profile likelihood} of~$\mathbf{n}_d$ after concentrating out 
+the nuisance~$\eta$.  For each candidate direction, the optimal nuisance 
+parameter is the least-squares solution:
+\begin{equation}
+  \hat\eta(\mathbf{n}_d)
+  = \frac{\displaystyle\sum_{i=1}^{K}\hat\mu_i\,
+    (\mathbf{n}_{t,i}\cdot\mathbf{n}_d)^{m}}
+   {\displaystyle\sum_{i=1}^{K}
+    (\mathbf{n}_{t,i}\cdot\mathbf{n}_d)^{2m}}.
+  \label{eq:eta_hat}
+\end{equation}
+Hence, the NLS is the \emph{profile maximum-likelihood estimator (MLE)} 
+for the direction subproblem with~$\eta$ as nuisance.
+
+In practice, \eqref{eq:nls_cost} is solved via MATLAB's \texttt{fmincon} 
+with the SQP algorithm.  The initial direction is set to the LED 
+orientation~$\mathbf{n}_{t,i^*}$ corresponding to the highest received 
+power ($i^* = \arg\max_i \hat\mu_i$), and $\eta$ is initialised to unity.
+
+\subsection{Comparison with Linear Estimators}
+
+Two observations motivate the closed-form GLS/WLS estimators developed 
+in Section~\ref{sec:Lineal}:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Statistical weighting.}  
+  The NLS cost~\eqref{eq:nls_cost} assigns equal weight to every 
+  orientation, regardless of its SNR.  Orientations with negligible 
+  received power ($\cos\phi_i\approx0$) contribute noise-dominated 
+  residuals that degrade the solution.  By contrast, the GLS 
+  estimator (Section~\ref{sec:Lineal}) applies the inverse-covariance 
+  weighting $\mathbf{\Sigma}_\beta^{-1}$, which naturally down-weights 
+  low-SNR orientations.
+
+\item \textbf{Computational cost.}  
+  The NLS requires an iterative constrained optimisation at each receiver 
+  position, yielding ms-level latency per estimate.  The GLS/WLS 
+  reduce direction finding to a single $3\times3$ eigenvalue problem, 
+  achieving $\mu$s-level latency (see Section~\ref{sec:results}).
+\end{enumerate}
+
+\noindent
+Despite being the profile MLE for the direction subproblem, the NLS 
+does not outperform GLS in the operating regime of this work ($N=1000$ 
+samples, SNR$\approx14\,$dB), because the first-order linearisation 
+underlying GLS is tight and the optimal weighting 
+$\mathbf{\Sigma}_\beta^{-1}$ compensates for the approximation.
+The NLS therefore serves as a computationally expensive benchmark 
+that validates the effectiveness of the proposed closed-form approach.
