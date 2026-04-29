@@ -86,18 +86,33 @@ time_NL_arr  = zeros(N_pos, 1);
 rad2deg_factor = 180 / pi;
 options_nl = optimoptions('fmincon', 'Display', 'none', 'Algorithm', 'sqp');
 
-% Progress reporting via DataQueue (thread-safe, order-independent)
+%% Log setup — subdirectory named K{N_or}_DF_MC_{M_trials}
+results_subdir = fullfile(fileparts(mfilename('fullpath')), 'results', ...
+    sprintf('LAST', N_or, M_trials));
+if ~exist(results_subdir, 'dir'), mkdir(results_subdir); end
+
+log_filename = fullfile(results_subdir, ...
+    sprintf('K%d_DF_MC_log_%s.txt', N_or, datestr(now, 'yyyy-mm-dd_HH-MM-SS')));
+diary(log_filename);
+
+fprintf('%s\n', repmat('=', 1, 60));
+fprintf('DIRECTION-FINDING MC SIMULATION LOG\n');
+fprintf('%s\n', repmat('=', 1, 60));
+fprintf('Date       : %s\n', datestr(now));
+fprintf('K (N_or)   : %d\n', N_or);
+fprintf('M_trials   : %d\n', M_trials);
+fprintf('N_pos      : %d\n', N_pos);
+fprintf('N_samples  : %d\n', N_samples);
+fprintf('Metric     : %s\n', error_metric);
+fprintf('TEST_MODE  : %d\n', TEST_MODE);
+fprintf('Workers    : %d\n', pool.NumWorkers);
+fprintf('%s\n\n', repmat('=', 1, 60));
+
+% Progress reporting — anonymous callback receives position index directly
+% (avoids nested-function scope issue when local functions are present)
 fprintf('Running Monte Carlo Simulation (%d trials/pos) for %d positions...\n', M_trials, N_pos);
 D = parallel.pool.DataQueue;
-progress_count = 0;
-afterEach(D, @(~) reportProgress());
-
-    function reportProgress()
-        progress_count = progress_count + 1;
-        if mod(progress_count, 10) == 0 || progress_count == N_pos
-            fprintf('  --> Completed %d / %d positions\n', progress_count, N_pos);
-        end
-    end
+afterEach(D, @(pos) fprintf('  --> Completed position %d / %d\n', pos, N_pos));
 
 parfor i_pos = 1:N_pos
     x = X_r(i_pos); y = Y_r(i_pos); z = Z_r(i_pos);
@@ -184,7 +199,10 @@ parfor i_pos = 1:N_pos
     time_GLS_arr(i_pos) = t_gls;
     time_NL_arr(i_pos)  = t_nl;
 
-    send(D, i_pos);
+    % Send progress update every 10 positions (and first/last)
+    if mod(i_pos, 10) == 0 || i_pos == 1 || i_pos == N_pos
+        send(D, i_pos);
+    end
 end
 
 % Aggregate timing
@@ -259,16 +277,17 @@ grid minor
 
 %% 6. Save
 if save_files == 1
-    results_dir = fullfile(fileparts(mfilename('fullpath')), 'results');
-    if ~exist(results_dir, 'dir'), mkdir(results_dir); end
-    save(fullfile(results_dir, sprintf('K%d_DF_MC_results.mat', N_or)), ...
+    save(fullfile(results_subdir, sprintf('K%d_DF_MC_results.mat', N_or)), ...
         'rmse_ang_WLS_pos', 'rmse_ang_GLS_pos', 'rmse_ang_NL_pos', ...
         'rmse_cho_WLS_pos', 'rmse_cho_GLS_pos', 'rmse_cho_NL_pos', ...
         'DEB_cho_pos', 'DEB_ang_pos', 'time_WLS', 'time_GLS', 'time_NL', ...
         'N_or', 'M_trials', 'N_pos', 'N_samples', 'total_runs', ...
         'X_r', 'Y_r', 'Z_r', 'rad2deg_factor');
-    fprintf('Saved all results to %s\n', results_dir);
+    fprintf('Saved .mat to: %s\n', results_subdir);
 end
+
+fprintf('\nLog saved to: %s\n', log_filename);
+diary off;
 
 % =========================================================================
 % LOCAL FUNCTIONS
