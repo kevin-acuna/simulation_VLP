@@ -20,9 +20,9 @@ addpath('../core');
 % =================================================
 rng(42);
 TEST_MODE    = false;     % true = fast coarse grid, false = full paper grid
-M_trials     = 100;      % Monte Carlo trials per position
+M_trials     = 1000;      % Monte Carlo trials per position
 N_or         = 5;         % Number of orientations
-save_files   = 0;         
+save_files   = 1;         
 receiver_mode = 'fixed';
 error_metric = 'angular'; % 'angular' = acos(dot) | 'chordal' = ||n_hat - n||
 

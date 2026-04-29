@@ -68,7 +68,7 @@ orientations_GLS_DF_K9 = [9.20,213.10,65.04,205.04,50.16,101.79,28.62,183.93,4.5
 
 % ============================================================================================
 
-all_orientations = {orientations_K3, orientations_K4, orientations_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
+all_orientations = {orientations_K3, orientations_K4, orientations_DEB_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
 K_values = [3, 4, 5, 6, 7, 8, 9, 10];
 
 all_orientations_NL = {[], [], orientations_NL_K5, [], [], [], orientations_NL_K9};

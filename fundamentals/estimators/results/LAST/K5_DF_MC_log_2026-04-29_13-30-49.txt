@@ -1,0 +1,208 @@
+============================================================
+DIRECTION-FINDING MC SIMULATION LOG
+============================================================
+Date       : 29-Apr-2026 13:30:49
+K (N_or)   : 5
+M_trials   : 100
+N_pos      : 1792
+N_samples  : 1000
+Metric     : angular
+TEST_MODE  : 0
+Workers    : 24
+============================================================
+
+Running Monte Carlo Simulation (100 trials/pos) for 1792 positions...
+  --> Completed position 40 / 1792
+  --> Completed position 60 / 1792
+  --> Completed position 20 / 1792
+  --> Completed position 80 / 1792
+  --> Completed position 10 / 1792
+  --> Completed position 70 / 1792
+  --> Completed position 90 / 1792
+  --> Completed position 30 / 1792
+  --> Completed position 50 / 1792
+  --> Completed position 1 / 1792
+  --> Completed position 340 / 1792
+  --> Completed position 620 / 1792
+  --> Completed position 900 / 1792
+  --> Completed position 550 / 1792
+  --> Completed position 480 / 1792
+  --> Completed position 690 / 1792
+  --> Completed position 270 / 1792
+  --> Completed position 760 / 1792
+  --> Completed position 130 / 1792
+  --> Completed position 830 / 1792
+  --> Completed position 200 / 1792
+  --> Completed position 790 / 1792
+  --> Completed position 580 / 1792
+  --> Completed position 230 / 1792
+  --> Completed position 370 / 1792
+  --> Completed position 720 / 1792
+  --> Completed position 510 / 1792
+  --> Completed position 860 / 1792
+  --> Completed position 410 / 1792
+  --> Completed position 300 / 1792
+  --> Completed position 330 / 1792
+  --> Completed position 750 / 1792
+  --> Completed position 470 / 1792
+  --> Completed position 610 / 1792
+  --> Completed position 540 / 1792
+  --> Completed position 260 / 1792
+  --> Completed position 160 / 1792
+  --> Completed position 650 / 1792
+  --> Completed position 890 / 1792
+  --> Completed position 500 / 1792
+  --> Completed position 820 / 1792
+  --> Completed position 930 / 1792
+  --> Completed position 780 / 1792
+  --> Completed position 120 / 1792
+  --> Completed position 440 / 1792
+  --> Completed position 850 / 1792
+  --> Completed position 360 / 1792
+  --> Completed position 570 / 1792
+  --> Completed position 220 / 1792
+  --> Completed position 710 / 1792
+  --> Completed position 290 / 1792
+  --> Completed position 600 / 1792
+  --> Completed position 400 / 1792
+  --> Completed position 250 / 1792
+  --> Completed position 530 / 1792
+  --> Completed position 190 / 1792
+  --> Completed position 740 / 1792
+  --> Completed position 320 / 1792
+  --> Completed position 460 / 1792
+  --> Completed position 880 / 1792
+  --> Completed position 810 / 1792
+  --> Completed position 680 / 1792
+  --> Completed position 640 / 1792
+  --> Completed position 490 / 1792
+  --> Completed position 840 / 1792
+  --> Completed position 110 / 1792
+  --> Completed position 560 / 1792
+  --> Completed position 770 / 1792
+  --> Completed position 210 / 1792
+  --> Completed position 280 / 1792
+  --> Completed position 350 / 1792
+  --> Completed position 590 / 1792
+  --> Completed position 920 / 1792
+  --> Completed position 700 / 1792
+  --> Completed position 240 / 1792
+  --> Completed position 520 / 1792
+  --> Completed position 730 / 1792
+  --> Completed position 310 / 1792
+  --> Completed position 870 / 1792
+  --> Completed position 450 / 1792
+  --> Completed position 430 / 1792
+  --> Completed position 1080 / 1792
+  --> Completed position 800 / 1792
+  --> Completed position 1170 / 1792
+  --> Completed position 1260 / 1792
+  --> Completed position 630 / 1792
+  --> Completed position 100 / 1792
+  --> Completed position 390 / 1792
+  --> Completed position 1150 / 1792
+  --> Completed position 1240 / 1792
+  --> Completed position 150 / 1792
+  --> Completed position 910 / 1792
+  --> Completed position 670 / 1792
+  --> Completed position 1090 / 1792
+  --> Completed position 1200 / 1792
+  --> Completed position 1330 / 1792
+  --> Completed position 1040 / 1792
+  --> Completed position 950 / 1792
+  --> Completed position 1290 / 1792
+  --> Completed position 1130 / 1792
+  --> Completed position 1180 / 1792
+  --> Completed position 1110 / 1792
+  --> Completed position 1070 / 1792
+  --> Completed position 1250 / 1792
+  --> Completed position 1060 / 1792
+  --> Completed position 1360 / 1792
+  --> Completed position 1230 / 1792
+  --> Completed position 1220 / 1792
+  --> Completed position 380 / 1792
+  --> Completed position 1030 / 1792
+  --> Completed position 1320 / 1792
+  --> Completed position 1140 / 1792
+  --> Completed position 940 / 1792
+  --> Completed position 1280 / 1792
+  --> Completed position 140 / 1792
+  --> Completed position 1160 / 1792
+  --> Completed position 180 / 1792
+  --> Completed position 1100 / 1792
+  --> Completed position 1420 / 1792
+  --> Completed position 1120 / 1792
+  --> Completed position 1350 / 1792
+  --> Completed position 1440 / 1792
+  --> Completed position 1430 / 1792
+  --> Completed position 1370 / 1792
+  --> Completed position 1050 / 1792
+  --> Completed position 1380 / 1792
+  --> Completed position 1310 / 1792
+  --> Completed position 1530 / 1792
+  --> Completed position 1210 / 1792
+  --> Completed position 1490 / 1792
+  --> Completed position 1480 / 1792
+  --> Completed position 420 / 1792
+  --> Completed position 1460 / 1792
+  --> Completed position 1500 / 1792
+  --> Completed position 660 / 1792
+  --> Completed position 1450 / 1792
+  --> Completed position 1410 / 1792
+  --> Completed position 1000 / 1792
+  --> Completed position 1190 / 1792
+  --> Completed position 1520 / 1792
+  --> Completed position 1510 / 1792
+  --> Completed position 1340 / 1792
+  --> Completed position 1470 / 1792
+  --> Completed position 1300 / 1792
+  --> Completed position 1580 / 1792
+  --> Completed position 1620 / 1792
+  --> Completed position 1560 / 1792
+  --> Completed position 1390 / 1792
+  --> Completed position 1650 / 1792
+  --> Completed position 1600 / 1792
+  --> Completed position 1680 / 1792
+  --> Completed position 1550 / 1792
+  --> Completed position 1400 / 1792
+  --> Completed position 1640 / 1792
+  --> Completed position 1670 / 1792
+  --> Completed position 1610 / 1792
+  --> Completed position 170 / 1792
+  --> Completed position 1630 / 1792
+  --> Completed position 1270 / 1792
+  --> Completed position 1700 / 1792
+  --> Completed position 1540 / 1792
+  --> Completed position 1020 / 1792
+  --> Completed position 970 / 1792
+  --> Completed position 1590 / 1792
+  --> Completed position 1720 / 1792
+  --> Completed position 1690 / 1792
+  --> Completed position 1740 / 1792
+  --> Completed position 1570 / 1792
+  --> Completed position 1660 / 1792
+  --> Completed position 1760 / 1792
+  --> Completed position 1710 / 1792
+  --> Completed position 1770 / 1792
+  --> Completed position 1790 / 1792
+  --> Completed position 1792 / 1792
+  --> Completed position 990 / 1792
+  --> Completed position 1730 / 1792
+  --> Completed position 1010 / 1792
+  --> Completed position 1780 / 1792
+  --> Completed position 960 / 1792
+  --> Completed position 980 / 1792
+  --> Completed position 1750 / 1792
+
+========================================================
+ DIRECTION-FINDING RESULTS (K=5, 100 MC trials/pos, metric=angular)
+========================================================
+Method          RMSE[°]     CDF90[°]       APE[°]
+GLS              0.7548       1.0909       0.5744
+WLS              1.0037       1.1202       0.6429
+NL-MLE           0.6368       0.9079       0.5206
+DEB              0.5583       0.8496       0.4827
+--------------------------------------------------------
+Latency — WLS: 0.0820 ms | GLS: 0.0752 ms | NL-MLE: 5.8983 ms
+
+Log saved to: /home/kevin/Documents/simulation_VLP/fundamentals/estimators/results/LAST/K5_DF_MC_log_2026-04-29_13-30-49.txt
