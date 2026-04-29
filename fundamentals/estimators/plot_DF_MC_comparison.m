@@ -1,9 +1,9 @@
 %% plot_DF_MC_comparison.m
 % Loads two K*_DF_MC_results.mat files and generates:
-%   Fig 1 — CDF of per-position angular RMSE for file A (4 estimators)
-%   Fig 2 — CDF of per-position angular RMSE for file B (4 estimators)
-%   Fig 3 — Combined CDF (8 curves): same colors, solid=A, dashed=B
-%   Console — Metrics table: global RMSE, CDF90, Mean for all estimators × files
+%   Fig 1 - CDF of per-position angular RMSE for file A (4 estimators)
+%   Fig 2 - CDF of per-position angular RMSE for file B (4 estimators)
+%   Fig 3 - Combined CDF (8 curves): same colors, solid=A, dashed=B
+%   Console - Metrics table: global RMSE, CDF90, Mean for all estimators × files
 %
 % Both .mat files must have been produced by run_DF_comparison_MC.m or
 % run_DF_comparison_MC_parallel.m (same variable structure).
@@ -13,12 +13,12 @@
 close all; clear variables; clc;
 
 % =========================================================================
-% HYPERPARAMETERS — set the two .mat file paths here
+% HYPERPARAMETERS - set the two .mat file paths here
 % =========================================================================
 base_dir = fullfile(fileparts(mfilename('fullpath')), 'results');
 
-file_A = fullfile(base_dir, 'K5_DF_MC_100',  'K5_DF_MC_results.mat');
-file_B = fullfile(base_dir, 'K5_DF_MC_1000', 'K5_DF_MC_results.mat');
+file_A = fullfile(base_dir, 'K5_DF_MC_1000_DEB-Optimized',  'K5_DF_MC_results.mat');
+file_B = fullfile(base_dir, 'K5_DF_MC_1000_GLS-Optimized-MC10', 'K5_DF_MC_results.mat');
 
 save_figs = 0;   % 1 = export figures as PNG to results/
 % =========================================================================
@@ -70,8 +70,8 @@ color_nl  = [0.4940, 0.1840, 0.5560];
 color_deb = [0.4660, 0.6740, 0.1880];
 lw = 1.5;
 
-%% 4. Figure 1 — File A only
-fig1 = figure('Name', sprintf('CDF DF Angular RMSE — %s', labelA), ...
+%% 4. Figure 1 - File A only
+fig1 = figure('Name', sprintf('CDF DF Angular RMSE - %s', labelA), ...
     'Position', [50, 100, 600, 500]);
 hold on;
 
@@ -88,11 +88,12 @@ legend(sprintf('GLS (%s)',         labelA), ...
        sprintf('NL-MLE (%s)',      labelA), ...
        sprintf('Theoretical DEB (%s)', labelA), ...
        'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 10);
-title(sprintf('CDF of Spatial RMSE — %s', labelA), 'Interpreter', 'latex', 'FontSize', 13);
+title(sprintf('CDF of Spatial RMSE - %s', labelA), 'Interpreter', 'latex', 'FontSize', 13);
+xlim([0 4])
 grid minor; hold off;
 
-%% 5. Figure 2 — File B only
-fig2 = figure('Name', sprintf('CDF DF Angular RMSE — %s', labelB), ...
+%% 5. Figure 2 - File B only
+fig2 = figure('Name', sprintf('CDF DF Angular RMSE - %s', labelB), ...
     'Position', [100, 100, 600, 500]);
 hold on;
 
@@ -109,22 +110,23 @@ legend(sprintf('GLS (%s)',         labelB), ...
        sprintf('NL-MLE (%s)',      labelB), ...
        sprintf('Theoretical DEB (%s)', labelB), ...
        'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 10);
-title(sprintf('CDF of Spatial RMSE — %s', labelB), 'Interpreter', 'latex', 'FontSize', 13);
+title(sprintf('CDF of Spatial RMSE - %s', labelB), 'Interpreter', 'latex', 'FontSize', 13);
+xlim([0 4])
 grid minor; hold off;
 
-%% 6. Figure 3 — Combined (8 curves)
+%% 6. Figure 3 - Combined (8 curves)
 %  Same color per method. Solid line = file A, dashed line = file B.
-fig3 = figure('Name', sprintf('CDF DF Combined — %s vs %s', labelA, labelB), ...
+fig3 = figure('Name', sprintf('CDF DF Combined - %s vs %s', labelA, labelB), ...
     'Position', [150, 100, 720, 540]);
 hold on;
 
-% File A — solid
+% File A - solid
 [f,x] = ecdf(rA_GLS); hA_GLS = stairs(x, f, '-',  'LineWidth', lw,   'Color', color_gls);
 [f,x] = ecdf(rA_WLS); hA_WLS = stairs(x, f, '-',  'LineWidth', lw,   'Color', color_wls);
 [f,x] = ecdf(rA_NL);  hA_NL  = stairs(x, f, '-',  'LineWidth', lw,   'Color', color_nl);
 [f,x] = ecdf(rA_DEB(~isnan(rA_DEB))); hA_DEB = stairs(x, f, '-', 'LineWidth', lw, 'Color', color_deb);
 
-% File B — dashed, slightly thicker
+% File B - dashed, slightly thicker
 [f,x] = ecdf(rB_GLS); hB_GLS = stairs(x, f, '--', 'LineWidth', lw+0.5, 'Color', color_gls);
 [f,x] = ecdf(rB_WLS); hB_WLS = stairs(x, f, '--', 'LineWidth', lw+0.5, 'Color', color_wls);
 [f,x] = ecdf(rB_NL);  hB_NL  = stairs(x, f, '--', 'LineWidth', lw+0.5, 'Color', color_nl);
@@ -135,17 +137,18 @@ yline(0.9, '--', 'LineWidth', 0.8, 'Color', [0.5 0.5 0.5]);
 xlabel('Per-position Angular RMSE [°]', 'Interpreter', 'latex', 'FontSize', 12);
 ylabel('Empirical CDF',                 'Interpreter', 'latex', 'FontSize', 12);
 legend([hA_GLS, hA_WLS, hA_NL, hA_DEB, hB_GLS, hB_WLS, hB_NL, hB_DEB], ...
-       sprintf('GLS — %s',         labelA), ...
-       sprintf('WLS — %s',         labelA), ...
-       sprintf('NL-MLE — %s',      labelA), ...
-       sprintf('DEB — %s',         labelA), ...
-       sprintf('GLS — %s',         labelB), ...
-       sprintf('WLS — %s',         labelB), ...
-       sprintf('NL-MLE — %s',      labelB), ...
-       sprintf('DEB — %s',         labelB), ...
+       sprintf('GLS - %s',         labelA), ...
+       sprintf('WLS - %s',         labelA), ...
+       sprintf('NL-MLE - %s',      labelA), ...
+       sprintf('DEB - %s',         labelA), ...
+       sprintf('GLS - %s',         labelB), ...
+       sprintf('WLS - %s',         labelB), ...
+       sprintf('NL-MLE - %s',      labelB), ...
+       sprintf('DEB - %s',         labelB), ...
        'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 9);
-title(sprintf('CDF of Spatial RMSE — Combined (%s \\ solid / %s \\ dashed)', labelA, labelB), ...
+title(sprintf('CDF of Spatial RMSE - Combined (%s \\ solid / %s \\ dashed)', labelA, labelB), ...
     'Interpreter', 'latex', 'FontSize', 13);
+xlim([0 4])
 grid minor; hold off;
 
 %% 7. Print metrics table
