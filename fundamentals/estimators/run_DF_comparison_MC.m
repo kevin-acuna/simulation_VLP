@@ -13,9 +13,9 @@ addpath('../core');
 % =================================================
 rng(42);
 TEST_MODE = false;       % 'true' for fast grid, 'false' for full paper grid
-M_trials = 1000;         % Monte Carlo trials per position
+M_trials = 10;         % Monte Carlo trials per position
 N_or = 5;               % Number of orientations
-save_files = 1;         
+save_files = 0;         
 receiver_mode = 'fixed';
 error_metric = 'angular'; % 'angular' = acos(dot) [exact, recommended for TCOM]
                           % 'chordal' = ||n_hat - n|| [consistent with DEB definition]

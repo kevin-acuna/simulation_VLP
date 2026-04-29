@@ -64,11 +64,12 @@ orientations_GLS_DF_K5 = [1.58,153.32,41.37,129.51,31.95,217.36,34.21,306.97,30.
 orientations_GLS_DF_K9 = [9.20,213.10,65.04,205.04,50.16,101.79,28.62,183.93,4.58,332.83,50.50,278.53,21.32,357.39,13.26,14.88,72.61,24.28];
 
 % Conditions: MC=10 (Monte Carlo consideration)
+orientations_GLS_DF_K5_MC10 = [7.93,290.28,31.06,126.22,33.95,216.95,34.11,307.43,31.53,39.43];
 
 
 % ============================================================================================
 
-all_orientations = {orientations_K3, orientations_K4, orientations_DEB_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
+all_orientations = {orientations_K3, orientations_K4, orientations_GLS_DF_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
 K_values = [3, 4, 5, 6, 7, 8, 9, 10];
 
 all_orientations_NL = {[], [], orientations_NL_K5, [], [], [], orientations_NL_K9};
