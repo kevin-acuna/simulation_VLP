@@ -18,13 +18,13 @@ K_orientations      = [5,9];   % Number of LED orientations to optimize
 max_elevation_angle = 80;    % Max elevation angle for LED orientations [deg]
 results_dir = 'results/GLS_DF_optimization';
 
-L = 3; W = 3; Hmax = 1.2; step = 0.3;  % Testbed geometry [m]
+L = 3; W = 3; Hmax = 1.2; step = 0.2;  % Testbed geometry [m]
 
 M_MC = 10;               % Monte Carlo trials per position (higher = more accurate but slower)
 
 % GA parameters
 pop_size        = 300;
-max_generations = 150;
+max_generations = 400;
 % ===============================================================
 
 %% ======================== PARALLEL SETUP ========================
@@ -128,6 +128,17 @@ for k_idx = 1:length(K_orientations)
         [], [], [], [], lb, ub, [], options);
     optimization_time = toc(t_start);
 
+    %% Post-process: reorder orientation pairs by ascending theta
+    % GLS uses nt(:,1) as pivot — the nadir-facing LED must be first.
+    thetas_opt = xOpt(1:2:end);             % [theta1, theta2, ..., thetaK]
+    [~, sidx]  = sort(thetas_opt);          % ascending
+    xOpt_sorted = zeros(1, 2*K);
+    for ii = 1:K
+        xOpt_sorted(2*ii-1) = xOpt(2*sidx(ii)-1);
+        xOpt_sorted(2*ii)   = xOpt(2*sidx(ii));
+    end
+    xOpt = xOpt_sorted;
+
     %% Results
     fprintf('\n%s\n', repmat('-', 1, 50));
     fprintf('GLS DF OPTIMIZATION RESULTS FOR K = %d\n', K);
@@ -136,7 +147,7 @@ for k_idx = 1:length(K_orientations)
     fprintf('Best RMS angular error: %.4f°\n', fvalOpt);
     fprintf('Exit flag: %d\n', exitflag);
 
-    fprintf('\nOptimal LED orientations (GLS DF-optimized):\n');
+    fprintf('\nOptimal LED orientations (GLS DF-optimized, sorted by theta):\n');
     for i = 1:K
         theta_deg = xOpt(2*i-1);
         rho_deg   = xOpt(2*i);

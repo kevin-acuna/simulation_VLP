@@ -31,6 +31,15 @@ try
                     -cos(theta_rad)];
     end
 
+    %% Sort orientations by ascending theta: most nadir-facing LED → nt(:,1) = GLS reference
+    % GLS uses nt(:,1) as pivot for ratios, covariance, and sign correction.
+    % A nadir-facing reference maximises mu1, keeps all beta_i ≤ 1, and
+    % makes the sign correction reliable. This also renders the objective
+    % invariant to the input ordering of the K orientation pairs.
+    thetas = orientation_vector(1:2:end);   % [theta1, theta2, ..., thetaK]
+    [~, sort_idx] = sort(thetas);           % ascending: smallest theta first
+    n_t = n_t(sort_idx, :);                % reorder rows accordingly
+
     %% Degeneracy check — penalize near-parallel orientations
     MIN_ANGLE_SEP = 5; % degrees
     for i = 1:K-1
