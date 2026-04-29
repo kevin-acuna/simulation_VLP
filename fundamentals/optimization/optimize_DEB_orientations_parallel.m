@@ -11,7 +11,7 @@ clear; clc; close all;
 rng('default');
 
 % ======================== CONFIGURATION ========================
-K_orientations = [9];
+K_orientations = [3,4,6,7,8,];
 system_params.optimization_metric = 'rms';  % 'mean', 'max', 'rms', 'percentile_90'
 L = 3; W = 3; Hmax = 1.2; step = 0.2;
 max_elevation_angle = 80;
@@ -19,7 +19,7 @@ results_dir = 'results/DEB_optimization';
 
 % GA parameters
 pop_size = 300;
-max_generations = 150;
+max_generations = 200;
 % ===============================================================
 
 %% ======================== PARALLEL SETUP ========================
