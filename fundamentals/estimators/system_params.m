@@ -60,16 +60,16 @@ orientations_DEB_K9 = [66.06,165.39,8.73,267.05,66.75,273.80,62.42,219.37,64.16,
 
 % GLS-DF-optimized orientation 
 % Conditions: MC=1 (normal situation)
-orientations_GLS_DF_K5 = [1.58,153.32,41.37,129.51,31.95,217.36,34.21,306.97,30.33,42.52];
+orientations_GLS_DF_K5 = [1.58,153.32,41.37,129.51,31.95,217.36,34.21,306.97,30.33,42.52]; % usado para optimizacion con 0.3 (grid)
 orientations_GLS_DF_K9 = [9.20,213.10,65.04,205.04,50.16,101.79,28.62,183.93,4.58,332.83,50.50,278.53,21.32,357.39,13.26,14.88,72.61,24.28];
 
-% Conditions: MC=10 (Monte Carlo consideration)
-orientations_GLS_DF_K5_MC10 = [7.93,290.28,31.06,126.22,33.95,216.95,34.11,307.43,31.53,39.43];
-
+% Conditions: MC=10 (Optimizado con M_trials=10)
+orientations_GLS_DF_K5_MC10 = [4.94,224.16,33.89,47.73,35.32,139.14,35.99,320.48,36.73,228.08]; % Optimization with 0.2 (grid)
+orientations_GLS_DF_K9_MC10 = [0.43,336.06,8.61,110.92,11.02,244.90,20.87,334.90,54.40,203.93,55.90,69.39,57.16,267.18,61.52,157.17,67.81,354.24];
 
 % ============================================================================================
 
-all_orientations = {orientations_K3, orientations_K4, orientations_GLS_DF_K5, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
+all_orientations = {orientations_K3, orientations_K4, orientations_GLS_DF_K5_MC10, orientations_K6, orientations_K7, orientations_K8, orientations_K9, orientations_K10};
 K_values = [3, 4, 5, 6, 7, 8, 9, 10];
 
 all_orientations_NL = {[], [], orientations_NL_K5, [], [], [], orientations_NL_K9};
