@@ -35,7 +35,7 @@ N_or         = 5;         % Number of LED orientations
 save_files   = 1;
 
 % Receiver tilt sweep
-tilt_angles  = [0, 10, 20, 30, 40, 50];  % degrees
+tilt_angles  = [0,5, 10,15, 20,25, 30,35, 40,45, 50];  % degrees
 phi_tilt     = 0;                          % fixed azimuth [deg]
 
 %% 0. Parallel Pool Setup
