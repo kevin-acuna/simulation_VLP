@@ -18,7 +18,7 @@ close all; clear variables; clc;
 base_dir = fullfile(fileparts(mfilename('fullpath')), 'results');
 
 file_A = fullfile(base_dir, 'K5_3D_MC_1000_DEB-Optimized',  'K5_3D_MC_results.mat');
-file_B = fullfile(base_dir, 'K5_3D_MC_1000_GLS-Optimized-MC10', 'K5_3D_MC_results.mat');
+file_B = fullfile(base_dir, 'K5_3D_MC_1000_GLS-Optimized', 'K5_3D_MC_results.mat');
 
 save_figs = 0;   % 1 = export figures as PNG to results/
 factor = 100;    % m to cm
