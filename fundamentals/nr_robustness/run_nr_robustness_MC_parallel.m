@@ -35,7 +35,7 @@ N_or         = 5;         % Number of LED orientations
 save_files   = 1;
 
 % Receiver tilt sweep
-tilt_angles  = [0,5, 10,15, 20,25, 30,35, 40,45, 50];  % degrees
+tilt_angles  = [0,5, 10,15, 20,25, 30];  % degrees
 phi_tilt     = 0;                          % fixed azimuth [deg]
 
 %% 0. Parallel Pool Setup
@@ -171,16 +171,9 @@ for i_tilt = 1:N_tilts
             DEB_ang(i_pos) = NaN;
         end
 
-        % --- Coverage check: BOTH sets must have all K powers > 0 ---
+        % Coverage flag — informational only, all positions are simulated
         if any(P_clean_gls <= 0) || any(P_clean_deb <= 0)
-            rmse_ang_WLS(i_pos) = NaN;
-            rmse_ang_GLS(i_pos) = NaN;
-            rmse_ang_NL(i_pos)  = NaN;
-            coverage(i_pos)     = false;
-            if mod(i_pos, 50) == 0 || i_pos == 1 || i_pos == N_pos
-                send(D, i_pos);
-            end
-            continue;
+            coverage(i_pos) = false;
         end
 
         % --- MC trials ---
@@ -259,38 +252,39 @@ for i_tilt = 1:N_tilts
     all_results(i_tilt).time_NL      = sum(time_NL_arr);
     all_results(i_tilt).elapsed_s    = elapsed;
 
-    % Quick summary for this tilt
-    valid = coverage;
-    n_valid = sum(valid);
-    fprintf('  Coverage  : %d / %d positions (%.1f%%)\n', n_valid, N_pos, 100*n_valid/N_pos);
-    fprintf('  GLS  RMSE : %.4f deg  (valid positions)\n', sqrt(nanmean(rmse_ang_GLS(valid).^2)));
-    fprintf('  WLS  RMSE : %.4f deg\n', sqrt(nanmean(rmse_ang_WLS(valid).^2)));
-    fprintf('  NL   RMSE : %.4f deg\n', sqrt(nanmean(rmse_ang_NL(valid).^2)));
-    fprintf('  DEB  RMSE : %.4f deg\n', sqrt(nanmean(DEB_ang(valid).^2)));
+    % Quick summary for this tilt (all positions)
+    n_valid = sum(coverage);
+    fprintf('  Coverage  : %d / %d positions (%.1f%%)  [informational]\n', n_valid, N_pos, 100*n_valid/N_pos);
+    fprintf('  GLS  RMSE : %.4f deg  (all positions)\n', sqrt(nanmean(rmse_ang_GLS.^2)));
+    fprintf('  WLS  RMSE : %.4f deg\n', sqrt(nanmean(rmse_ang_WLS.^2)));
+    fprintf('  NL   RMSE : %.4f deg\n', sqrt(nanmean(rmse_ang_NL.^2)));
+    fprintf('  DEB  RMSE : %.4f deg\n', sqrt(nanmean(DEB_ang.^2)));
     fprintf('  Elapsed   : %.1f s\n', elapsed);
 end
 
-%% 5. Compute common coverage mask
+%% 5. Coverage statistics (informational)
 common_cov = true(N_pos, 1);
 for i_tilt = 1:N_tilts
     common_cov = common_cov & all_results(i_tilt).coverage;
 end
 n_common = sum(common_cov);
 fprintf('\n%s\n', repmat('=', 1, 60));
-fprintf('COMMON COVERAGE: %d / %d positions (%.1f%%)\n', n_common, N_pos, 100*n_common/N_pos);
+fprintf('Coverage info: %d / %d positions fully illuminated across all tilts (%.1f%%)\n', ...
+    n_common, N_pos, 100*n_common/N_pos);
 fprintf('%s\n', repmat('=', 1, 60));
 
-% Metrics on common coverage only
-fprintf('\n%-12s  %-10s  %-10s  %-10s  %-10s\n', 'Tilt [deg]', 'GLS [°]', 'WLS [°]', 'NL [°]', 'DEB [°]');
+% Final metrics over ALL positions
+fprintf('\nRESULTS OVER ALL %d POSITIONS\n', N_pos);
+fprintf('%-12s  %-10s  %-10s  %-10s  %-10s\n', 'Tilt [deg]', 'GLS [°]', 'WLS [°]', 'NL [°]', 'DEB [°]');
 fprintf('%s\n', repmat('-', 1, 60));
 for i_tilt = 1:N_tilts
-    g = all_results(i_tilt).rmse_ang_GLS(common_cov);
-    w = all_results(i_tilt).rmse_ang_WLS(common_cov);
-    n = all_results(i_tilt).rmse_ang_NL(common_cov);
-    d = all_results(i_tilt).DEB_ang(common_cov);
+    g = all_results(i_tilt).rmse_ang_GLS;
+    w = all_results(i_tilt).rmse_ang_WLS;
+    n = all_results(i_tilt).rmse_ang_NL;
+    d = all_results(i_tilt).DEB_ang;
     fprintf('%-12d  %-10.4f  %-10.4f  %-10.4f  %-10.4f\n', ...
         all_results(i_tilt).theta_tilt, ...
-        sqrt(mean(g.^2)), sqrt(mean(w.^2)), sqrt(mean(n.^2)), sqrt(nanmean(d.^2)));
+        sqrt(nanmean(g.^2)), sqrt(nanmean(w.^2)), sqrt(nanmean(n.^2)), sqrt(nanmean(d.^2)));
 end
 fprintf('%s\n', repmat('=', 1, 60));
 
