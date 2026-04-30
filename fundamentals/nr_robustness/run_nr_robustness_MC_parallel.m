@@ -35,7 +35,7 @@ N_or         = 5;         % Number of LED orientations
 save_files   = 1;
 
 % Receiver tilt sweep
-tilt_angles  = [0,5, 10,15, 20,25, 30];  % degrees
+tilt_angles  = 0:2:20;  % degrees
 phi_tilt     = 0;                          % fixed azimuth [deg]
 
 %% 0. Parallel Pool Setup
@@ -105,7 +105,15 @@ fprintf('Phi_tilt     : %d deg\n', phi_tilt);
 fprintf('Workers      : %d\n', pool.NumWorkers);
 fprintf('TEST_MODE    : %d\n', TEST_MODE);
 fprintf('GLS/WLS ori  : orientations_GLS_DF_K5_MC10\n');
+for ii = 1:N_or
+    fprintf('               LED%d: theta=%.2f deg, rho=%.2f deg\n', ...
+        ii, or_gls_raw(2*ii-1), or_gls_raw(2*ii));
+end
 fprintf('NL/DEB  ori  : orientations_DEB_K5\n');
+for ii = 1:N_or
+    fprintf('               LED%d: theta=%.2f deg, rho=%.2f deg\n', ...
+        ii, or_deb_raw(2*ii-1), or_deb_raw(2*ii));
+end
 fprintf('%s\n\n', repmat('=', 1, 60));
 
 %% 4. Main sweep over tilt angles
