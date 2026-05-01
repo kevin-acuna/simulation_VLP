@@ -36,11 +36,11 @@ N_or           = 5;         % Number of LED orientations
 
 TEST_MODE      = false;     % true = fast coarse grid
 M_trials       = 100;      % Monte Carlo trials per (position, tilt)
-N_random_tilt  = 20;        % Number of random tilt realizations per position
+N_random_tilt  = 30;        % Number of random tilt realizations per position
 save_files     = 1;
 
 % Random tilt distribution
-sigma_tilt     = 10;        % Std dev of half-normal [deg] (tune spread)
+sigma_tilt     = 5;        % Std dev of half-normal [deg] (tune spread)
 theta_max_tilt = 30;        % Hard truncation limit [deg]
 
 %% 0. Parallel Pool Setup
@@ -87,30 +87,34 @@ X_r = X(:)'; Y_r = Y(:)'; Z_r = Z(:)';
 N_pos = length(X_r);
 fprintf('Grid: %d positions\n', N_pos);
 
-%% 3. Pre-generate random tilt samples (shared across all positions)
-% theta: truncated half-normal on [0, theta_max_tilt]
-% phi:   uniform on [0, 360)
-tilt_samples    = zeros(N_random_tilt, 1);
-azimuth_samples = zeros(N_random_tilt, 1);
-for i = 1:N_random_tilt
-    theta = abs(sigma_tilt * randn());
-    while theta > theta_max_tilt
+%% 3. Pre-generate random tilt samples — independent per position
+% tilt_mat(i_pos, i_rt):    truncated half-normal on [0, theta_max_tilt]
+% azimuth_mat(i_pos, i_rt): uniform on [0, 360)
+% Using a pre-generated matrix keeps rng(42) meaningful (full reproducibility).
+tilt_mat    = zeros(N_pos, N_random_tilt);
+azimuth_mat = zeros(N_pos, N_random_tilt);
+for i_p = 1:N_pos
+    for j = 1:N_random_tilt
         theta = abs(sigma_tilt * randn());
+        while theta > theta_max_tilt
+            theta = abs(sigma_tilt * randn());
+        end
+        tilt_mat(i_p, j)    = theta;
+        azimuth_mat(i_p, j) = 360 * rand();
     end
-    tilt_samples(i)    = theta;
-    azimuth_samples(i) = 360 * rand();
 end
 
-fprintf('Tilt samples: min=%.2f°, max=%.2f°, mean=%.2f°, median=%.2f°\n', ...
-    min(tilt_samples), max(tilt_samples), mean(tilt_samples), median(tilt_samples));
+fprintf('Tilt matrix (%d pos x %d tilts): min=%.2f°, max=%.2f°, mean=%.2f°, median=%.2f°\n', ...
+    N_pos, N_random_tilt, min(tilt_mat(:)), max(tilt_mat(:)), mean(tilt_mat(:)), median(tilt_mat(:)));
 
 %% 4. Results directory & log
 results_dir = fullfile(fileparts(mfilename('fullpath')), 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 
 log_filename = fullfile(results_dir, ...
-    sprintf('nr_random_tilt_K%d_M%d_Ntilt%d_log_%s.txt', ...
-    N_or, M_trials, N_random_tilt, datestr(now, 'yyyy-mm-dd_HH-MM-SS')));
+    sprintf('nr_random_tilt_K%d_M%d_Ntilt%d_sig%d_max%d_log_%s.txt', ...
+    N_or, M_trials, N_random_tilt, round(sigma_tilt), round(theta_max_tilt), ...
+    datestr(now, 'yyyy-mm-dd_HH-MM-SS')));
 diary(log_filename);
 
 fprintf('%s\n', repmat('=', 1, 65));
@@ -140,8 +144,8 @@ for ii = 1:N_or
     fprintf('                  LED%d: theta=%.2f deg, rho=%.2f deg\n', ...
         ii, or_deb_raw(2*ii-1), or_deb_raw(2*ii));
 end
-fprintf('\nTilt samples (first 10): %s\n', mat2str(tilt_samples(1:min(10,end))', 4));
-fprintf('Azimuth samples (first 10): %s\n', mat2str(azimuth_samples(1:min(10,end))', 4));
+fprintf('\nTilt matrix: each of %d positions has %d independent random tilts\n', N_pos, N_random_tilt);
+fprintf('Azimuth: uniform [0,360), Tilt: half-normal(sigma=%.1f), max=%.1f deg\n', sigma_tilt, theta_max_tilt);
 fprintf('%s\n\n', repmat('=', 1, 65));
 
 %% 5. Main simulation (parfor over positions)
@@ -192,8 +196,8 @@ parfor i_pos = 1:N_pos
     t_wls = 0; t_gls = 0; t_nl = 0;
 
     for i_rt = 1:N_random_tilt
-        theta_t = tilt_samples(i_rt);
-        phi_t   = azimuth_samples(i_rt);
+        theta_t = tilt_mat(i_pos, i_rt);
+        phi_t   = azimuth_mat(i_pos, i_rt);
 
         % Build n_r for this random tilt
         n_r_t = [sind(theta_t)*cosd(phi_t), ...
@@ -401,13 +405,53 @@ end
 %% 8. Save (full workspace)
 if save_files
     mat_file = fullfile(results_dir, ...
-        sprintf('nr_random_tilt_K%d_M%d_Ntilt%d.mat', N_or, M_trials, N_random_tilt));
+        sprintf('nr_random_tilt_K%d_M%d_Ntilt%d_sig%d_max%d.mat', ...
+        N_or, M_trials, N_random_tilt, round(sigma_tilt), round(theta_max_tilt)));
     save(mat_file);
     fprintf('\nFull workspace saved to: %s\n', mat_file);
 end
 
 fprintf('Log: %s\n', log_filename);
 diary off;
+
+%% 9. CDF plot: Aggregated random tilt vs Baseline (tilt=0)
+color_gls = [0,      0.4470, 0.7410];
+color_wls = [0.8500, 0.3250, 0.0980];
+color_nl  = [0.4940, 0.1840, 0.5560];
+color_deb = [0.4660, 0.6740, 0.1880];
+lw = 1.8;
+
+fig_cdf = figure('Name', 'Random Tilt vs Baseline CDF', 'Position', [100, 100, 720, 520]);
+hold on;
+
+% Baseline (solid)
+[f,x] = ecdf(rmse_GLS_baseline); h1 = stairs(x,f,'-',  'LineWidth',lw,   'Color',color_gls);
+[f,x] = ecdf(rmse_WLS_baseline); h2 = stairs(x,f,'-',  'LineWidth',lw,   'Color',color_wls);
+[f,x] = ecdf(rmse_NL_baseline);  h3 = stairs(x,f,'-',  'LineWidth',lw,   'Color',color_nl);
+deb_bl_v = DEB_ang_baseline(~isnan(DEB_ang_baseline));
+[f,x] = ecdf(deb_bl_v);          h4 = stairs(x,f,'-',  'LineWidth',lw,   'Color',color_deb);
+
+% Random tilt aggregated (dashed)
+[f,x] = ecdf(rmse_GLS_agg);      h5 = stairs(x,f,'--', 'LineWidth',lw,   'Color',color_gls);
+[f,x] = ecdf(rmse_WLS_agg);      h6 = stairs(x,f,'--', 'LineWidth',lw,   'Color',color_wls);
+[f,x] = ecdf(rmse_NL_agg);       h7 = stairs(x,f,'--', 'LineWidth',lw,   'Color',color_nl);
+deb_rt_v = DEB_ang_agg(~isnan(DEB_ang_agg));
+[f,x] = ecdf(deb_rt_v);          h8 = stairs(x,f,'--', 'LineWidth',lw,   'Color',color_deb);
+
+yline(0.9,'--','LineWidth',0.8,'Color',[0.5 0.5 0.5]);
+
+xlabel('Per-position Angular RMSE [°]','Interpreter','latex','FontSize',13);
+ylabel('Empirical CDF','Interpreter','latex','FontSize',13);
+title(sprintf('Random Tilt Sensitivity ($K$=%d, $M$=%d, $N_{\\mathrm{tilt}}$=%d, $\\sigma$=%d°, max=%d°)', ...
+    N_or, M_trials, N_random_tilt, round(sigma_tilt), round(theta_max_tilt)), ...
+    'Interpreter','latex','FontSize',13);
+legend([h1 h2 h3 h4 h5 h6 h7 h8], ...
+    'GLS — baseline ($0°$)', 'WLS — baseline ($0°$)', ...
+    'NL-MLE — baseline ($0°$)', 'DEB — baseline ($0°$)', ...
+    'GLS — rand. tilt', 'WLS — rand. tilt', ...
+    'NL-MLE — rand. tilt', 'DEB — rand. tilt', ...
+    'Location','southeast','Interpreter','latex','FontSize',9);
+grid minor; box on; hold off;
 
 % =========================================================================
 % LOCAL FUNCTIONS
