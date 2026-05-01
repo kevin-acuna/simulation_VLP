@@ -1,0 +1,101 @@
+=================================================================
+RANDOM TILT SENSITIVITY EXPERIMENT LOG
+=================================================================
+Date            : 01-May-2026 16:05:22
+K (N_or)        : 5
+M_trials        : 100
+N_random_tilt   : 20
+N_pos           : 147
+N_samples       : 1000
+sigma2          : 3.0000e-14
+FOV             : 85 deg
+sigma_tilt      : 10.0 deg
+theta_max_tilt  : 30.0 deg
+Workers         : 24
+TEST_MODE       : 1
+Total runs/pos  : 2000 (N_random_tilt x M_trials)
+Total runs      : 294000
+GLS/WLS ori     : orientations_GLS_DF_K5_MC10
+                  LED1: theta=4.94 deg, rho=224.16 deg
+                  LED2: theta=33.89 deg, rho=47.73 deg
+                  LED3: theta=35.32 deg, rho=139.14 deg
+                  LED4: theta=35.99 deg, rho=320.48 deg
+                  LED5: theta=36.73 deg, rho=228.08 deg
+NL/DEB  ori     : orientations_DEB_K5
+                  LED1: theta=0.10 deg, rho=74.22 deg
+                  LED2: theta=65.68 deg, rho=269.84 deg
+                  LED3: theta=65.73 deg, rho=179.90 deg
+                  LED4: theta=65.91 deg, rho=359.82 deg
+                  LED5: theta=65.88 deg, rho=89.91 deg
+
+Tilt samples (first 10): [5.382 9.76 9.961 12.97 1.766 5.915 18.17 23.25 6.809 0.5955]
+Azimuth samples (first 10): [342.3 215.5 56.16 311.8 254.9 349.2 76.44 66.03 188.9 104.8]
+=================================================================
+
+Running random-tilt MC (20 tilts x 100 trials/tilt, 147 positions)...
+  --> position 20 / 147 completed
+  --> position 1 / 147 completed
+  --> position 10 / 147 completed
+  --> position 30 / 147 completed
+  --> position 90 / 147 completed
+  --> position 60 / 147 completed
+  --> position 80 / 147 completed
+  --> position 110 / 147 completed
+  --> position 40 / 147 completed
+  --> position 50 / 147 completed
+  --> position 100 / 147 completed
+Warning: Matrix is singular to working precision.
+> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('DEB_complete_nr', '/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m', 98)" style="font-weight:bold">DEB_complete_nr</a> (<a href="matlab: opentoline('/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m',98,0)">line 98</a>)
+
+Warning: Matrix is singular to working precision.
+> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('DEB_complete_nr', '/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m', 98)" style="font-weight:bold">DEB_complete_nr</a> (<a href="matlab: opentoline('/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m',98,0)">line 98</a>)
+
+  --> position 130 / 147 completed
+  --> position 70 / 147 completed
+Warning: Matrix is singular to working precision.
+> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('DEB_complete_nr', '/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m', 98)" style="font-weight:bold">DEB_complete_nr</a> (<a href="matlab: opentoline('/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m',98,0)">line 98</a>)
+
+Warning: Matrix is singular to working precision.
+> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('DEB_complete_nr', '/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m', 98)" style="font-weight:bold">DEB_complete_nr</a> (<a href="matlab: opentoline('/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/DEB_complete_nr.m',98,0)">line 98</a>)
+
+  --> position 140 / 147 completed
+  --> position 147 / 147 completed
+  --> position 120 / 147 completed
+
+======================================================================
+RANDOM TILT SENSITIVITY RESULTS (K=5, M=100, N_tilt=20)
+Tilt distribution: half-normal(sigma=10.0 deg), max=30.0 deg
+======================================================================
+
+--- AGGREGATED OVER RANDOM TILTS (per-position RMSE) ---
+Method          RMSE [°]     CDF90 [°]      Mean [°]
+--------------------------------------------------
+GLS               3.8399        1.5647        1.3190
+WLS               3.9509        1.9841        1.4446
+NL-MLE            3.8948        1.0982        1.2291
+DEB               0.7082        1.0352        0.6086
+--------------------------------------------------
+
+--- BASELINE (tilt = 0°) ---
+Method          RMSE [°]     CDF90 [°]      Mean [°]
+--------------------------------------------------
+GLS               0.8836        1.3221        0.7000
+WLS               1.0545        1.6318        0.8016
+NL-MLE            0.6757        0.9446        0.5890
+DEB               0.6432        0.9740        0.5645
+--------------------------------------------------
+
+--- DEGRADATION (random tilt vs baseline) ---
+  GLS  : +2.9563° (+334.58%)
+  WLS  : +2.8964° (+274.67%)
+  NL   : +3.2191° (+476.42%)
+  DEB  : +0.0649° (+10.09%)
+======================================================================
+
+Latency — WLS: 0.0864 ms | GLS: 0.0759 ms | NL-MLE: 6.0780 ms
+Total elapsed: 1.7 min (0.0 h)
+
+WARNING: TEST_MODE=true. For paper: TEST_MODE=false, M_trials>=100
+
+Full workspace saved to: /home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/results/nr_random_tilt_K5_M100_Ntilt20.mat
+Log: /home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/results/nr_random_tilt_K5_M100_Ntilt20_log_2026-05-01_16-05-22.txt

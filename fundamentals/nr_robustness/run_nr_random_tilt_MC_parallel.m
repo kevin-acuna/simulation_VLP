@@ -34,7 +34,7 @@ addpath('../estimators');
 rng(42);
 N_or           = 5;         % Number of LED orientations
 
-TEST_MODE      = true;     % true = fast coarse grid
+TEST_MODE      = false;     % true = fast coarse grid
 M_trials       = 100;      % Monte Carlo trials per (position, tilt)
 N_random_tilt  = 20;        % Number of random tilt realizations per position
 save_files     = 1;
