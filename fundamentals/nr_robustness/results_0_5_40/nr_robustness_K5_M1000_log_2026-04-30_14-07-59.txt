@@ -534,3 +534,13 @@ Results saved to: /home/kevin/Documents/simulation_VLP/fundamentals/nr_robustnes
 
 Total experiment time: 61.7 min
 Log: /home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/results/nr_robustness_K5_M1000_log_2026-04-30_14-07-59.txt
+
+for pos_i
+    n_r = fix
+
+
+end
+
+
+random = 0 +/- 20 (gaussian)
+1790 pos x 100 random orientation (r) x 1000 (MC trials)
