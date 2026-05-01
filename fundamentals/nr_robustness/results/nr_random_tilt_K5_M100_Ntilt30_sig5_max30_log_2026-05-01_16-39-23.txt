@@ -1,0 +1,176 @@
+=================================================================
+RANDOM TILT SENSITIVITY EXPERIMENT LOG
+=================================================================
+Date            : 01-May-2026 16:39:23
+K (N_or)        : 5
+M_trials        : 100
+N_random_tilt   : 30
+N_pos           : 1792
+N_samples       : 1000
+sigma2          : 3.0000e-14
+FOV             : 85 deg
+sigma_tilt      : 5.0 deg
+theta_max_tilt  : 30.0 deg
+Workers         : 24
+TEST_MODE       : 0
+Total runs/pos  : 3000 (N_random_tilt x M_trials)
+Total runs      : 5376000
+GLS/WLS ori     : orientations_GLS_DF_K5_MC10
+                  LED1: theta=4.94 deg, rho=224.16 deg
+                  LED2: theta=33.89 deg, rho=47.73 deg
+                  LED3: theta=35.32 deg, rho=139.14 deg
+                  LED4: theta=35.99 deg, rho=320.48 deg
+                  LED5: theta=36.73 deg, rho=228.08 deg
+NL/DEB  ori     : orientations_DEB_K5
+                  LED1: theta=0.10 deg, rho=74.22 deg
+                  LED2: theta=65.68 deg, rho=269.84 deg
+                  LED3: theta=65.73 deg, rho=179.90 deg
+                  LED4: theta=65.91 deg, rho=359.82 deg
+                  LED5: theta=65.88 deg, rho=89.91 deg
+
+Tilt matrix: each of 1792 positions has 30 independent random tilts
+Azimuth: uniform [0,360), Tilt: half-normal(sigma=5.0), max=30.0 deg
+=================================================================
+
+Running random-tilt MC (30 tilts x 100 trials/tilt, 1792 positions)...
+  --> position 80 / 1792 completed
+  --> position 60 / 1792 completed
+  --> position 40 / 1792 completed
+  --> position 20 / 1792 completed
+  --> position 90 / 1792 completed
+  --> position 30 / 1792 completed
+  --> position 10 / 1792 completed
+  --> position 1 / 1792 completed
+  --> position 760 / 1792 completed
+  --> position 200 / 1792 completed
+  --> position 480 / 1792 completed
+  --> position 50 / 1792 completed
+  --> position 620 / 1792 completed
+  --> position 130 / 1792 completed
+  --> position 270 / 1792 completed
+  --> position 900 / 1792 completed
+  --> position 70 / 1792 completed
+  --> position 410 / 1792 completed
+  --> position 690 / 1792 completed
+  --> position 550 / 1792 completed
+  --> position 830 / 1792 completed
+  --> position 790 / 1792 completed
+  --> position 340 / 1792 completed
+  --> position 510 / 1792 completed
+  --> position 300 / 1792 completed
+  --> position 440 / 1792 completed
+  --> position 650 / 1792 completed
+  --> position 930 / 1792 completed
+  --> position 230 / 1792 completed
+  --> position 750 / 1792 completed
+  --> position 160 / 1792 completed
+  --> position 260 / 1792 completed
+  --> position 890 / 1792 completed
+  --> position 120 / 1792 completed
+  --> position 680 / 1792 completed
+  --> position 720 / 1792 completed
+  --> position 860 / 1792 completed
+  --> position 470 / 1792 completed
+  --> position 500 / 1792 completed
+  --> position 540 / 1792 completed
+  --> position 780 / 1792 completed
+  --> position 920 / 1792 completed
+  --> position 370 / 1792 completed
+  --> position 190 / 1792 completed
+  --> position 820 / 1792 completed
+  --> position 400 / 1792 completed
+  --> position 740 / 1792 completed
+  --> position 330 / 1792 completed
+  --> position 220 / 1792 completed
+  --> position 610 / 1792 completed
+  --> position 640 / 1792 completed
+  --> position 250 / 1792 completed
+  --> position 430 / 1792 completed
+  --> position 150 / 1792 completed
+  --> position 710 / 1792 completed
+  --> position 490 / 1792 completed
+  --> position 670 / 1792 completed
+  --> position 290 / 1792 completed
+  --> position 530 / 1792 completed
+  --> position 360 / 1792 completed
+  --> position 910 / 1792 completed
+  --> position 810 / 1792 completed
+  --> position 770 / 1792 completed
+  --> position 460 / 1792 completed
+  --> position 850 / 1792 completed
+  --> position 390 / 1792 completed
+  --> position 730 / 1792 completed
+  --> position 180 / 1792 completed
+  --> position 880 / 1792 completed
+  --> position 600 / 1792 completed
+  --> position 580 / 1792 completed
+  --> position 110 / 1792 completed
+  --> position 420 / 1792 completed
+  --> position 210 / 1792 completed
+  --> position 280 / 1792 completed
+  --> position 240 / 1792 completed
+  --> position 520 / 1792 completed
+  --> position 970 / 1792 completed
+  --> position 700 / 1792 completed
+  --> position 800 / 1792 completed
+  --> position 660 / 1792 completed
+  --> position 630 / 1792 completed
+  --> position 840 / 1792 completed
+  --> position 1000 / 1792 completed
+  --> position 320 / 1792 completed
+  --> position 950 / 1792 completed
+  --> position 1040 / 1792 completed
+  --> position 170 / 1792 completed
+  --> position 380 / 1792 completed
+  --> position 450 / 1792 completed
+  --> position 140 / 1792 completed
+  --> position 1310 / 1792 completed
+  --> position 1150 / 1792 completed
+  --> position 1290 / 1792 completed
+  --> position 1200 / 1792 completed
+  --> position 570 / 1792 completed
+  --> position 1240 / 1792 completed
+  --> position 1080 / 1792 completed
+  --> position 350 / 1792 completed
+  --> position 1270 / 1792 completed
+  --> position 1260 / 1792 completed
+  --> position 870 / 1792 completed
+  --> position 1170 / 1792 completed
+  --> position 960 / 1792 completed
+  --> position 1180 / 1792 completed
+  --> position 1030 / 1792 completed
+  --> position 590 / 1792 completed
+  --> position 1350 / 1792 completed
+  --> position 100 / 1792 completed
+  --> position 1300 / 1792 completed
+  --> position 940 / 1792 completed
+  --> position 1330 / 1792 completed
+  --> position 310 / 1792 completed
+  --> position 1280 / 1792 completed
+  --> position 1230 / 1792 completed
+  --> position 990 / 1792 completed
+  --> position 1370 / 1792 completed
+  --> position 1070 / 1792 completed
+  --> position 1110 / 1792 completed
+  --> position 1440 / 1792 completed
+  --> position 1430 / 1792 completed
+  --> position 1160 / 1792 completed
+{Operation terminated by user during <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('parallel.internal.parfor.ParforEngine/getCompleteIntervals', '/usr/local/MATLAB/R2024b/toolbox/parallel/cluster/+parallel/+internal/+parfor/ParforEngine.m', 211)" style="font-weight:bold">parallel.internal.parfor.ParforEngine/getCompleteIntervals</a> (<a href="matlab: opentoline('/usr/local/MATLAB/R2024b/toolbox/parallel/cluster/+parallel/+internal/+parfor/ParforEngine.m',211,0)">line 211</a>)
+
+
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('parallel_function>distributed_execution', '/usr/local/MATLAB/R2024b/toolbox/matlab/lang/parallel_function.m', 742)" style="font-weight:bold">parallel_function>distributed_execution</a> (<a href="matlab: opentoline('/usr/local/MATLAB/R2024b/toolbox/matlab/lang/parallel_function.m',742,0)">line 742</a>)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('parallel_function', '/usr/local/MATLAB/R2024b/toolbox/matlab/lang/parallel_function.m', 574)" style="font-weight:bold">parallel_function</a> (<a href="matlab: opentoline('/usr/local/MATLAB/R2024b/toolbox/matlab/lang/parallel_function.m',574,0)">line 574</a>)
+    R = distributed_execution(...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('run_nr_random_tilt_MC_parallel', '/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/run_nr_random_tilt_MC_parallel.m', 186)" style="font-weight:bold">run_nr_random_tilt_MC_parallel</a> (<a href="matlab: opentoline('/home/kevin/Documents/simulation_VLP/fundamentals/nr_robustness/run_nr_random_tilt_MC_parallel.m',186,0)">line 186</a>)
+parfor i_pos = 1:N_pos
+^
+} 
+run_nr_random_tilt_MC_parallel
+Setting up parallel pool...
+Using 24 parallel workers.
+
+Grid: 1792 positions
+Tilt matrix (1792 pos x 10 tilts): min=0.00°, max=21.27°, mean=3.98°, median=3.34°

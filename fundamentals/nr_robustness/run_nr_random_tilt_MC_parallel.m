@@ -35,8 +35,8 @@ rng(42);
 N_or           = 5;         % Number of LED orientations
 
 TEST_MODE      = false;     % true = fast coarse grid
-M_trials       = 100;      % Monte Carlo trials per (position, tilt)
-N_random_tilt  = 30;        % Number of random tilt realizations per position
+M_trials       = 1000;      % Monte Carlo trials per (position, tilt)
+N_random_tilt  = 10;        % Number of random tilt realizations per position
 save_files     = 1;
 
 % Random tilt distribution
