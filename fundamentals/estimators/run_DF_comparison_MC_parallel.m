@@ -20,11 +20,12 @@ addpath('../core');
 % =================================================
 rng(42);
 TEST_MODE    = false;     % true = fast coarse grid, false = full paper grid
-M_trials     = 1000;      % Monte Carlo trials per position
+M_trials     = 100;      % Monte Carlo trials per position
 N_or         = 5;         % Number of orientations
-save_files   = 1;         
+save_files   = 0;         
 receiver_mode = 'fixed';
 error_metric = 'angular'; % 'angular' = acos(dot) | 'chordal' = ||n_hat - n||
+PERMUTE_REF  = false;      % true = randomize ref for GLS/WLS (fair test vs *-Max)
 
 %% 0. Parallel Pool Setup
 fprintf('Setting up parallel pool...\n');
@@ -69,19 +70,25 @@ end
 param_r = {A_det, n_r, FOV};
 
 %% 3. Monte Carlo Simulation Core (parallel over positions)
-rmse_ang_WLS_pos = zeros(N_pos, 1);
-rmse_ang_GLS_pos = zeros(N_pos, 1);
-rmse_ang_NL_pos  = zeros(N_pos, 1);
-rmse_cho_WLS_pos = zeros(N_pos, 1);
-rmse_cho_GLS_pos = zeros(N_pos, 1);
-rmse_cho_NL_pos  = zeros(N_pos, 1);
-DEB_cho_pos      = zeros(N_pos, 1);
-DEB_ang_pos      = zeros(N_pos, 1);
+rmse_ang_WLS_pos  = zeros(N_pos, 1);
+rmse_ang_WLSm_pos = zeros(N_pos, 1);
+rmse_ang_GLS_pos  = zeros(N_pos, 1);
+rmse_ang_GLSm_pos = zeros(N_pos, 1);
+rmse_ang_NL_pos   = zeros(N_pos, 1);
+rmse_cho_WLS_pos  = zeros(N_pos, 1);
+rmse_cho_WLSm_pos = zeros(N_pos, 1);
+rmse_cho_GLS_pos  = zeros(N_pos, 1);
+rmse_cho_GLSm_pos = zeros(N_pos, 1);
+rmse_cho_NL_pos   = zeros(N_pos, 1);
+DEB_cho_pos       = zeros(N_pos, 1);
+DEB_ang_pos       = zeros(N_pos, 1);
 
 % Per-position timing arrays (scalar accumulators not allowed in parfor)
-time_WLS_arr = zeros(N_pos, 1);
-time_GLS_arr = zeros(N_pos, 1);
-time_NL_arr  = zeros(N_pos, 1);
+time_WLS_arr  = zeros(N_pos, 1);
+time_WLSm_arr = zeros(N_pos, 1);
+time_GLS_arr  = zeros(N_pos, 1);
+time_GLSm_arr = zeros(N_pos, 1);
+time_NL_arr   = zeros(N_pos, 1);
 
 rad2deg_factor = 180 / pi;
 options_nl = optimoptions('fmincon', 'Display', 'none', 'Algorithm', 'sqp');
@@ -138,29 +145,57 @@ parfor i_pos = 1:N_pos
     end
 
     % --- MC trials ---
-    ang_WLS_mc = zeros(M_trials, 1); cho_WLS_mc = zeros(M_trials, 1);
-    ang_GLS_mc = zeros(M_trials, 1); cho_GLS_mc = zeros(M_trials, 1);
-    ang_NL_mc  = zeros(M_trials, 1); cho_NL_mc  = zeros(M_trials, 1);
-    t_wls = 0; t_gls = 0; t_nl = 0;
+    ang_WLS_mc  = zeros(M_trials, 1); cho_WLS_mc  = zeros(M_trials, 1);
+    ang_WLSm_mc = zeros(M_trials, 1); cho_WLSm_mc = zeros(M_trials, 1);
+    ang_GLS_mc  = zeros(M_trials, 1); cho_GLS_mc  = zeros(M_trials, 1);
+    ang_GLSm_mc = zeros(M_trials, 1); cho_GLSm_mc = zeros(M_trials, 1);
+    ang_NL_mc   = zeros(M_trials, 1); cho_NL_mc   = zeros(M_trials, 1);
+    t_wls = 0; t_wlsm = 0; t_gls = 0; t_glsm = 0; t_nl = 0;
 
     for mc = 1:M_trials
         P_raw = repmat(P_clean, N_samples, 1) + sqrt(sigma2) .* randn(N_samples, N_or);
 
-        % WLS
+        % Optional permutation so GLS/WLS ref (index 1) is arbitrary
+        if PERMUTE_REF
+            perm = randperm(N_or);
+            n_t_ref  = n_t(perm, :);
+            P_raw_ref = P_raw(:, perm);
+        else
+            n_t_ref  = n_t;
+            P_raw_ref = P_raw;
+        end
+
+        % WLS (ref = index 1 of n_t_ref)
         t0 = tic;
-        [d_hat_robust, ~, ~] = vlp_wls(n_t', P_raw, m_t);
+        [d_hat_robust, ~, ~] = vlp_wls(n_t_ref', P_raw_ref, m_t);
         t_wls = t_wls + toc(t0);
         v_est_wls = d_hat_robust' / norm(d_hat_robust);
         ang_WLS_mc(mc) = acos(max(-1, min(1, v_true' * v_est_wls'))) * rad2deg_factor;
         cho_WLS_mc(mc) = norm(v_true - v_est_wls');
 
-        % GLS
+        % WLS-Max (adaptive ref = max-power orientation)
         t0 = tic;
-        [d_hat_gls] = vlp_gls(n_t', P_raw, m_t, sigma2);
+        [d_hat_wlsm, ~, ~] = vlp_wls_max(n_t', P_raw, m_t);
+        t_wlsm = t_wlsm + toc(t0);
+        v_est_wlsm = d_hat_wlsm' / norm(d_hat_wlsm);
+        ang_WLSm_mc(mc) = acos(max(-1, min(1, v_true' * v_est_wlsm'))) * rad2deg_factor;
+        cho_WLSm_mc(mc) = norm(v_true - v_est_wlsm');
+
+        % GLS (ref = index 1 of n_t_ref)
+        t0 = tic;
+        [d_hat_gls] = vlp_gls(n_t_ref', P_raw_ref, m_t, sigma2);
         t_gls = t_gls + toc(t0);
         v_est_gls = d_hat_gls' / norm(d_hat_gls);
         ang_GLS_mc(mc) = acos(max(-1, min(1, v_true' * v_est_gls'))) * rad2deg_factor;
         cho_GLS_mc(mc) = norm(v_true - v_est_gls');
+
+        % GLS-Max (adaptive ref = max-power orientation)
+        t0 = tic;
+        [d_hat_glsm] = vlp_gls_max(n_t', P_raw, m_t, sigma2);
+        t_glsm = t_glsm + toc(t0);
+        v_est_glsm = d_hat_glsm' / norm(d_hat_glsm);
+        ang_GLSm_mc(mc) = acos(max(-1, min(1, v_true' * v_est_glsm'))) * rad2deg_factor;
+        cho_GLSm_mc(mc) = norm(v_true - v_est_glsm');
 
         % NL-MLE
         p_means = mean(P_raw, 1);
@@ -187,17 +222,23 @@ parfor i_pos = 1:N_pos
     end
 
     % Per-position RMSE (both metrics)
-    rmse_ang_WLS_pos(i_pos) = sqrt(mean(ang_WLS_mc.^2));
-    rmse_ang_GLS_pos(i_pos) = sqrt(mean(ang_GLS_mc.^2));
-    rmse_ang_NL_pos(i_pos)  = sqrt(mean(ang_NL_mc.^2));
-    rmse_cho_WLS_pos(i_pos) = sqrt(mean(cho_WLS_mc.^2));
-    rmse_cho_GLS_pos(i_pos) = sqrt(mean(cho_GLS_mc.^2));
-    rmse_cho_NL_pos(i_pos)  = sqrt(mean(cho_NL_mc.^2));
+    rmse_ang_WLS_pos(i_pos)  = sqrt(mean(ang_WLS_mc.^2));
+    rmse_ang_WLSm_pos(i_pos) = sqrt(mean(ang_WLSm_mc.^2));
+    rmse_ang_GLS_pos(i_pos)  = sqrt(mean(ang_GLS_mc.^2));
+    rmse_ang_GLSm_pos(i_pos) = sqrt(mean(ang_GLSm_mc.^2));
+    rmse_ang_NL_pos(i_pos)   = sqrt(mean(ang_NL_mc.^2));
+    rmse_cho_WLS_pos(i_pos)  = sqrt(mean(cho_WLS_mc.^2));
+    rmse_cho_WLSm_pos(i_pos) = sqrt(mean(cho_WLSm_mc.^2));
+    rmse_cho_GLS_pos(i_pos)  = sqrt(mean(cho_GLS_mc.^2));
+    rmse_cho_GLSm_pos(i_pos) = sqrt(mean(cho_GLSm_mc.^2));
+    rmse_cho_NL_pos(i_pos)   = sqrt(mean(cho_NL_mc.^2));
 
     % Timing per position
-    time_WLS_arr(i_pos) = t_wls;
-    time_GLS_arr(i_pos) = t_gls;
-    time_NL_arr(i_pos)  = t_nl;
+    time_WLS_arr(i_pos)  = t_wls;
+    time_WLSm_arr(i_pos) = t_wlsm;
+    time_GLS_arr(i_pos)  = t_gls;
+    time_GLSm_arr(i_pos) = t_glsm;
+    time_NL_arr(i_pos)   = t_nl;
 
     % Send progress update every 10 positions (and first/last)
     if mod(i_pos, 10) == 0 || i_pos == 1 || i_pos == N_pos
@@ -207,45 +248,58 @@ end
 
 % Aggregate timing
 time_WLS   = sum(time_WLS_arr);
+time_WLSm  = sum(time_WLSm_arr);
 time_GLS   = sum(time_GLS_arr);
+time_GLSm  = sum(time_GLSm_arr);
 time_NL    = sum(time_NL_arr);
 total_runs = N_pos * M_trials;
 
 %% 4. Display Results (selected metric)
 if strcmp(error_metric, 'angular')
-    r_WLS = rmse_ang_WLS_pos; r_GLS = rmse_ang_GLS_pos; r_NL = rmse_ang_NL_pos;
-    r_DEB = DEB_ang_pos;
+    r_WLS = rmse_ang_WLS_pos; r_WLSm = rmse_ang_WLSm_pos;
+    r_GLS = rmse_ang_GLS_pos; r_GLSm = rmse_ang_GLSm_pos;
+    r_NL = rmse_ang_NL_pos;   r_DEB = DEB_ang_pos;
     unit_str = '°';
 else
-    r_WLS = rmse_cho_WLS_pos; r_GLS = rmse_cho_GLS_pos; r_NL = rmse_cho_NL_pos;
-    r_DEB = DEB_cho_pos;
+    r_WLS = rmse_cho_WLS_pos; r_WLSm = rmse_cho_WLSm_pos;
+    r_GLS = rmse_cho_GLS_pos; r_GLSm = rmse_cho_GLSm_pos;
+    r_NL = rmse_cho_NL_pos;   r_DEB = DEB_cho_pos;
     unit_str = '';
 end
 
-global_rmse_WLS = sqrt(mean(r_WLS.^2));
-global_rmse_GLS = sqrt(mean(r_GLS.^2));
-global_rmse_NL  = sqrt(mean(r_NL.^2));
-global_rmse_DEB = sqrt(nanmean(r_DEB.^2));
+global_rmse_WLS  = sqrt(mean(r_WLS.^2));
+global_rmse_WLSm = sqrt(mean(r_WLSm.^2));
+global_rmse_GLS  = sqrt(mean(r_GLS.^2));
+global_rmse_GLSm = sqrt(mean(r_GLSm.^2));
+global_rmse_NL   = sqrt(mean(r_NL.^2));
+global_rmse_DEB  = sqrt(nanmean(r_DEB.^2));
 
-cdf90_WLS = prctile(r_WLS, 90);
-cdf90_GLS = prctile(r_GLS, 90);
-cdf90_NL  = prctile(r_NL, 90);
-cdf90_DEB = prctile(r_DEB(~isnan(r_DEB)), 90);
+cdf90_WLS  = prctile(r_WLS, 90);
+cdf90_WLSm = prctile(r_WLSm, 90);
+cdf90_GLS  = prctile(r_GLS, 90);
+cdf90_GLSm = prctile(r_GLSm, 90);
+cdf90_NL   = prctile(r_NL, 90);
+cdf90_DEB  = prctile(r_DEB(~isnan(r_DEB)), 90);
 
-ape_WLS = mean(r_WLS); ape_GLS = mean(r_GLS); ape_NL = mean(r_NL);
-ape_DEB = nanmean(r_DEB);
+ape_WLS  = mean(r_WLS);  ape_WLSm = mean(r_WLSm);
+ape_GLS  = mean(r_GLS);  ape_GLSm = mean(r_GLSm);
+ape_NL   = mean(r_NL);   ape_DEB  = nanmean(r_DEB);
 
 fprintf('\n========================================================\n');
 fprintf(' DIRECTION-FINDING RESULTS (K=%d, %d MC trials/pos, metric=%s)\n', N_or, M_trials, error_metric);
 fprintf('========================================================\n');
 fprintf('%-10s %12s %12s %12s\n', 'Method', ['RMSE[' unit_str ']'], ['CDF90[' unit_str ']'], ['APE[' unit_str ']']);
-fprintf('%-10s %12.4f %12.4f %12.4f\n', 'GLS',    global_rmse_GLS, cdf90_GLS, ape_GLS);
-fprintf('%-10s %12.4f %12.4f %12.4f\n', 'WLS',    global_rmse_WLS, cdf90_WLS, ape_WLS);
-fprintf('%-10s %12.4f %12.4f %12.4f\n', 'NL-MLE', global_rmse_NL,  cdf90_NL,  ape_NL);
-fprintf('%-10s %12.4f %12.4f %12.4f\n', 'DEB',    global_rmse_DEB, cdf90_DEB, ape_DEB);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'WLS',      global_rmse_WLS,  cdf90_WLS,  ape_WLS);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'WLS-Max',  global_rmse_WLSm, cdf90_WLSm, ape_WLSm);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'GLS',      global_rmse_GLS,  cdf90_GLS,  ape_GLS);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'GLS-Max',  global_rmse_GLSm, cdf90_GLSm, ape_GLSm);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'NL-MLE',   global_rmse_NL,   cdf90_NL,   ape_NL);
+fprintf('%-10s %12.4f %12.4f %12.4f\n', 'DEB',      global_rmse_DEB,  cdf90_DEB,  ape_DEB);
 fprintf('--------------------------------------------------------\n');
-fprintf('Latency — WLS: %.4f ms | GLS: %.4f ms | NL-MLE: %.4f ms\n', ...
-    (time_WLS/total_runs)*1000, (time_GLS/total_runs)*1000, (time_NL/total_runs)*1000);
+fprintf('PERMUTE_REF = %d\n', PERMUTE_REF);
+fprintf('Latency -- WLS: %.4f ms | WLS-Max: %.4f ms | GLS: %.4f ms | GLS-Max: %.4f ms | NL-MLE: %.4f ms\n', ...
+    (time_WLS/total_runs)*1000, (time_WLSm/total_runs)*1000, ...
+    (time_GLS/total_runs)*1000, (time_GLSm/total_runs)*1000, (time_NL/total_runs)*1000);
 if TEST_MODE
     fprintf('\n⚠ TEST_MODE=true. For paper results: TEST_MODE=false, M_trials≥100\n');
 end
@@ -254,21 +308,26 @@ end
 figure('Name', 'CDF of Spatial RMSE (Direction-Finding)', 'Position', [100, 100, 600, 500]);
 hold on;
 
-color_gls = [0, 0.4470, 0.7410];
-color_wls = [0.8500, 0.3250, 0.0980];
-color_nl  = [0.4940, 0.1840, 0.5560];
-color_deb = [0.4660, 0.6740, 0.1880];
+color_wls  = [0.8500, 0.3250, 0.0980];
+color_wlsm = [1.0, 0.6, 0.2];
+color_gls  = [0, 0.4470, 0.7410];
+color_glsm = [0.3010, 0.7450, 0.9330];
+color_nl   = [0.4940, 0.1840, 0.5560];
+color_deb  = [0.4660, 0.6740, 0.1880];
 
-[f, x] = ecdf(r_GLS); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_gls);
-[f, x] = ecdf(r_WLS); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_wls);
-[f, x] = ecdf(r_NL);  stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_nl);
+[f, x] = ecdf(r_WLS);  stairs(x, f, '-',  'LineWidth', 1.5, 'Color', color_wls);
+[f, x] = ecdf(r_WLSm); stairs(x, f, '--', 'LineWidth', 1.5, 'Color', color_wlsm);
+[f, x] = ecdf(r_GLS);  stairs(x, f, '-',  'LineWidth', 1.5, 'Color', color_gls);
+[f, x] = ecdf(r_GLSm); stairs(x, f, '--', 'LineWidth', 1.5, 'Color', color_glsm);
+[f, x] = ecdf(r_NL);   stairs(x, f, '-',  'LineWidth', 1.5, 'Color', color_nl);
 [f, x] = ecdf(r_DEB(~isnan(r_DEB))); stairs(x, f, '-', 'LineWidth', 1.5, 'Color', color_deb);
 
 yline(0.9, '--', 'LineWidth', 0.8, 'Color', [0.5 0.5 0.5]);
 
 xlabel('Spatial RMSE [degrees]', 'Interpreter', 'latex', 'FontSize', 12);
 ylabel('Empirical CDF', 'Interpreter', 'latex', 'FontSize', 12);
-legend(sprintf('GLS (K=%d)', N_or), sprintf('WLS (K=%d)', N_or), ...
+legend(sprintf('WLS (K=%d)', N_or), sprintf('WLS-Max (K=%d)', N_or), ...
+    sprintf('GLS (K=%d)', N_or), sprintf('GLS-Max (K=%d)', N_or), ...
     sprintf('NL-MLE (K=%d)', N_or), sprintf('Theoretical DEB (K=%d)', N_or), ...
     'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 11);
 title(sprintf('CDF of Spatial RMSE (K=%d, %d MC trials)', N_or, M_trials), ...
@@ -278,10 +337,11 @@ grid minor
 %% 6. Save
 if save_files == 1
     save(fullfile(results_subdir, sprintf('K%d_DF_MC_results.mat', N_or)), ...
-        'rmse_ang_WLS_pos', 'rmse_ang_GLS_pos', 'rmse_ang_NL_pos', ...
-        'rmse_cho_WLS_pos', 'rmse_cho_GLS_pos', 'rmse_cho_NL_pos', ...
-        'DEB_cho_pos', 'DEB_ang_pos', 'time_WLS', 'time_GLS', 'time_NL', ...
-        'N_or', 'M_trials', 'N_pos', 'N_samples', 'total_runs', ...
+        'rmse_ang_WLS_pos', 'rmse_ang_WLSm_pos', 'rmse_ang_GLS_pos', 'rmse_ang_GLSm_pos', 'rmse_ang_NL_pos', ...
+        'rmse_cho_WLS_pos', 'rmse_cho_WLSm_pos', 'rmse_cho_GLS_pos', 'rmse_cho_GLSm_pos', 'rmse_cho_NL_pos', ...
+        'DEB_cho_pos', 'DEB_ang_pos', ...
+        'time_WLS', 'time_WLSm', 'time_GLS', 'time_GLSm', 'time_NL', ...
+        'N_or', 'M_trials', 'N_pos', 'N_samples', 'total_runs', 'PERMUTE_REF', ...
         'X_r', 'Y_r', 'Z_r', 'rad2deg_factor');
     fprintf('Saved .mat to: %s\n', results_subdir);
 end
