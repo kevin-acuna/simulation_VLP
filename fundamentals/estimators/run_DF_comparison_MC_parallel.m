@@ -20,7 +20,7 @@ addpath('../core');
 % =================================================
 rng(42);
 TEST_MODE    = false;     % true = fast coarse grid, false = full paper grid
-M_trials     = 100;      % Monte Carlo trials per position
+M_trials     = 10;      % Monte Carlo trials per position
 N_or         = 5;         % Number of orientations
 save_files   = 0;         
 receiver_mode = 'fixed';

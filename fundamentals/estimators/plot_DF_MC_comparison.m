@@ -13,14 +13,29 @@
 close all; clear variables; clc;
 
 % =========================================================================
-% HYPERPARAMETERS - set the two .mat file paths here
+% HYPERPARAMETERS
 % =========================================================================
 base_dir = fullfile(fileparts(mfilename('fullpath')), 'results');
 
 file_A = fullfile(base_dir, 'K5_DF_MC_1000_DEB-Optimized',  'K5_DF_MC_results.mat');
 file_B = fullfile(base_dir, 'K5_DF_MC_1000_GLS-Optimized-MC10', 'K5_DF_MC_results.mat');
 
-save_figs = 0;   % 1 = export figures as PNG to results/
+save_figs = 1;   % 1 = export figures as PNG to results/
+
+% --- Global color palette (shared across all figures) ---
+color_deb = [0.4660, 0.6740, 0.1880]	;   % green  - DEB (theoretical bound)
+color_nl  = [0.4940, 0.1840, 0.5560]	;   % purple - NLS estimator
+color_gls = [0, 0.4470, 0.7410];   % blue   - GLS estimator
+color_wls = [0.8500, 0.3250, 0.0980]; % orange - WLS estimator
+
+% --- IEEE figure scale (1.0 = single column 3.5", increase for drafts/slides) ---
+fig_scale = 1.2;
+font_size  = 10;                  % pt (IEEE standard)
+% --- IEEE TCOM figure parameters ---
+fig_width  = 3.5 * fig_scale;    % inches (1.0 = single IEEE column)
+fig_height = 2 * fig_scale;   % inches  — wider than tall, like reference
+lw_ieee    = 1;                % line width (all curves)
+
 % =========================================================================
 
 %% 1. Load data
@@ -64,10 +79,6 @@ mA = compute_metrics(rA_GLS, rA_WLS, rA_NL, rA_DEB);
 mB = compute_metrics(rB_GLS, rB_WLS, rB_NL, rB_DEB);
 
 %% 3. Shared style
-color_gls = [0,      0.4470, 0.7410];
-color_wls = [0.8500, 0.3250, 0.0980];
-color_nl  = [0.4940, 0.1840, 0.5560];
-color_deb = [0.4660, 0.6740, 0.1880];
 lw = 1.5;
 
 %% 4. Figure 1 - File A only
@@ -81,14 +92,14 @@ hold on;
 [f,x] = ecdf(rA_DEB(~isnan(rA_DEB))); stairs(x, f, '-', 'LineWidth', lw, 'Color', color_deb);
 yline(0.9, '--', 'LineWidth', 0.8, 'Color', [0.5 0.5 0.5]);
 
-xlabel('Per-position Angular RMSE [°]', 'Interpreter', 'latex', 'FontSize', 12);
-ylabel('Empirical CDF',                 'Interpreter', 'latex', 'FontSize', 12);
+xlabel('Pointing error [$^\circ$]', 'Interpreter', 'latex', 'FontSize', 12);
+ylabel('Empirical CDF',              'Interpreter', 'latex', 'FontSize', 12);
 legend(sprintf('GLS (%s)',         labelA), ...
        sprintf('WLS (%s)',         labelA), ...
-       sprintf('NL-MLE (%s)',      labelA), ...
-       sprintf('Theoretical DEB (%s)', labelA), ...
+       sprintf('NLS (%s)',         labelA), ...
+       sprintf('DEB (%s)',         labelA), ...
        'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 10);
-title(sprintf('CDF of Spatial RMSE - %s', labelA), 'Interpreter', 'latex', 'FontSize', 13);
+title(sprintf('CDF of Pointing Error - %s', labelA), 'Interpreter', 'latex', 'FontSize', 13);
 xlim([0 4])
 grid minor; hold off;
 
@@ -103,14 +114,14 @@ hold on;
 [f,x] = ecdf(rB_DEB(~isnan(rB_DEB))); stairs(x, f, '-', 'LineWidth', lw, 'Color', color_deb);
 yline(0.9, '--', 'LineWidth', 0.8, 'Color', [0.5 0.5 0.5]);
 
-xlabel('Per-position Angular RMSE [°]', 'Interpreter', 'latex', 'FontSize', 12);
-ylabel('Empirical CDF',                 'Interpreter', 'latex', 'FontSize', 12);
+xlabel('Pointing error [$^\circ$]', 'Interpreter', 'latex', 'FontSize', 12);
+ylabel('Empirical CDF',              'Interpreter', 'latex', 'FontSize', 12);
 legend(sprintf('GLS (%s)',         labelB), ...
        sprintf('WLS (%s)',         labelB), ...
-       sprintf('NL-MLE (%s)',      labelB), ...
-       sprintf('Theoretical DEB (%s)', labelB), ...
+       sprintf('NLS (%s)',         labelB), ...
+       sprintf('DEB (%s)',         labelB), ...
        'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 10);
-title(sprintf('CDF of Spatial RMSE - %s', labelB), 'Interpreter', 'latex', 'FontSize', 13);
+title(sprintf('CDF of Pointing Error - %s', labelB), 'Interpreter', 'latex', 'FontSize', 13);
 xlim([0 4])
 grid minor; hold off;
 
@@ -134,19 +145,19 @@ hold on;
 
 yline(0.9, '--', 'LineWidth', 0.8, 'Color', [0.5 0.5 0.5]);
 
-xlabel('Per-position Angular RMSE [°]', 'Interpreter', 'latex', 'FontSize', 12);
-ylabel('Empirical CDF',                 'Interpreter', 'latex', 'FontSize', 12);
+xlabel('Pointing error [$^\circ$]', 'Interpreter', 'latex', 'FontSize', 12);
+ylabel('Empirical CDF',              'Interpreter', 'latex', 'FontSize', 12);
 legend([hA_GLS, hA_WLS, hA_NL, hA_DEB, hB_GLS, hB_WLS, hB_NL, hB_DEB], ...
-       sprintf('GLS - %s',         labelA), ...
-       sprintf('WLS - %s',         labelA), ...
-       sprintf('NL-MLE - %s',      labelA), ...
-       sprintf('DEB - %s',         labelA), ...
-       sprintf('GLS - %s',         labelB), ...
-       sprintf('WLS - %s',         labelB), ...
-       sprintf('NL-MLE - %s',      labelB), ...
-       sprintf('DEB - %s',         labelB), ...
+       sprintf('GLS - %s',  labelA), ...
+       sprintf('WLS - %s',  labelA), ...
+       sprintf('NLS - %s',  labelA), ...
+       sprintf('DEB - %s',  labelA), ...
+       sprintf('GLS - %s',  labelB), ...
+       sprintf('WLS - %s',  labelB), ...
+       sprintf('NLS - %s',  labelB), ...
+       sprintf('DEB - %s',  labelB), ...
        'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 9);
-title(sprintf('CDF of Spatial RMSE - Combined (%s \\ solid / %s \\ dashed)', labelA, labelB), ...
+title(sprintf('CDF of Pointing Error - Combined (%s \\ solid / %s \\ dashed)', labelA, labelB), ...
     'Interpreter', 'latex', 'FontSize', 13);
 xlim([0 4])
 grid minor; hold off;
@@ -184,15 +195,95 @@ fprintf('\n  Δ RMSE (B - A):  GLS=%.4f°  WLS=%.4f°  NL-MLE=%.4f°  DEB=%.4f°
     rmse_B(3)-rmse_A(3), rmse_B(4)-rmse_A(4));
 fprintf('%s\n', repmat('=', 1, 72));
 
-%% 8. Optional save
+%% 8. Figure 4 - IEEE TCOM: DEB & NLS (file A) vs GLS & WLS (file B)
+%  Publication-quality CDF of pointing error for IEEE TCOM submission.
+
+
+fig4 = figure('Units', 'inches', 'Position', [1, 1, fig_width, fig_height], ...
+    'Color', 'w', 'PaperUnits', 'inches', ...
+    'PaperSize', [fig_width, fig_height], ...
+    'PaperPosition', [0 0 fig_width fig_height]);
+hold on; box on;
+
+% DEB from file_A (theoretical bound) - green, slightly thicker
+deb_valid = rA_DEB(~isnan(rA_DEB));
+[f_deb, x_deb] = ecdf(deb_valid);
+h_deb = stairs(x_deb, f_deb, '-', 'LineWidth', lw_ieee+0.3, 'Color', color_deb);
+
+% NLS from file_A - purple
+[f_nl, x_nl] = ecdf(rA_NL);
+h_nl = stairs(x_nl, f_nl, '-', 'LineWidth', lw_ieee, 'Color', color_nl);
+
+% GLS from file_B - blue
+[f_gls, x_gls] = ecdf(rB_GLS);
+h_gls = stairs(x_gls, f_gls, '-', 'LineWidth', lw_ieee, 'Color', color_gls);
+
+% WLS from file_B - red
+[f_wls, x_wls] = ecdf(rB_WLS);
+h_wls = stairs(x_wls, f_wls, '-', 'LineWidth', lw_ieee, 'Color', color_wls);
+
+% 90th percentile reference line - visible dashed black
+yline(0.9, '--', 'LineWidth', 1.1, 'Color', [0.15 0.15 0.15], ...
+    'HandleVisibility', 'off');
+text(0.02, 0.93, '$90\%$', 'Units', 'normalized', ...
+    'Interpreter', 'latex', 'FontSize', font_size-1, 'Color', [0.15 0.15 0.15]);
+
+% Axis formatting
+xlabel('Per-position angular RMSE [$^\circ$]', ...
+    'Interpreter', 'latex', 'FontSize', font_size);
+ylabel('Empirical CDF', ...
+    'Interpreter', 'latex', 'FontSize', font_size);
+xlim([0 4]);
+ylim([0 1]);
+set(gca, 'FontSize', font_size-1, 'TickLabelInterpreter', 'latex', ...
+    'XMinorTick', 'on', 'YMinorTick', 'on', ...
+    'TickDir', 'in', 'LineWidth', 0.6, ...
+    'XTick', 0:1:5, 'YTick', 0:0.1:1);
+ax4 = gca;
+ax4.XAxis.MinorTickValues = 0:0.2:5;
+grid on;
+ax4.XMinorGrid = 'on';
+ax4.YMinorGrid = 'off';
+set(gca, 'GridLineStyle', '-',  'GridAlpha', 0.18, ...
+    'MinorGridLineStyle', '-', 'MinorGridAlpha', 0.07);
+
+% Legend (no title - IEEE uses figure caption)
+leg = legend([h_deb, h_nl, h_gls, h_wls], ...
+    'DEB (K=5)', ...
+    'NLS (K=5)', ...
+    'GLS (K=5)', ...
+    'WLS (K=5)', ...
+    'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', font_size-1);
+set(leg, 'Box', 'on', 'EdgeColor', [0.6 0.6 0.6]);
+
+hold off;
+
+%% 9. Save figures
+% Create output directory: estimators/figures/plot_DF_MC_comparison/
+script_dir = fileparts(mfilename('fullpath'));
+fig_out_dir = fullfile(script_dir, 'figures', 'plot_DF_MC_comparison');
+if ~exist(fig_out_dir, 'dir')
+    mkdir(fig_out_dir);
+end
+
+% Always save the IEEE figure (Fig 4)
+% exportgraphics crops automatically to the axes bounding box (no white margins)
+exportgraphics(fig4, fullfile(fig_out_dir, 'CDF_DF_IEEE_DEB_NL_vs_GLS_WLS.pdf'), ...
+    'ContentType', 'vector', 'BackgroundColor', 'white');
+exportgraphics(fig4, fullfile(fig_out_dir, 'CDF_DF_IEEE_DEB_NL_vs_GLS_WLS.png'), ...
+    'Resolution', 600, 'BackgroundColor', 'white');
+exportgraphics(fig4, fullfile(fig_out_dir, 'CDF_DF_IEEE_DEB_NL_vs_GLS_WLS.eps'), ...
+    'ContentType', 'vector', 'BackgroundColor', 'white');
+fprintf('\nIEEE figure saved to:\n  %s\n', fig_out_dir);
+
+% Original figures (optional)
 if save_figs
-    fig_dir = base_dir;
     tag = sprintf('%s_vs_%s', strrep(labelA,' ',''), strrep(labelB,' ',''));
     set(fig1, 'Color', 'white');
     set(fig2, 'Color', 'white');
     set(fig3, 'Color', 'white');
-    print(fig1, fullfile(fig_dir, sprintf('CDF_DF_A_%s.png',   tag)), '-dpng', '-r300');
-    print(fig2, fullfile(fig_dir, sprintf('CDF_DF_B_%s.png',   tag)), '-dpng', '-r300');
-    print(fig3, fullfile(fig_dir, sprintf('CDF_DF_AB_%s.png',  tag)), '-dpng', '-r300');
-    fprintf('Figures saved to: %s\n', fig_dir);
+    print(fig1, fullfile(fig_out_dir, sprintf('CDF_DF_A_%s.png',   tag)), '-dpng', '-r300');
+    print(fig2, fullfile(fig_out_dir, sprintf('CDF_DF_B_%s.png',   tag)), '-dpng', '-r300');
+    print(fig3, fullfile(fig_out_dir, sprintf('CDF_DF_AB_%s.png',  tag)), '-dpng', '-r300');
+    fprintf('Additional figures saved to: %s\n', fig_out_dir);
 end

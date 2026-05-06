@@ -1,4 +1,4 @@
-function [d_hat, beta_hat, w] = vlp_wls(nt, Praw, m)
+function [d_hat, beta_hat, w] = vlp_wls_sure(nt, Praw, m)
 % VLP_WLS_ROBUST Robust Weighted Least Squares estimator for VLP
 % 
 % Inputs:
@@ -11,6 +11,8 @@ function [d_hat, beta_hat, w] = vlp_wls(nt, Praw, m)
 %   beta_hat : (n-1)×1 razones estimadas
 %   w        : (n-1)×1 pesos finales
 % 
+
+[~, n] = size(Praw);
 
 % ---- 1. medias μ̂_i
 mu_hat = mean(Praw, 1) .';          % n×1
@@ -26,10 +28,12 @@ w     = 1 ./ denom;                 % (n-1)×1  (constante común omitida)
 
 w = w/max(w);
 
-% ---- 3. matriz M (vectorizado)
-A  = nt(:,2:end) - nt(:,1) * beta_hat.';   % 3×(n-1)
-Aw = A .* w.';                               % escala columnas por peso
-M  = Aw * A.';                               % 3×3
+% ---- 3. matriz M
+M = zeros(3);
+for i = 2:n
+    ai = nt(:,i) - beta_hat(i-1)*nt(:,1);
+    M  = M + w(i-1) * (ai*ai.');
+end
 
 % ---- 4. autovector de menor autovalor
 [V,D]  = eig(M);
