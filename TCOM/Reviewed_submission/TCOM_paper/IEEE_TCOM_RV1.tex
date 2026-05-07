@@ -21,6 +21,7 @@
 % --- Revision markup commands ---
 \newcommand{\added}[1]{{\color{blue}#1}}
 \newcommand{\deleted}[1]{{\color{red}#1}}
+\newcommand{\addedlate}[1]{{\color{violet}#1}}
 
 \begin{document}
 \bstctlcite{IEEEexample:BSTcontrol}
@@ -208,7 +209,8 @@ Section~\ref{sec:NoLineal} (NL estimator) and Section~\ref{sec:Lineal} (linear G
 After direction finding, the LED is \deleted{aligned with the estimated direction
 $\hat{\mathbf{n}}_{d}$ and, for beam-forming symmetry, the receiver is oriented to
 $\mathbf{n}_{r}=-\hat{\mathbf{n}}_{d}$.} \added{steered to $\hat{\mathbf{n}}_{d}$ so that its beam is directed toward the receiver, and the PD is reoriented to $\mathbf{n}_r = -\hat{\mathbf{n}}_d$ so that it faces the transmitter. This cooperative alignment maximizes both $\cos\phi\approx 1$ and $\cos\psi\approx 1$, thereby maximizing the received power and the SNR of the ranging measurement.}
-\added{\textit{Remark.} The PD reorientation is performed \emph{once}, after the $K$ direction-finding measurements during which the PD remains at an arbitrary fixed pose. This contrasts with prior single-LED approaches that require continuous PD rotation \cite{Liu2022,Wang2024,Shi2025}.}  
+\added{\textit{Remark.} The PD reorientation is performed \emph{once}, after the $K$ direction-finding measurements during which the PD remains at an arbitrary fixed pose. This contrasts with prior single-LED approaches that require continuous PD rotation \cite{Liu2022,Wang2024,Shi2025}.}
+\addedlate{The cooperative alignment is a \emph{sufficient} but not \emph{necessary} condition for distance recovery.  In principle, the $K$ direction-finding powers already carry range information through the $1/d^2$ dependence in~\eqref{eq:hLOS}; however, extracting $d$ from them also requires $\cos\psi$, which couples $d$ to the receiver orientation~$\mathbf{n}_r$ via~\eqref{eq:cosines}.  By forcing $\cos\phi{=}\cos\psi{=}1$, the cooperative measurement decouples distance from $\mathbf{n}_r$ and isolates $d$ in closed form, preserving $\mathbf{n}_r$-agnosticism across both stages.  An alternative broadcast formulation that avoids PD reorientation---at the cost of requiring coarse $\mathbf{n}_r$ knowledge, e.g., from an accelerometer---is discussed in Section~\ref{sec:Conclusion}.}
 Under this beam-steered configuration and using \eqref{eq:hLOS}, \eqref{eq:cosines}, and \eqref{eq:Pr_i},
 the received power for this new orientation \((K+1)\), denoted as \(P_{r,K+1}\), obeys:
 \begin{equation}
@@ -1030,6 +1032,7 @@ Beyond accuracy, the architecture is deployment-friendly. By concentrating compl
 
 \deleted{Possible future work includes augmenting the radiometric–geometric model with physics-informed neural networks to learn small residual corrections while preserving physical constraints, enabling a gray-box (rather than black-box) estimator. Future work also includes validating the approach experimentally and extending the framework to OWC, with emphasis on single-source optical integrated sensing and communication.}
 \added{Future work includes: (i)~experimental validation, for which we are currently investigating beam steering via electrically tunable liquid lenses that offer continuous angular control without mechanical parts; (ii)~integration with beam-steered OWC links, where the direction-finding stage can be embedded into the beam-tracking loop and an intelligent refresh strategy can exploit the previous direction estimate to reduce the number of required orientations; and (iii)~extending the framework to optical integrated sensing and communication (ISAC).}
+\addedlate{A further direction is the broadcast distance-recovery variant noted in Section~\ref{sec:SystemModel}: by leveraging coarse receiver-orientation knowledge from an accelerometer, distance can be extracted from the $K$ direction-finding measurements alone, eliminating the cooperative $(K{+}1)$-th step and enabling simultaneous localization of multiple receivers from a single orientation scan.}
 
 \appendices
 \section{Proof of Equation \eqref{eq:beta_lin_gls}}
