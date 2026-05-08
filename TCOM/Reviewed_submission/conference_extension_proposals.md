@@ -21,27 +21,94 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 
 ## 2. Congresos Objetivo y Deadlines
 
-### 2.1 Opciones inmediatas (deadlines abiertos)
+> **Actualizado:** 8 Mayo 2026. Deadlines verificados en los sitios oficiales.
 
-| Congreso | Lugar | Fechas | Deadline Papers | Tipo |
-|----------|-------|--------|-----------------|------|
-| **PIMRC 2026 Workshop** | Singapore | Sep 2026 | **5 Jun 2026** | Workshop paper |
-| **GLOBECOM 2026 Workshop** | Macau, China | 7–11 Dic 2026 | **12 Ago 2026** | Workshop paper |
+### 2.1 ⚡ URGENTE — Deadlines en las próximas semanas
 
-### 2.2 Opciones a medio plazo (~Oct 2026 deadline)
+| Congreso | Lugar | Fechas evento | **Deadline** | Tipo | Papers candidatos |
+|----------|-------|---------------|--------------|------|-------------------|
+| **ISWCS 2026** | Gold Coast, Australia | 24–26 Ago 2026 | **⚠️ 31 May 2026** | Conference (5p) | F, G, H, I |
+| **PIMRC 2026 Workshop** | Singapore | Sep–Oct 2026 | **5 Jun 2026** | Workshop (5–6p) | F, H, I, G |
 
-| Congreso | Lugar | Fechas | Deadline estimado | Tipo |
-|----------|-------|--------|-------------------|------|
-| **ICC 2027** | TBD | May–Jun 2027 | ~Oct 2026 | Symposium paper |
-| **WCNC 2027** | Panama City, Panama | Mar–Abr 2027 | ~Oct 2026 | Symposium paper |
+> ISWCS: International Symposium on Wireless Communication Systems — cubre SP, localization, OWC. Venue menor pero rápido y relevante. **Deadline en 23 días.**
 
-### 2.3 Deadlines ya cerrados (referencia)
+---
 
-| Congreso | Deadline | Estado |
-|----------|----------|--------|
-| PIMRC 2026 Symposium | 16 Abr 2026 | ❌ Cerrado |
-| GLOBECOM 2026 Symposium | 3 May 2026 | ❌ Cerrado |
-| VTC 2026-Fall (Boston) | 21 Mar 2026 | ❌ Cerrado |
+### 2.2 Deadlines 2026 Q3 (Ago–Sep 2026)
+
+| Congreso | Lugar | Fechas evento | **Deadline** | Tipo | Papers candidatos |
+|----------|-------|---------------|--------------|------|-------------------|
+| **GLOBECOM 2026 Workshop** | Macau, China | 7–11 Dic 2026 | **12 Ago 2026** | Workshop (6p) | F, D, H, G, A |
+| **IEEE ISAC 2026** ⭐ | Lisboa, Portugal | 16–18 Nov 2026 | **11 Sep 2026** | Conference (6p) | A, L, G, F |
+
+> **ISAC 2026** es el primer congreso dedicado exclusivamente a Integrated Sensing and Communications (IEEE ComSoc + SPS + Aerospace). Debut histórico — máxima visibilidad para paper A (ISAC óptico) o L (RL adaptativo). Deadline extendido desde el 1 Jun original.
+>
+> **GLOBECOM 2026 Workshops relevantes:** WS-01 "7th Workshop on Emerging Topics in 6G Communications"; buscar también workshops de OWC, ISAC, o 6G Sensing al publicarse la lista completa.
+
+---
+
+### 2.3 Deadlines 2026 Q4 (Oct–Nov 2026)
+
+| Congreso | Lugar | Fechas evento | **Deadline** | Tipo | Papers candidatos |
+|----------|-------|---------------|--------------|------|-------------------|
+| **ICC 2027** | Washington DC, EE.UU. | 30 May–3 Jun 2027 | **26 Oct 2026** | Symposium (6p) | A, F, G, H, I |
+| **WCNC 2027** | Panama City, Panama | Mar–Abr 2027 | **31 Oct 2026** | Symposium (6p) | A, F, G, I, D |
+| **ICASSP 2027** | Toronto, Canada | 16–21 May 2027 | **~Sep–Oct 2026** *(TBC)* | Conference (5p) | L, E, N |
+
+> ICC 2027 tracks relevantes: *Optical Wireless Communications (SAC)*, *Signal Processing for Communications*, *Localization & Positioning*.
+>
+> WCNC 2027 tracks: *Wireless Localization & Sensing*, *Optical Wireless*, *AI/ML for Wireless*.
+>
+> ICASSP 2027 (IEEE Signal Processing Society): venue principal para L (RL), E (GLS+NN), N (ML universal). Deadline aún no publicado oficialmente; históricamente entre Sep–Oct del año anterior.
+
+---
+
+### 2.4 Journals (rolling — sin deadline fijo)
+
+| Journal | IF | Review típico | Papers candidatos |
+|---------|----|---------------|-------------------|
+| **IEEE Trans. Communications (TCOM)** | ~7.2 | 3–6 meses | A, K, J, N |
+| **IEEE/OSA J. Lightwave Technology (JLT)** | ~4.7 | 3–4 meses | C, A, K |
+| **IEEE Photonics Journal** | ~2.4 | 2–3 meses | C (opc.) |
+| **IEEE Trans. Signal Processing (TSP)** | ~5.4 | 3–5 meses | J, L |
+| **IEEE Signal Processing Letters** | ~3.9 | 2–3 meses (4p) | E, L (carta) |
+| **IEEE Wireless Communications Letters** | ~4.6 | 2–3 meses (4p) | F, G (carta) |
+| **IEEE JSAC** | ~13.0 | 4–6 meses | M (Cambridge) |
+| **IEEE IoT Journal** | ~10.0 | 3–5 meses | N |
+
+---
+
+### 2.5 Deadlines ya cerrados (referencia)
+
+| Congreso | Lugar | Fechas evento | Deadline | Estado |
+|----------|-------|---------------|----------|--------|
+| CSNDSP 2026 | Edinburgh, UK | 15–17 Jul 2026 | 31 Ene 2026 | ❌ Cerrado |
+| SPAWC 2026 | Atenas, Grecia | 6–9 Sep 2026 | 22 Mar 2026 | ❌ Cerrado |
+| VTC 2026-Fall | Boston, EE.UU. | 6–9 Sep 2026 | 21 Mar 2026 | ❌ Cerrado |
+| PIMRC 2026 Symposium | Singapore | Sep–Oct 2026 | 16 Abr 2026 (firm) | ❌ Cerrado |
+| ECOC 2026 | Málaga, España | 20–24 Sep 2026 | 22 Abr 2026 (extendido) | ❌ Cerrado |
+| ISWCS 2026 | Gold Coast, AU | 24–26 Ago 2026 | 31 May 2026 | ✅ Abierto |
+| GLOBECOM 2026 Symposium (ONS/SPC) | Macau | 7–11 Dic 2026 | 15 Mar 2026 | ❌ Cerrado |
+
+---
+
+### 2.6 Vista de conjunto: papel → venue recomendado
+
+| Paper | Venue principal | Deadline | Alternativa |
+|-------|-----------------|----------|-------------|
+| **F** (broadcast K-only, sim) | GLOBECOM 2026 WS | 12 Ago 2026 | ISWCS 2026 (31 May ⚡) |
+| **H** (beam tracking) | PIMRC 2026 WS | 5 Jun 2026 | GLOBECOM 2026 WS |
+| **I** (two-stage adaptive) | PIMRC 2026 WS | 5 Jun 2026 | WCNC 2027 |
+| **G** (ML observability) | ISAC 2026 | 11 Sep 2026 | WCNC 2027 |
+| **A** (ISAC óptico, exp.) | **ISAC 2026** ⭐ | 11 Sep 2026 | ICC/WCNC 2027 |
+| **L** (RL adaptativo) | **ICASSP 2027** | ~Sep–Oct 2026 | ISAC 2026 |
+| **E** (GLS+NN) | IEEE SP Letters | rolling | ICASSP 2027 |
+| **D** (multi-receptor) | GLOBECOM 2026 WS | 12 Ago 2026 | WCNC 2027 |
+| **N** (ML universal) | ICASSP 2027 | ~Sep–Oct 2026 | IEEE IoT-J |
+| **C** (non-Lamb. exp.) | **JLT** | rolling | IEEE Photonics J |
+| **J** (framework teórico) | TSP o TCOM | rolling | — |
+| **K** (multi-LED exp.) | TCOM o JLT | rolling | — |
+| **M** (TL Cambridge) | **JSAC** | rolling | NeurIPS WS |
 
 ---
 
@@ -58,15 +125,16 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 | **F** | *"Broadcast Beam-Steered OWP: IMU-Assisted Distance Recovery Without Cooperative Alignment"* | Conference (Workshop) | Simulación | ★★☆ | 2–3 meses |
 | **A** ⚡ | *"Experimental ISAC with Gimbal-Steered LiFi: Simultaneous Indoor Positioning and High-Speed OWC"* | **Journal (TCOM / JLT)** | **Experimental** (LiFi dongle + gimbal) | ★★★ | 4–6 meses |
 | **K** ⚡ | *"Multi-LED Beam-Steered OWP: Diversity Gain and Joint Orientation Design with Mechanical Gimbals"* | **Journal (TCOM / JLT)** | **Experimental** (múltiples gimbals) | ★★★ | 5–7 meses |
-| **J** | *"Generalized Beam-Steered OWP Beyond Lambertian Emission: Bounds, Estimators, and VCSEL Case Study"* | Journal (TSP / TCOM) | Simulación | ★★★ | 3–5 meses |
+| **J** | *"Generalized Beam-Steered OWP Beyond Lambertian Emission: Bounds, Hybrid Estimator, and Reference Normalization"* | Journal (TSP / TCOM) | Simulación | ★★★ | 4–5 meses |
 | **C** ⚡ | *"Experimental Validation of Non-Lambertian Beam-Steered OWP with Real Emission Pattern Calibration"* | Journal (JLT) | **Experimental** (goniómetro + testbed) | ★★★★ | 6–8 meses |
 | **H** ⚡ | *"Real-Time Beam Tracking for Beam-Steered OWP via Gimbal Servo Control"* | Journal o Conf. Symp. | **Experimental** (servo + móvil) | ★★★ | 5–7 meses |
 | **I** | *"Adaptive Two-Stage Orientation Design for Precision Beam-Steered OWP"* | Conference (Symposium) | Simulación (+ opcional exp.) | ★★☆ | 2–3 meses |
 | **G** | *"Fundamental Observability Limits for ML-Based Single-PD Optical Wireless Positioning"* | Conference (Workshop) | Simulación | ★★☆ | 2–3 meses |
 | **D** | *"Broadcast Beam-Steered OWP for Multi-User Concurrent Localization"* | Conference (Workshop) | Simulación | ★☆☆ | 1–2 meses |
 | **L** 🤖 | *"Deep RL for Adaptive Beam Orientation Selection in Single-LED OWP"* | **ICASSP / IEEE SP Letters** | Simulación (Python) | ★★☆ | 2–3 meses |
+| **N** 🤖 | *"Pattern-Conditioned Universal ML Model for Cross-LED Beam-Steered OWP"* | **Journal (TCOM / IoT-J)** | Simulación (+ opc. exp.) | ★★★ | 3 meses (N₁) |
 | **M** 🤖⚡ | *"Physics-Informed Transfer Learning for Generalizable Beam-Steered OWP"* | **Journal (JSAC / TCOM)** | Sim + Exp (Cambridge) | ★★★ | Durante pasantía |
-| **E** | *"Physics-Informed Neural Correction for GLS Direction Finding in Beam-Steered OWP"* | Conf. o Journal | Simulación | ★★★ | 4–6 meses |
+| **E** | *"Physics-Informed Neural Correction for GLS Direction Finding in Beam-Steered OWP"* | **IEEE SP Letters** | Simulación | ★★☆ | 2–3 meses |
 
 *⚡ = aprovecha directamente el hardware disponible (testbed + gimbals + LiFi dongle)*
 *🤖 = trabajo ML/RL puro, portfolio GitHub, visible a industria AI*
@@ -85,6 +153,7 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 | **I** | TCOM + beneficia de J | — (o validar exp. con testbed) | ✅ Sí |
 | **G** | Solo TCOM | — | ✅ Sí, o como sección de F |
 | **D** | **F** (necesita broadcast) | — | ⚠️ Tras F |
+| **N** 🤖 | Solo TCOM + simulador Python (compartido con L); banco de datasheets | — (opc. 2–3 LEDs) | ✅ Sí — paper standalone, simulación |
 | **M** 🤖⚡ | **L** (simulador Python como dominio origen); E independiente, no requerido | Pasantía Cambridge (3 meses) | ⚠️ Necesita L primero + pasantía |
 | **E** | Solo TCOM | — | ✅ Sí (más esfuerzo) |
 
@@ -662,7 +731,26 @@ El DEB multi-LED depende de la posición del receptor `r` (a diferencia del DEB 
 
 > **Relación con Propuesta C:** Esta propuesta es el **companion teórico** de Propuesta C. No requiere experimentos — solo simulación. Puede someterse 4–6 meses antes que Propuesta C y sirve como fundamento teórico de referencia.
 
-**Idea central:** El TCOM asume `R(φ) = cos^m(φ)`. Existe una pregunta teórica más profunda y general: *¿cómo queda el framework de dirección finding y posicionamiento OWP cuando el emisor tiene un patrón completamente arbitrario?* Esto incluye no solo LEDs ligeramente no-Lambertianos sino casos extremos como **VCSELs** (Gaussiano estrecho, divergencia 5–20°), LEDs con difusor (patrón casi uniforme), o LEDs con asimetría azimutal. La respuesta requiere generalizar la FIM, los estimadores y el diseño óptimo de orientaciones desde cero.
+**Idea central (alcance honesto):** El TCOM asume `R(φ) = cos^m(φ)` y deriva GLS como estimador closed-form gracias a esa estructura. Para `R(φ)` arbitrario se demuestra que **NO existe GLS closed-form** (resultado de imposibilidad), y se ofrece como solución práctica un **híbrido GLS-init + Newton refinement** que es near-optimal con coste computacional comparable al GLS clásico. El framework cubre: (i) FIM/DEB universales, (ii) prueba de imposibilidad de cerrado, (iii) híbrido near-closed-form, (iv) elección de medición de referencia, (v) diseño óptimo de orientaciones para `R` arbitrario, y (vi) caso estudio VCSEL.
+
+**Lo que J NO promete:** una familia infinita de GLS closed-form para R distintos. Eso no existe (J.3 lo prueba). Lo que J SÍ entrega: un framework completo donde para cada R real se obtiene un estimador eficiente y un bound asociado.
+
+---
+
+#### J.0 Feasibility breakdown por componente
+
+| Componente | Tarea técnica | Dificultad | Tiempo | Riesgo de no salir |
+|------------|---------------|-----------|--------|---------------------|
+| **DEB/PEB generalizadas** | FIM con `R'(φ)` para R diferenciable | Baja | 2 sem | Muy bajo — extensión directa del TCOM |
+| **Prueba imposibilidad GLS** | Algebraico: GLS linealiza ⇔ R(arccos(·)) es monomio | Media | 2–3 sem | Bajo — argumento auto-contenido |
+| **Híbrido GLS-init + Newton** | m_eff por LSQ, Newton-Riemann en S² con R real | Media | 4 sem | Bajo — Newton estándar, gradiente derivable |
+| **Análisis convergencia híbrido** | Radio de captura, condiciones de monotonía | Media-Alta | 3 sem | Medio — puede requerir asumir R log-cóncava o similar |
+| **Análisis normalización (Q2)** | β_1 vs β_max vs β_geo, FIM bajo reparametrización | Baja | 2 sem | Muy bajo |
+| **Diseño orientaciones para R** | GA con DEB numérico, R arbitraria | Baja | 2 sem | Muy bajo — código GA del TCOM reutilizable |
+| **Caso estudio VCSEL** | Gaussian R, simulaciones, comparación 4 estimadores | Baja | 2–3 sem | Muy bajo |
+| **Redacción** | — | — | 4–6 sem | — |
+
+**Total realista: 4–5 meses.** Riesgo principal: el análisis de convergencia del híbrido (J.4) puede requerir suposiciones técnicas (log-concavidad de R) que no se cumplen para todos los R. **Fallback:** presentar convergencia como resultado empírico (curvas de iteraciones por habitación) en lugar de teorema. Sigue siendo paper publicable.
 
 ---
 
@@ -728,7 +816,39 @@ Generalización del GA del TCOM: reemplazar `m·Q_i^{m-1}` por `R'(φᵢ)/sin(φ
 
 ---
 
-#### J.3 Análisis de casos extremos (simulación)
+#### J.3 Choice of Reference Measurement: análisis de normalización
+
+El TCOM define `β_i = P_i/P_1` (referencia fija al primer canal). Esta elección no es única — y la decisión afecta tanto el sesgo como la varianza del estimador. J formaliza tres alternativas y caracteriza cuándo conviene cada una.
+
+**J.3.1 Familias de normalización**
+
+| Esquema | Definición | Naturaleza | Efecto en GLS |
+|---------|-----------|------------|---------------|
+| **β_1 (TCOM)** | `β_i = P_i/P_1` | Anchor determinístico | GLS clásico; sensible a `P_1` ruidoso |
+| **β_max** | `β_i = P_i/max_j(P_j)` | Anchor data-dependent | Robusto a outliers en cualquier canal individual; introduce sesgo |
+| **β_geo** | `β_i = P_i/(∏_j P_j)^(1/K)` | Media geométrica simétrica | Sin sesgo si todos los canales contribuyen; varianza balanceada |
+
+**J.3.2 FIM bajo reparametrización no-lineal**
+
+Para una transformación `g: μ → β` (con `g` diferenciable), la FIM en β se relaciona con la FIM en μ vía:
+
+```
+J_β = (∂g/∂μ)^(-T) · J_μ · (∂g/∂μ)^(-1)
+```
+
+Esto significa que **el DEB calculado sobre β_1, β_max o β_geo es matemáticamente equivalente** si los estimadores son MLE — solo cambia el camino computacional. Pero cuando los estimadores son cuasi-MLE (GLS, WLS) la elección de β sí afecta la eficiencia. El análisis cuantifica este gap.
+
+**J.3.3 Resultado esperado**
+
+- **β_1 (TCOM)**: óptimo asintóticamente cuando `P_1` es alto-SNR (orientación 1 cerca del receptor). Riesgo: si `P_1` es bajo-SNR (orientación 1 lejos), el ratio amplifica ruido en todos los canales.
+- **β_max**: introduce sesgo `O(σ²/μ_max²)` por estimar el max, pero gana ~3 dB en escenarios donde la primera orientación queda fuera del lóbulo principal del LED.
+- **β_geo**: balanceada; típicamente 1–2 dB peor que la mejor de las dos en cada régimen, pero nunca colapsa.
+
+**Recomendación práctica:** β_1 cuando se conoce el mapa de SNR; β_geo como default robusto sin asumir nada sobre la geometría; β_max solo en escenarios con outliers severos (NLOS parcial).
+
+---
+
+#### J.4 Análisis de casos extremos (simulación)
 
 | Caso | R(φ) | φ_opt | Cobertura útil | DEB vs. Lambertiano |
 |------|------|-------|----------------|---------------------|
@@ -740,25 +860,26 @@ Generalización del GA del TCOM: reemplazar `m·Q_i^{m-1}` por `R'(φᵢ)/sin(φ
 
 ---
 
-#### J.4 Estructura del paper (Journal)
+#### J.5 Estructura del paper (Journal)
 
-| Sección | Contenido |
-|---------|-----------|
-| I. Intro | Gap: framework OWP existe solo para Lambertiano; motivación VCSEL + liquid lens |
-| II. System Model | Modelo generalizado `μᵢ = η·R(φᵢ)`; clases de emisores; representaciones de R |
-| III. FIM Generalizada | Derivación completa; φ_opt para R genérico; DEB numérico; sanity check vs. TCOM |
-| IV. Imposibilidad de GLS/WLS | Prueba algebraica; qué condición precisa se necesita; ninguna R "natural" la cumple excepto cos^m |
-| V. Estimadores generales | GLS(m_eff): justificación log-lineal; GLS+Newton: convergencia y radio de captura; Profile MLE = NLS |
-| VI. Diseño óptimo de orientaciones | GA con DEB numérico; orientaciones óptimas para VCSEL vs. LED estándar; límite de difusor |
-| VII. Estudio comparativo (simulación) | DEB y RMSE para los 5 casos de emisor; 4 estimadores; función de K |
-| VIII. Conclusiones | |
+| Sección | Contenido | Mapeo a J.x |
+|---------|-----------|-------------|
+| **I. Introduction** | Gap: framework OWP cerrado existe solo para Lambertiano; motivación VCSEL + liquid lens; alcance honesto del paper | — |
+| **II. Generalized System Model** | Modelo `μᵢ = η·R(φᵢ)`; clases de emisores; representaciones de R (paramétrico vs. spline) | — |
+| **III. Generalized FIM and DEB** | Derivación con `R'(φ)`; sanity check Lambertian; φ_opt para R genérico; resultado de difusor (DEB infinito) | J.2.1, J.2.2 |
+| **IV. Impossibility of Closed-Form GLS** | Prueba algebraica: GLS linealiza sii `R(arccos(·))` es monomio; ninguna R "natural" lo cumple salvo cos^m | J.2.3 |
+| **V. Hybrid Estimator: GLS-init + Newton Refinement** | m_eff por LSQ; Newton-Riemann en S² con R real; análisis de convergencia (radio de captura); reduce a GLS si R = cos^m | J.2.4 |
+| **VI. Choice of Reference Measurement** | β_1 vs β_max vs β_geo; FIM bajo reparametrización no-lineal; régimen óptimo de cada normalización | **J.3 (Q2)** |
+| **VII. Optimal Orientation Design for Arbitrary R** | GA con DEB numérico; orientaciones óptimas VCSEL vs. LED estándar; límite del difusor | J.2.5 |
+| **VIII. Numerical Study** | DEB y RMSE para 5 emisores × 4 estimadores × 3 normalizaciones; función de K; caso VCSEL detallado | J.4 |
+| **IX. Conclusions** | — | — |
 
-**Viabilidad:** Alta — puramente analítico + simulación MATLAB. Sin hardware. Derivaciones extensión directa del TCOM. ~3–4 meses.
+**Viabilidad:** Alta — puramente analítico + simulación MATLAB/Python. Sin hardware. Las derivaciones son extensiones directas del TCOM. **~4–5 meses** (ver J.0).
 
 **Target (por orden):**
-- **IEEE Transactions on Signal Processing** (IF ~5.4): si el énfasis es en los nuevos estimadores y el análisis algebraico
-- **IEEE Transactions on Communications (TCOM)** como companion paper (mismo venue, extensión natural)
-- **IEEE Wireless Communications Letters** (rapid comms, 4 páginas): si se recorta a los resultados más impactantes (GLS+Newton + VCSEL)
+- **IEEE Transactions on Signal Processing** (IF ~5.4): si el énfasis editorial cae en el resultado de imposibilidad (Sec IV) + híbrido (Sec V) + normalización (Sec VI). TSP valora rigor algebraico y resultados de imposibilidad.
+- **IEEE Transactions on Communications (TCOM)** como companion paper natural del TCOM original (mismo grupo de reviewers, extensión obvia, VCSEL atrae a la comunidad de OWC).
+- **IEEE Wireless Communications Letters** (4 páginas, rapid): solo si se recorta agresivamente a Sec III + Sec V + caso VCSEL. Sacrifica la sección de normalización, que volvería a ser un letter aparte.
 
 ---
 
@@ -1098,6 +1219,104 @@ Esto unifica Propuesta L + M en un único framework: **Meta-RL con prior físico
 **Viabilidad:** Muy alta — la teoría es extensión directa del TCOM; el simulador Python lo construyes antes (Propuesta L); Cambridge provee el hardware real y el co-authorship.
 
 **Target:** **IEEE Journal on Selected Areas in Communications (JSAC)** — el venue más prestigioso para este tipo de trabajo (IF ~13). Alternativa: IEEE TCOM companion o **NeurIPS Workshop on Machine Learning for Physical Sciences**.
+
+---
+
+### Propuesta N: Modelo ML Condicionado en Patrón de Radiación — OWP Universal Cross-LED 🤖
+
+> **Paper standalone, simulación.** Esta propuesta resuelve la limitación más práctica de los modelos ML para OWP: típicamente se entrenan para UN LED específico y no generalizan a otros. Aquí se entrena un modelo único condicionado en el patrón de radiación `R(φ)` que se despliega con cualquier LED sin reentrenamiento — un "modelo universal" para OWP single-LED.
+
+**Idea central:** Entrenar un modelo `f_θ` cuyo input no son solo las mediciones RSS `{μ_i, n_{t,i}}` sino también una representación del patrón de radiación `R(φ)` del LED en uso. La salida es la posición 3D `r̂`. En training, se muestrean aleatoriamente patrones de un banco de datasheets (Lumileds, Cree, OSRAM) → el modelo aprende a explotar el patrón como información lateral. En deployment, basta con cargar el `R(φ)` del LED instalado (de su datasheet) y el modelo funciona sin reentrenamiento.
+
+---
+
+#### N.1 Arquitectura
+
+```
+Pattern encoder:    R(φ) muestreado en N_φ ángulos  →  e_R ∈ ℝ^{d_pattern}
+                    (MLP o set encoder sobre los muestreos)
+
+Measurement encoder: {(μ_i, n_{t,i})}_{i=1..K}        →  h_meas ∈ ℝ^{d_meas}
+                    (Set transformer / DeepSets — permutation invariant)
+
+Conditioning:       FiLM(h_meas, e_R)                  →  h_cond
+                    (γ, β = MLP(e_R); h_cond = γ·h_meas + β)
+
+Position head:      h_cond                              →  r̂ ∈ ℝ³
+```
+
+**Por qué FiLM:** Feature-wise Linear Modulation es la forma estándar de condicionar redes con información lateral. Permite que el patrón module la representación de las mediciones sin requerir que el patrón se concatene como input plano (lo que llevaría a sobreajuste).
+
+**Permutation invariance:** las K mediciones son un conjunto desordenado (cuando K se diseña offline). Set transformer / DeepSets garantiza que el output no depende del orden → menos parámetros, mejor generalización.
+
+---
+
+#### N.2 Banco de patrones para entrenamiento
+
+Combinar tres fuentes:
+
+| Fuente | Cantidad | Tipo |
+|--------|---------|------|
+| Datasheets reales | ~20–30 | LEDs comerciales (Lumileds Luxeon, Cree XLamp, OSRAM Oslon, etc.) |
+| Lambertianos sintéticos | ~10 | `cos^m(φ)` con m ∈ {1, 2, 5, 10, 20, 50, 100} |
+| Patrones extremos | ~5 | Gaussiano (VCSEL), uniforme (difusor), asimétrico (lente cilíndrica) |
+
+**Augmentation:** rotaciones azimutales, scaling, ruido en las muestras del patrón → el modelo se vuelve robusto a errores de calibración del datasheet.
+
+---
+
+#### N.3 Comparaciones que hace el paper interesante
+
+| Comparación | Pregunta científica |
+|-------------|---------------------|
+| **f_θ universal vs. f_θ_LED1** | ¿Cuánto pierde el modelo universal vs. uno entrenado para un LED específico? |
+| **f_θ universal vs. GLS_TCOM** | ¿Supera al estimador clásico cuando el patrón no es Lambertiano? |
+| **f_θ universal vs. NLS calibrado** | ¿El modelo aprende algo que NLS no puede capturar? |
+| **Out-of-distribution: VCSEL** | ¿El modelo entrenado en patrones "normales" generaliza a patrones extremos no vistos? |
+| **Robustez a ruido en R(φ)** | ¿Qué pasa si el patrón cargado tiene 5%/10%/20% de error? |
+
+**Resultado clave esperado:** el modelo universal está dentro de ~1–2 dB del modelo especializado en cada patrón, pero generaliza a 30+ LEDs sin reentrenamiento. NLS especializado lo supera para cada patrón pero requiere recalibración cara para cada LED nuevo.
+
+---
+
+#### N.4 ¿Simulación o experimental?
+
+**Recomendación: simulación pura para el paper base (N₁), experimental como extensión (N₂).**
+
+| Versión | Datos | Esfuerzo | Aporte |
+|---------|-------|---------|--------|
+| **N₁ (simulación)** | RSS sintético generado del modelo TCOM con cada `R(φ)` del banco | 2–3 meses | Paper completo: prueba el concepto, generaliza a 30+ patrones |
+| **N₂ (extensión exp.)** | Validación con 2–3 LEDs reales del LISV de patrones distintos | +2 meses | Sección experimental que valida sim-to-real; refuerza para journal |
+
+**N₁ ya es publicable** porque las datasheets son la realidad — no son "datos sintéticos" arbitrarios. La crítica "esto no funciona en hardware real" se mitiga argumentando que los patrones son los que vienen de la realidad de los LEDs comerciales.
+
+**N₂ sería ideal pero no necesario** para un Conference o SP Letters. Para un Journal sí conviene tener al menos 1–2 LEDs experimentales.
+
+---
+
+#### N.5 Conexión con otras propuestas
+
+- **vs. E (residual correction):** E corrige GLS para UN patrón conocido. N maneja patrones arbitrarios. Son ortogonales — incluso podrían combinarse (corrector residual condicionado en patrón).
+- **vs. J (framework teórico no-Lambertiano):** J deriva el MLE/bound para `R(φ)` arbitrario. N aprende ese MLE con NN. J da el bound de referencia.
+- **vs. M (Transfer Learning Cambridge):** N es generalización **intra-distribución** (patrones del banco). M es generalización **out-of-distribution** (sim-to-real, cross-room). Son complementarias y forman parejas naturales en el discurso.
+
+---
+
+#### N.6 Estructura del paper
+
+| Sección | Contenido |
+|---------|-----------|
+| I. Intro | Limitación de modelos ML específicos a un LED; motivación universal |
+| II. Problem formulation | OWP con `R(φ)` arbitrario; modelo del canal; banco de patrones |
+| III. Architecture | FiLM conditioning; pattern encoder; set transformer measurements |
+| IV. Training | Sampling estratificado de patrones; augmentation; loss |
+| V. Resultados sim | Universal vs. especializado; OOD a VCSEL; robustez a ruido en R(φ) |
+| VI. Experimental (opc.) | 2–3 LEDs reales del LISV; sim-to-real gap |
+| VII. Conclusión | |
+
+**Viabilidad:** Alta — simulador Python (parte del simulador de Propuesta L, reutilizable). FiLM y set transformer son estándar en PyTorch. Banco de patrones es público (datasheets). ~3 meses para versión simulación.
+
+**Target:** **IEEE Transactions on Communications** (TCOM, companion natural — generaliza el TCOM a cualquier LED) o **IEEE Internet of Things Journal** (positioning + ML aplicado, IF ~10). Alternativa conference: ICASSP 2027.
 
 ---
 
