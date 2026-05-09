@@ -474,29 +474,20 @@ Table~\ref{tab:optimal_orientations_2col} lists the \added{DEB-}optimal \(K\)-or
 In Fig.~\ref{fig:Optimized_vs_Random}, for each \(K\) we present box-and-whisker plots of the \deleted{PEB} \added{DEB} computed over all receiver locations in the \(3\times3\times2\,\mathrm{m}^3\) testbed; optimized sets are shown in green, randomly selected sets in orange, and the shaded profiles depict the corresponding probability density function (PDF) estimates. 
 \deleted{Quantitatively, the optimized sets achieve a median of PEB below $1.5\,\mathrm{cm}$ for all $K\in\{3,\ldots,9\}$ (worst median $1.43\,\mathrm{cm}$ at $K=3$) and reach $0.74\,\mathrm{cm}$ at $K=9$.} The GA consistently outperforms random orientations: across \(K\), the optimized sets reduce the median \deleted{PEB} \added{DEB} by \(49\%\)–\(72\%\) and exhibit smaller interquartile ranges. These gains are reflected in the distributions, with the central tendency improving monotonically as \(K\) increases.
 
-Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the PEB across a \(3\times3\,\mathrm{m^2}\) floor at \(z=0.8\) m for \(K=5\) orientations with the transmitter at the room centre.  In the optimal configuration, shown in Fig.~\ref{fig:optimo_vs_random_3D}(a), the highest errors occur uniformly along the boundaries and especially at the corners, analogous to multi‐transmitter layouts \cite{acuna2025}, but remain spatially consistent.  By contrast, the random configuration in Fig.~\ref{fig:optimo_vs_random_3D}(b) exhibits both larger and more irregular error patterns.  
+Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the DEB across a \(3\times3\,\mathrm{m^2}\) floor at \(z=0.8\) m for \(K=5\) orientations with the transmitter at the room centre.  In the optimal configuration, shown in Fig.~\ref{fig:optimo_vs_random_3D}(a), the highest errors occur uniformly along the boundaries and especially at the corners, analogous to multi‐transmitter layouts \cite{acuna2025}, but remain spatially consistent.  By contrast, the random configuration in Fig.~\ref{fig:optimo_vs_random_3D}(b) exhibits both larger and more irregular error patterns.  
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/IV. Optimization/DEB_violin_comparison.png}
-    \caption{Distribution of the PEB across all receiver locations in the \(3\times3\times2\,\mathrm{m^3}\) testbed. For each \(K\), green shows the GA-optimized orientation set and orange a randomly selected set. Boxes and whiskers summarize the sample distribution, while the shaded profiles depict the corresponding PDF.}
+    \includegraphics[width=\linewidth]{Figures/IV. Optimization/DEB_violin_comparison}
+    \caption{Distribution of the DEB [$^\circ$] across all receiver locations in the \(3\times3\times2\,\mathrm{m^3}\) testbed for \(K\in\{3,\ldots,9\}\). Green: GA-optimized orientation set; orange: randomly selected set. Box-and-whisker plots summarize the sample distribution; shaded profiles depict the estimated PDF. The GA-optimized sets consistently achieve lower DEB and tighter distributions across all~\(K\).}
     \label{fig:Optimized_vs_Random}
 \end{figure}
 
 
-\begin{figure}[htbp]
+\begin{figure}[tb]
   \centering
-  \subfloat[]{
-    \includegraphics[width=0.8\columnwidth]{Figures/IV. Optimization/PEB_K5_optimal.png}%
-    \label{fig:1a}
-  }\\[1ex] 
-
-  \subfloat[]{
-    \includegraphics[width=0.8\columnwidth]{Figures/IV. Optimization/PEB_K5_random.png}%
-    \label{fig:1b}
-  }
-
-  \caption{Heat map of the PEB across a \(3\times3\,\mathrm{m^2}\) testbed at \(z=0.8\)\, m for \(K=5\) orientations: (a) optimal set, (b) random set.}
+  \includegraphics[width=\columnwidth]{Figures/IV. Optimization/DEB_heatmap_K5}
+  \caption{Spatial distribution of the DEB across the \(3\times3\,\mathrm{m^2}\) floor at \(z=0.8\)\,m for \(K=5\) orientations. (a)~GA-optimized set; (b)~randomly selected set. The colour scale is shared and clipped at \(3^\circ\).}
   \label{fig:optimo_vs_random_3D}
 \end{figure}
 
