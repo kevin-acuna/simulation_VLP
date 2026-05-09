@@ -4,26 +4,22 @@
 %
 % Author: Kevin Acuña
 close all; clear variables; clc;
-rng(71);
+rng(43);
 
 %% ===== FLAGS =====
 SAVE_OUTPUT    = true;    % true → export PNG + PDF to outputs/ ; false → screen only
 RECOMPUTE      = true;    % false → load previously saved DEB_violin_data.mat
 
 %% ===== PATHS =====
-script_dir = fileparts(mfilename('fullpath'));
-if isempty(script_dir)                          % fallback: script run from Command Window
-    script_dir = fileparts(which('FigDEB_Violin_Comparison_K'));
-end
-core_dir  = fullfile(script_dir, '..', 'core');
-param_dir = fullfile(script_dir, '..', 'estimators');
-out_dir   = fullfile(script_dir, 'outputs');
-data_file = fullfile(out_dir, 'DEB_violin_data.mat');
+script_dir  = fileparts(mfilename('fullpath'));
+core_dir    = fullfile(script_dir, '..', 'core');
+param_dir   = fullfile(script_dir, '..', 'estimators');
+out_dir     = fullfile(script_dir, 'outputs');
+data_file   = fullfile(out_dir, 'DEB_violin_data.mat');
 
 addpath(core_dir);
 addpath(param_dir);
-if ~exist(out_dir, 'dir'), mkdir(out_dir); end  % always create, regardless of SAVE_OUTPUT
-fprintf('Output directory: %s\n', out_dir);
+if SAVE_OUTPUT && ~exist(out_dir, 'dir'), mkdir(out_dir); end
 
 %% ===== LOAD SYSTEM PARAMETERS =====
 run('system_params.m');           % loads: P_t, m_t, A_det, FOV, sigma2, N_samples,
@@ -176,12 +172,8 @@ legend([h1,h2],{'Optimized','Random'},'Location','northeast', ...
 
 %% ===== EXPORT =====
 if SAVE_OUTPUT
-    exportgraphics(fig, fullfile(out_dir,'DEB_violin_comparison.pdf'), ...
-        'ContentType', 'vector', 'BackgroundColor', 'white');
-    exportgraphics(fig, fullfile(out_dir,'DEB_violin_comparison.png'), ...
-        'Resolution', 600, 'BackgroundColor', 'white');
-    exportgraphics(fig, fullfile(out_dir,'DEB_violin_comparison.eps'), ...
-        'ContentType', 'vector', 'BackgroundColor', 'white');
+    exportgraphics(fig, fullfile(out_dir,'DEB_violin_comparison.png'), 'Resolution',600);
+    exportgraphics(fig, fullfile(out_dir,'DEB_violin_comparison.pdf'), 'ContentType','vector');
     fprintf('\nFigures saved to:\n  %s\n', out_dir);
 end
 

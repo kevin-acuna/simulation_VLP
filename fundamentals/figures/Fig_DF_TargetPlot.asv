@@ -24,8 +24,8 @@ addpath(fullfile(parent_dir, 'core'));        % vlp_gls, vlp_wls, DEB_complete, 
 %  HYPERPARAMETERS
 %% =========================================================================
 rng(42);
-M_vis     = 200;%120;      % MC trials per position
-save_fig  = true;     % Save PNG to outputs/
+M_vis     = 1;%120;      % MC trials per position
+save_fig  = false;     % Save PNG to outputs/
 
 % Ring geometry: floor radii [m] and azimuth offsets [deg]
 ring_radii      = [0.4, 0.8, 1.2];      % horizontal distance from nadir [m]
@@ -155,10 +155,10 @@ fprintf('Done.\n');
 %% =========================================================================
 % Layer visual parameters
 alpha_layer = [0.55, 0.80];   % opacity per layer (low z = more transparent)
-sz_est      = 15;
-sz_true     = 50;
+sz_est      = 7;
+sz_true     = 100;
 
-c_true = [0.07 0.07 0.07];
+c_true = [0.08 0.08 0.08];
 c_gls  = [0.13 0.47 0.71];
 c_nls  = [0.20 0.63 0.17];
 c_deb  = [0.85 0.10 0.10];
@@ -168,7 +168,7 @@ ax  = axes(fig, 'Position', [0.10 0.10 0.82 0.84]);
 hold(ax, 'on');
 
 % ---- Background: theta contours and azimuth spokes ----
-theta_rings = [10, 20,30, 40,50, 60];
+theta_rings = [20, 40, 60];
 for th = theta_rings
     phi_c = linspace(0, 2*pi, 300);
     plot(ax, sin(deg2rad(th))*cos(phi_c), sin(deg2rad(th))*sin(phi_c), ...
@@ -212,9 +212,9 @@ for i_pos = 1:N_pos_total
 
     % True direction (on top)
     if layer_id(i_pos) == 2
-        scatter(ax, px_nd, py_nd, sz_true, c_true, 'x','LineWidth',1);
+        scatter(ax, px_nd, py_nd, sz_true, c_true, 'x', 'LineWidth', 2.0);
     else
-        scatter(ax, px_nd, py_nd, sz_true, c_true, '+','LineWidth',1);
+        scatter(ax, px_nd, py_nd, sz_true*0.7, c_true, '+', 'LineWidth', 1.4);
     end
 end
 
