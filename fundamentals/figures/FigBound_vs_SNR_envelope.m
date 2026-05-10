@@ -27,7 +27,7 @@ K_VALUES    = 3:9;                   % K range for envelope
 K_HIGHLIGHT = 5;                     % accent curve
 PHI_HALF    = 45;                    % LED half-power angle [°]
 
-SAVE_OUTPUT = true;
+SAVE_OUTPUT = false;
 RECOMPUTE   = true;
 
 %% ===== PATHS =====

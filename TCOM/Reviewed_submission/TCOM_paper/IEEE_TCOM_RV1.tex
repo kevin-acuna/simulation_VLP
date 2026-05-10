@@ -899,7 +899,7 @@ WLS   & 0.77 & 1.14 & 0.61 \\ \hline
 
 To experimentally validate Proposition~1, we evaluate direction-finding performance under random receiver tilts. The tilt angle $\theta_{\mathrm{tilt}}$ is drawn from a half-normal distribution with $\sigma=5^\circ$ truncated at $30^\circ$, and the azimuth $\varphi_{\mathrm{tilt}}$ is uniform on $[0^\circ,360^\circ)$. For each of the $1{,}792$ positions, $N_{\mathrm{tilt}}=100$ independent random tilts are generated, with $M=1{,}000$ noise trials per tilt realization.
 
-Table~\ref{tab:tilt_robustness} reports the RMSE degradation relative to the vertical baseline ($\mathbf{n}_r=[0,0,1]^{\mathsf T}$). All estimators degrade by less than $3\%$, confirming that the direction-finding stage is effectively $\mathbf{n}_r$-agnostic. The small residual degradation is attributable to SNR reduction (lower $\cos\psi$ reduces received power and hence SNR), not to structural bias.
+Table~\ref{tab:tilt_robustness} reports the RMSE degradation relative to the vertical baseline ($\mathbf{n}_r=[0,0,1]^{\mathsf T}$). All estimators exhibit degradation below~$3\%$, confirming that the direction-finding stage is effectively $\mathbf{n}_r$-agnostic. The residual degradation is attributable to SNR reduction---a tilted PD intercepts less optical power ($\cos\psi<1$), lowering the effective SNR---rather than structural bias in the estimators. Figure~\ref{fig:NR_robust_CDF} corroborates these results: the empirical CDFs of the per-position angular RMSE under random tilt (dashed curves) are virtually indistinguishable from those obtained with a vertical receiver (solid curves) for all four methods, with the inset depicting the truncated half-normal tilt distribution applied in the experiment.
 
 \begin{table}[t]
 \centering
@@ -914,6 +914,13 @@ NLS   & 0.620 & 0.631 & $+1.68\%$ \\ \hline
 DEB   & 0.518 & 0.527 & $+1.69\%$ \\ \hline
 \end{tabular}
 \end{table}
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30}
+    \caption{Empirical CDF of the per-position angular RMSE under vertical $\mathbf{n}_r$ (solid) and random receiver tilt (dashed) for $K{=}5$ orientations ($M{=}1{,}000$ noise trials, $N_{\mathrm{tilt}}{=}100$ tilt realizations per position). Inset: truncated half-normal tilt distribution ($\sigma{=}5^{\circ}$, $\theta_{\max}{=}30^{\circ}$). The near-perfect overlap between solid and dashed curves confirms the $\mathbf{n}_r$-independence established in Proposition~1.}
+    \label{fig:NR_robust_CDF}
+\end{figure}
 }% end added
 
 %.............................................................
