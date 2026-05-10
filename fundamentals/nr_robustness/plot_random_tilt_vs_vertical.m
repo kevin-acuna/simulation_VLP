@@ -22,7 +22,7 @@ close all; clear variables; clc;
 % =========================================================================
 % Random tilt experiment (full workspace save)
 file_rand = fullfile(fileparts(mfilename('fullpath')), 'results', ...
-    'nr_random_tilt_K5_M1000_Ntilt10_sig5_max30.mat');
+    'nr_random_tilt_K5_M1000_Ntilt100_sig5_max30.mat');
 
 % Reference: vertical n_r, GLS/WLS orientations
 ref_dir = fullfile(fileparts(mfilename('fullpath')), '..', 'estimators', 'results');

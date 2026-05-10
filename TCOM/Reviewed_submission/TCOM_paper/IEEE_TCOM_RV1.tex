@@ -491,10 +491,11 @@ Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the DEB acros
   \label{fig:optimo_vs_random_3D}
 \end{figure}
 
-We now turn from optimization to performance characterization: using the optimized orientation sets, we quantify how the 90th‐percentile of the PEB distribution (\(\mathrm{PEB}_{90\%}\)) varies with \(K\), \(\Phi_{1/2}\), and SNR. Figure~\ref{fig:PEB_vs_K} depicts the \(\mathrm{PEB}_{90\%}\) for the optimal \(K\)-orientation set under three \(\Phi_{1/2}\) scenarios at an effective SNR (from \eqref{eq:SNRc}) of 14 dB, selected as a representative moderate-SNR setting and consistent with prior indoor VLP evaluations that analyze performance around 15 dB \cite{Shen2022}. In all scenarios, \(\mathrm{PEB}_{90\%}\) decreases as \(K\) increases, indicating improved localization precision with additional orientations. Assuming a fixed per-orientation acquisition time, the total acquisition latency scales linearly with \(K\); under this accuracy–latency tradeoff, \(K=5\) offers a favorable compromise. For \(\Phi_{1/2}=30^\circ\), at least four orientations are necessary due to the increased directivity limiting coverage with only three orientations; configurations with \(K\ge4\) outperform alternatives.  In contrast, \(\Phi_{1/2}=45^\circ\) achieves competitive error performance starting at \(K=3\), and given its widespread use in commercial LEDs, it is adopted for the subsequent simulations.
+We now turn from optimization to performance characterization. Figure~\ref{fig:PEB_vs_K} plots the RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus~\(K\) for the DEB-optimized orientation sets under three half-power angles \(\Phi_{1/2}\in\{45^\circ,60^\circ,75^\circ\}\). Both bounds decrease monotonically with~\(K\), confirming that additional orientations improve direction-finding and positioning accuracy simultaneously. The direction-finding bound reaches sub-degree RMS-DEB at \(K\ge5\) for \(\Phi_{1/2}=45^\circ\), while the corresponding RMS-PEB falls below~\(2\)\,cm. Wider beams (\(\Phi_{1/2}=60^\circ\)--\(75^\circ\)) incur higher bounds due to the reduced Lambertian directivity, yet the trends remain consistent. Assuming a fixed per-orientation acquisition time, latency scales linearly with~\(K\); under this accuracy--latency trade-off, \(K=5\) offers a favourable compromise for both bounds. \(\Phi_{1/2}=45^\circ\) achieves competitive performance starting at \(K=3\) and, given its widespread use in commercial LEDs, is adopted for the subsequent simulations.
 
-Figure~\ref{fig:PEB_vs_noise} illustrates the dependence of the \(\mathrm{PEB}_{90\%}\) on the SNR for various optimized \(K\)-orientation sets.  As the SNR increases, \(\mathrm{PEB}_{90\%}\) decreases monotonically.  Moreover, at any fixed SNR, increasing \(K\) yields a lower PEB, and the spacing between the curves diminishes at high SNR, indicating reduced incremental benefit from additional orientations under noise-limited conditions.
-
+\added{
+Figure~\ref{fig:PEB_vs_noise} presents the RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets with \(\Phi_{1/2}=45^\circ\). The bold curves correspond to the recommended operating point \(K=5\); the shaded bands span the range \(K\in\{3,\ldots,9\}\). Both bounds decrease monotonically with SNR and exhibit nearly identical slopes of \(-1/2\) on the log--log axes, confirming the theoretical \(1/\sqrt{\mathrm{SNR}}\) scaling of the CRLB. At a representative SNR of~\(14\)\,dB, the \(K=5\) set achieves an RMS-DEB below~\(0.3^\circ\) and an RMS-PEB below~\(1\)\,cm. The band width at any fixed SNR quantifies the gain from additional orientations; it narrows at high SNR, indicating diminishing returns from increasing~\(K\) in low-noise regimes.
+}
 
 % *******************************************
 \section{\deleted{Nonlinear Estimator} \added{Nonlinear Direction Estimator}}
@@ -548,16 +549,15 @@ and the transmitter as $\mathbf n_{r}=[\alpha,\beta,\gamma]^{\mathsf T}$ and $\m
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/IV. Optimization/PEB_vs_theta_half.png}
-    \caption{\(\mathrm{PEB}_{90\%}\) versus the number of orientations \(K\) for GA-optimized sets at a fixed SNR of \(14\) dB and \(\Phi_{1/2}\in\{30^\circ,45^\circ,60^\circ\}\). Values are computed over all receiver positions in the \(3\times3\times2~\mathrm{m}^3\) testbed.}
-
+    \includegraphics[width=\linewidth]{Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms}
+    \caption{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus the number of orientations~\(K\) for the DEB-optimized sets and three LED half-power angles \(\Phi_{1/2}\in\{45^\circ,60^\circ,75^\circ\}\). Values are computed over all receiver positions in the \(3\times3\times2~\mathrm{m}^3\) testbed. Both bounds decrease monotonically with~\(K\); the operating point \(K=5\) offers a favourable accuracy--latency trade-off for both direction finding and 3D positioning.}
     \label{fig:PEB_vs_K}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/IV. Optimization/PEB_vs_SNR.png}
-    \caption{\(\mathrm{PEB}_{90\%}\) versus SNR for GA-optimized orientation sets with \(K\in\{3,\ldots,9\}\) (\(\Phi_{1/2}=45^\circ\); remaining parameters in Table~\ref{tab:ga_params}). Values are computed over all receiver positions in the \(3\times3\times2\,\mathrm{m^3}\) testbed.}
+    \includegraphics[width=\linewidth]{Figures/IV. Optimization/Bound_vs_SNR_envelope_rms}
+    \caption{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets (\(\Phi_{1/2}=45^\circ\)). Bold curves: \(K=5\); shaded bands: range over \(K\in\{3,\ldots,9\}\); dotted edges: \(K=3\) (upper) and \(K=9\) (lower). Both bounds decrease as \(1/\sqrt{\mathrm{SNR}}\), with the band width reflecting the diminishing incremental gain from additional orientations at high SNR.}
     \label{fig:PEB_vs_noise}
 \end{figure}
 
