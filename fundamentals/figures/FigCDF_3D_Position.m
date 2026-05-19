@@ -21,8 +21,8 @@
 close all; clear variables; clc;
 
 %% ===== HYPERPARAMETERS =====
-SAVE_OUTPUT = false;
-SHOW_K9     = false;   % set true once K=9 MC results are available
+SAVE_OUTPUT = true;
+SHOW_K9     = true;    % K=9 results available in K9_3D_MC_1000_{DEB,GLS}-Optimized/
 factor  = 100;   % m → cm
 XLIM_CM = 14;    % x-axis upper limit [cm]
 
@@ -142,8 +142,8 @@ grid(ax,'on'); grid(ax,'minor');
 if SHOW_K9
     h_leg = [h_svd, h_gls5, h_wls5, h_nls5, h_peb5, h_gls9, h_wls9, h_nls9, h_peb9];
     leg_str = {'$K{=}3$, SVD [Chassagne~2025]', ...
-               '$K{=}5$, GLS', '$K{=}5$, WLS', '$K{=}5$, NLS', '$K{=}5$, PEB (bound)', ...
-               '$K{=}9$, GLS', '$K{=}9$, WLS', '$K{=}9$, NLS', '$K{=}9$, PEB (bound)'};
+               '$K{=}5$, GLS', '$K{=}5$, WLS', '$K{=}5$, NLS', '$K{=}5$, PEB', ...
+               '$K{=}9$, GLS', '$K{=}9$, WLS', '$K{=}9$, NLS', '$K{=}9$, PEB'};
     lg = legend(ax, h_leg, leg_str, 'Interpreter','latex','FontSize',6.5, ...
         'Location','southeast','Box','on','NumColumns',2);
 else
