@@ -61,7 +61,7 @@ orientations_DEB_K5 = [0.10,74.22,65.68,269.84,65.73,179.90,65.91,359.82,65.88,8
 orientations_DEB_K6 = [67.60,253.38,66.63,321.05,70.03,176.90,0.12,274.29,68.91,98.38,66.82,24.94];
 orientations_DEB_K7 = [65.60,353.25,2.46,10.07,66.17,273.62,64.59,196.54,62.48,130.76,2.56,191.66,63.78,68.11];
 orientations_DEB_K8 = [67.61,67.08,66.59,247.26,2.79,39.70,3.21,226.96,64.71,2.81,66.06,179.67,66.89,298.24,65.37,114.85];
-orientations_DEB_K9 = [66.06,165.39,8.73,267.05,66.75,273.80,62.42,219.37,64.16,21.63,67.15,90.96,13.90,105.06,4.52,303.11,62.04,330.31];
+orientations_DEB_K9 = [4.52,303.11,66.06,165.39,8.73,267.05,66.75,273.80,62.42,219.37,64.16,21.63,67.15,90.96,13.90,105.06,62.04,330.31];
 
 % GLS-DF-optimized orientation 
 % Conditions: MC=1 (normal situation)
@@ -74,7 +74,7 @@ orientations_GLS_DF_K9_MC10 = [0.43,336.06,8.61,110.92,11.02,244.90,20.87,334.90
 
 % ============================================================================================
 
-all_orientations = {orientations_K3, orientations_K4, orientations_DEB_K5, orientations_K6, orientations_K7, orientations_K8, orientations_DEB_K9, orientations_K10};
+all_orientations = {orientations_K3, orientations_K4, orientations_DEB_K5, orientations_K6, orientations_K7, orientations_K8, orientations_GLS_DF_K9_MC10, orientations_K10};
 K_values = [3, 4, 5, 6, 7, 8, 9, 10];
 
 all_orientations_NL = {[], [], orientations_NL_K5, [], [], [], orientations_NL_K9};
