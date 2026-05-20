@@ -167,6 +167,7 @@ if SAVE_OUTPUT
         exportgraphics(fig, [base, '.png'], 'Resolution',600,'BackgroundColor','white');
     end
     fprintf('Figures exported to: %s\n', out_local);
+    
 end
 
 %% ===== LOCAL FUNCTION =====
