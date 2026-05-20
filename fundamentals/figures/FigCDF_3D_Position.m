@@ -102,29 +102,29 @@ color_peb = [0.466, 0.674, 0.188];  % green  — PEB (bound)
 ax_fmt = {'FontName','Times New Roman','FontSize',9, ...
           'TickLabelInterpreter','latex','LineWidth',0.8,'Box','on', ...
           'GridLineStyle',':','GridAlpha',0.30, ...
-          'MinorGridLineStyle',':','MinorGridAlpha',0.15};
+          'MinorGridLineStyle',':','MinorGridAlpha',0.10};
 
 %% ===== MAIN FIGURE =====
-fig = figure('Units','inches','Position',[1 1 3.5 2.9],'Color','w');
-ax  = axes(fig,'Position',[0.115 0.135 0.865 0.848]);
+fig = figure('Units','inches','Position',[1 1 5.0*0.8 3.4*0.8],'Color','w');
+ax  = axes(fig,'Position',[0.105 0.135 0.875 0.83]);
 hold(ax,'on');
 
 % --- K=3 SVD baseline (dash-dot, lighter weight) ---
 [f,x] = ecdf(r_SVD);
-h_svd = stairs(ax, x, f, '-.', 'Color', color_svd, 'LineWidth', 1.1);
+h_svd = stairs(ax, x, f, '-.', 'Color', color_svd, 'LineWidth', 0.9);
 
 % --- K=5: solid lines ---
-[f,x] = ecdf(r_GLS5); h_gls5 = stairs(ax, x, f, '-',  'Color', color_gls, 'LineWidth', 1.4);
-[f,x] = ecdf(r_WLS5); h_wls5 = stairs(ax, x, f, '-',  'Color', color_wls, 'LineWidth', 1.4);
-[f,x] = ecdf(r_NLS5); h_nls5 = stairs(ax, x, f, '-',  'Color', color_nls, 'LineWidth', 1.4);
-[f,x] = ecdf(r_PEB5); h_peb5 = stairs(ax, x, f, '-',  'Color', color_peb, 'LineWidth', 1.4);
+[f,x] = ecdf(r_GLS5); h_gls5 = stairs(ax, x, f, '-',  'Color', color_gls, 'LineWidth', 0.75);
+[f,x] = ecdf(r_WLS5); h_wls5 = stairs(ax, x, f, '-',  'Color', color_wls, 'LineWidth', 0.75);
+[f,x] = ecdf(r_NLS5); h_nls5 = stairs(ax, x, f, '-',  'Color', color_nls, 'LineWidth', 0.75);
+[f,x] = ecdf(r_PEB5); h_peb5 = stairs(ax, x, f, '-',  'Color', color_peb, 'LineWidth', 0.75);
 
 % --- K=9: dashed lines (same colors) ---
 if SHOW_K9
-    [f,x] = ecdf(r_GLS9); h_gls9 = stairs(ax, x, f, '--', 'Color', color_gls, 'LineWidth', 1.4);
-    [f,x] = ecdf(r_WLS9); h_wls9 = stairs(ax, x, f, '--', 'Color', color_wls, 'LineWidth', 1.4);
-    [f,x] = ecdf(r_NLS9); h_nls9 = stairs(ax, x, f, '--', 'Color', color_nls, 'LineWidth', 1.4);
-    [f,x] = ecdf(r_PEB9); h_peb9 = stairs(ax, x, f, '--', 'Color', color_peb, 'LineWidth', 1.4);
+    [f,x] = ecdf(r_GLS9); h_gls9 = stairs(ax, x, f, '--', 'Color', color_gls, 'LineWidth', 1.5);
+    [f,x] = ecdf(r_WLS9); h_wls9 = stairs(ax, x, f, '--', 'Color', color_wls, 'LineWidth', 1.5);
+    [f,x] = ecdf(r_NLS9); h_nls9 = stairs(ax, x, f, '--', 'Color', color_nls, 'LineWidth', 1.5);
+    [f,x] = ecdf(r_PEB9); h_peb9 = stairs(ax, x, f, '--', 'Color', color_peb, 'LineWidth', 1.5);
 end
 
 % 90th-percentile reference line
@@ -144,7 +144,7 @@ if SHOW_K9
     leg_str = {'$K{=}3$, SVD [Chassagne~2025]', ...
                '$K{=}5$, GLS', '$K{=}5$, WLS', '$K{=}5$, NLS', '$K{=}5$, PEB', ...
                '$K{=}9$, GLS', '$K{=}9$, WLS', '$K{=}9$, NLS', '$K{=}9$, PEB'};
-    lg = legend(ax, h_leg, leg_str, 'Interpreter','latex','FontSize',6.5, ...
+    lg = legend(ax, h_leg, leg_str, 'Interpreter','latex','FontSize',7, ...
         'Location','southeast','Box','on','NumColumns',2);
 else
     lg = legend(ax, [h_svd, h_gls5, h_wls5, h_nls5, h_peb5], ...
@@ -152,7 +152,7 @@ else
          '$K{=}5$, GLS', '$K{=}5$, WLS', '$K{=}5$, NLS', '$K{=}5$, PEB (bound)'}, ...
         'Interpreter','latex','FontSize',7,'Location','southeast','Box','on');
 end
-lg.ItemTokenSize = [14, 12];
+lg.ItemTokenSize = [12, 12];
 
 hold(ax,'off');
 
