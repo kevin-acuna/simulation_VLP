@@ -152,26 +152,29 @@ grid(ax_main,'on'); grid(ax_main,'minor');
 xlim(ax_main, [0, 4]);
 ylim(ax_main, [0, 1.02]);
 
-% --- Custom legend (3 columns: methods + 2 conditions) ---
-hp_GLS = plot(ax_main, NaN, NaN, '-', 'Color', color_gls, 'LineWidth', 1.4);
-hp_WLS = plot(ax_main, NaN, NaN, '-', 'Color', color_wls, 'LineWidth', 1.4);
-hp_NL  = plot(ax_main, NaN, NaN, '-', 'Color', color_nl,  'LineWidth', 1.4);
-hp_DEB = plot(ax_main, NaN, NaN, '-', 'Color', color_deb, 'LineWidth', 1.4);
-hp_v   = plot(ax_main, NaN, NaN, '-',  'Color', [0.3 0.3 0.3], 'LineWidth', 1.4);
-hp_t   = plot(ax_main, NaN, NaN, '--', 'Color', [0.3 0.3 0.3], 'LineWidth', 1.4);
+% --- Custom legend (4 methods × 2 line styles) ---
+hp_GLS_v = plot(ax_main, NaN, NaN, '-',  'Color', color_gls, 'LineWidth', 1.4);
+hp_GLS_t = plot(ax_main, NaN, NaN, '--', 'Color', color_gls, 'LineWidth', 1.4);
+hp_WLS_v = plot(ax_main, NaN, NaN, '-',  'Color', color_wls, 'LineWidth', 1.4);
+hp_WLS_t = plot(ax_main, NaN, NaN, '--', 'Color', color_wls, 'LineWidth', 1.4);
+hp_NL_v  = plot(ax_main, NaN, NaN, '-',  'Color', color_nl,  'LineWidth', 1.4);
+hp_NL_t  = plot(ax_main, NaN, NaN, '--', 'Color', color_nl,  'LineWidth', 1.4);
+hp_DEB_v = plot(ax_main, NaN, NaN, '-',  'Color', color_deb, 'LineWidth', 1.4);
+hp_DEB_t = plot(ax_main, NaN, NaN, '--', 'Color', color_deb, 'LineWidth', 1.4);
 
-lg = legend([hp_GLS, hp_v, hp_WLS, hp_t, hp_NL, hp_DEB], ...
-    {'GLS', 'Vertical $n_r$', 'WLS', 'Random tilt', 'NLS', 'DEB'}, ...
-    'Interpreter','latex','FontSize',7,'NumColumns',3, ...
+lg = legend([hp_GLS_v, hp_GLS_t, hp_WLS_v, hp_WLS_t, hp_NL_v, hp_NL_t, hp_DEB_v, hp_DEB_t], ...
+    {'GLS (vertical)', 'GLS (tilt)', 'WLS (vertical)', 'WLS (tilt)', ...
+     'NLS (vertical)', 'NLS (tilt)', 'DEB (vertical)', 'DEB (tilt)'}, ...
+    'Interpreter','latex','FontSize',6.5,'NumColumns',2, ...
     'Location','southeast','Box','on');
-lg.ItemTokenSize = [12, 12];
+lg.ItemTokenSize = [15, 10];
 
 
 
 % --- Tilt PDF inset (top-right of CDF plot) ---
 % Visualises the random-tilt distribution that produced the "Random tilt"
 % curves in the main panel (input side of the experiment).
-ax_pdf = axes('Position',[0.62 0.45 0.27*1.2 0.33*1.2]);
+ax_pdf = axes('Position',[0.62 0.48 0.27*1.2 0.33*1.2]);
 hold(ax_pdf,'on');
 
 tilt_all_inset = d_rand.tilt_mat(:);
