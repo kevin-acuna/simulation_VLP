@@ -1,0 +1,284 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{titlesec}
+
+\titleformat{\section}{\large\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\normalsize\bfseries}{}{0pt}{}
+
+\newcommand{\reviewercomment}[1]{\noindent\textcolor{red}{\textbf{Comment:} #1}\par\vspace{6pt}}
+\newcommand{\response}{\noindent\textbf{Response:} }
+\newcommand{\change}[1]{\textcolor{blue}{#1}}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries Responses to the Reviewers' Comments}\\[12pt]
+{\large Manuscript ID: TCOM-TPS-25-XXXX}\\[8pt]
+{\large\em ``Model-Based Beam-Steered Optical Wireless Positioning with Single-LED Single-Photodiode for 3D Localization''}\\[8pt]
+by Kevin Acuna-Condori, Bastien B\'{e}chadergue, Hongyu Guan, and Luc Chassagne\\[8pt]
+\today
+\end{center}
+
+\vspace{12pt}
+
+\noindent Dear Editor and Reviewers,
+
+\vspace{6pt}
+
+\noindent Thank you for the thorough review of our manuscript and for the constructive comments that have significantly improved its quality. We have carefully revised the paper to address all concerns raised by the reviewer. Below, we provide detailed point-by-point responses.
+
+In the revised manuscript, deleted text is shown in {\color{red}red} and added text in {\color{blue}blue}. Unless otherwise stated, all equation, figure, table, section, and reference numbers refer to the revised manuscript.
+
+\vspace{6pt}
+
+\noindent\textbf{Summary of major changes:}
+\begin{itemize}[leftmargin=*]
+    \item A new Direction Error Bound (DEB) is formally defined and adopted as the primary design metric for the direction-finding stage, clearly separating it from the Position Error Bound (PEB) which serves as benchmark for the full 3D pipeline (Section~III).
+    \item A new receiver-orientation independence result (Section~VI-D) proves that \emph{all} proposed direction estimators (GLS, WLS, NLS) are mathematically independent of the receiver orientation~$\mathbf{n}_r$, supported by Monte Carlo simulations under random receiver tilts (Section~VII-A).
+    \item The nonlinear estimator is reformulated as a normalized NLS on $\mathbb{S}^2$ that is explicitly $\mathbf{n}_r$-independent and achieves the best direction-finding accuracy among all estimators (Section~V).
+    \item A new Direction-Finding Performance subsection (Section~VII-A) evaluates angular error CDF and robustness to receiver tilt independently of the distance-recovery stage.
+    \item The Section~III derivation is streamlined: the log-likelihood and score function are removed, and the FIM is stated directly via the Slepian--Bangs formula.
+    \item Latency analysis and deployment considerations are added to the Conclusion.
+\end{itemize}
+
+\vspace{12pt}
+\hrule
+\vspace{12pt}
+
+\section{Answers to Reviewer 2}
+
+\vspace{6pt}
+
+\noindent We thank the reviewer for the detailed and constructive evaluation of our manuscript. The comments have enabled us to substantially strengthen the paper. We address each point below.
+
+\vspace{12pt}
+
+%==============================================================================
+\subsection{Comment 1 --- Introduction reorganization}
+%==============================================================================
+
+\reviewercomment{The motivation of the paper is not sufficiently clear. Although many related works are cited in the Introduction, the presentation lacks a clear logical flow, and the relationships among the cited works are not well established. The Introduction should be reorganized to clearly highlight the problem being addressed, the limitations of existing approaches, and the necessity of the proposed solution.}
+
+\response We agree that the Introduction lacked a clear logical progression. We have restructured the Introduction to follow six clearly delineated blocks:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Problem statement}: GNSS unavailability indoors; RF limitations (multipath, meter-level accuracy).
+    \item \textbf{OWP as alternative}: Advantages of optical channels (confinement, immunity to EMI); NIR decoupled from illumination.
+    \item \textbf{Paradigms}: Data-driven vs.\ model-based; justification for model-based approach.
+    \item \textbf{Multi-LED to single-LED}: Table~I summarizes state-of-the-art; identifies the gap---no single-LED single-PD 3D system exists.
+    \item \textbf{Beam steering as enabler}: Mature technology in OWC (MEMS, liquid-crystal, OPA); natural extension to positioning.
+    \item \textbf{Our proposal and contributions}: Core concept paragraph followed by itemized contributions.
+\end{enumerate}
+
+\change{The revised Introduction (Section~I) follows this structure with explicit transitional sentences connecting each block. The relationships among cited works are now clearly stated within the multi-LED discussion and the single-LED survey.}
+
+%==============================================================================
+\subsection{Comment 2 --- Core concept before contributions}
+%==============================================================================
+
+\reviewercomment{The core concept and steps of the proposed method are not adequately explained before listing the contributions.}
+
+\response We have inserted a dedicated paragraph before the contributions list that summarizes the key idea of the proposed architecture:
+
+\change{A new paragraph (Section~I, before the contributions list) reads: ``The key idea is to steer a single LED through $K$ predefined orientations while a PD at an unknown position collects the resulting $K$ received-signal-strength measurements. The ratio of received powers between any two orientations cancels distance-dependent and receiver-orientation-dependent terms, yielding linear constraints on the transmitter-to-receiver direction. A closed-form eigenvector solution provides the direction estimate. Subsequently, a single cooperative measurement with both the LED and PD aligned along the estimated direction recovers the LED-to-PD distance, completing the 3D position.''}
+
+Additionally, the contributions list has been expanded from four to six items to explicitly include: the NLS estimator, the $\mathbf{n}_r$-independence result, and the Monte Carlo validation with quantitative figures.
+
+%==============================================================================
+\subsection{Comment 3 --- Distance Recovery and ``beam-forming symmetry''}
+%==============================================================================
+
+\reviewercomment{The description of the ``Distance Recovery'' stage in Section II-B2 is confusing, particularly with respect to the so-called ``beam-forming symmetry.'' The discussion appears to imply that the receiver must also be oriented as $\mathbf{n}_r = -\hat{\mathbf{n}}_d$, which contradicts the claim in the Abstract that the system uses a single PD without receiver rotation.}
+
+\response We fully acknowledge that the original wording was confusing. Two distinct stages must be clearly separated:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Direction finding} ($K$ measurements): The PD remains at an \emph{arbitrary fixed pose} throughout. No receiver rotation is needed. All proposed direction estimators (GLS, WLS, NLS) are provably independent of~$\mathbf{n}_r$ (Section~VI-D).
+    \item \textbf{Distance recovery} (1 measurement): \emph{After} direction finding is complete, a single cooperative reorientation aligns both the LED and PD along the estimated direction to maximize the ranging SNR. This is a single, one-time reorientation---not continuous rotation.
+\end{enumerate}
+
+\change{Section~II-B2 has been rewritten. The ambiguous phrase ``beam-forming symmetry'' has been removed and replaced with a transparent description: ``the LED is steered to the estimated direction $\hat{\mathbf{n}}_d$ so that its beam is directed toward the receiver, and the PD is reoriented to $\mathbf{n}_r = -\hat{\mathbf{n}}_d$ so that it faces the transmitter.'' A new Remark explicitly states that the PD reorientation is performed once, after the $K$ direction-finding measurements, contrasting with prior single-LED approaches that require continuous PD rotation. Algorithm~1 has been updated accordingly.}
+
+%==============================================================================
+\subsection{Comment 4a --- Dependence of $\mu_i(\mathbf{r})$ on $\mathbf{r}$}
+%==============================================================================
+
+\reviewercomment{In $\mu_i(\mathbf{r})$ under (10), the dependence of $h_{\text{LOS},i}(\mathbf{r})$ on $\mathbf{r}$ is unclear, since Eqs.~(2) and (3) do not explicitly involve~$\mathbf{r}$.}
+
+\response The dependence on $\mathbf{r}$ enters through $d(\mathbf{r}) = \|\mathbf{r} - \mathbf{t}\|$, $\cos\phi_i(\mathbf{r}) = \mathbf{n}_{t,i}\cdot(\mathbf{r}-\mathbf{t})/d$, and $\cos\psi(\mathbf{r}) = \mathbf{n}_r\cdot(\mathbf{t}-\mathbf{r})/d$ in Eqs.~(2)--(3), all of which are explicit functions of the receiver position~$\mathbf{r}$.
+
+\change{In the revised Section~III (Direction-Finding Observation Model), this dependence is made explicit through the factorized form $\mu_i = \eta\,Q_i^m$ (Eqs.~(8)--(10)), where both $Q_i = \mathbf{n}_{t,i}\cdot\mathbf{n}_d$ and $\eta = C\cos\psi/d^2$ are functions of~$\mathbf{r}$.}
+
+%==============================================================================
+\subsection{Comment 4b --- Sections III-A and III-B unnecessary}
+%==============================================================================
+
+\reviewercomment{Under the Gaussian noise assumption, the FIM can be directly written in the form of (16) following standard results (e.g., Kay, 1993). Therefore, Sections III-A and III-B appear unnecessary.}
+
+\response We agree. The log-likelihood derivation and score function were pedagogically motivated but unnecessary given the standard result.
+
+\change{The revised Section~III removes the former Sections~III-A (Joint Statistical Model) and III-B (Log-Likelihood and Score Function) entirely. The FIM is now stated directly via the Slepian--Bangs formula, citing Kay (1993), in the new Section~III-B (Fisher Information for Direction Estimation). This reduces the derivation by approximately 30 lines while maintaining rigor.}
+
+%==============================================================================
+\subsection{Comment 4c --- Vectors $\mathbf{u}_x$, $\mathbf{u}_y$, $\mathbf{u}_z$ undefined}
+%==============================================================================
+
+\reviewercomment{The vectors $\mathbf{u}_x$, $\mathbf{u}_y$, and $\mathbf{u}_z$ appearing above (26) are not defined.}
+
+\response We thank the reviewer for catching this oversight.
+
+\change{In Section~IV, the definition ``where $\mathbf{u}_x = [1,0,0]^{\mathsf T}$, $\mathbf{u}_y = [0,1,0]^{\mathsf T}$, $\mathbf{u}_z = [0,0,1]^{\mathsf T}$ are the standard Cartesian basis vectors'' has been added before the spherical parameterization equation.}
+
+%==============================================================================
+\subsection{Comment 4d --- GLS/WLS derivations insufficiently explained}
+%==============================================================================
+
+\reviewercomment{The derivations of the GLS and WLS estimators are not sufficiently explained, making it difficult to follow the reasoning.}
+
+\response We have added explanatory paragraphs at three key points in the derivation:
+
+\change{(1)~After the $\beta_i$ definition: a paragraph explains why the power ratio cancels distance and receiver-orientation terms. (2)~After the orthogonality condition $\mathbf{a}_i\cdot\mathbf{d}=0$: a paragraph provides the geometric interpretation (hyperplane intersection). (3)~In the WLS subsection: a paragraph clarifies when the diagonal approximation is accurate ($\mu_1 \gg \mu_i$). These additions are marked in blue in Section~VI.}
+
+%==============================================================================
+\subsection{Comment 5 --- Table I ``Arbitrary'' vs.\ model with fixed $\mathbf{n}_r$}
+%==============================================================================
+
+\reviewercomment{There is a major inconsistency between the claims in Table~I and the system model. Table~I states that the receiver orientation is ``arbitrary,'' whereas Section~II-A explicitly assumes a fixed receiver orientation $\mathbf{n}_r = [0,0,1]^{\mathsf T}$. Moreover, the derivations rely on a known~$\mathbf{n}_r$.}
+
+\response This is a central point that we have addressed comprehensively in the revision. The key insight is that the direction-finding stage is provably independent of~$\mathbf{n}_r$, while the distance-recovery stage requires a known/controlled~$\mathbf{n}_r$.
+
+\change{Three changes address this:
+\begin{enumerate}
+    \item \textbf{Section~II-A}: Generalized to $\mathbf{n}_r \in \mathbb{S}^2$ (arbitrary). We set $\mathbf{n}_r = [0,0,1]^{\mathsf T}$ in simulations for concreteness, with an explicit note that direction-finding results hold for any~$\mathbf{n}_r$.
+    \item \textbf{Section~VI-D} (new subsection ``Receiver-Orientation Independence''): Establishes formally that all three direction estimators are $\mathbf{n}_r$-independent. For GLS/WLS, the power ratios $\beta_i = (\mu_i/\mu_1)^{1/m}$ cancel the common factor~$\eta$ (which contains~$\cos\psi$ and~$d$). For NLS, the max-normalization $p_i = \hat\mu_i/\max_j\hat\mu_j$ cancels~$\eta$ through a different mechanism.
+    \item \textbf{Section~VII-A} (Robustness to Receiver Tilt): Monte Carlo simulation under random tilts (half-normal $\sigma=5^\circ$, $\max=30^\circ$) confirms degradation below~3\% for all estimators, attributable to SNR reduction rather than structural bias.
+\end{enumerate}}
+
+%==============================================================================
+\subsection{Comment 6 --- Tilt--azimuth pairs not in system model}
+%==============================================================================
+
+\reviewercomment{The tilt--azimuth pairs do not explicitly appear in the system model, and their relationship with the CRLB is unclear.}
+
+\response The tilt--azimuth parameterization $(\theta_i, \varphi_i)$ maps to the unit orientation vector via $\mathbf{n}_{t,i} = [\sin\theta_i\cos\varphi_i,\;\sin\theta_i\sin\varphi_i,\;-\cos\theta_i]^{\mathsf T}$, which then enters the channel model (Eqs.~(2)--(3)) and hence the FIM. The DEB/PEB are therefore explicit functions of the $2K$ angular variables.
+
+\change{In Section~IV, we now emphasize that substituting the spherical parameterization into the channel model makes the DEB an explicit function of the $2K$ decision variables $\{(\theta_i,\varphi_i)\}_{i=1}^K$, which the GA optimizes. The GA objective function is stated formally in Eq.~(17).}
+
+%==============================================================================
+\subsection{Comment 7 --- 2K unknowns vs.\ K measurements (underdetermined)}
+%==============================================================================
+
+\reviewercomment{The orientation set optimization involves 2K unknowns (tilt-azimuth angles), while only K measurements are available. This results in an underdetermined problem, and the solution obtained by GA may not be reliable.}
+
+\response We respectfully clarify that this is not an estimation problem but an \emph{offline system-design} problem. The $2K$ decision variables define the LED orientation set; for each candidate set, the DEB is evaluated \emph{analytically} over the entire 3D testbed using the closed-form FIM---no measurements are involved. The ``2K vs.\ K'' ratio therefore does not constitute underdetermination.
+
+Once the optimal orientation set is fixed, the \emph{online} direction-finding stage uses $K$ power measurements to recover the 2-DoF direction on $\mathbb{S}^2$, which is overdetermined for $K \geq 3$.
+
+\change{A new paragraph in Section~IV explicitly distinguishes the offline design problem from the online estimation problem and clarifies that the GA fitness evaluation is purely analytical.}
+
+%==============================================================================
+\subsection{Comment 8 --- Is position $\mathbf{r}$ fixed during optimization?}
+%==============================================================================
+
+\reviewercomment{It is unclear whether the position vector $\mathbf{r}$ is assumed to be fixed when optimizing the orientation set.}
+
+\response The position is \emph{not} fixed. The GA objective sweeps over all $|\mathcal{R}| = 1{,}792$ testbed positions and minimizes the RMS-DEB averaged over this spatial grid. The resulting orientation set is position-independent and universally deployable.
+
+\change{This is explicitly stated in the new paragraph added to Section~IV (same paragraph addressing Comment~7): ``The orientation set is optimized to minimize the RMSE of the DEB averaged over all $|\mathcal{R}|=1{,}792$ receiver positions in the 3D testbed (Table~II). The position~$\mathbf{r}$ is therefore not fixed but sweeps the spatial grid during fitness evaluation; the resulting orientation set is position-independent and can be deployed universally.''}
+
+%==============================================================================
+\subsection{Comment 9 --- Fig.~9 redundant with Fig.~2}
+%==============================================================================
+
+\reviewercomment{The results shown in Fig.~9 lead to essentially the same conclusion as those in Fig.~2 (Optimized), making Fig.~9 redundant.}
+
+\response We respectfully disagree that the figures are redundant; they address complementary perspectives:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Fig.~2 (violin plots)}: Presents the \emph{theoretical} DEB distribution across the testbed for optimized vs.\ random orientation sets---a design-level metric with no noise or Monte Carlo trials.
+    \item \textbf{Fig.~6 (CDF)}: Reports the \emph{empirical} positioning error from Monte Carlo simulations (1,000 trials $\times$ 1,792 positions) under additive noise---an operational performance metric.
+\end{itemize}
+
+These serve complementary roles: design validation (bounds) vs.\ operational assessment (estimator performance under noise). We believe both are necessary for a complete evaluation.
+
+\change{In the revised manuscript, Fig.~7 (3D scatter plot) has been replaced by the new angular CDF and tilt-robustness figure (Fig.~8), which provides genuinely new information (direction-finding performance and $\mathbf{n}_r$-independence validation). This avoids any perceived redundancy while adding content that directly addresses Comment~5.}
+
+%==============================================================================
+\subsection{Comment 10 --- Latency due to sequential measurements}
+%==============================================================================
+
+\reviewercomment{The system relies on sequential measurements over K beam orientations. If the user moves during the K measurement intervals, the position $\mathbf{r}$ may change between samples, violating the static model assumption.}
+
+\response This is a valid practical concern. We have added a quantitative latency analysis:
+
+With state-of-the-art MEMS micromirrors capable of repositioning in ${\sim}100\,\mu$s and $N=1{,}000$ samples per orientation at MHz-rate ADCs, each orientation requires approximately 1\,ms of acquisition plus 0.1\,ms of steering overhead. For $K=5$, the total pipeline (direction finding + distance recovery) requires ${\sim}6.6$\,ms. At typical pedestrian speed (1.4\,m/s), displacement during this window is ${\sim}9$\,mm---below the centimeter-level positioning accuracy of the system.
+
+\change{A new paragraph in the Conclusion (Section~VIII) states: ``The full pipeline acquires $K+1$ sequential measurements ($K$ for direction finding and one for distance recovery). For $K=5$ with state-of-the-art steering mechanisms, the total acquisition window is on the order of milliseconds, resulting in sub-centimeter displacement at pedestrian speeds.'' Future work on liquid-lens steering and intelligent refresh strategies is also discussed.}
+
+%==============================================================================
+\subsection{Comment 11 --- Missing baseline MLE and SNR performance}
+%==============================================================================
+
+\reviewercomment{The simulations only compare the proposed NL, GLS, and WLS estimators, without including existing methods or a common baseline such as maximum likelihood estimator. In addition, performance via SNR should also be provided.}
+
+\response We address the three sub-points:
+
+\textbf{(a) Baseline method:} The revised manuscript includes the deterministic SVD-based estimator of [Chassagne2025] ($K=3$) as the baseline, which represents the state-of-the-art single-LED positioning approach. Its RMSE of 11.05\,cm is reported alongside our estimators.
+
+\textbf{(b) MLE characterization:} Under the normalized Lambertian model, the NLS estimator developed in Section~V is approximately the maximum-likelihood estimator for the direction parameter. It minimizes the sum of squared residuals between observed normalized powers and the Lambertian model on~$\mathbb{S}^2$, with a free scale parameter that marginalizes over the unknown multiplicative factor. For large~$N$, this converges to the MLE. GLS is the MLE of the \emph{linearized} ratio model. A joint MLE over all $K+1$ measurements is not implementable because the $(K+1)$-th measurement is adaptive (depends on~$\hat{\mathbf{n}}_d$).
+
+\textbf{(c) SNR performance:} The revised manuscript includes Fig.~5, which plots both the RMS-DEB and RMS-PEB versus SNR for $K\in\{3,\ldots,9\}$. Both bounds decrease as $1/\sqrt{\text{SNR}}$, confirming the theoretical scaling.
+
+\change{Section~V clarifies the NLS--MLE relationship. Fig.~5 (RMS-DEB and RMS-PEB vs.\ SNR) is new. The baseline [Chassagne2025] is included in Table~III and Fig.~6.}
+
+%==============================================================================
+\subsection{Comment 12 --- CRLB with statistical metrics in Table IV}
+%==============================================================================
+
+\reviewercomment{In Table IV, the meanings of ``RMSE,'' ``CDF 90\%,'' and ``APE'' of CRLB are unclear. RMSE and APE are statistical metrics obtained from multiple Monte Carlo trials, whereas the CRLB represents a theoretical performance bound.}
+
+\response The reviewer is correct that the CRLB (now renamed PEB) is not a random variable. The metrics in the PEB row are \emph{deterministic spatial statistics} of the bound computed over the 1,792 testbed positions---not Monte Carlo statistics. Specifically: ``RMSE'' is the root-mean-square of the PEB over all positions; ``CDF~90\%'' is the 90th spatial percentile; ``APE'' is the spatial mean.
+
+\change{The row is renamed from ``CRLB'' to ``PEB'' in Table~III. A footnote now explicitly states: ``For the PEB rows, `RMSE' denotes the root-mean-square of the PEB over all testbed positions (a deterministic spatial statistic, not a Monte Carlo estimate); `CDF 90\%' is the 90th percentile of the PEB distribution across positions; `APE' is the spatial mean PEB.''}
+
+%==============================================================================
+\subsection{Comment 13 --- NL performance gap with CRLB}
+%==============================================================================
+
+\reviewercomment{Section VII-B-3) states that the NL estimator is implemented using Gauss--Newton iterations. Since Gauss--Newton is a typical implementation of MLE under Gaussian noise, it is expected to achieve the CRLB asymptotically. The observed performance gap requires further explanation.}
+
+\response The performance gap between the estimators and the bounds arises from two fundamental causes:
+
+\textbf{(i)~Two-stage decomposition:} The PEB represents the bound for \emph{joint} estimation of~$\mathbf{r}$ from all $K+1$ measurements simultaneously. All proposed estimators employ a two-stage architecture (direction finding + distance recovery). The $K$ direction-finding measurements contain distance information through absolute power levels, which the ratio/normalization approach discards by design (to achieve $\mathbf{n}_r$-independence). A joint MLE is not feasible because measurement $K+1$ is adaptive.
+
+\textbf{(ii)~Genie-aided bounds:} The PEB assumes perfect beam alignment in the $(K+1)$-th measurement ($\mathbf{n}_{t,K+1} = \mathbf{n}_d$ exactly). No practical estimator can achieve this, since the LED is steered to~$\hat{\mathbf{n}}_d$ (an estimate, not the true direction).
+
+For direction finding specifically: the gap between NLS (0.63$^\circ$) and the DEB (0.52$^\circ$) is due to NLS using uniform weighting (not Fisher-optimal) and finite-sample effects.
+
+\change{Section~VII-B now includes a paragraph explaining the two causes of the estimator--PEB gap. The NLS is characterized as an $\mathbf{n}_r$-independent iterative estimator operating on the full nonlinear model on $\mathbb{S}^2$, which explains both its superiority over GLS (no linearization) and its gap to the DEB (uniform weighting).}
+
+%==============================================================================
+\subsection{Comment 14 --- Language corrections}
+%==============================================================================
+
+\reviewercomment{Several issues in language usage should be corrected: (a) ``They presumes'' $\to$ ``They presume''; (b) grammatically broken sentence; (c) ``transformer'' $\to$ ``Transformer.''}
+
+\response We thank the reviewer for these corrections.
+
+\change{All three corrections have been applied: (a)~``presumes'' $\to$ ``presume'' (Section~I); (b)~the sentence has been restructured in the revised Introduction; (c)~``transformer'' $\to$ ``Transformer'' (Section~I). These are marked with \textcolor{red}{red}/\textcolor{blue}{blue} tracking in the revised manuscript.}
+
+\vspace{18pt}
+\hrule
+\vspace{12pt}
+
+\noindent We believe the revised manuscript comprehensively addresses all comments raised by the reviewer. The additions---particularly the DEB formulation, the $\mathbf{n}_r$-independence proof, and the new direction-finding evaluation---significantly strengthen the paper's contributions. We hope the revised version meets the standards of IEEE Transactions on Communications.
+
+\vspace{12pt}
+\noindent Sincerely,\\
+Kevin Acuna-Condori and co-authors
+
+\end{document}

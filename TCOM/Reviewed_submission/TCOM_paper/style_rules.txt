@@ -8,4 +8,9 @@ Con respecto a información para el "response letter":
 """
 \addedlate{The cooperative alignment is a \emph{sufficient} but not \emph{necessary} condition for distance recovery.  In principle, the $K$ direction-finding powers already carry range information through the $1/d^2$ dependence in~\eqref{eq:hLOS}; however, extracting $d$ from them also requires $\cos\psi$, which couples $d$ to the receiver orientation~$\mathbf{n}_r$ via~\eqref{eq:cosines}.  By forcing $\cos\phi{=}\cos\psi{=}1$, the cooperative measurement decouples distance from $\mathbf{n}_r$ and isolates $d$ in closed form, preserving $\mathbf{n}_r$-agnosticism across both stages.  An alternative broadcast formulation that avoids PD reorientation---at the cost of requiring coarse $\mathbf{n}_r$ knowledge, e.g., from an accelerometer---is discussed in Section~\ref{sec:Conclusion}.}
 """.
+5. En conclusiones el ultimo parrafo.
+May be kept for the response letter and removed here.
+"""
+\addedlate{A further direction is the broadcast distance-recovery variant noted in Section~\ref{sec:SystemModel}: by leveraging coarse receiver-orientation knowledge from an accelerometer, distance can be extracted from the $K$ direction-finding measurements alone, eliminating the cooperative $(K{+}1)$-th step and enabling simultaneous localization of multiple receivers from a single orientation scan.}
+"""
 El asesor sugirio retirarlo e inclurso en el "response letter".
