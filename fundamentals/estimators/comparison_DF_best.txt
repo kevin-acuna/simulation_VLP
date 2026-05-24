@@ -22,10 +22,90 @@
 ----------------------------------------------------------------------------
 
 
-[IGNORAR] 
-========================================================================
-Comparaciones de tiempo:
-GLS: 0.0460 ms  <  0.0469 ms
-WLS: 0.0347 ms  <  0.0358 ms 
-NLS: 6.8870 ms  <  6.1000 ms
-========================================================================
+========================================
+ GLS LATENCY BENCHMARK (K=5) — SERIAL
+========================================
+--- Direction-Finding (DF) ---
+Mean          : 28.05 us
+Median        : 25.20 us
+Std           : 11.17 us
+p5 / p95      : 24.30 / 43.00 us
+Mean [ms]     : 0.0281 ms
+
+========================================
+ WLS LATENCY BENCHMARK (K=5) — SERIAL
+========================================
+--- Direction-Finding (DF) ---
+Mean          : 22.43 us
+Median        : 18.40 us
+Std           : 31.85 us
+p5 / p95      : 17.30 / 40.10 us
+Mean [ms]     : 0.0224 ms
+
+========================================
+ GLS LATENCY BENCHMARK (K=9) — SERIAL
+========================================
+--- Direction-Finding (DF) ---
+Mean          : 38.01 us
+Median        : 31.40 us
+Std           : 39.50 us
+p5 / p95      : 29.30 / 66.30 us
+Mean [ms]     : 0.0380 ms
+
+========================================
+ WLS LATENCY BENCHMARK (K=9) — SERIAL
+========================================
+--- Direction-Finding (DF) ---
+Mean          : 26.02 us
+Median        : 21.10 us
+Std           : 54.26 us
+p5 / p95      : 19.80 / 44.70 us
+Mean [ms]     : 0.0260 ms
+
+
+========================================
+ NL-MLE LATENCY BENCHMARK (K=5) — SERIAL
+========================================
+--- Direction-Finding (DF) ---
+Mean          : 5367.54 us
+Median        : 4289.20 us
+Std           : 2940.51 us
+p5 / p95      : 3448.20 / 12512.95 us
+Mean [ms]     : 5.3675 ms
+--- fmincon Iterations (diagnostic) ---
+Mean iter     : 13.5
+Median iter   : 11.0
+p5 / p95 iter : 9 / 32
+Max iter      : 50
+
+
+========================================
+ NL-MLE LATENCY BENCHMARK (K=9) — SERIAL
+========================================
+--- Direction-Finding (DF) ---
+Mean          : 4801.35 us
+Median        : 4451.05 us
+Std           : 1227.82 us
+p5 / p95      : 3535.55 / 7242.85 us
+Mean [ms]     : 4.8014 ms
+--- fmincon Iterations (diagnostic) ---
+Mean iter     : 10.8
+Median iter   : 11.0
+p5 / p95 iter : 8 / 13
+Max iter      : 30
+
+
+========================================
+ NL-MLE LATENCY BENCHMARK (K=9) — SERIAL
+========================================
+--- Direction-Finding (DF) ---
+Mean          : 4399.01 us
+Median        : 4198.15 us
+Std           : 900.72 us
+p5 / p95      : 3451.55 / 6035.45 us
+Mean [ms]     : 4.3990 ms
+--- fmincon Iterations (diagnostic) ---
+Mean iter     : 10.8
+Median iter   : 11.0
+p5 / p95 iter : 8 / 13
+Max iter      : 37
