@@ -898,7 +898,32 @@ DEB   & 0.518 & 0.527 & $+1.69\%$ \\ \hline
     \caption{Empirical CDF of the per-position angular RMSE for $K{=}5$ orientations ($M{=}1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf{n}_r{=}[0,0,1]^{\mathsf T}$); dashed curves: random receiver tilt ($N_{\mathrm{tilt}}{=}100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma{=}5^{\circ}$, $\theta_{\max}{=}30^{\circ}$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref{subsec:nr_independence}).}
     \label{fig:NR_robust_CDF}
 \end{figure}
+\subsubsection{Computational Complexity and Latency}
+\label{subsec:complexity}
+
+We summarize the per-inference computational cost for direction finding under $K$ LED orientations and $N$ samples per orientation. Computing the sample means $\{\hat{\mu}_i\}_{i=1}^{K}$ via \eqref{eq:sampleMean} incurs $\mathcal{O}(NK)$ and is common to all schemes.
+
+\paragraph*{GLS}
+From \eqref{eq:var_beta_gls}--\eqref{eq:cov_beta_gls}, the full covariance
+$\mathbf{\Sigma}_\beta\in\mathbb{R}^{(K-1)\times(K-1)}$ is assembled in $\mathcal{O}(K^2)$, then inverted and used to form $\mathbf{M}_{\rm GLS}=\hat{\mathbf A}\,\mathbf{\Sigma}_\beta^{-1}\hat{\mathbf A}^{\mathsf T}$ in \eqref{eq:M_GLS_final}. The inversion dominates with $\mathcal{O}((K{-}1)^3)$ flops; the subsequent matrix products are $\mathcal{O}(K^2)$, and the $3\times3$ eigenproblem is constant-cost. Overall: $\mathcal{O}(NK)+\mathcal{O}(K^3)$.
+
+\paragraph*{WLS}
+Replacing $\mathbf{\Sigma}_\beta$ by the diagonal $\tilde{\mathbf{\Sigma}}_\beta$ in \eqref{eq:Sigma_beta_diag} removes the full covariance inversion. Forming $\mathbf{M}_{\rm WLS}=\hat{\mathbf A}\,\tilde{\mathbf{\Sigma}}_\beta^{-1}\hat{\mathbf A}^{\mathsf T}$ requires only column scalings and $K{-}1$ rank-one updates of a $3\times3$ matrix, i.e., $\mathcal{O}(K)$. The eigenproblem is again constant-cost. Overall: $\mathcal{O}(NK)+\mathcal{O}(K)$.
+
+\paragraph*{NLS}
+Solving \eqref{eq:argmin_NL} with MATLAB's \texttt{fmincon} (SQP) optimizes over the direction $\mathbf{v}\in\mathbb{S}^2$ and scale $\hat\eta$---a constant-size parameter vector of four variables---subject to the unit-sphere equality constraint and box bounds. At each iteration, the cost function~\eqref{eq:NLS_cost} is evaluated in $\mathcal{O}(K)$ (one term per orientation), and the SQP subproblem has constant dimension. With $T_{\rm NLS}$ iterations, the per-estimate cost is $\mathcal{O}(NK)+\mathcal{O}(T_{\rm NLS}\,K)$.
+
+Figure~\ref{fig:latency} reports the measured computation latency per direction estimate for $K{=}5$ (powers pre-acquired). WLS and GLS complete with median latencies of $0.018$\,ms and $0.025$\,ms, respectively, consistent with their closed-form $\mathcal{O}(K)$ and compact $\mathcal{O}(K^3)$ structures acting on a small $(K{-}1)\times(K{-}1)$ system followed by a constant-cost $3\times3$ eigensolve. By contrast, NLS requires a median of $4.29$\,ms---over two orders of magnitude slower---due to the iterative constrained nonlinear solve (median $11$ SQP iterations). The 90\% intervals (p5--p95) shown in the figure further reveal that NLS exhibits substantial tail variability ($3.45$--$12.51$\,ms), whereas GLS and WLS remain tightly concentrated below $0.05$\,ms. These measurements corroborate the complexity analysis: closed-form WLS/GLS enable real-time direction finding without fingerprinting or model retraining, whereas NLS is latency-limited.
 }% end added
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_Time.png}
+    \caption{\added{Computation latency of the GLS, WLS, and NLS direction-finding estimators for $K{=}5$. Markers denote the median and mean over all testbed positions; whiskers span the 90\% interval (p5--p95). The dashed line marks the $1$\,ms threshold.}}
+    \label{fig:latency}
+\end{figure}
+
+
 
 %.............................................................
 \subsection{\added{3D Positioning Performance}}
@@ -949,36 +974,6 @@ The APE values track the same ordering as RMSE and \(\mathrm{CDF}_{90\%}\), indi
 \end{figure}
 
 
-\subsection{Computational Complexity}
-\label{subsec:complexity}
-
-We summarize the per-inference computational cost for direction finding under \(K\) LED orientations and \(N\) samples per orientation; computing the sample means \(\{\hat{\mu}_i\}_{i=1}^{K}\) via \eqref{eq:sampleMean} incurs \(\mathcal{O}(NK)\) and is common to all schemes. We next detail the direction–finding estimators (GLS/WLS/\added{NLS}); the subsequent distance–recovery step is identical across methods and requires constant time, as given by \eqref{eq:dhat}.
-
-\subsubsection{GLS}
-From \eqref{eq:var_beta_gls}–\eqref{eq:cov_beta_gls} we assemble the full covariance
-\(\mathbf{\Sigma}_\beta\in\mathbb{R}^{(K-1)\times(K-1)}\) (cost \(\mathcal{O}(K^2)\)), then factor it (Cholesky) and apply the solves needed to build \(\mathbf{M}_{\rm GLS}=\hat{\mathbf A}\,\mathbf{\Sigma}_\beta^{-1}\hat{\mathbf A}^{\mathsf T}\) in \eqref{eq:M_GLS_final}. The factorization dominates with \(\mathcal{O}((K-1)^3)\) flops; the subsequent triangular solves are \(\mathcal{O}(K^2)\).
-The eigenproblem is \(3\times3\) and thus constant-cost. Overall, the cost per position estimate is $\mathcal{O}(NK)~+~\mathcal{O}(K^2)~+~\mathcal{O}(K^3)$
-with GLS.
-
-\subsubsection{WLS}
-Replacing \(\mathbf{\Sigma}_\beta\) by the diagonal \(\tilde{\mathbf{\Sigma}}_\beta\) in \eqref{eq:Sigma_beta_diag} removes the full covariance inversion. Forming \(\mathbf{M}_{\rm WLS}=\hat{\mathbf A}\,\tilde{\mathbf{\Sigma}}_\beta^{-1}\hat{\mathbf A}^{\mathsf T}\) requires only column scalings and a \(3\times( K-1)\)–by–\((K-1)\times 3\) product, i.e., \(\mathcal{O}(K)\). The final eigenproblem is again constant-cost. Hence, the cost per position estimate is 
-\(
-\mathcal{O}(NK)~+~\mathcal{O}(K)\;
-\)
-with WLS.
-
-\subsubsection{\added{NLS}}
-\added{Solving \eqref{eq:argmin_NL} with MATLAB's \texttt{fmincon} (interior-point) optimizes over the direction $\mathbf{v}\in\mathbb{S}^2$ and scale $\hat\eta$ (a constant-size parameter vector) subject to $K$ inequality constraints. At each iteration, the solver evaluates the cost gradient and constraint Jacobian, both requiring $\mathcal{O}(K)$ operations (one term per orientation in~\eqref{eq:NLS_cost}), and solves a constant-size linear system for the Newton step. With $T_{\rm NLS}$ interior-point iterations, the per-estimate cost is $\mathcal{O}(NK)+\mathcal{O}(T_{\rm NLS}K)$.}
-
-Figure~\ref{fig:latency} reports the average end-to-end computation time per 3D estimate (powers pre-acquired). For \(K{=}5\), WLS and GLS complete in \(0.022\)~ms and \(0.027\)~ms, respectively, while \added{NLS} requires \(85.331\)~ms; for \(K{=}9\), WLS and GLS remain in the tens of microseconds (\(0.026\)~ms and \(0.034\)~ms), whereas \added{NLS} increases to \(126.079\)~ms. The growth from \(K{=}5\) to \(K{=}9\) is modest for WLS (\(+18\%\)) and GLS (\(+26\%\)), consistent with their \(\mathcal{O}(K)\) and small \(\mathcal{O}(K^3)\) components, noting that the cubic term in GLS acts on a compact \((K{-}1)\times(K{-}1)\) system followed by a constant-cost \(3\times3\) eigensolve. By contrast, \added{NLS} is two to three orders of magnitude slower and increases by \(\approx48\%\) with \(K\) due to the constrained nonlinear solve performed with MATLAB's \texttt{fmincon} (interior-point), which repeatedly evaluates \(K\)-sized Jacobians as part of the iteration. These measurements corroborate the complexity analysis above: closed-form WLS/GLS enable real-time inference without fingerprinting or model retraining, whereas \added{NLS} is latency-limited.
-
-
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_Time.png}
-    \caption{Computation latency of the \added{NLS}, GLS, and WLS estimators for \(K=5\) and \(K=9\).}
-    \label{fig:latency}
-\end{figure}
 
 
 % *******************************************
@@ -991,7 +986,7 @@ This paper introduced a beam–steered single-LED, single-PD OWP architecture th
 We proposed a two-stage process: (i) direction finding from \(K\) steered orientations, followed by (ii) distance recovery from a single beam-aligned power measurement. A full \added{DEB and PEB} analysis characterized identifiability (\(K\!\ge\!3\)) and showed the benefits of overdetermination (\(K\!\ge\!4\)). A GA-based orientation-set optimizer minimized the RMSE \added{DEB} across a 3D testbed and yielded practical steering patterns. Additionally, we introduce a ratio-based linearization of the Lambertian power model that yields closed-form GLS/WLS direction estimators for stage (i). \added{We showed (Section~\ref{subsec:nr_independence}) that all three proposed direction estimators (GLS, WLS, NLS) are mathematically independent of the receiver orientation $\mathbf{n}_r$, which eliminates the need for receiver pose calibration during the direction-finding stage.}
 
 \added{Monte Carlo simulations over $1{,}792$ testbed positions with $1{,}000$ trials confirmed the effectiveness of the proposed framework. For direction finding with $K{=}5$, all estimators achieved sub-degree angular RMSE: NLS $0.63^\circ$, GLS $0.66^\circ$, WLS $0.77^\circ$, with the DEB at $0.52^\circ$. For full 3D positioning, NLS attained RMSE $2.40$\,cm and GLS $2.52$\,cm at $K{=}5$, tracking the PEB ($1.64$\,cm) within a factor $\approx1.5\times$; increasing to $K{=}9$ improved NLS to $1.47$\,cm and GLS to $1.78$\,cm. All proposed estimators substantially outperformed the deterministic $K{=}3$ baseline~\cite{Chassagne2025} ($11.05$\,cm).
-Importantly, GLS/WLS reduce inference to a single $3\times3$ eigenproblem, yielding $\mu$s-level latency ($\approx0.03$\,ms), while NLS requires $\approx85$\,ms due to its iterative constrained optimization. Furthermore, under random receiver tilts (half-normal, $\sigma{=}5^\circ$, $\max{=}30^\circ$), all estimators degrade by less than $3\%$, confirming that receiver-orientation variations have negligible effect on direction-finding accuracy, as established analytically in Section~\ref{subsec:nr_independence}.}
+Importantly, GLS/WLS reduce inference to a single $3\times3$ eigenproblem, yielding $\mu$s-level latency ($\approx0.025$\,ms), while NLS requires $\approx4.3$\,ms due to its iterative SQP-based constrained optimization. Furthermore, under random receiver tilts (half-normal, $\sigma{=}5^\circ$, $\max{=}30^\circ$), all estimators degrade by less than $3\%$, confirming that receiver-orientation variations have negligible effect on direction-finding accuracy, as established analytically in Section~\ref{subsec:nr_independence}.}
 
 \added{Beyond accuracy, direction finding constitutes the core enabling stage of the architecture. It is fully passive on the receiver side (the PD remains at an arbitrary fixed orientation during the $K$ measurements), requires no receiver pose calibration, and the same periodic $K$-orientation scan can serve multiple receivers simultaneously. Once the direction $\hat{\mathbf{n}}_d$ is known, it enables cooperative beam alignment---steering the LED toward the PD and reorienting the PD toward the LED---which maximizes the link SNR for a subsequent distance-recovery measurement that completes the 3D position. Thus, beam-steering complexity is concentrated in the infrastructure (a single source), while the receiver requires only a single PD and one cooperative reorientation for the ranging step.}
 \added{The full pipeline acquires $K+1$ sequential measurements ($K$ for direction finding and one for distance recovery). For $K=5$ with state-of-the-art steering mechanisms, the total acquisition window is on the order of milliseconds, resulting in sub-centimeter displacement at pedestrian speeds.}
