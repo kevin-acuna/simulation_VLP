@@ -36,7 +36,7 @@ save_files   = 1;
 % We define sigma2(SNR) = sigma2_0dB / 10^(SNR/10), where sigma2_0dB is the
 % noise at SNR=0 dB, calibrated so that sigma2_nominal → 14 dB.
 SNR_nominal_dB = 14;       % SNR corresponding to sigma2 in system_params.m
-SNR_dB         = 0:5:50;   % 11 SNR points [dB]
+SNR_dB         = 20:5:50;   % 11 SNR points [dB]
 
 if TEST_MODE
     M_trials = 50;
@@ -146,9 +146,6 @@ fprintf('TEST_MODE  : %d\n', TEST_MODE);
 fprintf('Workers    : %d\n', pool.NumWorkers);
 fprintf('%s\n\n', repmat('=', 1, 70));
 
-options_nl = optimoptions('fmincon', 'Display', 'none', 'Algorithm', 'sqp', ...
-    'StepTolerance', 1e-12, 'OptimalityTolerance', 1e-12, ...
-    'MaxFunctionEvaluations', 5000, 'MaxIterations', 1000);
 rad2deg_factor = 180 / pi;
 
 %% 4. Main SNR Sweep Loop
@@ -256,21 +253,9 @@ for i_snr = 1:nSNR
             estPos_wls = T + v_est_wls .* d_est;
             pos_WLS_mc(mc) = norm(realPos_i - estPos_wls);
             
-            % ===== NLS =====
-            p_means = mean(P_raw_nl, 1);
-            max_p = max(p_means); if max_p <= 0; max_p = 1e-12; end
-            p_target = p_means / max_p;
-            [~, max_idx] = max(p_target);
-            best_n_t = n_t_nl(max_idx, :);
-            x0_nl = [best_n_t(1), best_n_t(2), best_n_t(3), 1.0];
-            lb_nl = [-1, -1, -1, 1e-3]; ub_nl = [1, 1, 0, 10];
-            obj_fcn = @(vars) mle_cost_function(vars, p_target, n_t_nl, m_t);
-            nonlcon_fn = @(vars) sphere_constraint(vars);
-            [sol, ~, ~] = fmincon(obj_fcn, x0_nl, [], [], [], [], ...
-                lb_nl, ub_nl, nonlcon_fn, options_nl);
-            nrm_nl = norm(sol(1:3));
-            if nrm_nl < 1e-12; nrm_nl = 1e-12; end
-            v_est_nl = sol(1:3) / nrm_nl;
+            % ===== NLS (lsqnonlin/LM via core function) =====
+            d_hat_nl = vlp_nls_lm(n_t_nl', P_raw_nl, m_t);
+            v_est_nl = d_hat_nl' / norm(d_hat_nl);
             ang_NLS_mc(mc) = acos(max(-1, min(1, v_true' * v_est_nl'))) * rad2deg_factor;
             % 3D: distance recovery
             param_t_ax = {T, v_est_nl, P_t, m_t};
@@ -389,20 +374,4 @@ fprintf('Full workspace saved to: %s\n', fullfile(results_subdir, 'workspace_ful
 fprintf('\nLog saved to: %s\n', log_filename);
 diary off;
 
-% =========================================================================
-% LOCAL FUNCTIONS
-% =========================================================================
-function F = mle_cost_function(vars, p_target, n_t, m_t)
-    v = vars(1:3)';
-    eta = vars(4);
-    F = 0;
-    for i = 1:size(n_t, 1)
-        Q_pos = max(0, dot(n_t(i,:), v));
-        F = F + (eta * Q_pos^m_t - p_target(i))^2;
-    end
-end
-
-function [c, ceq] = sphere_constraint(vars)
-    c = [];
-    ceq = vars(1)^2 + vars(2)^2 + vars(3)^2 - 1;
-end
+% NLS estimator is in core/vlp_nls_lm.m (lsqnonlin/Levenberg-Marquardt)
