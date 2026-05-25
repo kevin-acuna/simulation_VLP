@@ -1,0 +1,357 @@
+======================================================================
+ RMSE vs SNR SIMULATION LOG
+======================================================================
+Date       : 25-May-2026 13:45:04
+K (N_or)   : 5
+M_trials   : 500
+N_pos      : 605
+N_samples  : 1000
+SNR range  : [-30, 40] dB, step 10 dB (8 points)
+SNR_nominal: 14 dB (sigma2 = 3.0000e-14 W^2)
+sigma2_0dB : 7.5357e-13 W^2
+TEST_MODE  : 0
+Workers    : 24
+======================================================================
+
+
+--- SNR = -30 dB (sigma2 = 7.5357e-10) ---
+  [SNR=-30 dB] pos 20/605
+  [SNR=-30 dB] pos 40/605
+  [SNR=-30 dB] pos 120/605
+  [SNR=-30 dB] pos 240/605
+  [SNR=-30 dB] pos 300/605
+  [SNR=-30 dB] pos 60/605
+  [SNR=-30 dB] pos 180/605
+  [SNR=-30 dB] pos 260/605
+  [SNR=-30 dB] pos 140/605
+  [SNR=-30 dB] pos 200/605
+  [SNR=-30 dB] pos 320/605
+  [SNR=-30 dB] pos 80/605
+  [SNR=-30 dB] pos 100/605
+  [SNR=-30 dB] pos 160/605
+  [SNR=-30 dB] pos 220/605
+  [SNR=-30 dB] pos 280/605
+  [SNR=-30 dB] pos 420/605
+  [SNR=-30 dB] pos 480/605
+  [SNR=-30 dB] pos 340/605
+  [SNR=-30 dB] pos 360/605
+  [SNR=-30 dB] pos 400/605
+  [SNR=-30 dB] pos 460/605
+  [SNR=-30 dB] pos 440/605
+  [SNR=-30 dB] pos 380/605
+  [SNR=-30 dB] pos 500/605
+  [SNR=-30 dB] pos 520/605
+  [SNR=-30 dB] pos 560/605
+  [SNR=-30 dB] pos 540/605
+  [SNR=-30 dB] pos 580/605
+  [SNR=-30 dB] pos 600/605
+  [SNR=-30 dB] pos 605/605
+  Elapsed: 92.7 s (0.15 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 56.238 | WLS: 72.746 | NLS: 59.340 | DEB: 106.169
+  3D RMSE  [cm]  — GLS: 1172930318.87 | WLS: 1280854049.97 | NLS: 1189233811.49 | PEB: 322.82
+  Avg time/SNR: 92.7 s | Remaining: ~10.8 min (7 SNR points left)
+
+--- SNR = -20 dB (sigma2 = 7.5357e-11) ---
+  [SNR=-20 dB] pos 20/605
+  [SNR=-20 dB] pos 40/605
+  [SNR=-20 dB] pos 240/605
+  [SNR=-20 dB] pos 120/605
+  [SNR=-20 dB] pos 300/605
+  [SNR=-20 dB] pos 60/605
+  [SNR=-20 dB] pos 180/605
+  [SNR=-20 dB] pos 140/605
+  [SNR=-20 dB] pos 260/605
+  [SNR=-20 dB] pos 80/605
+  [SNR=-20 dB] pos 320/605
+  [SNR=-20 dB] pos 200/605
+  [SNR=-20 dB] pos 100/605
+  [SNR=-20 dB] pos 220/605
+  [SNR=-20 dB] pos 160/605
+  [SNR=-20 dB] pos 280/605
+  [SNR=-20 dB] pos 420/605
+  [SNR=-20 dB] pos 360/605
+  [SNR=-20 dB] pos 480/605
+  [SNR=-20 dB] pos 400/605
+  [SNR=-20 dB] pos 440/605
+  [SNR=-20 dB] pos 460/605
+  [SNR=-20 dB] pos 380/605
+  [SNR=-20 dB] pos 500/605
+  [SNR=-20 dB] pos 340/605
+  [SNR=-20 dB] pos 560/605
+  [SNR=-20 dB] pos 540/605
+  [SNR=-20 dB] pos 520/605
+  [SNR=-20 dB] pos 580/605
+  [SNR=-20 dB] pos 600/605
+  [SNR=-20 dB] pos 605/605
+  Elapsed: 84.5 s (0.14 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 33.617 | WLS: 49.435 | NLS: 32.867 | DEB: 33.574
+  3D RMSE  [cm]  — GLS: 532339481.56 | WLS: 714555650.40 | NLS: 508322395.51 | PEB: 102.09
+  Avg time/SNR: 88.6 s | Remaining: ~8.9 min (6 SNR points left)
+
+--- SNR = -10 dB (sigma2 = 7.5357e-12) ---
+  [SNR=-10 dB] pos 40/605
+  [SNR=-10 dB] pos 20/605
+  [SNR=-10 dB] pos 240/605
+  [SNR=-10 dB] pos 120/605
+  [SNR=-10 dB] pos 300/605
+  [SNR=-10 dB] pos 180/605
+  [SNR=-10 dB] pos 60/605
+  [SNR=-10 dB] pos 140/605
+  [SNR=-10 dB] pos 80/605
+  [SNR=-10 dB] pos 260/605
+  [SNR=-10 dB] pos 320/605
+  [SNR=-10 dB] pos 220/605
+  [SNR=-10 dB] pos 200/605
+  [SNR=-10 dB] pos 100/605
+  [SNR=-10 dB] pos 280/605
+  [SNR=-10 dB] pos 160/605
+  [SNR=-10 dB] pos 360/605
+  [SNR=-10 dB] pos 420/605
+  [SNR=-10 dB] pos 460/605
+  [SNR=-10 dB] pos 380/605
+  [SNR=-10 dB] pos 480/605
+  [SNR=-10 dB] pos 400/605
+  [SNR=-10 dB] pos 340/605
+  [SNR=-10 dB] pos 440/605
+  [SNR=-10 dB] pos 500/605
+  [SNR=-10 dB] pos 540/605
+  [SNR=-10 dB] pos 560/605
+  [SNR=-10 dB] pos 580/605
+  [SNR=-10 dB] pos 605/605
+  [SNR=-10 dB] pos 520/605
+  [SNR=-10 dB] pos 600/605
+  Elapsed: 83.5 s (0.14 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 12.988 | WLS: 21.634 | NLS: 10.086 | DEB: 10.617
+  3D RMSE  [cm]  — GLS: 98164741.26 | WLS: 239574619.93 | NLS: 62706913.99 | PEB: 32.28
+  Avg time/SNR: 86.9 s | Remaining: ~7.2 min (5 SNR points left)
+
+--- SNR = +0 dB (sigma2 = 7.5357e-13) ---
+  [SNR=+0 dB] pos 40/605
+  [SNR=+0 dB] pos 20/605
+  [SNR=+0 dB] pos 240/605
+  [SNR=+0 dB] pos 120/605
+  [SNR=+0 dB] pos 300/605
+  [SNR=+0 dB] pos 180/605
+  [SNR=+0 dB] pos 60/605
+  [SNR=+0 dB] pos 80/605
+  [SNR=+0 dB] pos 140/605
+  [SNR=+0 dB] pos 260/605
+  [SNR=+0 dB] pos 220/605
+  [SNR=+0 dB] pos 320/605
+  [SNR=+0 dB] pos 200/605
+  [SNR=+0 dB] pos 280/605
+  [SNR=+0 dB] pos 160/605
+  [SNR=+0 dB] pos 100/605
+  [SNR=+0 dB] pos 380/605
+  [SNR=+0 dB] pos 360/605
+  [SNR=+0 dB] pos 460/605
+  [SNR=+0 dB] pos 420/605
+  [SNR=+0 dB] pos 400/605
+  [SNR=+0 dB] pos 480/605
+  [SNR=+0 dB] pos 340/605
+  [SNR=+0 dB] pos 440/605
+  [SNR=+0 dB] pos 500/605
+  [SNR=+0 dB] pos 540/605
+  [SNR=+0 dB] pos 520/605
+  [SNR=+0 dB] pos 580/605
+  [SNR=+0 dB] pos 600/605
+  [SNR=+0 dB] pos 605/605
+  [SNR=+0 dB] pos 560/605
+  Elapsed: 80.7 s (0.13 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 4.098 | WLS: 6.559 | NLS: 2.858 | DEB: 3.357
+  3D RMSE  [cm]  — GLS: 14811844.68 | WLS: 63774346.44 | NLS: 11.37 | PEB: 10.21
+  Avg time/SNR: 85.4 s | Remaining: ~5.7 min (4 SNR points left)
+
+--- SNR = +10 dB (sigma2 = 7.5357e-14) ---
+  [SNR=+10 dB] pos 40/605
+  [SNR=+10 dB] pos 20/605
+  [SNR=+10 dB] pos 240/605
+  [SNR=+10 dB] pos 120/605
+  [SNR=+10 dB] pos 300/605
+  [SNR=+10 dB] pos 60/605
+  [SNR=+10 dB] pos 180/605
+  [SNR=+10 dB] pos 80/605
+  [SNR=+10 dB] pos 140/605
+  [SNR=+10 dB] pos 260/605
+  [SNR=+10 dB] pos 200/605
+  [SNR=+10 dB] pos 220/605
+  [SNR=+10 dB] pos 320/605
+  [SNR=+10 dB] pos 160/605
+  [SNR=+10 dB] pos 280/605
+  [SNR=+10 dB] pos 100/605
+  [SNR=+10 dB] pos 420/605
+  [SNR=+10 dB] pos 360/605
+  [SNR=+10 dB] pos 460/605
+  [SNR=+10 dB] pos 340/605
+  [SNR=+10 dB] pos 440/605
+  [SNR=+10 dB] pos 480/605
+  [SNR=+10 dB] pos 540/605
+  [SNR=+10 dB] pos 380/605
+  [SNR=+10 dB] pos 500/605
+  [SNR=+10 dB] pos 560/605
+  [SNR=+10 dB] pos 400/605
+  [SNR=+10 dB] pos 520/605
+  [SNR=+10 dB] pos 580/605
+  [SNR=+10 dB] pos 600/605
+  [SNR=+10 dB] pos 605/605
+  Elapsed: 80.3 s (0.13 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 1.164 | WLS: 1.389 | NLS: 0.962 | DEB: 1.062
+  3D RMSE  [cm]  — GLS: 4.53 | WLS: 7115380.14 | NLS: 3.76 | PEB: 3.23
+  Avg time/SNR: 84.3 s | Remaining: ~4.2 min (3 SNR points left)
+
+--- SNR = +20 dB (sigma2 = 7.5357e-15) ---
+  [SNR=+20 dB] pos 40/605
+  [SNR=+20 dB] pos 20/605
+  [SNR=+20 dB] pos 240/605
+  [SNR=+20 dB] pos 120/605
+  [SNR=+20 dB] pos 300/605
+  [SNR=+20 dB] pos 60/605
+  [SNR=+20 dB] pos 180/605
+  [SNR=+20 dB] pos 80/605
+  [SNR=+20 dB] pos 140/605
+  [SNR=+20 dB] pos 260/605
+  [SNR=+20 dB] pos 220/605
+  [SNR=+20 dB] pos 200/605
+  [SNR=+20 dB] pos 320/605
+  [SNR=+20 dB] pos 160/605
+  [SNR=+20 dB] pos 280/605
+  [SNR=+20 dB] pos 100/605
+  [SNR=+20 dB] pos 360/605
+  [SNR=+20 dB] pos 420/605
+  [SNR=+20 dB] pos 380/605
+  [SNR=+20 dB] pos 460/605
+  [SNR=+20 dB] pos 340/605
+  [SNR=+20 dB] pos 480/605
+  [SNR=+20 dB] pos 440/605
+  [SNR=+20 dB] pos 500/605
+  [SNR=+20 dB] pos 560/605
+  [SNR=+20 dB] pos 400/605
+  [SNR=+20 dB] pos 580/605
+  [SNR=+20 dB] pos 520/605
+  [SNR=+20 dB] pos 600/605
+  [SNR=+20 dB] pos 540/605
+  [SNR=+20 dB] pos 605/605
+  Elapsed: 81.3 s (0.13 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 0.362 | WLS: 0.430 | NLS: 0.464 | DEB: 0.336
+  3D RMSE  [cm]  — GLS: 1.40 | WLS: 1.65 | NLS: 1.76 | PEB: 1.02
+  Avg time/SNR: 83.8 s | Remaining: ~2.8 min (2 SNR points left)
+
+--- SNR = +30 dB (sigma2 = 7.5357e-16) ---
+  [SNR=+30 dB] pos 40/605
+  [SNR=+30 dB] pos 20/605
+  [SNR=+30 dB] pos 240/605
+  [SNR=+30 dB] pos 120/605
+  [SNR=+30 dB] pos 300/605
+  [SNR=+30 dB] pos 60/605
+  [SNR=+30 dB] pos 180/605
+  [SNR=+30 dB] pos 80/605
+  [SNR=+30 dB] pos 140/605
+  [SNR=+30 dB] pos 260/605
+  [SNR=+30 dB] pos 220/605
+  [SNR=+30 dB] pos 200/605
+  [SNR=+30 dB] pos 160/605
+  [SNR=+30 dB] pos 320/605
+  [SNR=+30 dB] pos 100/605
+  [SNR=+30 dB] pos 280/605
+  [SNR=+30 dB] pos 360/605
+  [SNR=+30 dB] pos 460/605
+  [SNR=+30 dB] pos 420/605
+  [SNR=+30 dB] pos 440/605
+  [SNR=+30 dB] pos 540/605
+  [SNR=+30 dB] pos 480/605
+  [SNR=+30 dB] pos 380/605
+  [SNR=+30 dB] pos 400/605
+  [SNR=+30 dB] pos 500/605
+  [SNR=+30 dB] pos 340/605
+  [SNR=+30 dB] pos 560/605
+  [SNR=+30 dB] pos 580/605
+  [SNR=+30 dB] pos 520/605
+  [SNR=+30 dB] pos 600/605
+  [SNR=+30 dB] pos 605/605
+  Elapsed: 79.7 s (0.13 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 0.113 | WLS: 0.135 | NLS: 0.334 | DEB: 0.106
+  3D RMSE  [cm]  — GLS: 0.44 | WLS: 0.52 | NLS: 1.29 | PEB: 0.32
+  Avg time/SNR: 83.2 s | Remaining: ~1.4 min (1 SNR points left)
+
+--- SNR = +40 dB (sigma2 = 7.5357e-17) ---
+  [SNR=+40 dB] pos 40/605
+  [SNR=+40 dB] pos 20/605
+  [SNR=+40 dB] pos 240/605
+  [SNR=+40 dB] pos 120/605
+  [SNR=+40 dB] pos 300/605
+  [SNR=+40 dB] pos 60/605
+  [SNR=+40 dB] pos 180/605
+  [SNR=+40 dB] pos 80/605
+  [SNR=+40 dB] pos 140/605
+  [SNR=+40 dB] pos 260/605
+  [SNR=+40 dB] pos 220/605
+  [SNR=+40 dB] pos 200/605
+  [SNR=+40 dB] pos 320/605
+  [SNR=+40 dB] pos 280/605
+  [SNR=+40 dB] pos 100/605
+  [SNR=+40 dB] pos 160/605
+  [SNR=+40 dB] pos 420/605
+  [SNR=+40 dB] pos 380/605
+  [SNR=+40 dB] pos 360/605
+  [SNR=+40 dB] pos 460/605
+  [SNR=+40 dB] pos 340/605
+  [SNR=+40 dB] pos 440/605
+  [SNR=+40 dB] pos 480/605
+  [SNR=+40 dB] pos 500/605
+  [SNR=+40 dB] pos 560/605
+  [SNR=+40 dB] pos 540/605
+  [SNR=+40 dB] pos 400/605
+  [SNR=+40 dB] pos 580/605
+  [SNR=+40 dB] pos 520/605
+  [SNR=+40 dB] pos 600/605
+  [SNR=+40 dB] pos 605/605
+  Elapsed: 84.9 s (0.14 s/pos, 0.0003 s/trial)
+  DF RMSE  [deg] — GLS: 0.035 | WLS: 0.043 | NLS: 0.320 | DEB: 0.034
+  3D RMSE  [cm]  — GLS: 0.14 | WLS: 0.17 | NLS: 1.19 | PEB: 0.10
+  Avg time/SNR: 83.5 s | Remaining: ~0.0 min (0 SNR points left)
+
+======================================================================
+ SUMMARY: RMSE vs SNR (K=5, 500 MC trials/pos, 605 positions)
+======================================================================
+
+--- Direction Finding RMSE [degrees] ---
+SNR[dB]         GLS        WLS        NLS        DEB
+-30         56.2379    72.7456    59.3400   106.1688
+-20         33.6169    49.4346    32.8667    33.5735
+-10         12.9876    21.6340    10.0863    10.6169
+0            4.0976     6.5588     2.8578     3.3574
+10           1.1640     1.3892     0.9617     1.0617
+20           0.3617     0.4301     0.4637     0.3357
+30           0.1127     0.1355     0.3336     0.1062
+40           0.0355     0.0428     0.3203     0.0336
+
+--- 3D Positioning RMSE [cm] ---
+SNR[dB]         GLS        WLS        NLS        PEB
+-30      1172930318.87 1280854049.97 1189233811.49     322.82
+-20      532339481.56 714555650.40 508322395.51     102.09
+-10      98164741.26 239574619.93 62706913.99      32.28
+0        14811844.68 63774346.44      11.37      10.21
+10             4.53 7115380.14       3.76       3.23
+20             1.40       1.65       1.76       1.02
+30             0.44       0.52       1.29       0.32
+40             0.14       0.17       1.19       0.10
+
+Total computation time: 11.1 min
+
+--- Timing per SNR point ---
+SNR[dB]       Time[s]  Time/pos[s] Time/trial[ms]
+-30              92.7        0.153         0.3064
+-20              84.5        0.140         0.2793
+-10              83.5        0.138         0.2760
+0                80.7        0.133         0.2669
+10               80.3        0.133         0.2654
+20               81.3        0.134         0.2687
+30               79.7        0.132         0.2634
+40               84.9        0.140         0.2808
+AVG              83.5        0.138         0.2759
+======================================================================
+
+Results saved to: /home/kevin/Documents/simulation_VLP/fundamentals/estimators/results/K5_RMSE_vs_SNR/K5_RMSE_vs_SNR_2026-05-25_13-56-12.mat
+Full workspace saved to: /home/kevin/Documents/simulation_VLP/fundamentals/estimators/results/K5_RMSE_vs_SNR/workspace_full.mat
+
+Log saved to: /home/kevin/Documents/simulation_VLP/fundamentals/estimators/results/K5_RMSE_vs_SNR/K5_RMSE_vs_SNR_log_2026-05-25_13-45-04.txt
