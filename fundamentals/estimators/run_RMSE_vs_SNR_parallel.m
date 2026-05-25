@@ -28,7 +28,7 @@ addpath('../core');
 % =================================================
 rng(42);
 TEST_MODE    = false;      % true = fast test (coarse grid, few trials)
-M_trials     = 500;        % Monte Carlo trials per position per SNR
+M_trials     = 1000;        % Monte Carlo trials per position per SNR
 N_or         = 5;          % Number of orientations (K=5, main operating point)
 save_files   = 1;
 
