@@ -36,11 +36,11 @@ save_files   = 1;
 % We define sigma2(SNR) = sigma2_0dB / 10^(SNR/10), where sigma2_0dB is the
 % noise at SNR=0 dB, calibrated so that sigma2_nominal → 14 dB.
 SNR_nominal_dB = 14;       % SNR corresponding to sigma2 in system_params.m
-SNR_dB         = -30:10:40; % 7 SNR points [dB]
+SNR_dB         = 0:5:50;   % 11 SNR points [dB]
 
 if TEST_MODE
     M_trials = 50;
-    SNR_dB   = [-10, 0, 14, 30];
+    SNR_dB   = [0, 14, 30, 50];
 end
 
 %% 0. Parallel Pool Setup
@@ -146,7 +146,9 @@ fprintf('TEST_MODE  : %d\n', TEST_MODE);
 fprintf('Workers    : %d\n', pool.NumWorkers);
 fprintf('%s\n\n', repmat('=', 1, 70));
 
-options_nl = optimoptions('fmincon', 'Display', 'none', 'Algorithm', 'sqp');
+options_nl = optimoptions('fmincon', 'Display', 'none', 'Algorithm', 'sqp', ...
+    'StepTolerance', 1e-12, 'OptimalityTolerance', 1e-12, ...
+    'MaxFunctionEvaluations', 5000, 'MaxIterations', 1000);
 rad2deg_factor = 180 / pi;
 
 %% 4. Main SNR Sweep Loop
@@ -192,10 +194,10 @@ for i_snr = 1:nSNR
             [~, P_clean_nl(i_dir), ~, ~] = OWC_LOS_channel(x, y, z, param_t, param_r);
         end
         
-        % --- Theoretical Bounds (DEB and PEB) ---
-        deb_val = DEB_complete(R_real, n_t_lin', T', P_t, m_t, A_det, ...
+        % --- Theoretical Bounds (DEB and PEB with NLS orientations) ---
+        deb_val = DEB_complete(R_real, n_t_nl', T', P_t, m_t, A_det, ...
             deg2rad(theta_half), deg2rad(FOV), s2, N_samples);
-        peb_val = PEB_complete(R_real, n_t_lin', T', P_t, m_t, A_det, ...
+        peb_val = PEB_complete(R_real, n_t_nl', T', P_t, m_t, A_det, ...
             deg2rad(theta_half), deg2rad(FOV), s2, N_samples);
         if isreal(deb_val) && isfinite(deb_val) && deb_val > 0
             deb_pos(i_pos) = deb_val * rad2deg_factor;
@@ -216,6 +218,7 @@ for i_snr = 1:nSNR
         pos_WLS_mc = zeros(M_trials, 1);
         pos_NLS_mc = zeros(M_trials, 1);
         
+        d_max = 5;  % max plausible distance [m] (room diagonal ≈ 2.9 m)
         for mc = 1:M_trials
             % Noisy powers (DF stage) — separate for linear and NLS
             P_raw_lin = repmat(P_clean_lin, N_samples, 1) + sqrt(s2) .* randn(N_samples, N_or);
@@ -233,7 +236,7 @@ for i_snr = 1:nSNR
             [~, P_ax, ~, ~] = OWC_LOS_channel(x, y, z, param_t_ax, param_r_ax);
             P_ax_noisy = P_ax + sqrt(s2) .* randn(1, N_samples);
             P_ax_mean = max(mean(P_ax_noisy), 1e-20);
-            d_est = sqrt(P_t*(m_t+1)*A_det / (2*pi*P_ax_mean));
+            d_est = min(sqrt(P_t*(m_t+1)*A_det / (2*pi*P_ax_mean)), d_max);
             estPos_gls = T + v_est_gls .* d_est;
             pos_GLS_mc(mc) = norm(realPos_i - estPos_gls);
             
@@ -249,7 +252,7 @@ for i_snr = 1:nSNR
             [~, P_ax, ~, ~] = OWC_LOS_channel(x, y, z, param_t_ax, param_r_ax);
             P_ax_noisy = P_ax + sqrt(s2) .* randn(1, N_samples);
             P_ax_mean = max(mean(P_ax_noisy), 1e-20);
-            d_est = sqrt(P_t*(m_t+1)*A_det / (2*pi*P_ax_mean));
+            d_est = min(sqrt(P_t*(m_t+1)*A_det / (2*pi*P_ax_mean)), d_max);
             estPos_wls = T + v_est_wls .* d_est;
             pos_WLS_mc(mc) = norm(realPos_i - estPos_wls);
             
@@ -275,7 +278,7 @@ for i_snr = 1:nSNR
             [~, P_ax, ~, ~] = OWC_LOS_channel(x, y, z, param_t_ax, param_r_ax);
             P_ax_noisy = P_ax + sqrt(s2) .* randn(1, N_samples);
             P_ax_mean = max(mean(P_ax_noisy), 1e-20);
-            d_est = sqrt(P_t*(m_t+1)*A_det / (2*pi*P_ax_mean));
+            d_est = min(sqrt(P_t*(m_t+1)*A_det / (2*pi*P_ax_mean)), d_max);
             estPos_nl = T + v_est_nl .* d_est;
             pos_NLS_mc(mc) = norm(realPos_i - estPos_nl);
         end
