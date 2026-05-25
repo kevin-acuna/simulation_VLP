@@ -36,7 +36,7 @@ save_files   = 1;
 % We define sigma2(SNR) = sigma2_0dB / 10^(SNR/10), where sigma2_0dB is the
 % noise at SNR=0 dB, calibrated so that sigma2_nominal → 14 dB.
 SNR_nominal_dB = 14;       % SNR corresponding to sigma2 in system_params.m
-SNR_dB         = 20:5:50;   % 11 SNR points [dB]
+SNR_dB         = 0:5:50;   % 11 SNR points [dB]
 
 if TEST_MODE
     M_trials = 50;
