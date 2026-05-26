@@ -1,17 +1,23 @@
 function PEB = PEB_Konly(R, nt_orientations, T, Pt, m, A_det, Psi_FOV, sigma2, N, nr)
-% PEB_Konly - Position Error Bound for K-only architecture (no K+1 measurement)
+% PEB_Konly - Broadcast Position Error Bound (PEB_B)
 %
-% Computes the CRLB for 3D position estimation using ONLY the K direction-
-% finding measurements (no cooperative distance recovery measurement).
-% This is the bound for the broadcast architecture (Proposal F).
+% Computes the CRLB for 3D position estimation using ONLY the K steered-
+% orientation measurements, without a cooperative beam-aligned measurement.
+% This is the fundamental bound for the broadcast architecture.
 %
-% KEY DIFFERENCE vs PEB_complete:
-%   - PEB_complete: J = sum_{i=1}^{K} grad_i*grad_i' + grad_{K+1}*grad_{K+1}'
-%   - PEB_Konly:    J = sum_{i=1}^{K} grad_i*grad_i'  (NO distance measurement)
+% RELATION TO PEB_complete (cooperative PEB, PEB_C):
+%   PEB_C uses: J_C = J_B + (N/sigma2) * grad_{K+1} * grad_{K+1}'
+%   PEB_B uses: J_B = (N/sigma2) * sum_{i=1}^{K} grad_i * grad_i'
+%   Since J_C = J_B + PSD, by Loewner ordering: PEB_C <= PEB_B (always).
 %
-% The K-only bound depends on n_r (unlike DEB which is n_r-independent).
-% This is because absolute power information is needed for distance recovery,
-% and the absolute power depends on cos(psi) = -n_r . n_d.
+% WHY THIS WORKS:
+%   Each mu_i(r) depends on r through n_d(r), d(r), and cos_psi(r).
+%   The gradient nabla_r mu_i captures sensitivity to all 3 components of r.
+%   With K >= 3 non-coplanar orientations, J_B is rank 3 and 3D position
+%   is identifiable from K measurements alone.
+%
+% NOTE: Unlike the DEB (n_r-independent), PEB_B depends on n_r because
+%   absolute power information (not ratios) is needed for distance recovery.
 %
 % INPUTS:
 %   R               : 3x1 vector, receiver position [x; y; z] (m)
@@ -26,7 +32,7 @@ function PEB = PEB_Konly(R, nt_orientations, T, Pt, m, A_det, Psi_FOV, sigma2, N
 %   nr              : 3x1 vector, receiver orientation (unit vector)
 %
 % OUTPUT:
-%   PEB : scalar, K-only Position Error Bound (m RMS)
+%   PEB : scalar, broadcast position error bound PEB_B (m RMS)
 
 %% Input validation
 if nargin < 10

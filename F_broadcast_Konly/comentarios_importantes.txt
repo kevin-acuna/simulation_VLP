@@ -1,0 +1,13 @@
+
+Scripts terminados y comprobados:
+sim06_PEB_vs_tilt.m
+
+
+Flujo metodologico:
+1. Se obtiene el PEB teorico.
+Luego se toman en consideracion 3 variables a estudiar:
+a. K (numero de orientaciones)
+b. Psi_1/2 (divergencia del LED)
+c. Tilt (angulo de inclinacion)
+2. Fig.1 : Estudio de impacto de K (numero de orientaciones). La grafica seria RMS vs. K para diferentes valores de Psi_1/2. (sim02)
+3. Fig.2 : Se considera un Psi_1/2 fijo y se varia el tilt a traves de diferentes K representativos. (sim6)
