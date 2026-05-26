@@ -17,7 +17,7 @@ addpath('../../core');
 % HYPERPARAMETERS
 % =================================================
 N_or     = 5;       % Number of orientations (match paper K)
-M_BENCH  = 10;      % Timed calls per position
+M_BENCH  = 100;      % Timed calls per position
 N_WARMUP = 10;      % Warm-up calls (discarded, force JIT compilation)
 
 %% 1. System Parameters

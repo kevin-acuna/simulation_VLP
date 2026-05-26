@@ -8,10 +8,10 @@ close all; clear; clc;
 
 % ── DATA  (K=5, serial benchmark, converted to ms) ────────────────────────
 %                    GLS       WLS       NLS
-med_v  = [0.02520,  0.01840,  4.28920];
-mean_v = [0.02805,  0.02243,  5.36754];
-p5_v   = [0.02430,  0.01730,  3.44820];
-p95_v  = [0.04300,  0.04010, 12.51295];
+med_v  = [0.02520,  0.01840,  0.6496];
+mean_v = [0.02805,  0.02243,  0.7124];
+p5_v   = [0.02430,  0.01730,  0.5303];
+p95_v  = [0.04300,  0.04010,  1.11445];
 
 lo = med_v - p5_v;
 hi = p95_v - med_v;
@@ -67,7 +67,7 @@ h_mn = plot(ax, x, mean_v, 'd', ...
     'LineWidth',       0.65);
 
 % ── 1 ms reference line ───────────────────────────────────────────────────
-yline(ax, 1, '--', ...
+yline(ax, 0.1, '--', ...
     'Color',                   [0.45 0.45 0.45], ...
     'LineWidth',               0.70,             ...
     'HandleVisibility',        'off',            ...
@@ -92,7 +92,7 @@ end
 
 % ── AXES limits & ticks ───────────────────────────────────────────────────
 xlim(ax, [0.45, 3.80]);
-ylim(ax, [0.010, 35]);
+ylim(ax, [0.010, 5]);
 
 set(ax, 'XTick', x, 'XTickLabel', xlbls, 'XTickLabelRotation', 0);
 set(ax, 'YTick', [0.01, 0.1, 1, 10], ...

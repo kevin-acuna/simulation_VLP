@@ -68,7 +68,8 @@ legend('GLS', 'WLS', 'NLS', 'DEB', ...
 grid on; grid minor;
 set(gca, 'FontName', 'Times New Roman', 'FontSize', 9, ...
     'TickLabelInterpreter', 'latex', 'LineWidth', 0.8, 'Box', 'on');
-xlim([SNR_dB(1), SNR_dB(end)]);
+xlim([SNR_dB(3), SNR_dB(end)]);
+ylim([1e-2 1e1])
 hold off;
 
 %% ===== FIGURE 2: 3D Positioning (Position RMSE vs SNR) =====
@@ -93,7 +94,7 @@ legend('GLS', 'WLS', 'NLS', 'PEB', ...
 grid on; grid minor;
 set(gca, 'FontName', 'Times New Roman', 'FontSize', 9, ...
     'TickLabelInterpreter', 'latex', 'LineWidth', 0.8, 'Box', 'on');
-xlim([SNR_dB(1), SNR_dB(end)]);
+xlim([SNR_dB(3), SNR_dB(end)]);
 hold off;
 
 %% ===== EXPORT =====
