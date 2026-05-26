@@ -4,33 +4,42 @@
 
 ---
 
-## 1. Resumen del Paper TCOM
+## 1. Resumen del Paper TCOM (versión RV2 — Mayo 2026)
 
-El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD para localización 3D indoor. Contribuciones principales:
+El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD para localización 3D indoor. Contribuciones principales (5 items en Section I):
 
-- **Arquitectura single-LED single-PD** con beam steering en K orientaciones
-- **DEB y PEB** (Direction/Position Error Bound) derivados analíticamente
-- **Optimización GA** del conjunto de orientaciones para minimizar DEB
-- **Tres estimadores de dirección**: GLS (closed-form, eficiente), WLS (ligero), NLS (iterativo)
-- **Proposición 1**: independencia de n_r (orientación del receptor) para los tres estimadores
-- **Resultados**: sub-grado en direction finding (GLS: 0.66°, NLS: 0.63°), cm-level en 3D (GLS: 2.5 cm)
-- **Future work declarado**: (i) validación experimental con liquid lenses, (ii) integración con OWC/beam tracking, (iii) ISAC óptico
-- **Limitación arquitectónica identificada**: la medición cooperativa K+1 requiere PD steering y no escala a N receptores (ver análisis en `analysis_architecture_limitations.md`)
+- **Arquitectura single-LED single-PD** con beam steering en K orientaciones, n_r-independiente
+- **DEB y PEB** (Direction/Position Error Bound) derivados analíticamente vía Schur complement de la FIM (Slepian-Bangs + perfil de η)
+- **Optimización GA** del conjunto de orientaciones para minimizar RMS-DEB sobre 1,792 posiciones 3D (Table III: K=3→9, RMS-DEB 1.30°→0.36°)
+- **Estimadores closed-form GLS/WLS**: ratio-based linearization → eigenvector de 3×3 matrix, latencia μs (GLS: 0.025 ms, WLS: 0.018 ms)
+- **NLS iterativo**: Levenberg-Marquardt en reparametrización esférica, near-efficient (≈1.00× DEB), latencia 0.65 ms
+- **n_r-independencia** (Section VI-C): prueba formal para los tres estimadores; validación MC con tilts aleatorios (<3% degradación)
+- **Resultados (K=5, abstract APE)**: direction finding sub-grado (GLS: 0.54°, WLS: 0.61°, NLS: 0.52°); 3D positioning cm-level (GLS: 2.00 cm, WLS: 2.25 cm, NLS: 1.90 cm); PEB: 1.64 cm RMSE
+- **Resultados K=9**: GLS 1.46 cm APE, NLS 1.26 cm APE → approaching PEB (1.10 cm)
+- **Baseline comparison**: vs. [Chassagne2025] K=3 SVD → 4.4× mejora (GLS K=5: 2.52 cm vs 11.05 cm RMSE)
+- **SNR analysis (Fig. 5 + Fig. 9)**: bounds + estimators siguen 1/√SNR; NLS tracks DEB ≈1.00×, GLS ≈1.3×, WLS ≈1.6× (gaps constantes, estructurales)
+- **Future work declarado** (Section VIII): (i) experimental validation, (ii) integration with beam-steered OWC links + intelligent refresh strategy, (iii) optical ISAC
+- **Limitación arquitectónica identificada**: la medición cooperativa K+1 requiere PD steering (una reorientación tras DF) y no escala a N receptores
+- **Puntos clave de los reviewers** (que informan extensiones):
+  - R3-C4: multipath/NLOS no abordado — extensión natural
+  - R3-C3: sincronización TX↔RX no analizada en detalle
+  - R3-C7: comparación con otros metaheurísticos (PSO, DE, SA) queda como trabajo futuro
+  - R2-C13: NLS NO es MLE (es NLS sobre targets normalizados); GLS es MLE del modelo linealizado de ratios
 
 ---
 
 ## 2. Congresos Objetivo y Deadlines
 
-> **Actualizado:** 8 Mayo 2026. Deadlines verificados en los sitios oficiales.
+> **Actualizado:** 26 Mayo 2026. Deadlines verificados en los sitios oficiales.
 
-### 2.1 ⚡ URGENTE — Deadlines en las próximas semanas
+### 2.1 ⚡ URGENTE — Deadlines en los próximos días
 
 | Congreso | Lugar | Fechas evento | **Deadline** | Tipo | Papers candidatos |
 |----------|-------|---------------|--------------|------|-------------------|
-| **ISWCS 2026** | Gold Coast, Australia | 24–26 Ago 2026 | **⚠️ 31 May 2026** | Conference (5p) | F, G, H, I |
-| **PIMRC 2026 Workshop** | Singapore | Sep–Oct 2026 | **5 Jun 2026** | Workshop (5–6p) | F, H, I, G |
+| **ISWCS 2026** | Gold Coast, Australia | 24–26 Ago 2026 | **🚨 31 May 2026** | Conference (5p) | F, G, H, I |
+| **PIMRC 2026 Workshop** | Singapore | Sep–Oct 2026 | **⚠️ 5 Jun 2026** | Workshop (5–6p) | F, H, I, G |
 
-> ISWCS: International Symposium on Wireless Communication Systems — cubre SP, localization, OWC. Venue menor pero rápido y relevante. **Deadline en 23 días.**
+> ISWCS: **Deadline en 5 días (31 Mayo).** Probablemente demasiado tarde salvo que haya trabajo ya avanzado. PIMRC Workshop en 10 días.
 
 ---
 
@@ -87,7 +96,7 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 | VTC 2026-Fall | Boston, EE.UU. | 6–9 Sep 2026 | 21 Mar 2026 | ❌ Cerrado |
 | PIMRC 2026 Symposium | Singapore | Sep–Oct 2026 | 16 Abr 2026 (firm) | ❌ Cerrado |
 | ECOC 2026 | Málaga, España | 20–24 Sep 2026 | 22 Abr 2026 (extendido) | ❌ Cerrado |
-| ISWCS 2026 | Gold Coast, AU | 24–26 Ago 2026 | 31 May 2026 | ✅ Abierto |
+| ISWCS 2026 | Gold Coast, AU | 24–26 Ago 2026 | 31 May 2026 | ⚠️ 5 días (prob. cerrado efectivo) |
 | GLOBECOM 2026 Symposium (ONS/SPC) | Macau | 7–11 Dic 2026 | 15 Mar 2026 | ❌ Cerrado |
 
 ---
@@ -96,9 +105,10 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 
 | Paper | Venue principal | Deadline | Alternativa |
 |-------|-----------------|----------|-------------|
-| **F** (broadcast K-only, sim) | GLOBECOM 2026 WS | 12 Ago 2026 | ISWCS 2026 (31 May ⚡) |
-| **H** (beam tracking) | PIMRC 2026 WS | 5 Jun 2026 | GLOBECOM 2026 WS |
-| **I** (two-stage adaptive) | PIMRC 2026 WS | 5 Jun 2026 | WCNC 2027 |
+| **F** (broadcast K-only, sim) | **GLOBECOM 2026 WS** | 12 Ago 2026 | ISAC 2026 (11 Sep) |
+| **V** ⭐ (TCOM+F exp.+NL calib.) | **TCOM / JLT** | rolling | IEEE Photonics J |
+| **H** (beam tracking) | GLOBECOM 2026 WS | 12 Ago 2026 | WCNC 2027 |
+| **I** (two-stage adaptive) | GLOBECOM 2026 WS | 12 Ago 2026 | WCNC 2027 |
 | **G** (ML observability) | ISAC 2026 | 11 Sep 2026 | WCNC 2027 |
 | **A** (ISAC óptico, exp.) | **ISAC 2026** ⭐ | 11 Sep 2026 | ICC/WCNC 2027 |
 | **L** (RL adaptativo) | **ICASSP 2027** | ~Sep–Oct 2026 | ISAC 2026 |
@@ -123,6 +133,7 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 | ID | Título tentativo | Venue | Contenido | Complejidad | Tiempo est. |
 |----|-----------------|-------|-----------|-------------|-------------|
 | **F** | *"Broadcast Beam-Steered OWP: IMU-Assisted Distance Recovery Without Cooperative Alignment"* | Conference (Workshop) | Simulación | ★★☆ | 2–3 meses |
+| **V** ⚡⭐ | *"Experimental Beam-Steered OWP with Broadcast Distance Recovery and Quasi-Lambertian Calibration"* | **Journal (TCOM / JLT)** | **Experimental** (testbed + R(φ) calibrado) | ★★☆ | 3–4 meses |
 | **A** ⚡ | *"Experimental ISAC with Gimbal-Steered LiFi: Simultaneous Indoor Positioning and High-Speed OWC"* | **Journal (TCOM / JLT)** | **Experimental** (LiFi dongle + gimbal) | ★★★ | 4–6 meses |
 | **K** ⚡ | *"Multi-LED Beam-Steered OWP: Diversity Gain and Joint Orientation Design with Mechanical Gimbals"* | **Journal (TCOM / JLT)** | **Experimental** (múltiples gimbals) | ★★★ | 5–7 meses |
 | **J** | *"Generalized Beam-Steered OWP Beyond Lambertian Emission: Bounds, Hybrid Estimator, and Reference Normalization"* | Journal (TSP / TCOM) | Simulación | ★★★ | 4–5 meses |
@@ -138,12 +149,14 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 
 *⚡ = aprovecha directamente el hardware disponible (testbed + gimbals + LiFi dongle)*
 *🤖 = trabajo ML/RL puro, portfolio GitHub, visible a industria AI*
+*⭐ = prioridad inmediata (pipeline directo F → V)*
 
 #### Dependencias entre propuestas
 
 | ID | Prerequisito académico | Prerequisito práctico (hardware) | Puede hacerse solo |
-|----|------------------------|----------------------------------|--------------------|
+|----|------------------------|----------------------------------|--------------------||
 | **F** | Solo TCOM | — | ✅ Sí, prioritario |
+| **V** ⚡⭐ | **TCOM + F + GLOBECOM** (extensión journal) | Testbed 3D (disponible) | ✅ Sí — **siguiente tras F** |
 | **A** ⚡ | Solo TCOM | LiFi dongle + gimbal (disponible) | ✅ Sí — empezar en paralelo con F |
 | **K** ⚡ | TCOM + F (arquitectura K-only multi-LED) | Múltiples gimbals (disponible) | ⚠️ Tras F |
 | **L** 🤖 | Solo TCOM + Python/RL skills | — | ✅ Sí — empezar cuando se quiera |
@@ -157,53 +170,65 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 | **M** 🤖⚡ | **L** (simulador Python como dominio origen); E independiente, no requerido | Pasantía Cambridge (3 meses) | ⚠️ Necesita L primero + pasantía |
 | **E** | Solo TCOM | — | ✅ Sí (más esfuerzo) |
 
-#### Orden de ejecución recomendado (revisado con hardware disponible)
+#### Orden de ejecución recomendado (actualizado 26 Mayo 2026)
 
 ```
-INMEDIATO (simulación, no requiere hardware):
-  F               [analytical base: K-only distance recovery]
-  L 🤖          [RL adaptativo: Python puro, ICASSP 2027, alta visibilidad ML]
-  J               [teoría NL: puede correr en paralelo con C]
+⭐ PIPELINE PRIORITARIO (lo más directo — hacer PRIMERO):
+  1. F (simulación)     [K-only distance recovery → GLOBECOM WS, deadline 12 Ago]
+  2. V (experimental)   [TCOM+F validado + R(φ) calibrado → Journal (TCOM/JLT)]
+     └→ F y V comparten framework; V extiende GLOBECOM a journal
+     └→ Testbed ya disponible; R(φ) se mide con el mismo setup
+  3. H (experimental)   [Beam tracking con Pseudo-Quad TX → Journal o ICC/WCNC 2027]
+     └→ Reutiliza mismo testbed + gimbal de V
+     └→ Extiende DF (V) a tracking dinámico: acquisition → tracking mode
+
+PARALELO (iniciar cuando pipeline F→V esté encaminado):
+  L 🤖              [RL adaptativo: Python puro, ICASSP 2027, alta visibilidad ML]
+  A ⚡              [LiFi dongle + gimbal → ISAC experimental, alto impacto]
+
+MEDIO PLAZO:
+  J               [teoría NL general: companion teórico profundo de V]
+  K ⚡            [múltiples gimbals → multi-LED experimental, muy novedoso]
+  I               [dos etapas: puede validarse con testbed]
   G               [observabilidad ML: complemento de F, bajo esfuerzo]
 
-PARALELO CON HARDWARE (aprovechar testbed + gimbals + LiFi):
-  A ⚡            [LiFi dongle + gimbal → ISAC experimental, alto impacto]
-  C + J ⚡        [C experimental, J teórico en paralelo, se alimentan mutuamente]
-
-MEDIO PLAZO (requieren más setup o más gimbals):
-  K ⚡            [múltiples gimbals → multi-LED experimental, muy novedoso]
-  H ⚡            [servo tracking real con gimbal → paper de journal]
-  I               [dos etapas: puede validarse con testbed]
-
-CAMBRIDGE (durante pasantía — máxima prioridad ese periodo):
-  M 🤖⚡         [TL + prior físico + co-authorship Haas → JSAC, impacto máximo]
+CAMBRIDGE (durante pasantía):
+  M 🤖⚡         [TL + prior físico + co-authorship Haas → JSAC]
 
 OPCIONAL / LARGO PLAZO:
-  D               [multi-receptor: tras F, bajo esfuerzo adicional]
-  E               [ML híbrido: más esfuerzo de implementación]
+  D, E, N
 ```
 
 **Mapa de dependencias visual (revisado):**
 
 ```
-                 TCOM
-           /  /  |  \  \  \
-          F   J   G   A   I   E
-         / \  |       |
-        D   K C⚡     H⚡
-            (multi-LED, tras K+testbed)
+               TCOM + GLOBECOM (enviado)
+                 |          \
+                 F           A ⚡
+                 |
+                 V ⚡⭐
+                 |
+                 H ⚡        [tracking = extensión natural de V]
+                /|\
+               / | \
+              D  K  (informa J, C como journals más profundos)
+                 |
+              J + C ⚡ (companion teórico + experimental avanzado)
+
+  Independientes: L 🤖, G, I, E, N
+  Cambridge: M (requiere L)
 ```
 
 #### Impacto vs. esfuerzo (con hardware disponible)
 
 | Zona | Propuestas | Estrategia |
 |------|-----------|------------|
-| **Inmediato (simulación)** | **F, L, J, G** | F→GLOBECOM; L→ICASSP 2027 (ML career track) |
-| **Alta prioridad experimental** | **A, C** | Hardware disponible; impacto único; Journal |
-| **Media prioridad experimental** | **K, H** | Requieren más setup; Journal |
-| **Teórico medio plazo** | **I** | Puede validarse con testbed |
-| **ML / Career track** | **L → E** | L (RL, corto) primero; E (gray-box ML) después |
-| **Opcional** | **D** | Tras F, bajo esfuerzo |
+| **⭐ Prioridad máxima** | **F → V → H** | F→GLOBECOM; V→Journal; H→Journal o conf. Pipeline directo, mismo testbed |
+| **Paralelo (simulación)** | **L** | L→ICASSP 2027 (ML career track) |
+| **Alta prioridad experimental** | **A** | Hardware disponible; impacto único; ISAC 2026 o Journal |
+| **Media prioridad experimental** | **K** | Requiere más setup; Journal |
+| **Teórico profundo** | **J, C** | J+C son versiones profundas del tema NL que V toca ligeramente |
+| **Opcional** | **D, G, I, E, N** | Bajo esfuerzo o nicho |
 
 ---
 
@@ -1320,46 +1345,150 @@ Combinar tres fuentes:
 
 ---
 
-## 4. Recomendación de Estrategia
+## 4. Recomendación de Estrategia (actualizado 26 Mayo 2026)
 
-### ⭐ Opción principal: GLOBECOM 2026 Workshop (deadline 12 Ago 2026)
+### ⭐⭐⭐ PIPELINE PRIORITARIO: F → V
 
-- **Paper recomendado:** **Propuesta F (Broadcast K-only)**, opcionalmente combinada con elementos de Propuesta D (multi-receiver)
-- **Por qué:** Resuelve directamente la limitación arquitectónica más débil del TCOM (la medición cooperativa K+1). Es una contribución clara, autocontenida, con framework analítico ya disponible. El tema *broadcast localization / multi-receiver OWP* encaja con workshops de 6G y OWC en GLOBECOM.
-- **Esfuerzo estimado:** 2–3 meses (derivaciones + simulaciones + redacción)
-- **Ventaja:** Tiempo suficiente. Contribución diferenciada. Bajo riesgo técnico.
-- **Título tentativo:** *"Broadcast Beam-Steered Optical Wireless Positioning: Eliminating Cooperative Alignment via IMU-Assisted Distance Recovery"*
+> **Contexto:** Ya se envió un paper a GLOBECOM conference con validación experimental del TCOM cooperativo (PD controlado en K+1). El pipeline prioritario extiende esto en dos pasos directos.
 
-### Opción alternativa: GLOBECOM 2026 Workshop
+#### Paso 1: Propuesta F → GLOBECOM 2026 Workshop (deadline 12 Ago)
 
-- **Paper recomendado:** Propuesta A (ISAC Óptico) o Propuesta C (Non-Lambertian)
-- **Por qué:** Si se prefiere un tema más novedoso (ISAC) o experimental (non-Lambertian). Macau atrae comunidad asiática OWC fuerte.
-- **Esfuerzo estimado:** 2–3 meses
-- **Ventaja:** Más trending (ISAC para 6G).
+- **Qué:** Derivación analítica + simulación de la arquitectura broadcast K-only (sin K+1 cooperativo)
+- **Esfuerzo:** 2–3 meses (simulación pura)
+- **Riesgo:** Bajo
 
-### Opción premium conference: ICC 2027 o WCNC 2027 (deadline ~Oct 2026)
+#### Paso 2: Propuesta V → Journal (TCOM companion o JLT)
 
-- **Paper recomendado:** Propuesta A (ISAC) como symposium paper de 6 páginas
-- **Por qué:** Symposium paper (no workshop), mayor prestigio.
-- **Esfuerzo estimado:** 4–5 meses
+- **Qué:** Validación experimental de TCOM+F con el testbed 3D, incluyendo corrección del patrón quasi-Lambertiano del LED real
+- **Relación:** Extensión journal del GLOBECOM (ya enviado) + F (por enviar)
+- **Esfuerzo:** 3–4 meses experimentales + 1–2 meses redacción
+- **Riesgo:** Bajo (testbed disponible, framework analítico del TCOM reutilizable)
 
-### ⭐⭐ Opción Journal: IEEE/OSA J. Lightwave Technology (2027)
+---
 
-- **Paper recomendado:** **Propuesta C (Non-Lambertian + Experimental)**
-- **Por qué:** Combina teoría (DEB generalizado) + experimental (patrón medido + posicionamiento). JLT publica regularmente papers de OWC con validación experimental. La contribución es ortogonal al TCOM (que es puramente teórico/simulado).
-- **Esfuerzo estimado:** 6–8 meses (3–4 experimental + 2–3 redacción)
-- **Título tentativo:** *"Impact of Non-Lambertian Emission Patterns on Beam-Steered Optical Wireless Positioning: Theory, Bounds, and Experimental Validation"*
+### Plan de ejecución paso a paso
 
-### Plan combinado sugerido
+| # | Paso | Timeline | Entregable |
+|---|------|----------|------------|
+| 1 | **F: Simulación K-only** — Derivar η̂ estimator, PEB K-only, MC comparativa | May–Jul 2026 | Manuscrito GLOBECOM WS |
+| 2 | **F: Submit GLOBECOM** | **12 Ago 2026** | Paper enviado |
+| 3 | **V-a: Medir R(φ)** del LED real — fijar PD, rotar LED en φ conocidos, registrar potencia | Ago–Sep 2026 | Tabla R(φ) + spline cúbico + m_eff |
+| 4 | **V-b: NLS calibrado** — reemplazar cos^m por R_spline en cost function del NLS | Sep 2026 | Código NLS calibrado (cambio mínimo) |
+| 5 | **V-c: Validación experimental 3D** — K-only (F) + cooperativo (TCOM) con 4 escenarios | Sep–Nov 2026 | Datos experimentales completos |
+| 6 | **V-d: Redacción journal** | Nov–Dic 2026 | Manuscrito TCOM/JLT |
+| 7 | **V: Submit Journal** | **Dic 2026–Ene 2027** | Paper enviado |
 
-| Timeline | Acción |
-|----------|--------|
-| **May–Jun 2026** | Desarrollar **Propuesta F** (broadcast K-only + IMU) para GLOBECOM |
-| **Jul 2026** | Iniciar caracterización experimental LED para Propuesta C |
-| **Ago 2026** | Submit GLOBECOM 2026 Workshop con Propuesta F |
-| **Sep–Oct 2026** | Preparar Propuesta A (ISAC) para ICC/WCNC 2027 |
-| **Nov 2026–Feb 2027** | Experimental end-to-end para Propuesta C |
-| **Mar 2027** | Submit **JLT** con Propuesta C (Non-Lambertian + Experimental) |
+---
+
+### Los 4 escenarios experimentales de V (columnas de la tabla de resultados)
+
+| Escenario | Direction Finding | Distance Recovery | Qué demuestra |
+|-----------|-------------------|-------------------|-----------------|
+| **S1:** GLS + cos^m(φ) nominal | Bias por mismatch | Bias en η̂ → error en d̂ | Baseline teórico vs. realidad |
+| **S2:** GLS + cos^{m_eff}(φ) | Bias reducido | Bias reducido | Mejora simple (1 parámetro) |
+| **S3:** NLS + R_spline(φ) calibrado | **Sin bias** | **Sin bias** en η̂ | Corrección completa model-based |
+| **S4:** DEB/PEB numérico con R_spline | Bound correcto | Bound correcto | Referencia teórica real |
+
+> **Contribución clave de V:** No es solo validación (GLOBECOM ya lo hizo con PD controlado). V añade: (i) arquitectura broadcast K-only experimental, (ii) diagnóstico + corrección del mismatch quasi-Lambertiano sin ML, y (iii) cuantificación del gap teoría-experimento con 4 escenarios.
+
+---
+
+### Cómo medir R(φ) con el testbed existente (Paso V-a)
+
+No requiere goniómetro dedicado. Se puede usar el propio testbed:
+
+1. **Fijar el PD** en una posición conocida, orientado verticalmente (n_r = [0,0,1])
+2. **Colocar el LED** a distancia conocida d, apuntando directamente al PD (φ = 0)
+3. **Rotar el gimbal** del LED en pasos de 2–5°, registrando potencia recibida vs. ángulo de tilt
+4. **Normalizar**: R(φ) = P_r(φ) / P_r(0)
+5. **Ajustar spline**: `R_spline = spline(phi_meas, R_meas)`
+6. **Ajustar m_eff**: `m_eff = argmin_m ||log(R_meas) - m*log(cos(phi_meas))||`
+
+> **Tiempo estimado:** 1–2 sesiones de laboratorio (< 1 semana).
+
+---
+
+### Cómo implementar NLS calibrado (Paso V-b)
+
+Cambio mínimo en el código NLS del TCOM:
+
+```matlab
+% TCOM original (1 línea a cambiar en el residual):
+residual_i = eta * max(0, dot(n_t_i, v))^m - p_i;
+
+% NLS calibrado:
+phi_i = acos(max(-1, min(1, dot(n_t_i, v))));
+residual_i = eta * ppval(R_spline, phi_i) - p_i;
+```
+
+Para la estimación de η (distancia K-only, Propuesta F):
+
+```matlab
+% Original:
+eta_hat = sum(mu_hat .* Q.^m) / sum(Q.^(2*m));
+
+% Calibrado:
+R_vals = ppval(R_spline, acos(Q));
+eta_hat = sum(mu_hat .* R_vals) / sum(R_vals.^2);
+```
+
+> **Tiempo estimado:** 1–2 días de implementación + verificación.
+
+---
+
+### Estructura tentativa del paper V (Journal)
+
+| Sección | Contenido |
+|---------|-----------|
+| I. Intro | TCOM (teoría) + GLOBECOM (validación cooperativa) → este paper: K-only broadcast + calibración NL |
+| II. System Model | Recap TCOM + Propuesta F (K-only η̂, d̂ sin K+1) |
+| III. Quasi-Lambertian Characterization | Medición R(φ); ajuste m_eff; spline; DEB numérico con R_spline |
+| IV. Calibrated Estimators | GLS(m_eff), NLS(R_spline), η̂ calibrado para broadcast |
+| V. Experimental Setup | Testbed, protocolo, ground truth |
+| VI. Results | 4 escenarios (S1–S4); direction finding + 3D positioning; gap analysis |
+| VII. Conclusion | |
+
+**Target journal (por orden):**
+- **IEEE Trans. Communications (TCOM)** — companion natural del paper base; valida + extiende
+- **IEEE/OSA J. Lightwave Technology (JLT)** — si el énfasis cae en la caracterización óptica
+- **IEEE Photonics Journal** — si se prioriza rapidez de review
+
+---
+
+### Relación V vs. C vs. J (para evitar confusión)
+
+| Aspecto | **V** (prioritario) | **C** (deep experimental) | **J** (deep teórico) |
+|---------|---------------------|---------------------------|-----------------------|
+| R(φ) | Medido, spline, m_eff | Medido + goniómetro + azimut 2D | Arbitrario paramétrico |
+| Estimadores | GLS(m_eff) + NLS(R_spline) | + GLS+Newton Riemanniano | + prueba imposibilidad GLS |
+| DEB | Numérico con R_spline | Numérico + GA re-optimizado | FIM generalizada cerrada |
+| Experimental | Sí (testbed 3D) | Sí (goniómetro + testbed) | No (solo simulación) |
+| Complejidad | ★★☆ | ★★★★ | ★★★ |
+| Profundidad NL | Pragmática (corregir mismatch) | Completa (4 estimadores) | Fundamental (imposibilidad) |
+| Esfuerzo | 3–4 meses | 6–8 meses | 4–5 meses |
+
+> **V es suficiente y autocontenido como journal paper.** C y J son extensiones más profundas del tema NL que pueden hacerse después si se quiere explotar la línea. V NO requiere C ni J como prerequisito.
+
+---
+
+### Plan combinado completo (actualizado 26 Mayo 2026)
+
+| Timeline | Acción | Prioridad |
+|----------|--------|-----------|
+| **May–Jul 2026** | **Propuesta F** (K-only simulación) para GLOBECOM WS | ⭐⭐⭐ |
+| **12 Ago 2026** | **Submit F** a GLOBECOM WS | ⭐⭐⭐ |
+| **Ago–Sep 2026** | **V-a:** Medir R(φ) del LED + ajustar spline/m_eff | ⭐⭐⭐ |
+| **Sep 2026** | **V-b:** Implementar NLS calibrado + η̂ calibrado | ⭐⭐⭐ |
+| **Sep–Nov 2026** | **V-c:** Validación experimental completa (4 escenarios) | ⭐⭐⭐ |
+| **Nov–Dic 2026** | **V-d:** Redacción journal | ⭐⭐⭐ |
+| **Dic 2026–Ene 2027** | **Submit V** a TCOM/JLT | ⭐⭐⭐ |
+| **Ene–Feb 2027** | **H-a:** Implementar Pseudo-Quad TX (4 orientaciones dithered) | ⭐⭐⭐ |
+| **Feb–Mar 2027** | **H-b:** Experimento tracking dinámico (receptor móvil a velocidad conocida) | ⭐⭐⭐ |
+| **Mar–Abr 2027** | **H-c:** Filtro de Kalman en S² + análisis de convergencia | ⭐⭐⭐ |
+| **Abr–May 2027** | **H-d:** Redacción + submit journal o ICC/WCNC 2027 | ⭐⭐⭐ |
+| **Sep–Oct 2026** | En paralelo: **Propuesta L** (RL, Python) para ICASSP 2027 | ⭐⭐ |
+| **Oct 2026** | En paralelo: **Propuesta A** (ISAC) para ICC/WCNC 2027 | ⭐ |
+| **2027+** | Papers profundos: J, C, K según disponibilidad | ⭐ |
 
 ---
 
