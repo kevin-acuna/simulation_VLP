@@ -199,43 +199,43 @@ c_nls = [0.49, 0.18, 0.56];
 c_peb = [0.47, 0.67, 0.19];
 styles = {'-', '--', ':'};
 
-figure('Position', [100,100,650,520]);
+figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color','w');
 hold on;
-leg_h = gobjects(0); leg_l = {};
 
+% Plot all curves (no individual legend entries)
 for it = 1:nT
     ls = styles{it};
-
-    [f,x]=ecdf(all_rmse_GLS{it}*cm);
-    h=stairs(x,f,ls,'LineWidth',1.6,'Color',c_gls);
-    leg_h(end+1)=h; leg_l{end+1}=sprintf('GLS ($\\theta_{\\mathrm{tilt}}{=}%d^\\circ$)',tilt_angles(it));
-
-    [f,x]=ecdf(all_rmse_WLS{it}*cm);
-    h=stairs(x,f,ls,'LineWidth',1.6,'Color',c_wls);
-    leg_h(end+1)=h; leg_l{end+1}=sprintf('WLS ($\\theta_{\\mathrm{tilt}}{=}%d^\\circ$)',tilt_angles(it));
-
-    [f,x]=ecdf(all_rmse_NLS{it}*cm);
-    h=stairs(x,f,ls,'LineWidth',1.9,'Color',c_nls);
-    leg_h(end+1)=h; leg_l{end+1}=sprintf('NLS ($\\theta_{\\mathrm{tilt}}{=}%d^\\circ$)',tilt_angles(it));
-
+    [f,x]=ecdf(all_rmse_GLS{it}*cm); stairs(x,f,ls,'LineWidth',0.9,'Color',c_gls,'HandleVisibility','off');
+    [f,x]=ecdf(all_rmse_WLS{it}*cm); stairs(x,f,ls,'LineWidth',0.9,'Color',c_wls,'HandleVisibility','off');
+    [f,x]=ecdf(all_rmse_NLS{it}*cm); stairs(x,f,ls,'LineWidth',1.0,'Color',c_nls,'HandleVisibility','off');
     v=all_PEB_B{it}; v=v(isfinite(v));
-    [f,x]=ecdf(v*cm);
-    h=stairs(x,f,ls,'LineWidth',1.6,'Color',c_peb);
-    leg_h(end+1)=h; leg_l{end+1}=sprintf('$\\mathrm{PEB}_\\mathrm{B}$ ($\\theta_{\\mathrm{tilt}}{=}%d^\\circ$)',tilt_angles(it));
+    [f,x]=ecdf(v*cm); stairs(x,f,ls,'LineWidth',0.9,'Color',c_peb,'HandleVisibility','off');
 end
 
-yline(0.9,':','LineWidth',0.5,'Color',[0.6 0.6 0.6],'HandleVisibility','off');
-xlabel('3D Positioning Error [cm]','Interpreter','latex','FontSize',11);
-ylabel('CDF','Interpreter','latex','FontSize',11);
-legend(leg_h, leg_l, 'Interpreter','latex','FontSize',7, ...
-    'Location','southeast','NumColumns',3);
-title(sprintf('Broadcast 3D under Receiver Tilt ($K{=}%d$, $M{=}%d$)', ...
-    K_fixed, M_trials), 'Interpreter','latex','FontSize',12);
-grid minor; box on;
-set(gca,'FontSize',9);
+% Compact legend: 4 color proxies (method) + 3 style proxies (tilt)
+h_leg = gobjects(7,1);
+h_leg(1) = plot(NaN,NaN,'-','Color',c_gls,'LineWidth',0.9);
+h_leg(2) = plot(NaN,NaN,'-','Color',c_wls,'LineWidth',0.9);
+h_leg(3) = plot(NaN,NaN,'-','Color',c_nls,'LineWidth',1.0);
+h_leg(4) = plot(NaN,NaN,'-','Color',c_peb,'LineWidth',0.9);
+h_leg(5) = plot(NaN,NaN,'-','Color',[0.4 0.4 0.4],'LineWidth',0.8);
+h_leg(6) = plot(NaN,NaN,'--','Color',[0.4 0.4 0.4],'LineWidth',0.8);
+h_leg(7) = plot(NaN,NaN,':','Color',[0.4 0.4 0.4],'LineWidth',0.8);
 
+leg_labels = {'GLS','WLS','NLS','$\mathrm{PEB}_\mathrm{B}$', ...
+    sprintf('$\\theta_{\\mathrm{tilt}}{=}%d^\\circ$',tilt_angles(1)), ...
+    sprintf('$\\theta_{\\mathrm{tilt}}{=}%d^\\circ$',tilt_angles(2)), ...
+    sprintf('$\\theta_{\\mathrm{tilt}}{=}%d^\\circ$',tilt_angles(3))};
+
+yline(0.9,':','LineWidth',0.4,'Color',[0.6 0.6 0.6],'HandleVisibility','off');
+xlabel('3D Positioning Error [cm]','Interpreter','latex','FontSize',8);
+ylabel('CDF','Interpreter','latex','FontSize',8);
+legend(h_leg, leg_labels, 'Interpreter','latex','FontSize',5.5, ...
+    'Location','southeast','NumColumns',2);
+grid minor; box on;
+set(gca,'FontSize',7,'LineWidth',0.5);
+xlim([0 20]);
 if SAVE_FIGS
-    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
     exportgraphics(gcf, fullfile(results_dir, 'Fig09_CDF_tilt.pdf'), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, 'Fig09_CDF_tilt.png'), 'Resolution',600,'BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, 'Fig09_CDF_tilt.eps'), 'ContentType','vector','BackgroundColor','white');

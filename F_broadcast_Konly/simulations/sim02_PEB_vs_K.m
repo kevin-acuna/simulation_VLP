@@ -68,36 +68,31 @@ for ik = 1:length(K_values)
 end
 
 %% Figure: RMS-PEB vs K
-figure('Position', [100, 100, 700, 500]);
+% Create at IEEE single-column size directly to avoid marker/line distortion
+fig = figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color','w');
 
-yyaxis left
-plot(K_values, RMS_PEB_B*100, 'b-o', 'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'b');
+plot(K_values, RMS_PEB_B*100, '-o', 'LineWidth', 1.0, 'MarkerSize', 4, ...
+    'Color', [0 0.45 0.74], 'MarkerFaceColor', [0 0.45 0.74]);
 hold on;
-plot(K_values, RMS_PEB_C*100, 'r--s', 'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'r');
-ylabel('RMS-PEB [cm]');
+plot(K_values, RMS_PEB_C*100, '--s', 'LineWidth', 1.0, 'MarkerSize', 4, ...
+    'Color', [0.85 0.33 0.10], 'MarkerFaceColor', [0.85 0.33 0.10]);
+ylabel('RMS-PEB [cm]', 'Interpreter', 'latex', 'FontSize', 8);
 ylim([0, max(RMS_PEB_B*100)*1.1]);
 
-yyaxis right
-plot(K_values, Mean_rho, 'k:d', 'LineWidth', 1.5, 'MarkerSize', 7, 'MarkerFaceColor', [0.5 0.5 0.5]);
-ylabel('Broadcast penalty $\rho$', 'Interpreter', 'latex');
-
-xlabel('Number of orientations $K$', 'Interpreter', 'latex');
-title('RMS-PEB vs $K$: Broadcast vs Cooperative', 'Interpreter', 'latex');
+xlabel('Number of orientations $K$', 'Interpreter', 'latex', 'FontSize', 8);
 legend({'$\mathrm{PEB}_\mathrm{B}$ (broadcast)', ...
-        '$\mathrm{PEB}_\mathrm{C}$ (cooperative)', ...
-        '$\bar{\rho}$ (mean penalty)'}, ...
-    'Location', 'northeast', 'Interpreter', 'latex');
+        '$\mathrm{PEB}_\mathrm{C}$ (cooperative)'}, ...
+    'Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 6);
 grid on;
-set(gca, 'XTick', K_values);
+set(gca, 'XTick', K_values, 'FontSize', 7, 'LineWidth', 0.5);
 
 %% Save
-results_dir = fullfile(project_root, 'results');
+results_dir = fullfile(pwd, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 if SAVE_FIGS
-    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
-    exportgraphics(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.pdf'), 'ContentType','vector','BackgroundColor','white');
-    exportgraphics(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.png'), 'Resolution',600,'BackgroundColor','white');
-    exportgraphics(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.eps'), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(fig, fullfile(results_dir, 'Fig02_PEB_vs_K.pdf'), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(fig, fullfile(results_dir, 'Fig02_PEB_vs_K.png'), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(fig, fullfile(results_dir, 'Fig02_PEB_vs_K.eps'), 'ContentType','vector','BackgroundColor','white');
     fprintf('Figures saved (pdf/png/eps)\n');
 end
 

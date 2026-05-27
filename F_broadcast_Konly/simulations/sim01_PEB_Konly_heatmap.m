@@ -65,7 +65,7 @@ for ik = 1:nP
 end
 
 %% Figure: side-by-side heatmaps
-fig = figure('Position', [50, 100, 900, 400], 'Color', 'w');
+fig = figure('Units','inches', 'Position',[0.5 0.5 7.16 3.0], 'Color', 'w');
 
 % Common color scale
 all_valid = cellfun(@(g) g(isfinite(g)), PEB_grids, 'UniformOutput', false);
@@ -98,7 +98,6 @@ results_dir = fullfile(pwd, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 
 if SAVE_FIGS
-    set(fig, 'Units', 'inches', 'Position', [0.5 0.5 7.16 3.0]);
     exportgraphics(fig, fullfile(results_dir, 'Fig01_PEB_B_heatmap.pdf'), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(fig, fullfile(results_dir, 'Fig01_PEB_B_heatmap.png'), 'Resolution',600,'BackgroundColor','white');
     exportgraphics(fig, fullfile(results_dir, 'Fig01_PEB_B_heatmap.eps'), 'ContentType','vector','BackgroundColor','white');

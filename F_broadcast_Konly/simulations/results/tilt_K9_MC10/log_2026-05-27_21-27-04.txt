@@ -1,0 +1,71 @@
+============================================================
+BROADCAST MC — TILT COMPARISON (K=9)
+Tilts: [0  10  20] deg | N_az=12 | M=10 | N_pos=1792
+============================================================
+
+
+>>> Tilt = 0 deg
+  az=  0 deg ... done
+  az= 30 deg ... done
+  az= 60 deg ... done
+  az= 90 deg ... done
+  az=120 deg ... done
+  az=150 deg ... done
+  az=180 deg ... done
+  az=210 deg ... done
+  az=240 deg ... done
+  az=270 deg ... done
+  az=300 deg ... done
+  az=330 deg ... done
+  Tilt=0: NLS RMS=1.72 cm, PEB_B RMS=1.72 cm
+
+>>> Tilt = 10 deg
+  az=  0 deg ... done
+  az= 30 deg ... done
+  az= 60 deg ... done
+  az= 90 deg ... done
+  az=120 deg ... done
+  az=150 deg ... done
+  az=180 deg ... done
+  az=210 deg ... done
+  az=240 deg ... done
+  az=270 deg ... done
+  az=300 deg ... done
+  az=330 deg ... done
+  Tilt=10: NLS RMS=1.98 cm, PEB_B RMS=1.98 cm
+
+>>> Tilt = 20 deg
+  az=  0 deg ... done
+  az= 30 deg ... done
+  az= 60 deg ... done
+  az= 90 deg ... done
+  az=120 deg ... done
+  az=150 deg ... done
+  az=180 deg ... done
+  az=210 deg ... done
+  az=240 deg ... done
+  az=270 deg ... done
+  az=300 deg ... done
+  az=330 deg ... done
+  Tilt=20: NLS RMS=3.15 cm, PEB_B RMS=3.18 cm
+
+======================================================================
+ TILT COMPARISON (K=9, M=10)
+======================================================================
+Tilt   Method       RMSE[cm]  CDF90[cm]    APE[cm]
+----------------------------------------------------------------------
+   0°  GLS              2.43       3.54       1.79
+   0°  WLS              3.75       4.78       2.41
+   0°  NLS              1.72       2.68       1.42
+   0°  PEB_B            1.72       2.69       1.42
+----------------------------------------------------------------------
+  10°  GLS              3.06       3.98       2.04
+  10°  WLS              4.33       5.34       2.67
+  10°  NLS              1.98       2.94       1.56
+  10°  PEB_B            1.98       2.95       1.56
+----------------------------------------------------------------------
+  20°  GLS              5.36       5.92       2.96
+  20°  WLS              5.30       7.43       3.35
+  20°  NLS              3.15       4.29       2.13
+  20°  PEB_B            3.18       4.21       2.14
+----------------------------------------------------------------------

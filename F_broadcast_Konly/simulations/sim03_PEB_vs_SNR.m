@@ -121,7 +121,7 @@ switch lower(METRIC)
 end
 
 %% Figure
-fig = figure('Position', [100, 100, 700, 500], 'Color', 'w');
+fig = figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color', 'w');
 ax = axes(fig);
 hold(ax, 'on');
 
@@ -141,7 +141,7 @@ plot(SNR_dB, peb_kmax, ':', 'Color', c_peb*0.7, 'LineWidth', 0.8, ...
 
 % Bold highlight curve
 h_hl = plot(SNR_dB, peb_hl, '-o', 'Color', c_peb, ...
-    'MarkerFaceColor', c_peb, 'LineWidth', 2, 'MarkerSize', 5);
+    'MarkerFaceColor', c_peb, 'LineWidth', 1.0, 'MarkerSize', 3.5);
 
 % Formatting
 set(ax, 'YScale', 'log');
@@ -152,7 +152,7 @@ title(sprintf('Broadcast PEB vs SNR ($\\Phi_{1/2}{=}%d^\\circ$, $\\mathbf{n}_r{=
     theta_half), 'Interpreter', 'latex', 'FontSize', 12);
 grid on; grid minor;
 xlim([SNR_dB(1), SNR_dB(end)]);
-set(ax, 'FontSize', 9, 'Box', 'on', 'LineWidth', 0.8);
+set(ax, 'FontSize', 7, 'Box', 'on', 'LineWidth', 0.5);
 
 % Reference lines
 yline(1, '--', '1 cm', 'Color', [0.5 0.5 0.5], 'LineWidth', 0.6, ...
@@ -181,8 +181,7 @@ results_dir = fullfile(pwd, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 
 if SAVE_OUTPUT
-    fig_name = sprintf('Fig_A6_PEB_vs_SNR_%s', METRIC);
-    set(fig, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
+    fig_name = sprintf('Fig_3_PEB_vs_SNR_%s', METRIC);
     exportgraphics(fig, fullfile(results_dir, [fig_name '.pdf']), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(fig, fullfile(results_dir, [fig_name '.png']), 'Resolution',600,'BackgroundColor','white');
     exportgraphics(fig, fullfile(results_dir, [fig_name '.eps']), 'ContentType','vector','BackgroundColor','white');

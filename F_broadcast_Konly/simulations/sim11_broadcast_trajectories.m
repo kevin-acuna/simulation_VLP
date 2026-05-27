@@ -114,7 +114,7 @@ for iu = 1:N_users
 end
 
 %% ===== MAIN FIGURE: 3D Trajectory Estimation =====
-fig = figure('Position', [50, 50, 900, 700], 'Color', 'w');
+fig = figure('Units','inches', 'Position',[0.5 0.5 7.16 5.5], 'Color', 'w');
 ax = axes(fig);
 hold(ax, 'on');
 
@@ -215,7 +215,7 @@ lighting gouraud;
 camlight('headlight');
 
 %% ===== FIGURE 2: Top-down XY view =====
-fig2 = figure('Position', [100, 100, 600, 550], 'Color', 'w');
+fig2 = figure('Units','inches', 'Position',[0.5 0.5 3.5 3.2], 'Color', 'w');
 hold on;
 
 for iu = 1:N_users
@@ -257,7 +257,6 @@ if SAVE_FIGS
     fig_name_xy = 'Fig_flagship_broadcast_XY';
     
     % Figure 1 (3D)
-    set(fig, 'Units','inches', 'Position', [0.5 0.5 7.16 5.5]);
     exportgraphics(fig, fullfile(results_dir, [fig_name_3d '.pdf']), ...
         'ContentType','vector', 'BackgroundColor','white');
     exportgraphics(fig, fullfile(results_dir, [fig_name_3d '.png']), ...
@@ -266,7 +265,6 @@ if SAVE_FIGS
         'ContentType','vector', 'BackgroundColor','white');
     
     % Figure 2 (XY)
-    set(fig2, 'Units','inches', 'Position', [0.5 0.5 3.5 3.2]);
     exportgraphics(fig2, fullfile(results_dir, [fig_name_xy '.pdf']), ...
         'ContentType','vector', 'BackgroundColor','white');
     exportgraphics(fig2, fullfile(results_dir, [fig_name_xy '.png']), ...

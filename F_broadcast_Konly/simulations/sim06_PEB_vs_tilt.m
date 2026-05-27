@@ -148,7 +148,7 @@ fprintf('\nTotal time: %.1f s (%.1f min)\n', total_time, total_time/60);
 metric_labels = struct('rms','RMS', 'mean','Mean', 'median','Median', 'cdf90','CDF_{90\%}');
 metric_label = metric_labels.(spatial_metric);
 
-figure('Position', [100, 100, 700, 500]);
+figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color','w');
 hold on;
 
 colors = lines(N_K);
@@ -157,7 +157,7 @@ markers = {'o', 's', 'd', '^', 'v', 'p', 'h'};
 for ik = 1:N_K
     mk = markers{min(ik, length(markers))};
     plot(theta_tilt_range, PEB_B_agg(:, ik)*100, ...
-        ['-' mk], 'LineWidth', 1.8, 'MarkerSize', 7, ...
+        ['-' mk], 'LineWidth', 1.0, 'MarkerSize', 3.5, ...
         'Color', colors(ik,:), 'MarkerFaceColor', colors(ik,:));
 end
 
@@ -166,9 +166,10 @@ ylabel(sprintf('%s $\\mathrm{PEB}_\\mathrm{B}$ [cm]', metric_label), 'Interprete
 title(sprintf('Broadcast PEB vs Receiver Tilt ($\\Phi_{1/2}{=}%d^\\circ$, DEB-opt., 3D testbed)', ...
     theta_half), 'Interpreter', 'latex');
 legend(arrayfun(@(k) sprintf('$K{=}%d$', k), K_sweep, 'UniformOutput', false), ...
-    'Interpreter', 'latex', 'Location', 'northwest');
+    'Interpreter', 'latex', 'FontSize', 6, 'Location', 'northwest');
 grid on; box on;
 xlim([0 max(theta_tilt_range)]);
+set(gca, 'FontSize', 7, 'LineWidth', 0.5);
 
 %% Save
 results_dir = fullfile(pwd, 'results');
@@ -176,7 +177,6 @@ if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 
 if SAVE_FIGS
     fig_name = sprintf('Fig_A4_PEB_vs_tilt_%s', spatial_metric);
-    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
     exportgraphics(gcf, fullfile(results_dir, [fig_name '.pdf']), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, [fig_name '.png']), 'Resolution',600,'BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, [fig_name '.eps']), 'ContentType','vector','BackgroundColor','white');

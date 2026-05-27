@@ -186,20 +186,22 @@ c_nls = [0.49, 0.18, 0.56];
 c_peb = [0.47, 0.67, 0.19];
 c_coop = [0.85, 0.33, 0.10];
 
-figure('Position', [100,100,650,520]);
+figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color','w');
 hold on;
 
 % Broadcast (solid)
-[f,x]=ecdf(rmse_B_GLS*cm); h1=stairs(x,f,'-','LineWidth',1.6,'Color',c_gls);
-[f,x]=ecdf(rmse_B_NLS*cm); h2=stairs(x,f,'-','LineWidth',1.9,'Color',c_nls);
+[f,x]=ecdf(rmse_B_GLS*cm); h1=stairs(x,f,'-','LineWidth',0.6,'Color',c_gls);
 v=PEB_B_arr(isfinite(PEB_B_arr));
-[f,x]=ecdf(v*cm);           h3=stairs(x,f,'-','LineWidth',1.6,'Color',c_peb);
+[f,x]=ecdf(v*cm);           h3=stairs(x,f,'-','LineWidth',1.2,'Color',c_peb);
+[f,x]=ecdf(rmse_B_NLS*cm); h2=stairs(x,f,'-','LineWidth',0.6,'Color',c_nls);
+
 
 % Cooperative (dashed)
-[f,x]=ecdf(rmse_C_GLS*cm); h4=stairs(x,f,'--','LineWidth',1.6,'Color',c_gls);
-[f,x]=ecdf(rmse_C_NLS*cm); h5=stairs(x,f,'--','LineWidth',1.9,'Color',c_nls);
+[f,x]=ecdf(rmse_C_GLS*cm); h4=stairs(x,f,'--','LineWidth',0.6,'Color',c_gls);
+
 v=PEB_C_arr(isfinite(PEB_C_arr));
-[f,x]=ecdf(v*cm);           h6=stairs(x,f,'--','LineWidth',1.6,'Color',c_peb);
+[f,x]=ecdf(v*cm);           h6=stairs(x,f,'--','LineWidth',1.2,'Color',c_peb);
+[f,x]=ecdf(rmse_C_NLS*cm); h5=stairs(x,f,'--','LineWidth',0.6,'Color',c_nls);
 
 yline(0.9,':','LineWidth',0.5,'Color',[0.6 0.6 0.6],'HandleVisibility','off');
 
@@ -212,10 +214,9 @@ legend([h1,h2,h3, h4,h5,h6], ...
 title(sprintf('Broadcast vs Cooperative ($K{=}%d$, $M{=}%d$, $\\mathbf{n}_r{=}[0,0,1]^T$)', ...
     K_fixed, M_trials), 'Interpreter','latex','FontSize',12);
 grid minor; box on;
-set(gca,'FontSize',9);
+set(gca,'FontSize',7,'LineWidth',0.5);
 
 if SAVE_FIGS
-    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
     exportgraphics(gcf, fullfile(results_dir, 'Fig10_CDF_bcast_vs_coop.pdf'), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, 'Fig10_CDF_bcast_vs_coop.png'), 'Resolution',600,'BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, 'Fig10_CDF_bcast_vs_coop.eps'), 'ContentType','vector','BackgroundColor','white');

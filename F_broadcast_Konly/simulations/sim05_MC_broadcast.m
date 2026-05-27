@@ -215,12 +215,12 @@ c_wls = [0.85, 0.33, 0.10];
 c_nls = [0.49, 0.18, 0.56];
 c_peb = [0.47, 0.67, 0.19];
 
-figure('Name', 'CDF — Broadcast 3D', 'Position', [100, 100, 650, 520]);
+figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color','w');
 hold on;
 
 % K=5 → solid (ik=1), K=9 → dashed (ik=2)
 styles = {'-', '--'};
-lw_base = 1.6;
+lw_base = 0.9;
 leg_h = gobjects(0); leg_l = {};
 
 for ik = 1:nK
@@ -248,15 +248,12 @@ end
 yline(0.9, ':', 'LineWidth', 0.5, 'Color', [0.6 0.6 0.6], 'HandleVisibility', 'off');
 xlabel('3D Positioning Error [cm]', 'Interpreter', 'latex', 'FontSize', 11);
 ylabel('CDF', 'Interpreter', 'latex', 'FontSize', 11);
-legend(leg_h, leg_l, 'Interpreter', 'latex', 'FontSize', 7.5, ...
+legend(leg_h, leg_l, 'Interpreter', 'latex', 'FontSize', 5.5, ...
     'Location', 'southeast', 'NumColumns', 2);
-title(sprintf('Broadcast 3D Positioning ($M{=}%d$, $\\mathbf{n}_r{=}[0,0,1]^T$)', M_trials), ...
-    'Interpreter', 'latex', 'FontSize', 12);
 grid minor; box on;
-set(gca, 'FontSize', 9);
-
+set(gca, 'FontSize', 7, 'LineWidth', 0.5);
+xlim([0 20])
 if SAVE_FIGS
-    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
     exportgraphics(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast.pdf'), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast.png'), 'Resolution',600,'BackgroundColor','white');
     exportgraphics(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast.eps'), 'ContentType','vector','BackgroundColor','white');
