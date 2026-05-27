@@ -40,6 +40,7 @@ K_sweep            = [5,7,9];          % K values to evaluate
 theta_tilt_range   = 0:3:30;         % Tilt angles [deg]
 N_az               = 36;              % Azimut samples (every 10°)
 spatial_metric     = 'rms';           % 'rms', 'mean', 'median', 'cdf90'
+SAVE_FIGS          = true;            % Export in IEEE format (pdf/png/eps)
 % =========================================================================
 
 %% Generate FULL 3D testbed (as defined in system_params_F)
@@ -173,8 +174,13 @@ xlim([0 max(theta_tilt_range)]);
 results_dir = fullfile(pwd, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 
-saveas(gcf, fullfile(results_dir, sprintf('Fig_A4_PEB_vs_tilt_%s.png', spatial_metric)));
-saveas(gcf, fullfile(results_dir, sprintf('Fig_A4_PEB_vs_tilt_%s.fig', spatial_metric)));
+if SAVE_FIGS
+    fig_name = sprintf('Fig_A4_PEB_vs_tilt_%s', spatial_metric);
+    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
+    exportgraphics(gcf, fullfile(results_dir, [fig_name '.pdf']), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, [fig_name '.png']), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, [fig_name '.eps']), 'ContentType','vector','BackgroundColor','white');
+end
 
 save(fullfile(results_dir, 'sim06_PEB_vs_tilt_data.mat'), ...
     'PEB_B_raw', 'PEB_B_per_pos', 'PEB_B_agg', ...

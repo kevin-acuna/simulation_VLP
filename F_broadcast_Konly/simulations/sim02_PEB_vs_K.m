@@ -18,6 +18,7 @@ addpath(project_root);
 
 %% System Parameters
 system_params_F;
+SAVE_FIGS = true;  % Save in IEEE format (png, pdf, eps)
 %K_values = K_values_Phi30
 %all_orientations_DEB = all_orientations_DEB_Phi30
 
@@ -92,8 +93,13 @@ set(gca, 'XTick', K_values);
 %% Save
 results_dir = fullfile(project_root, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
-saveas(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.png'));
-saveas(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.fig'));
+if SAVE_FIGS
+    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
+    exportgraphics(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.pdf'), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.png'), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig02_PEB_vs_K.eps'), 'ContentType','vector','BackgroundColor','white');
+    fprintf('Figures saved (pdf/png/eps)\n');
+end
 
 %% Print summary table
 fprintf('\n=== Summary Table ===\n');

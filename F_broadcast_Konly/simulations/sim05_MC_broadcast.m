@@ -27,6 +27,7 @@ TEST_MODE  = false;      % true = coarse grid for debugging
 M_trials   = 10;         % Monte Carlo trials per position
 K_sweep    = [5, 9];     % K values to compare in one CDF
 save_files = false;
+SAVE_FIGS  = true;       % Export figures in IEEE format (pdf/png/eps)
 
 %% 0. Parallel Pool
 fprintf('Setting up parallel pool...\n');
@@ -254,8 +255,13 @@ title(sprintf('Broadcast 3D Positioning ($M{=}%d$, $\\mathbf{n}_r{=}[0,0,1]^T$)'
 grid minor; box on;
 set(gca, 'FontSize', 9);
 
-saveas(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast_K5_K9.png'));
-saveas(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast_K5_K9.fig'));
+if SAVE_FIGS
+    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
+    exportgraphics(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast.pdf'), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast.png'), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast.eps'), 'ContentType','vector','BackgroundColor','white');
+    fprintf('CDF figure saved (pdf/png/eps)\n');
+end
 
 %% 8. Save
 if save_files

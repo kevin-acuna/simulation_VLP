@@ -30,6 +30,7 @@ K_fixed      = 9;
 tilt_angles  = [0, 10, 20];   % 3 tilt scenarios [deg]
 N_az_mc      = 12;             % Azimut samples per tilt (every 30 deg)
 save_files   = false;
+SAVE_FIGS    = true;           % Export in IEEE format (pdf/png/eps)
 % =========================================================================
 
 %% Parallel Pool
@@ -233,8 +234,12 @@ title(sprintf('Broadcast 3D under Receiver Tilt ($K{=}%d$, $M{=}%d$)', ...
 grid minor; box on;
 set(gca,'FontSize',9);
 
-saveas(gcf, fullfile(results_dir, 'Fig09_CDF_tilt_comparison.png'));
-saveas(gcf, fullfile(results_dir, 'Fig09_CDF_tilt_comparison.fig'));
+if SAVE_FIGS
+    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
+    exportgraphics(gcf, fullfile(results_dir, 'Fig09_CDF_tilt.pdf'), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig09_CDF_tilt.png'), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig09_CDF_tilt.eps'), 'ContentType','vector','BackgroundColor','white');
+end
 
 %% Save
 if save_files

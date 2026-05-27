@@ -38,7 +38,8 @@ M_avg        = 1;              % Single-shot per time step (realistic scenario)
 N_users      = 4;              % Number of simultaneous receivers
 N_steps      = 20;             % Time steps per trajectory
 estimators   = {'NLS', 'GLS'}; % Which estimators to show
-show_est     = 'GLS';          % Primary estimator for the main figure
+show_est     = 'NLS';          % Primary estimator for the main figure
+SAVE_FIGS    = true;           % Save figures in IEEE format (png, pdf, eps)
 % =========================================================================
 
 %% Orientations
@@ -63,6 +64,7 @@ end
 S = load(traj_file);
 trajectories = S.traj_true;
 traj_colors  = S.colors;
+traj_info    = S.traj_info;
 N_users      = S.N_users;
 N_steps      = S.N_steps;
 fprintf('Loaded %d trajectories (%d steps each)\n', N_users, N_steps);
@@ -92,8 +94,13 @@ for iu = 1:N_users
         P_raw = repmat(P_clean, N_samples, 1) + sqrt(sigma2).*randn(N_samples, K_fixed);
         mu_hat = mean(P_raw, 1);
         
-        % NLS direction + broadcast distance
-        nd_hat = vlp_nls_lm(nt, P_raw, m_t);
+        % Direction finding (selected estimator)
+        switch show_est
+            case 'NLS'
+                nd_hat = vlp_nls_lm(nt, P_raw, m_t);
+            case 'GLS'
+                nd_hat = vlp_gls(nt, P_raw, m_t, sigma2);
+        end
         [d_hat,~,~] = broadcast_distance(nd_hat, nt, mu_hat, m_t, C_opt, nr_col);
         
         est_pos(it,:) = T + (nd_hat' * d_hat);
@@ -127,55 +134,71 @@ for cx = rx
     end
 end
 
-% --- LED transmitter ---
-plot3(T(1), T(2), T(3), 'p', 'MarkerSize', 18, 'MarkerFaceColor', [1 0.8 0], ...
-    'MarkerEdgeColor', [0.8 0.5 0], 'LineWidth', 1.2);
 
-% --- Trajectories and estimates ---
+
+
+
+% --- Trajectories and estimates (inspired by standard positioning papers) ---
+% Style: ground truth = solid line + circle markers at each position
+%        estimated    = thin line + star/cross markers (overlaid on true)
+% Similar to "Actual Position vs. Estimated Position" standard plots.
+
 leg_h = gobjects(0); leg_l = {};
+
+% Distinct marker styles per user for ground truth
+gt_markers = {'o', 'd', '^'};    % circle, diamond, triangle-up
+est_marker = '*';                 % star for all estimates (like reference image)
 
 for iu = 1:N_users
     traj = trajectories{iu};
     est  = estimates{iu};
     col  = traj_colors(iu,:);
+    col_est = min(col + 0.25, 0.95);  % Slightly lighter for estimates
+    mk_gt = gt_markers{min(iu, length(gt_markers))};
     
-    % Ground truth: thick solid line
-    h_gt = plot3(traj(:,1), traj(:,2), traj(:,3), '-', ...
-        'LineWidth', 2.5, 'Color', col);
+    % Ground truth: line + markers at each position
+    h_gt = plot3(traj(:,1), traj(:,2), traj(:,3), ['-' mk_gt], ...
+        'LineWidth', 1.2, 'Color', col_est, ...
+        'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', col_est);
     
-    % Start and end markers on ground truth
-    plot3(traj(1,1), traj(1,2), traj(1,3), 'o', 'MarkerSize', 8, ...
-        'MarkerFaceColor', col, 'MarkerEdgeColor', 'k', 'LineWidth', 0.8, ...
-        'HandleVisibility','off');
-    plot3(traj(end,1), traj(end,2), traj(end,3), 's', 'MarkerSize', 9, ...
-        'MarkerFaceColor', col, 'MarkerEdgeColor', 'k', 'LineWidth', 0.8, ...
-        'HandleVisibility','off');
+    % Estimated: line + star markers overlaid
+    h_est = plot3(est(:,1), est(:,2), est(:,3), ['-' est_marker], ...
+        'LineWidth', 0.8, 'Color', col, ...
+        'MarkerSize', 5, 'MarkerEdgeColor', col);
     
-    % Estimates: lighter markers connected by thin line
-    col_light = min(col + 0.3, 1);
-    h_est = plot3(est(:,1), est(:,2), est(:,3), '--', ...
-        'LineWidth', 1.0, 'Color', col_light);
-    plot3(est(:,1), est(:,2), est(:,3), '.', 'MarkerSize', 10, ...
-        'Color', col, 'HandleVisibility','off');
-    
-    % Error segments (connecting true to estimated)
-    for it = 1:N_steps
+    % Thin error segments connecting each pair (true ↔ estimated)
+    for it = 1:3:N_steps  % Every 3rd point to avoid clutter
         plot3([traj(it,1) est(it,1)], [traj(it,2) est(it,2)], [traj(it,3) est(it,3)], ...
-            '-', 'Color', [col 0.25], 'LineWidth', 0.4, 'HandleVisibility','off');
+            '-', 'Color', [0.6 0.6 0.6 0.3], 'LineWidth', 0.3, 'HandleVisibility','off');
     end
     
     leg_h(end+1) = h_gt;
-    leg_l{end+1} = sprintf('User %d (true)', iu);
+    leg_l{end+1} = sprintf('%s (true)', traj_info{iu}.type);
     leg_h(end+1) = h_est;
-    leg_l{end+1} = sprintf('User %d (est.)', iu);
+    leg_l{end+1} = sprintf('%s (est.)', traj_info{iu}.type);
 end
+
+
+% Draw K orientation vectors from LED position
+vec_len = 0.30;  % Arrow length [m]
+vec_col = [0.60 0.60 0.60];  % Medium gray
+for io = 1:K_fixed
+    v = nt(:, io);  % 3x1 unit vector
+    quiver3(T(1), T(2), T(3), v(1)*vec_len, v(2)*vec_len, v(3)*vec_len, 0, ...
+        'Color', vec_col, 'LineWidth', 1.3, 'MaxHeadSize', 0.6, ...
+        'HandleVisibility', 'off');
+end
+
+% --- LED transmitter + orientation vectors ---
+plot3(T(1), T(2), T(3), '.', 'MarkerSize', 15, 'Color', [0.3 0.3 0.3], ...
+    'HandleVisibility', 'off');
 
 % --- Formatting ---
 xlabel('$x$ [m]', 'Interpreter','latex', 'FontSize', 12);
 ylabel('$y$ [m]', 'Interpreter','latex', 'FontSize', 12);
 zlabel('$z$ [m]', 'Interpreter','latex', 'FontSize', 12);
 title(sprintf(['Broadcast 3D Positioning: %d Simultaneous Users\n' ...
-    '($K{=}%d$, NLS, $\\mathbf{n}_r{=}[0,0,1]^T$)'], N_users, K_fixed), ...
+    '($K{=}%d$, %s, $\\mathbf{n}_r{=}[0,0,1]^T$)'], N_users, K_fixed, show_est), ...
     'Interpreter','latex', 'FontSize', 13);
 
 legend(leg_h, leg_l, 'Interpreter','latex', 'FontSize', 7.5, ...
@@ -191,14 +214,71 @@ set(ax, 'FontSize', 9, 'LineWidth', 0.6);
 lighting gouraud;
 camlight('headlight');
 
+%% ===== FIGURE 2: Top-down XY view =====
+fig2 = figure('Position', [100, 100, 600, 550], 'Color', 'w');
+hold on;
+
+for iu = 1:N_users
+    traj = trajectories{iu};
+    est  = estimates{iu};
+    col  = traj_colors(iu,:);
+    col_est = min(col + 0.25, 0.95);
+    mk_gt = gt_markers{min(iu, length(gt_markers))};
+    
+    plot(traj(:,1), traj(:,2), ['-' mk_gt], 'LineWidth', 1.2, 'Color', col_est, ...
+        'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', col_est);
+    plot(est(:,1), est(:,2), ['-' est_marker], 'LineWidth', 0.8, 'Color', col, ...
+        'MarkerSize', 5, 'MarkerEdgeColor', col);
+end
+
+% Room boundary
+plot([-L/2 L/2 L/2 -L/2 -L/2], [-W/2 -W/2 W/2 W/2 -W/2], '-', ...
+    'Color', [0.7 0.7 0.7], 'LineWidth', 0.8);
+% LED position
+plot(0, 0, '.', 'MarkerSize', 12, 'Color', [0.3 0.3 0.3]);
+
+xlabel('$x$ [m]', 'Interpreter','latex', 'FontSize', 11);
+ylabel('$y$ [m]', 'Interpreter','latex', 'FontSize', 11);
+title(sprintf('Top View ($K{=}%d$, %s)', K_fixed, show_est), 'Interpreter','latex', 'FontSize', 12);
+legend(cellfun(@(c) c.type, traj_info, 'UniformOutput', false), ...
+    'Interpreter','latex', 'FontSize', 9, 'Location', 'northeast');
+axis equal; grid on; box on;
+xlim([-L/2 L/2]*1.05); ylim([-W/2 W/2]*1.05);
+set(gca, 'FontSize', 9);
+
 %% Save
 results_dir = fullfile(pwd, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
-saveas(fig, fullfile(results_dir, 'Fig_flagship_broadcast_trajectories.png'));
-saveas(fig, fullfile(results_dir, 'Fig_flagship_broadcast_trajectories.fig'));
+
+if SAVE_FIGS
+    % IEEE column width: 3.5 in (single) or 7.16 in (double)
+    % Export at high resolution for print quality
+    fig_name_3d = 'Fig_flagship_broadcast_3D';
+    fig_name_xy = 'Fig_flagship_broadcast_XY';
+    
+    % Figure 1 (3D)
+    set(fig, 'Units','inches', 'Position', [0.5 0.5 7.16 5.5]);
+    exportgraphics(fig, fullfile(results_dir, [fig_name_3d '.pdf']), ...
+        'ContentType','vector', 'BackgroundColor','white');
+    exportgraphics(fig, fullfile(results_dir, [fig_name_3d '.png']), ...
+        'Resolution', 600, 'BackgroundColor','white');
+    exportgraphics(fig, fullfile(results_dir, [fig_name_3d '.eps']), ...
+        'ContentType','vector', 'BackgroundColor','white');
+    
+    % Figure 2 (XY)
+    set(fig2, 'Units','inches', 'Position', [0.5 0.5 3.5 3.2]);
+    exportgraphics(fig2, fullfile(results_dir, [fig_name_xy '.pdf']), ...
+        'ContentType','vector', 'BackgroundColor','white');
+    exportgraphics(fig2, fullfile(results_dir, [fig_name_xy '.png']), ...
+        'Resolution', 600, 'BackgroundColor','white');
+    exportgraphics(fig2, fullfile(results_dir, [fig_name_xy '.eps']), ...
+        'ContentType','vector', 'BackgroundColor','white');
+    
+    fprintf('Figures saved (pdf/png/eps) to: %s\n', results_dir);
+end
 
 %% Print summary
-fprintf('\n=== BROADCAST TRAJECTORY SUMMARY (K=%d, NLS) ===\n', K_fixed);
+fprintf('\n=== BROADCAST TRAJECTORY SUMMARY (K=%d, %s) ===\n', K_fixed, show_est);
 fprintf('%-8s %10s %10s %10s\n', 'User', 'Mean[cm]', 'Max[cm]', 'Std[cm]');
 for iu = 1:N_users
     e = errors{iu}*100;

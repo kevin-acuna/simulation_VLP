@@ -30,6 +30,7 @@ TEST_MODE  = false;
 M_trials   = 10;
 K_fixed    = 9;
 save_files = false;
+SAVE_FIGS  = true;       % Export in IEEE format (pdf/png/eps)
 % =========================================================================
 
 %% Parallel Pool
@@ -213,8 +214,12 @@ title(sprintf('Broadcast vs Cooperative ($K{=}%d$, $M{=}%d$, $\\mathbf{n}_r{=}[0
 grid minor; box on;
 set(gca,'FontSize',9);
 
-saveas(gcf, fullfile(results_dir, 'Fig10_CDF_broadcast_vs_cooperative.png'));
-saveas(gcf, fullfile(results_dir, 'Fig10_CDF_broadcast_vs_cooperative.fig'));
+if SAVE_FIGS
+    set(gcf, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
+    exportgraphics(gcf, fullfile(results_dir, 'Fig10_CDF_bcast_vs_coop.pdf'), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig10_CDF_bcast_vs_coop.png'), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(gcf, fullfile(results_dir, 'Fig10_CDF_bcast_vs_coop.eps'), 'ContentType','vector','BackgroundColor','white');
+end
 
 if save_files
     save(fullfile(results_dir, 'sim10_results.mat'), ...

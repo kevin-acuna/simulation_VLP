@@ -31,7 +31,7 @@ METRIC      = 'rms';             % 'rms' or 'cdf90'
 SNR_dB      = 0:5:50;           % SNR sweep [dB] (absolute)
 K_VALUES    = 5:15;             % K range for envelope
 K_HIGHLIGHT = 9;                 % Accent curve (bold)
-SAVE_OUTPUT = false;
+SAVE_OUTPUT = true;
 % =========================================================================
 
 %% Testbed (full 3D)
@@ -181,14 +181,17 @@ results_dir = fullfile(pwd, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 
 if SAVE_OUTPUT
-    saveas(fig, fullfile(results_dir, sprintf('Fig_A6_PEB_vs_SNR_%s.png', METRIC)));
-    saveas(fig, fullfile(results_dir, sprintf('Fig_A6_PEB_vs_SNR_%s.fig', METRIC)));
+    fig_name = sprintf('Fig_A6_PEB_vs_SNR_%s', METRIC);
+    set(fig, 'Units','inches', 'Position',[0.5 0.5 3.5 2.8]);
+    exportgraphics(fig, fullfile(results_dir, [fig_name '.pdf']), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(fig, fullfile(results_dir, [fig_name '.png']), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(fig, fullfile(results_dir, [fig_name '.eps']), 'ContentType','vector','BackgroundColor','white');
     
     save(fullfile(results_dir, 'sim03_PEB_vs_SNR_data.mat'), ...
         'peb_mat', 'SNR_dB', 'K_VALUES', 'K_HIGHLIGHT', ...
         'METRIC', 'sigma2_ref', 'sigma2_vec', 'N_pos', 'total_time');
     
-    fprintf('Saved to: %s\n', results_dir);
+    fprintf('Saved (pdf/png/eps) to: %s\n', results_dir);
 end
 
 %% Summary table

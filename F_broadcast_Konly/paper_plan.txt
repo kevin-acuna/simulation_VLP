@@ -1,0 +1,172 @@
+================================================================================
+ PAPER PLAN — Proposal F: Broadcast Beam-Steered OWP
+ Created: 27 May 2026
+================================================================================
+
+TITLE (tentativo):
+  "Broadcast Beam-Steered Optical Wireless Positioning: 
+   3D Localization Without Cooperative Alignment"
+
+================================================================================
+ NARRATIVA
+================================================================================
+
+PROBLEMA:
+  El beam-steered OWP (TCOM) requiere una medición cooperativa (K+1) para
+  recuperar distancia. Esto requiere PD reorientation → imposibilita broadcast
+  a múltiples usuarios simultáneamente.
+
+SOLUCIÓN:
+  Explotar la información de distancia contenida en las K potencias absolutas
+  (no solo en las ratios que usa GLS), usando n_r conocido vía IMU.
+  → Broadcast 3D positioning sin medición cooperativa.
+
+RESULTADO CLAVE:
+  NLS + broadcast_distance = profiled MLE → alcanza el PEB_B (CRLB broadcast).
+  Penalización broadcast ρ = PEB_B/PEB_C ≈ 1.2–1.8× dependiendo de K.
+  A cambio: escalabilidad total (N receptores simultáneos con un solo LED scan).
+
+================================================================================
+ TERMINOLOGÍA FORMAL
+================================================================================
+
+  PEB_B  = Broadcast PEB  (CRLB, solo K mediciones, n_r conocido)
+  PEB_C  = Cooperative PEB (CRLB, K+1 mediciones, TCOM)
+  DEB    = Direction Error Bound (CRLB dirección, n_r-independiente)
+  J_B    = Broadcast FIM
+  J_C    = Cooperative FIM = J_B + rango-1 PSD
+  ρ(r)   = PEB_B(r) / PEB_C(r) ≥ 1  (penalización broadcast)
+
+================================================================================
+ ESTRUCTURA DEL PAPER (6 páginas IEEE)
+================================================================================
+
+Section I — Introduction (1 pág)
+  - OWP state-of-the-art: multi-LED vs single-LED
+  - Limitación del beam-steered OWP: medición K+1 cooperativa, no escala
+  - Contribución: arquitectura broadcast + PEB_B + estimador near-optimal
+  - Organización del paper
+
+Section II — System Model and Broadcast Architecture (1 pág)
+  - Modelo de canal Lambertiano (recap breve del TCOM)
+  - Arquitectura broadcast: K mediciones, n_r conocido (IMU)
+  - Estimador de amplitud: η̂ = Σ μ̂_i Q̂_i^m / Σ Q̂_i^{2m}
+  - Distancia: d̂ = √(C·cos(ψ̂) / η̂)
+  → Fig. 1: Trayectorias 3D multi-usuario (sim11) [FLAGSHIP]
+
+Section III — Broadcast Position Error Bound (1 pág)
+  - FIM broadcast: J_B = (N/σ²) Σ [∇_r μ_i][∇_r μ_i]^T
+  - PEB_B = √tr(J_B⁻¹)
+  - Relación formal: J_C = J_B + PSD → PEB_C ≤ PEB_B (Loewner)
+  - Dependencia de n_r (vs DEB que es n_r-independiente)
+  → Fig. 2: Heatmap PEB_B para K=5 y K=9 (sim01)
+
+Section IV — Parametric Analysis (1.5 pág)
+  IV-A. Efecto de K (número de orientaciones)
+    → Fig. 3: PEB_B vs K para Φ_{1/2} ∈ {30°,45°,60°} (sim02)
+  IV-B. Efecto del receiver tilt
+    → Fig. 4: PEB_B vs θ_tilt para K=5,7,9 (sim06)
+  IV-C. Efecto del SNR
+    → Fig. 5: PEB_B vs SNR con envelope K=5..15 (sim03)
+
+Section V — Estimator Performance (1 pág)
+  - NLS + broadcast_distance = profiled MLE → near-efficient
+  - GLS/WLS subóptimos (descartan info distancia al usar ratios)
+  → Fig. 6: CDF de error 3D, K=5 (solid) y K=9 (dashed) (sim05)
+  → Table I: RMSE, CDF90, APE, latencia
+
+Section VI — Conclusion (0.5 pág)
+  - Broadcast viable con penalización ρ ≈ 1.2–1.8×
+  - Trade-off: n_r requerido para distancia, a cambio de escalabilidad
+  - Future work: orientaciones optimizadas para PEB_B, validación experimental
+
+================================================================================
+ FIGURAS Y TABLA
+================================================================================
+
+  Fig  | Contenido                              | Script | Sección  | Tamaño
+  ---- | -------------------------------------- | ------ | -------- | ----------
+   1   | Trayectorias 3D multi-usuario          | sim11  | Sec II   | Double-col
+   2   | Heatmap PEB_B (K=5, K=9)              | sim01  | Sec III  | Double-col
+   3   | PEB_B vs K (Φ=30°,45°,60°)            | sim02  | Sec IV-A | Single-col
+   4   | PEB_B vs θ_tilt (K=5,7,9)             | sim06  | Sec IV-B | Single-col
+   5   | PEB_B vs SNR (envelope K=5..15)        | sim03  | Sec IV-C | Single-col
+   6   | CDF estimadores (K=5 solid, K=9 dash) | sim05  | Sec V    | Single-col
+
+  Table I: RMSE/CDF90/APE/Latencia para GLS,WLS,NLS,PEB_B (de sim05)
+
+  Figuras de RESERVA (para versión journal extendida):
+   - sim09: CDF bajo tilt (K=9, tilts=0°,10°,20°)
+   - sim10: CDF broadcast vs cooperative (K=9)
+
+================================================================================
+ SCRIPTS DE SIMULACIÓN
+================================================================================
+
+  Script                          | Estado    | Descripción
+  ------------------------------- | --------- | ----------------------------------
+  sim01_PEB_Konly_heatmap.m       | ✅ Listo  | Heatmap PEB_B (K=5, K=9)
+  sim02_PEB_vs_K.m                | ✅ Listo  | PEB_B vs K, múltiples Φ_{1/2}
+  sim03_PEB_vs_SNR.m              | ✅ Listo  | PEB_B vs SNR, envelope
+  sim05_MC_broadcast.m            | ✅ Listo  | CDF estimadores, multi-K
+  sim06_PEB_vs_tilt.m             | ✅ Listo  | PEB_B vs tilt, 2-level aggregation
+  sim09_MC_broadcast_tilt.m       | ✅ Listo  | CDF bajo tilt (reserva)
+  sim10_MC_broadcast_vs_coop.m    | ✅ Listo  | Broadcast vs cooperative (reserva)
+  sim11_broadcast_trajectories.m  | ✅ Listo  | Flagship 3D trajectories
+  generate_trajectories.m         | ✅ Listo  | Genera trayectorias realistas
+  system_params_F.m               | ✅ Listo  | Parámetros compartidos
+
+  Funciones core:
+  - PEB_Konly.m          : FIM broadcast → PEB_B
+  - broadcast_distance.m : η̂ MLE + d̂ = √(C·cosψ̂/η̂)
+
+  Todos los scripts tienen:
+  - SAVE_FIGS flag
+  - Export IEEE: pdf (vector) + png (600dpi) + eps (vector)
+  - Tamaño: 3.5" (single-col) o 7.16" (double-col)
+
+================================================================================
+ VENUE RECOMENDADO
+================================================================================
+
+  Opción          | Venue                    | Deadline     | Págs
+  --------------- | ------------------------ | ------------ | ----
+  ⭐ Principal    | GLOBECOM 2026 Workshop   | 12 Ago 2026  | 6
+  ⭐ Alternativa  | IEEE ISAC 2026 (Lisboa)  | 11 Sep 2026  | 6
+  Premium         | ICC 2027 (Washington)    | ~Oct 2026    | 6
+  Letter          | IEEE WCL / PTL           | rolling      | 4
+
+  Recomendación: GLOBECOM 2026 Workshop (12 Ago).
+  Si sale fuerte: escalar a ISAC 2026 (11 Sep) con ángulo "broadcast sensing".
+
+================================================================================
+ PUNTOS PARA DISCUTIR / DECISIONES PENDIENTES
+================================================================================
+
+  1. Orientaciones: se usan DEB-optimizadas (del TCOM). NO se re-optimizan
+     para PEB_B. Es el escenario práctico. Mencionarlo como future work.
+
+  2. Degradación con tilt: viene de (a) SNR baja por cos(ψ)<1, y
+     (b) posiciones fuera del FOV. No es falla del IMU.
+
+  3. Nivel de ruido σ²: se usa σ²=3e-14 (14 dB, consistente con TCOM).
+     Para DC/NIR filtrado sería ~24 dB. La Fig.5 (PEB vs SNR) cubre todo.
+
+  4. Φ_{1/2}: se fija a 45° para la mayoría de figuras. Fig.3 muestra
+     el efecto de variarlo.
+
+  5. NLS es near-optimal porque es el profiled MLE (estima n_d y η
+     conjuntamente). GLS/WLS son subóptimos porque descartan η al tomar
+     ratios. Ver analysis_why_NLS_achieves_PEB_B.md para justificación.
+
+================================================================================
+ TIMELINE
+================================================================================
+
+  Mayo 2026     : Simulaciones completas (HECHO)
+  Jun 2026      : Redacción del paper
+  Jul 2026      : Revisión interna + figuras finales
+  12 Ago 2026   : Submit GLOBECOM 2026 Workshop
+  (11 Sep 2026) : Alternativa: submit ISAC 2026
+
+================================================================================
