@@ -18,6 +18,8 @@ addpath(project_root);
 
 %% System Parameters
 system_params_F;
+%K_values = K_values_Phi30
+%all_orientations_DEB = all_orientations_DEB_Phi30
 
 %% 3D Testbed grid
 x_range = -L/2:step:L/2;
@@ -34,6 +36,7 @@ fprintf('Testbed: %d positions\n', N_pos);
 RMS_PEB_B = zeros(1, length(K_values));
 RMS_PEB_C = zeros(1, length(K_values));
 Mean_rho  = zeros(1, length(K_values));
+
 
 for ik = 1:length(K_values)
     K = K_values(ik);

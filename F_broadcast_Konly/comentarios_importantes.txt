@@ -11,3 +11,9 @@ b. Psi_1/2 (divergencia del LED)
 c. Tilt (angulo de inclinacion)
 2. Fig.1 : Estudio de impacto de K (numero de orientaciones). La grafica seria RMS vs. K para diferentes valores de Psi_1/2. (sim02)
 3. Fig.2 : Se considera un Psi_1/2 fijo y se varia el tilt a traves de diferentes K representativos. (sim6)
+
+
+Para DISCUTIR:
+1. Se esta empleando las orientaciones optimas de DEB. Compatible con TCOM. Pero no se esta optimizando para PEB_B.
+2. La degradación con el tilt viene de dos razones (a) el SNR baja por el canal en si (b) por estar fuera del FOV.
+3. Justificar la decisión del nivel de ruido sigma. Para consistencia con TCOM se mantiene pero puede ser menor ruido y tener 3D subcentimetrico.
