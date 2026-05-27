@@ -11,14 +11,14 @@ clear; clc; close all;
 rng('default');
 
 % ======================== CONFIGURATION ========================
-K_orientations = [10,11,12,13,14,15];
+K_orientations = [3,4,5,6,7,8,9,10];
 system_params.optimization_metric = 'rms';  % 'mean', 'max', 'rms', 'percentile_90'
 L = 3; W = 3; Hmax = 1.2; step = 0.2;
 max_elevation_angle = 80;
-results_dir = 'results/DEB_optimization';
+results_dir = 'results/DEB_optimization_Psitreinta';
 
 % GA parameters
-pop_size = 300;
+pop_size = 400;
 max_generations = 300;
 % ===============================================================
 
@@ -35,7 +35,7 @@ end
 %% ======================== SYSTEM PARAMETERS ========================
 system_params.T = [0; 0; 2];
 system_params.Pt = 0.405;
-system_params.theta_half = deg2rad(45);
+system_params.theta_half = deg2rad(30);
 system_params.m = -log(2)/log(cos(system_params.theta_half));
 system_params.A_det = (4.8e-3)*(5.5e-3);
 system_params.Psi_FOV = deg2rad(85);
