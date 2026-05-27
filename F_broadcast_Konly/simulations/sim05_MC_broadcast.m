@@ -210,20 +210,22 @@ if TEST_MODE
     fprintf('\nWARNING: TEST_MODE=true. For paper results use TEST_MODE=false.\n');
 end
 
-%% 7. CDF Plot
-figure('Name', 'CDF — Broadcast 3D Positioning', 'Position', [100, 100, 650, 500]);
-hold on;
+%% 7. Figures
 
 c_gls = [0.00, 0.45, 0.74];
 c_wls = [0.85, 0.33, 0.10];
 c_nls = [0.49, 0.18, 0.56];
 c_peb = [0.47, 0.67, 0.19];
 
+% ---- (a) CDF of 3D positioning error ----
+figure('Name', 'Broadcast 3D Positioning', 'Position', [50, 100, 1200, 480]);
+
+subplot(1, 2, 1);
+hold on;
 [f,x] = ecdf(rmse_GLS*cm); stairs(x, f, '-',  'LineWidth', 1.8, 'Color', c_gls);
 [f,x] = ecdf(rmse_WLS*cm); stairs(x, f, '-',  'LineWidth', 1.8, 'Color', c_wls);
 [f,x] = ecdf(rmse_NLS*cm); stairs(x, f, '-',  'LineWidth', 1.8, 'Color', c_nls);
 [f,x] = ecdf(PEB_B_arr(~isnan(PEB_B_arr))*cm); stairs(x, f, '--', 'LineWidth', 1.8, 'Color', c_peb);
-
 yline(0.9, ':', 'LineWidth', 0.5, 'Color', [0.5 0.5 0.5]);
 xlabel('3D Positioning Error [cm]', 'Interpreter', 'latex');
 ylabel('CDF', 'Interpreter', 'latex');
@@ -231,13 +233,39 @@ legend(sprintf('GLS ($K{=}%d$)', N_or), ...
        sprintf('WLS ($K{=}%d$)', N_or), ...
        sprintf('NLS ($K{=}%d$)', N_or), ...
        sprintf('$\\mathrm{PEB}_\\mathrm{B}$ ($K{=}%d$)', N_or), ...
-       'Location', 'southeast', 'Interpreter', 'latex');
-title(sprintf('Broadcast 3D Positioning ($K{=}%d$, $M{=}%d$, $\\mathbf{n}_r{=}[0,0,1]^T$)', ...
-    N_or, M_trials), 'Interpreter', 'latex');
+       'Location', 'southeast', 'Interpreter', 'latex', 'FontSize', 8);
+title('(a) CDF of 3D positioning error', 'Interpreter', 'latex');
 grid minor; box on;
 
-saveas(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast_3D.png'));
-saveas(gcf, fullfile(results_dir, 'Fig05_CDF_broadcast_3D.fig'));
+% ---- (b) Scatter: per-position RMSE vs PEB_B ----
+subplot(1, 2, 2);
+hold on;
+valid_idx = isfinite(PEB_B_arr) & PEB_B_arr > 0;
+
+scatter(PEB_B_arr(valid_idx)*cm, rmse_GLS(valid_idx)*cm, 8, c_gls, 'filled', 'MarkerFaceAlpha', 0.3);
+scatter(PEB_B_arr(valid_idx)*cm, rmse_WLS(valid_idx)*cm, 8, c_wls, 'filled', 'MarkerFaceAlpha', 0.3);
+scatter(PEB_B_arr(valid_idx)*cm, rmse_NLS(valid_idx)*cm, 12, c_nls, 'filled', 'MarkerFaceAlpha', 0.4);
+
+% Diagonal (RMSE = PEB_B → perfectly efficient)
+ax_max = max(max(rmse_GLS(valid_idx)*cm), max(PEB_B_arr(valid_idx)*cm)) * 1.05;
+plot([0, ax_max], [0, ax_max], 'k--', 'LineWidth', 1, 'HandleVisibility', 'off');
+
+xlabel('$\mathrm{PEB}_\mathrm{B}$ [cm]', 'Interpreter', 'latex');
+ylabel('Per-position RMSE [cm]', 'Interpreter', 'latex');
+legend('GLS', 'WLS', 'NLS', 'Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 8);
+title('(b) Estimator RMSE vs $\mathrm{PEB}_\mathrm{B}$', 'Interpreter', 'latex');
+axis equal; grid on; box on;
+xlim([0, ax_max]); ylim([0, ax_max]);
+
+% Annotation: diagonal = efficient
+text(ax_max*0.55, ax_max*0.45, '$\mathrm{RMSE} = \mathrm{PEB}_\mathrm{B}$', ...
+    'Interpreter', 'latex', 'FontSize', 9, 'Color', [0.4 0.4 0.4], 'Rotation', 45);
+
+sgtitle(sprintf('Broadcast 3D Positioning ($K{=}%d$, $M{=}%d$, $\\mathbf{n}_r{=}[0,0,1]^T$)', ...
+    N_or, M_trials), 'Interpreter', 'latex', 'FontSize', 12);
+
+saveas(gcf, fullfile(results_dir, 'Fig05_CDF_and_scatter.png'));
+saveas(gcf, fullfile(results_dir, 'Fig05_CDF_and_scatter.fig'));
 
 %% 8. Save
 if save_files

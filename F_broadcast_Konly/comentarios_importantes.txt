@@ -7,13 +7,14 @@ Flujo metodologico:
 1. Se obtiene el PEB teorico.
 Luego se toman en consideracion 3 variables a estudiar:
 a. K (numero de orientaciones)
-b. Psi_1/2 (divergencia del LED)
+b. Phi_1/2 (divergencia del LED) ----- Este se podria fijar a 45grados para evitar mayores variables.
 c. Tilt (angulo de inclinacion)
-2. Fig.1 : Estudio de impacto de K (numero de orientaciones). La grafica seria RMS vs. K para diferentes valores de Psi_1/2. (sim02)
-3. Fig.2 : Se considera un Psi_1/2 fijo y se varia el tilt a traves de diferentes K representativos. (sim6)
-
+2. Fig.1 : Estudio de impacto de K (numero de orientaciones). La grafica seria RMS vs. K para diferentes valores de Phi_1/2. (sim02)
+3. Fig.2 : Se considera un Phi_1/2 fijo y se varia el tilt a traves de diferentes K representativos. (sim6)
+4. Fig.3 : Comparacion del SNR para el rango de K de 3 a 15 y con Phi_1/2 fijo a 45 y n_r fijo vertical.
 
 Para DISCUTIR:
 1. Se esta empleando las orientaciones optimas de DEB. Compatible con TCOM. Pero no se esta optimizando para PEB_B.
 2. La degradación con el tilt viene de dos razones (a) el SNR baja por el canal en si (b) por estar fuera del FOV.
-3. Justificar la decisión del nivel de ruido sigma. Para consistencia con TCOM se mantiene pero puede ser menor ruido y tener 3D subcentimetrico.
+3. Para evitar problemas con el sigma o SNR debo de hacer una grafica RMSE vs. SNR.
+4. Puedo elegir como parametro fijo el Phi_1/2 a 45grados para evitar mas variables.

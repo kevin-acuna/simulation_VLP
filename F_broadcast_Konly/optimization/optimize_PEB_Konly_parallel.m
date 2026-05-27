@@ -1,9 +1,10 @@
-% optimize_DEB_orientations_parallel.m
-% GA optimization to find LED orientation sets that minimize the DEB
-% (Direction Error Bound) over a 3D testbed.
+% optimize_PEB_Konly_parallel.m
+% GA optimization to find LED orientation sets that minimize the broadcast
+% Position Error Bound (PEB_B) using only the K steered-orientation
+% measurements (no cooperative beam-aligned measurement).
 %
-% Same structure as optimize_PEB_orientations_parallel.m but uses
-% DEB_complete instead of PEB_complete as the objective.
+% Uses PEB_Konly as the objective, following the same structure as
+% optimize_DEB_orientations_parallel.m in fundamentals/optimization/.
 %
 % Author: Kevin Acuña
 
@@ -15,7 +16,7 @@ K_orientations = [3,4,5,6,7,8,9,10];
 system_params.optimization_metric = 'rms';  % 'mean', 'max', 'rms', 'percentile_90'
 L = 3; W = 3; Hmax = 1.2; step = 0.2;
 max_elevation_angle = 80;
-results_dir = 'results/DEB_optimization';
+results_dir = 'results/PEB_Konly_optimization';
 
 % GA parameters
 pop_size = 400;
@@ -33,18 +34,19 @@ else
 end
 
 %% ======================== SYSTEM PARAMETERS ========================
-system_params.T = [0; 0; 2];
-system_params.Pt = 0.405;
-system_params.theta_half = deg2rad(30);
-system_params.m = -log(2)/log(cos(system_params.theta_half));
-system_params.A_det = (4.8e-3)*(5.5e-3);
-system_params.Psi_FOV = deg2rad(85);
-system_params.sigma2 = (10^(-21.0))*(30e6);
-system_params.N = 1000;
+system_params.T        = [0; 0; 2];
+system_params.Pt       = 0.405;
+system_params.theta_half = deg2rad(45);
+system_params.m        = -log(2)/log(cos(system_params.theta_half));
+system_params.A_det    = (4.8e-3)*(5.5e-3);
+system_params.Psi_FOV  = deg2rad(85);
+system_params.sigma2   = (10^(-21.0))*(30e6);
+system_params.N        = 1000;
+system_params.nr       = [0; 0; 1];
 system_params.debug_mode = false;
 
 %% ======================== TESTBED ========================
-% Add core to path for DEB_complete
+% Add core to path for PEB_Konly
 addpath('../core');
 
 x_range = -L/2:step:L/2;
@@ -69,21 +71,21 @@ fprintf('Range: X∈[%.1f,%.1f], Y∈[%.1f,%.1f], Z∈[%.1f,%.1f]\n', ...
 %% ======================== OPTIMIZATION LOOP ========================
 for k_idx = 1:length(K_orientations)
     K = K_orientations(k_idx);
-    
+
     current_datetime = datestr(now, 'yyyy-mm-dd_HH-MM-SS');
-    
+
     % Create results directory
     k_results_dir = fullfile(results_dir, sprintf('K_%d', K));
     if ~exist(k_results_dir, 'dir')
         mkdir(k_results_dir);
     end
-    
+
     % Start log
     log_filename = fullfile(k_results_dir, sprintf('optimization_log_%s.txt', current_datetime));
     diary(log_filename);
-    
+
     fprintf('\n%s\n', repmat('=', 1, 60));
-    fprintf('DEB ORIENTATION OPTIMIZATION LOG\n');
+    fprintf('PEB_B ORIENTATION OPTIMIZATION LOG\n');
     fprintf('%s\n', repmat('=', 1, 60));
     fprintf('Date: %s\n', datestr(now));
     fprintf('Metric: %s\n', system_params.optimization_metric);
@@ -95,7 +97,7 @@ for k_idx = 1:length(K_orientations)
     fprintf('Noise: σ²=%.2e W², N=%d samples\n', system_params.sigma2, system_params.N);
     fprintf('GA: pop=%d, gen=%d, parallel=%d workers\n', pop_size, max_generations, pool.NumWorkers);
     fprintf('%s\n\n', repmat('=', 1, 60));
-    
+
     %% GA Setup
     nvars = 2 * K;
     lb = zeros(1, nvars);
@@ -107,7 +109,7 @@ for k_idx = 1:length(K_orientations)
             lb(i) = 0;   ub(i) = 360;
         end
     end
-    
+
     options = optimoptions('ga', ...
         'PopulationSize', pop_size, ...
         'MaxGenerations', max_generations, ...
@@ -115,47 +117,47 @@ for k_idx = 1:length(K_orientations)
         'MutationFcn', @mutationadaptfeasible, ...
         'Display', 'iter', ...
         'PlotFcn', {@gaplotbestf}, ...
-        'OutputFcn', @DEB_monitor, ...
+        'OutputFcn', @PEB_Konly_monitor, ...
         'UseParallel', true, ...
         'UseVectorized', false);
-    
-    objective_func = @(x) DEB_objective(x, system_params, receiver_positions);
-    
+
+    objective_func = @(x) PEB_Konly_objective(x, system_params, receiver_positions);
+
     %% Run optimization
-    fprintf('Starting GA optimization for DEB (K=%d)...\n', K);
+    fprintf('Starting GA optimization for PEB_B (K=%d)...\n', K);
     t_start = tic;
-    
+
     [xOpt, fvalOpt, exitflag, output] = ga(objective_func, nvars, ...
         [], [], [], [], lb, ub, [], options);
-    
+
     optimization_time = toc(t_start);
-    
+
     %% Process results
     fprintf('\n%s\n', repmat('-', 1, 50));
-    fprintf('DEB OPTIMIZATION RESULTS FOR K = %d\n', K);
+    fprintf('PEB_B OPTIMIZATION RESULTS FOR K = %d\n', K);
     fprintf('%s\n', repmat('-', 1, 50));
     fprintf('Execution time: %.2f seconds (%.1f min)\n', optimization_time, optimization_time/60);
-    fprintf('Best RMS-DEB achieved: %.6f (chordal) = %.4f°\n', fvalOpt, fvalOpt*180/pi);
+    fprintf('Best RMS-PEB_B achieved: %.6f m\n', fvalOpt);
     fprintf('Exit flag: %d\n', exitflag);
-    
+
     % Display optimal orientations
-    fprintf('\nOptimal LED orientations (DEB-optimized):\n');
+    fprintf('\nOptimal LED orientations (PEB_B-optimized):\n');
     for i = 1:K
         theta_deg = xOpt(2*i-1);
-        rho_deg = xOpt(2*i);
+        rho_deg   = xOpt(2*i);
         nt = [sind(theta_deg)*cosd(rho_deg), sind(theta_deg)*sind(rho_deg), -cosd(theta_deg)];
         fprintf('  LED %d: θ = %6.2f°, ρ = %6.2f° → n_t = [%6.3f, %6.3f, %6.3f]\n', ...
             i, theta_deg, rho_deg, nt(1), nt(2), nt(3));
     end
-    
+
     % Save results
     save(fullfile(k_results_dir, 'optimization_results.mat'), ...
         'xOpt', 'fvalOpt', 'exitflag', 'output', 'optimization_time', ...
         'K', 'system_params', 'receiver_positions');
-    
+
     % Save orientation vector as text for easy copy-paste
     fprintf('\nOrientation vector (copy-paste ready):\n');
-    fprintf('orientations_DEB_K%d = [', K);
+    fprintf('orientations_PEB_Konly_K%d = [', K);
     for i = 1:length(xOpt)
         if i < length(xOpt)
             fprintf('%.2f,', xOpt(i));
@@ -164,7 +166,7 @@ for k_idx = 1:length(K_orientations)
         end
     end
     fprintf('];\n');
-    
+
     fprintf('\nOptimization completed at: %s\n', datestr(now));
     diary off;
 end
