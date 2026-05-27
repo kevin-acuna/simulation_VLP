@@ -1,0 +1,41 @@
+============================================================
+BROADCAST MC — TILT COMPARISON (K=9)
+Tilts: [0  10  20] deg | N_az=12 | M=10 | N_pos=1792
+============================================================
+
+
+>>> Tilt = 0 deg
+  az=  0 deg ... done
+  az= 30 deg ... done
+  az= 60 deg ... done
+  az= 90 deg ... done
+  az=120 deg ... done
+  az=150 deg ... done
+  az=180 deg ... done
+  az=210 deg ... done
+  az=240 deg ... done
+  az=270 deg ... done
+  az=300 deg ... done
+  az=330 deg ... done
+  Tilt=0: NLS RMS=1.73 cm, PEB_B RMS=1.72 cm
+
+>>> Tilt = 10 deg
+  az=  0 deg ... done
+  az= 30 deg ... done
+  az= 60 deg ... done
+  az= 90 deg ... done
+  az=120 deg ... done
+  az=150 deg ... done
+  az=180 deg ... done
+  az=210 deg ... done
+  az=240 deg ... done
+  az=270 deg ... done
+  az=300 deg ... done
+  az=330 deg ... done
+  Tilt=10: NLS RMS=1.98 cm, PEB_B RMS=1.98 cm
+
+>>> Tilt = 20 deg
+  az=  0 deg ... done
+  az= 30 deg ... done
+  az= 60 deg ... done
+  az= 90 deg ... 
