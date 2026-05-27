@@ -12,7 +12,7 @@ clear; clc; close all;
 rng('default');
 
 % ======================== CONFIGURATION ========================
-K_orientations = [3,4,5,6,7,8,9,10];
+K_orientations = [3,4,5,6,7,8,9,10,11,12,13,14,15];
 system_params.optimization_metric = 'rms';  % 'mean', 'max', 'rms', 'percentile_90'
 L = 3; W = 3; Hmax = 1.2; step = 0.2;
 max_elevation_angle = 80;
@@ -20,7 +20,7 @@ results_dir = 'results/PEB_Konly_optimization';
 
 % GA parameters
 pop_size = 400;
-max_generations = 300;
+max_generations = 400;
 % ===============================================================
 
 %% ======================== PARALLEL SETUP ========================
