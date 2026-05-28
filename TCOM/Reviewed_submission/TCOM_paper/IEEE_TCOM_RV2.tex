@@ -34,8 +34,8 @@ This work was supported in part by the French National Research Agency (ANR) thr
 The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Villacoublay, France (e-mail: kevin-jose.acuna-condori@uvsq.fr).
 }
 }
-\markboth{IEEE Transactions on Communications,~Vol.~XX, No.~X, November~2025}%
-{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+\markboth{IEEE Transactions on Communications,~Vol.~XX, No.~X, 2025}%
+{Acuna-Condori \MakeLowercase{\textit{et al.}}: Model-Based Beam-Steered OWP with Single-LED Single-PD for 3D Localization}
 \maketitle
 
 \begin{abstract}
@@ -63,7 +63,7 @@ State-of-the-art optical wireless positioning (OWP) commonly reaches centimeter-
 
 \added{Table~\ref{tab:single_led_vlp} summarizes representative single-LED OWP systems. The reported solutions adopt a variety of receiver architectures to compensate for the limited information provided by a single source at a fixed orientation: multiple tilted photodiodes (PD) that create directional diversity \cite{Qin2020, Qin2021, Zia-Ul-Mustafa2023, Zhang2024, Li2024}, a single mechanically rotatable PD \cite{Liu2022, Wang2024, Shi2025}, or aiding sensors such as inertial measurement units (IMU) \cite{Ma2024} and intelligent reflecting surfaces \cite{ShiJin2025}. Several systems are restricted to two-dimensional (2D) positioning \cite{Chen2021, Qin2021, Liu2022, Zia-Ul-Mustafa2023, Chassagne2025, Zhang2024, Wang2024, Shi2025, ShiJin2025}, whereas fewer achieve 3D localization \cite{Qin2020, Li2024, Ma2024}. A common thread emerges: with a single LED at a fixed orientation, one received signal strength (RSS) measurement is insufficient to resolve a 3D position; existing single-LED systems therefore compensate by placing hardware or computational complexity at the receiver side---through PD arrays, continuous mechanical rotation, or sensor fusion---limiting the simplicity and scalability of the user equipment.}
 
-\added{Recent advances in OWC suggest a fundamentally different strategy: shifting the spatial diversity requirement from the receiver to the transmitter infrastructure through beam steering. High-speed microelectromechanical mirrors \cite{Liu:25}, liquid-crystal or metasurface deflectors that widen the FOV without sacrificing speed \cite{Feng2019}, and silicon-photonics optical-phased arrays that shift the beam tens of degrees in microseconds with no moving parts \cite{mi13070990} have all been demonstrated for indoor OWC. Moreover, OWC roadmaps increasingly regard dynamic beam steering as a core enabler for high-capacity, mobile, multiuser links and blockage mitigation \cite{mi13070990, Zeng2023, Jin2023}. A recent comparative study has further shown that beam-steered transmitters substantially outperform fixed-antenna configurations in terms of indoor communication coverage \cite{AlSatai2026}, making it natural to exploit the same transmitter-side capability for positioning. In this work, we employ a near-infrared (NIR) LED transmitter, as opposed to conventional VLP which must respect visible-light illumination standards. Since NIR is imperceptible to humans, the positioning link is decoupled from room lighting constraints, allowing unrestricted steering and reorientation of the source \cite{Zhu2025}.}
+\added{Recent advances in OWC suggest a fundamentally different strategy: shifting the spatial diversity requirement from the receiver to the transmitter infrastructure through beam steering. In particular, microelectromechanical system (MEMS) micromirror gimbals redirect the LED beam mechanically, thereby preserving the native Lambertian emission pattern while achieving kHz-rate reorientation \cite{Liu:25}. Moreover, OWC roadmaps increasingly regard dynamic beam steering as a core enabler for high-capacity, mobile, multiuser links and blockage mitigation \cite{mi13070990, Zeng2023, Jin2023}. A recent comparative study has further shown that beam-steered transmitters substantially outperform fixed-antenna configurations in terms of indoor communication coverage \cite{AlSatai2026}, making it natural to exploit the same transmitter-side capability for positioning. In this work, we employ a near-infrared (NIR) LED transmitter, as opposed to conventional VLP which must respect visible-light illumination standards. Since NIR is imperceptible to humans, the positioning link is decoupled from room lighting constraints, allowing unrestricted steering and reorientation of the source \cite{Zhu2025}.}
 
 \added{Building on these observations, we study a novel model-based beam-steered single-LED single-PD OWP architecture for 3D indoor localization. The core idea is to steer a single LED through $K$ predefined orientations while a PD at an unknown position---held at an arbitrary fixed orientation---collects the resulting $K$ RSS measurements. Forming the ratio of received powers between any two orientations cancels the unknown distance, transmitted power, and all receiver-orientation-dependent terms, yielding linear constraints on the transmitter-to-receiver direction vector; a closed-form eigenvector solution then provides the direction estimate. Because the ratio-based formulation eliminates all receiver-dependent factors, the direction-finding stage is mathematically independent of the receiver orientation $\mathbf{n}_r$, requiring no receiver pose knowledge or control.}
 
@@ -230,7 +230,7 @@ is a positive scalar common to all $K$ orientations.  The constant $\eta$ absorb
 % ------------------------------------------------------------------
 We parameterize the direction in nadir-referenced spherical coordinates:
 \begin{equation}
-\mathbf{n}_d = \bigl[-\sin\theta_d\cos\phi_d,\;-\sin\theta_d\sin\phi_d,\;-\cos\theta_d\bigr]^{\mathsf T},
+\mathbf{n}_d = \bigl[\sin\theta_d\cos\phi_d,\;\sin\theta_d\sin\phi_d,\;-\cos\theta_d\bigr]^{\mathsf T},
 \label{eq:nd_spherical}
 \end{equation}
 where $\theta_d\in[0,\pi)$ is the polar angle from $-\mathbf{u}_z$ and $\phi_d\in[0,2\pi)$ is the azimuth.  Let $\mathbf{u}_\theta = \partial\mathbf{n}_d/\partial\theta_d$ and $\mathbf{u}_\phi = \partial\mathbf{n}_d/\partial\phi_d$ denote the tangent vectors to $\mathbb{S}^2$ at $\mathbf{n}_d$.
@@ -305,19 +305,20 @@ and the distance-recovery gradient is $\nabla_{\mathbf r}\mu_{K+1} = -2C\,\mathb
 Since the PEB assumes perfect beam alignment in the $(K{+}1)$-th measurement, it is an optimistic lower bound that no practical two-stage estimator can attain~\cite{Kay1993}.  In this work, the DEB~\eqref{eq:DEB} is adopted as the primary metric and GA objective; the PEB is reported in Section~\ref{sec:results} for completeness.}
 
 %-------------------------------------------------------------------------------
-\subsection{Number of LED Orientations}
+\added{\subsection{Number of LED Orientations}
 \label{subsec:Kchoice}
 %-------------------------------------------------------------------------------
 
-\subsubsection{Underdetermined Regime (\(K\le2\))}
-In this regime, the FIM \(\mathcal{I}(\mathbf r)\) from~\eqref{eq:FIM_general} is rank‐deficient. Each of the \(K\) orientation measurements contributes at most to one independent gradient vector, and the distance‐recovery measurement adds a single additional vector.  When \(K\le2\), there are fewer than three linearly independent gradients in total, so \(\mathcal{I}(\mathbf r)\) is singular and the CRLB on any unbiased position estimate diverges \cite{Zhuang2018}.
+Since the DEB is the primary metric adopted in this work, the identifiability conditions are stated in terms of the direction-finding FIM $\mathcal{I}_{\mathrm{DF}}(\boldsymbol\xi)$ in~\eqref{eq:FIM_DEB}, which is a sum of $K$ rank-one outer products $\tilde{\mathbf g}_i\tilde{\mathbf g}_i^{\mathsf T}$.
 
-\subsubsection{Just‐Determined Regime (\(K=3\))}
-With three distinct, non‐coplanar LED orientations plus the range measurement, the total of four gradient vectors can span the 3D parameter space.  In generic geometries the FIM is
-full rank and \(\mathcal{I}^{-1}(\mathbf r)\) exists, yielding a finite PEB.  However, the absence of redundancy makes the bound highly sensitive to small perturbations in orientation geometry \cite{Chen2021}.
+\subsubsection{Underdetermined Regime ($K\le2$)}
+When $K\le2$, at most two gradient vectors $\{\tilde{\mathbf g}_i\}$ are available, so $\operatorname{rank}(\mathcal{I}_{\mathrm{DF}})\le 2<3$. The FIM is singular, $\mathcal{I}_{\mathrm{DF}}^{-1}$ does not exist, and the DEB~\eqref{eq:DEB} diverges \cite{Zhuang2018}.
 
-\subsubsection{Overdetermined Regime (\(K\ge4\))}
-For four or more orientations, the FIM accumulates redundant outer‐products of gradients.  This overdetermination improves the numerical conditioning of \(\mathcal{I}(\mathbf r)\) and generally lowers the PEB, since extra measurements provide additional independent information beyond the minimal requirement \cite{Ma2024,Wang2024b}. 
+\subsubsection{Just-Determined Regime ($K=3$)}
+With three orientations whose gradient vectors $\{\tilde{\mathbf g}_1,\tilde{\mathbf g}_2,\tilde{\mathbf g}_3\}$ are linearly independent---which requires non-coplanar LED orientations---the FIM reaches full rank and $\mathcal{I}_{\mathrm{DF}}^{-1}$ exists, yielding a finite DEB. However, the absence of redundancy makes the bound highly sensitive to small perturbations in orientation geometry \cite{Chen2021}.
+
+\subsubsection{Overdetermined Regime ($K\ge4$)}
+For four or more orientations, additional rank-one contributions improve the numerical conditioning of $\mathcal{I}_{\mathrm{DF}}$ and lower the DEB, since each extra orientation provides independent angular information beyond the minimal three \cite{Ma2024,Wang2024b}. The same conclusions extend to the Cartesian FIM $\mathcal{I}(\mathbf r)$ in~\eqref{eq:FIM_general} and hence to the PEB, with the additional distance-recovery measurement further augmenting the information.} 
 
 
 % *******************************************
@@ -381,7 +382,7 @@ Standard genetic operators—tournament selection, crossover with probability \(
 with early termination when the average relative improvement of the best fitness over \(G_{\max}\) generations falls below \(10^{-6}\).
 The implementation is in MATLAB; optimization parameters are summarized in Table~\ref{tab:ga_params}.
 
-\added{We emphasize that the GA optimization is an offline system-design problem, not an online estimation problem. The $2K$ decision variables (tilt--azimuth pairs) define the orientation set; for each candidate set, the DEB (or PEB) is evaluated analytically over the entire 3D testbed using the closed-form FIM in~\eqref{eq:FIM_general}. No measurements are involved in this optimization---only theoretical performance bounds. The orientation set is optimized to minimize the RMSE of the DEB averaged over all $|\mathcal{R}|=1{,}792$ receiver positions (Table~\ref{tab:ga_params}). The position $\mathbf{r}$ is therefore not fixed but sweeps the spatial grid during fitness evaluation; the resulting orientation set is position-independent and can be deployed universally. Once fixed, the online direction-finding stage uses $K$ power measurements to recover the 2-DoF direction on $\mathbb{S}^2$, which is overdetermined for $K\ge3$.}
+\added{We emphasize that the GA optimization is an offline system-design problem, not an online estimation problem. The $2K$ decision variables (tilt--azimuth pairs) define the orientation set; for each candidate set, the DEB (or PEB) is evaluated analytically over the entire 3D testbed using the closed-form FIM in~\eqref{eq:FIM_general}. No measurements are involved in this optimization---only theoretical performance bounds. The orientation set is optimized to minimize the RMSE of the DEB averaged over all $|\mathcal{R}|=1{,}792$ receiver positions (Table~\ref{tab:ga_params}). The position $\mathbf{r}$ is therefore not fixed but sweeps the spatial grid during fitness evaluation; the resulting orientation set is position-independent and can be deployed universally. Once fixed, the online direction-finding stage uses $K$ power measurements to recover the two-degrees-of-freedom direction on $\mathbb{S}^2$, which is overdetermined for $K\ge3$.}
 
 \begin{table*}[ht]
 \centering
@@ -465,7 +466,7 @@ Figure~\ref{fig:PEB_vs_noise} presents the RMS-DEB (solid, left axis) and RMS-PE
 \added{F(\mathbf{v},\eta) = \sum_{i=1}^{K}\bigl(\eta\,[\mathbf{n}_{t,i}\cdot\mathbf{v}]^m - p_i\bigr)^2.}
 \label{eq:NLS_cost}
 \end{equation}
-\added{To solve~\eqref{eq:argmin_NL}, we reparameterize the direction in spherical coordinates $(\theta_d,\phi_d)$ so that $\mathbf{v}=(\sin\theta_d\cos\phi_d,\;\sin\theta_d\sin\phi_d,\;-\cos\theta_d)^{\mathsf T}$, which satisfies $\lVert\mathbf{v}\rVert=1$ by construction and reduces the parameter vector to $(\theta_d,\phi_d,\eta)\in\mathbb{R}^3$. The sum-of-squares structure of~\eqref{eq:NLS_cost} is then exploited by a Levenberg--Marquardt solver (MATLAB's \texttt{lsqnonlin}), which uses the Gauss--Newton Hessian approximation $\mathbf{J}^{\mathsf T}\mathbf{J}$ and achieves quadratic convergence near the zero-residual solution.}
+\added{To solve~\eqref{eq:argmin_NL}, we reparameterize the direction in spherical coordinates $(\theta_d,\phi_d)$ so that $\mathbf{v}=[\sin\theta_d\cos\phi_d,\;\sin\theta_d\sin\phi_d,\;-\cos\theta_d]^{\mathsf T}$, which satisfies $\lVert\mathbf{v}\rVert=1$ by construction and reduces the parameter vector to $(\theta_d,\phi_d,\eta)\in\mathbb{R}^3$. The sum-of-squares structure of~\eqref{eq:NLS_cost} is then exploited by a Levenberg--Marquardt solver (MATLAB's \texttt{lsqnonlin}), which uses the Gauss--Newton Hessian approximation $\mathbf{J}^{\mathsf T}\mathbf{J}$ and achieves quadratic convergence near the zero-residual solution.}
 
 % ------------------------------------------------------------------
 \added{\subsection{Consistency and Optimality at the True Direction}}
@@ -617,7 +618,7 @@ Stacking \(\boldsymbol{\xi}=[\xi_2,\ldots,\xi_K]^{\mathsf T}\) and
 \begin{equation}
 \begin{aligned}
 \boldsymbol{\xi} &= -\,\kappa\,\tilde{\boldsymbol n}, \\
-\mathbb E[\boldsymbol{\xi}] &= \mathbf{0}_{1\times (K-1)}, \\
+\mathbb E[\boldsymbol{\xi}] &= \mathbf{0}_{(K-1)\times 1}, \\
 \mathbf \Sigma_{\boldsymbol{\xi}} &= \operatorname{Cov}(\boldsymbol{\xi})
 = \kappa^{2}\mathbf\Sigma_{\beta},
 \end{aligned}
@@ -631,7 +632,7 @@ Stack the empirical constraint normals into
 From \eqref{eq:residual_def}–\eqref{eq:residual_cov}, the stacked residuals satisfy
 \(\boldsymbol{\xi}=\hat{\mathbf A}^{\mathsf T}\mathbf d\)
 with
-\(\boldsymbol{\xi}\sim\mathcal N(\mathbf{0}_{1\times (K-1)},\mathbf\Sigma_{\boldsymbol{\xi}})\)
+\(\boldsymbol{\xi}\sim\mathcal N(\mathbf{0}_{(K-1)\times 1},\mathbf\Sigma_{\boldsymbol{\xi}})\)
 and
 \(\mathbf\Sigma_{\boldsymbol{\xi}}=\kappa^{2}\mathbf\Sigma_{\beta}\),
 \(\kappa=\mathbf n_{t,1}\!\cdot\!\mathbf d\).
@@ -825,7 +826,7 @@ DEB   & 0.518 & 0.527 & $+1.69\%$ \\ \hline
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30}
-    \caption{Empirical CDF of the per-position angular RMSE for $K=5$ orientations ($M=1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf{n}_r=[0,0,1]^{\mathsf T}$); dashed curves: random receiver tilt ($N_{\mathrm{tilt}}=100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma=5^{\circ}$, $\theta_{\max}=30^{\circ}$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref{subsec:nr_independence}).}
+    \caption{\added{Empirical CDF of the per-position angular RMSE for $K=5$ orientations ($M=1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf{n}_r=[0,0,1]^{\mathsf T}$); dashed curves: random receiver tilt ($N_{\mathrm{tilt}}=100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma=5^{\circ}$, $\theta_{\max}=30^{\circ}$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref{subsec:nr_independence}).}}
     \label{fig:NR_robust_CDF}
 \end{figure}
 \subsubsection{Computational Complexity and Latency}
@@ -934,7 +935,7 @@ We proposed a two-stage process: (i) direction finding from \(K\) steered orient
 
 \added{Monte Carlo simulations over $1{,}792$ testbed positions with $1{,}000$ trials confirmed the effectiveness of the proposed framework. For direction finding with $K=5$, all estimators achieved sub-degree mean angular error: GLS $0.54^\circ$, WLS $0.61^\circ$, NLS $0.52^\circ$, with the DEB at $0.46^\circ$. For full 3D positioning, the APE reached GLS $2.00$\,cm, WLS $2.25$\,cm, and NLS $1.90$\,cm at $K=5$, tracking the PEB ($1.43$\,cm) within a factor $\approx1.4\times$; increasing to $K=9$ improved GLS to $1.46$\,cm and NLS to $1.26$\,cm. Importantly, GLS/WLS reduce inference to a single $3\times3$ eigenproblem, yielding $\mu$s-level latency ($\approx0.025$\,ms), while NLS requires $\approx0.65$\,ms due to its iterative Levenberg--Marquardt optimization. Furthermore, under random receiver tilts (half-normal, $\sigma=5^\circ$, $\max=30^\circ$), all estimators degrade by less than $3\%$, confirming that receiver-orientation variations have negligible effect on direction-finding accuracy, as established analytically in Section~\ref{subsec:nr_independence}.}
 
-\added{Beyond accuracy, direction finding constitutes the core enabling stage of the architecture. It requires no receiver rotation during the $K$ measurements, nor pose calibration, and the same periodic $K$-orientation scan can serve multiple receivers simultaneously. Once the direction $\hat{\mathbf{n}}_d$ is known, it enables cooperative beam alignment---steering the LED toward the PD and reorienting the PD toward the LED---which maximizes the link SNR for a subsequent distance-recovery measurement that completes the 3D position. Thus, beam-steering complexity is concentrated in the infrastructure (a single source), while the receiver requires only a single PD and one cooperative reorientation for the ranging step. The full pipeline acquires $K+1$ sequential measurements ($K$ for direction finding and one for distance recovery). For $K=5$ with state-of-the-art steering mechanisms, the total acquisition window is on the order of milliseconds, resulting in sub-centimeter displacement at pedestrian speeds.}
+\added{Beyond accuracy, direction finding constitutes the core enabling stage of the architecture. It requires no receiver rotation during the $K$ measurements, nor pose calibration, and the same periodic $K$-orientation scan can serve multiple receivers simultaneously. Once the direction $\hat{\mathbf{n}}_d$ is known, it enables cooperative beam alignment---steering the LED toward the PD and reorienting the PD toward the LED---which maximizes the link SNR for a subsequent distance-recovery measurement that completes the 3D position. Thus, beam-steering complexity is concentrated in the infrastructure (a single source). The full pipeline acquires $K+1$ sequential measurements ($K$ for direction finding and one for distance recovery). For $K=5$ with state-of-the-art steering mechanisms, the total acquisition window is on the order of milliseconds, resulting in sub-centimeter displacement at pedestrian speeds.}
 
 \added{Future works include: (i)~experimental validation; (ii)~integration with beam-steered OWC links, where the direction-finding stage can be embedded into the beam-tracking loop and an intelligent refresh strategy can exploit the previous direction estimate to reduce the number of required orientations; and (iii)~extending the framework to optical integrated sensing and communication.}
 
@@ -1022,8 +1023,6 @@ Thus:
 \beta_i\beta_j\,\mu_1^{-2}, \quad i\neq j,
 \end{equation}
 which is \eqref{eq:cov_beta_gls}.\hfill\(\square\)
-
-
 
 \bibliographystyle{IEEEtran}
 \bibliography{References}
