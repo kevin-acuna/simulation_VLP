@@ -18,9 +18,6 @@
 \usepackage{cite}
 \usepackage{xcolor}
 \usepackage{soul}
-% --- Revision markup commands ---
-\newcommand{\added}[1]{{\color{blue}#1}}
-\newcommand{\deleted}[1]{{\color{red}#1}}
 
 \begin{document}
 \bstctlcite{IEEEexample:BSTcontrol}
@@ -40,7 +37,7 @@ The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Vi
 
 \begin{abstract}
 State-of-the-art optical wireless positioning (OWP) commonly reaches centimeter-level accuracy by depending on dense multi-light-emitting diodes (LED) infrastructures, photodiode (PD) arrays, or image-sensor receivers, incurring hardware complexity and deployment cost. 
-\added{This paper introduces a single beam-steered LED, single-PD OWP architecture that achieves three-dimensional (3D) localization without cameras or PD arrays. The core idea is to steer the transmitter through $K$ known orientations and exploit the resulting received signal strength variations at the PD to first estimate the LED-to-PD direction, and then recover the distance from a single cooperative beam-aligned measurement. We derive a direction error bound (DEB) for the direction-finding stage and a position error bound for the complete 3D positioning system, and cast the steering-pattern design as a genetic algorithm that minimizes the DEB over a 3D testbed. We develop three direction estimators: a statistically efficient closed-form generalized least squares (GLS), a lightweight weighted least squares (WLS) approximation, and an iterative nonlinear least-squares (NLS) estimator. We prove that all three estimators are mathematically independent of the receiver orientation, enabling direction finding without receiver pose knowledge or control. Simulations over 1,792 testbed positions with 1,000 Monte Carlo trials demonstrate, for $K=5$ orientations, sub-degree mean direction-finding error (GLS: $0.54^\circ$, WLS: $0.61^\circ$, NLS: $0.52^\circ$) and centimeter-level average 3D positioning error (GLS: 2.00\,cm, WLS: 2.25\,cm, NLS: 1.90\,cm), with robustness to random receiver tilts (degradation below 3\%).}
+This paper introduces a single beam-steered LED, single-PD OWP architecture that achieves three-dimensional (3D) localization without cameras or PD arrays. The core idea is to steer the transmitter through $K$ known orientations and exploit the resulting received signal strength variations at the PD to first estimate the LED-to-PD direction, and then recover the distance from a single cooperative beam-aligned measurement. We derive a direction error bound (DEB) for the direction-finding stage and a position error bound for the complete 3D positioning system, and cast the steering-pattern design as a genetic algorithm that minimizes the DEB over a 3D testbed. We develop three direction estimators: a statistically efficient closed-form generalized least squares (GLS), a lightweight weighted least squares (WLS) approximation, and an iterative nonlinear least-squares (NLS) estimator. We prove that all three estimators are mathematically independent of the receiver orientation, enabling direction finding without receiver pose knowledge or control. Simulations over 1,792 testbed positions with 1,000 Monte Carlo trials demonstrate, for $K=5$ orientations, sub-degree mean direction-finding error (GLS: $0.54^\circ$, WLS: $0.61^\circ$, NLS: $0.52^\circ$) and centimeter-level average 3D positioning error (GLS: 2.00\,cm, WLS: 2.25\,cm, NLS: 1.90\,cm), with robustness to random receiver tilts (degradation below 3\%).
 \end{abstract}
 
 \begin{IEEEkeywords} 
@@ -51,11 +48,11 @@ State-of-the-art optical wireless positioning (OWP) commonly reaches centimeter-
 \section{Introduction}
 % *******************************************
 
-\IEEEPARstart{G}{lobal} navigation satellite systems (GNSS) provide ubiquitous outdoor positioning but are unreliable indoors due to severe attenuation, blockage, and multipath. \added{Dedicated indoor positioning systems are therefore required, and radio-frequency (RF) techniques leveraging existing communications infrastructure---such as Wi-Fi \cite{He2016}, Bluetooth Low Energy (BLE) \cite{Faragher2015}, ultra-wideband (UWB) \cite{Alarifi2016}, radio-frequency identification (RFID) \cite{Ni2004}, and emerging 5G positioning \cite{Italiano2025}---are widely studied and deployed \cite{Zafari2019, Italiano2025}.} However, in cluttered interiors they are strongly affected by multipath and time-varying interference in shared spectrum, typically yielding meter-level accuracy unless dense infrastructure, calibration, or specialized hardware is used \cite{Lymberopoulos2015, Leitch2023}.
+\IEEEPARstart{G}{lobal} navigation satellite systems (GNSS) provide ubiquitous outdoor positioning but are unreliable indoors due to severe attenuation, blockage, and multipath. Dedicated indoor positioning systems are therefore required, and radio-frequency (RF) techniques leveraging existing communications infrastructure---such as Wi-Fi \cite{He2016}, Bluetooth Low Energy (BLE) \cite{Faragher2015}, ultra-wideband (UWB) \cite{Alarifi2016}, radio-frequency identification (RFID) \cite{Ni2004}, and emerging 5G positioning \cite{Italiano2025}---are widely studied and deployed \cite{Zafari2019, Italiano2025}. However, in cluttered interiors they are strongly affected by multipath and time-varying interference in shared spectrum, typically yielding meter-level accuracy unless dense infrastructure, calibration, or specialized hardware is used \cite{Lymberopoulos2015, Leitch2023}.
 
-\added{Optical wireless positioning (OWP) has emerged as a compelling complement that exploits the favorable propagation properties of light for indoor localization \cite{Wang2024b}. The spatial confinement of optical signals (no wall penetration), immunity to RF electromagnetic interference, high spatial reuse, and the deterministic nature of line-of-sight (LOS) channels enable centimeter-level accuracy with cost-effective light-emitting diodes (LED) \cite{Trevlakis2023}. Moreover, the same LED infrastructure can simultaneously provide optical wireless communication (OWC)---often termed light-fidelity (LiFi) \cite{Haas:16}---so that illumination, data, and positioning coexist in a unified platform. These attributes make OWP attractive for navigation and asset tracking in malls, airports, and museums where GNSS is unavailable, as well as in electromagnetic-sensitive environments such as hospitals and airplane cabins \cite{Wang2024b, Zhu2025}.}
+Optical wireless positioning (OWP) has emerged as a compelling complement that exploits the favorable propagation properties of light for indoor localization \cite{Wang2024b}. The spatial confinement of optical signals (no wall penetration), immunity to RF electromagnetic interference, high spatial reuse, and the deterministic nature of line-of-sight (LOS) channels enable centimeter-level accuracy with cost-effective light-emitting diodes (LED) \cite{Trevlakis2023}. Moreover, the same LED infrastructure can simultaneously provide optical wireless communication (OWC)---often termed light-fidelity (LiFi) \cite{Haas:16}---so that illumination, data, and positioning coexist in a unified platform. These attributes make OWP attractive for navigation and asset tracking in malls, airports, and museums where GNSS is unavailable, as well as in electromagnetic-sensitive environments such as hospitals and airplane cabins \cite{Wang2024b, Zhu2025}.
 
-\added{Within OWP, two estimation paradigms coexist. Data-driven methods---including fingerprinting with support vector machines, random forests, multilayer perceptrons, convolutional neural networks, recurrent models, and Transformer architectures \cite{Rekkas2023, Tran2022}---can be effective given abundant labeled data, but are often opaque, sensitive to domain shift (hardware changes, illumination variations, occlusion), and require periodic retraining, offering limited physical guarantees \cite{Glass2021}. By contrast, model-based estimators grounded in radiometry and geometry, e.g., by Lambertian propagation or field-of-view (FOV) constraints, provide interpretability, sample efficiency, principled uncertainty quantification, and support joint system co-design \cite{Deng2023}. This work adopts the model-based paradigm.}
+Within OWP, two estimation paradigms coexist. Data-driven methods---including fingerprinting with support vector machines, random forests, multilayer perceptrons, convolutional neural networks, recurrent models, and Transformer architectures \cite{Rekkas2023, Tran2022}---can be effective given abundant labeled data, but are often opaque, sensitive to domain shift (hardware changes, illumination variations, occlusion), and require periodic retraining, offering limited physical guarantees \cite{Glass2021}. By contrast, model-based estimators grounded in radiometry and geometry, e.g., by Lambertian propagation or field-of-view (FOV) constraints, provide interpretability, sample efficiency, principled uncertainty quantification, and support joint system co-design \cite{Deng2023}. This work adopts the model-based paradigm.
 
 \begin{table*}[t]
 \centering
@@ -63,7 +60,6 @@ State-of-the-art optical wireless positioning (OWP) commonly reaches centimeter-
 \setlength{\tabcolsep}{3pt} 
 \renewcommand{\arraystretch}{1.15}
 \caption{State-of-the-art single-LED OWP systems and reported performance.}
-
 \label{tab:single_led_vlp}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|c|c|p{3.8cm}|c|c|p{3.8cm}|c|c|c|}
@@ -82,41 +78,41 @@ State-of-the-art optical wireless positioning (OWP) commonly reaches centimeter-
 2025 & \cite{Chassagne2025} & 1 reorientable LED / 1 PD & Arbitrary & 2D & Model-based (Power ratio) & 5.9 cm (CDF$_{90\%}$) & \(4 \times 4 \times 2.5\) & Sim. \\ \hline
 2025 & \cite{Shi2025} & 1 LED / 1 rotatable PD & Fixed & 2D & Least Square & 4.96 cm & \(5 \times 5 \times 4\) & Exp. \\ \hline
 2025 & \cite{ShiJin2025} & 1 LED / 16 IRS / 1 PD & Fixed & 2D & Levenberg--Marquardt algorithm & 5.6 cm (RMSE) & \(4 \times 5 \times 5\) & Sim. \\ \hline
-\added{2026} & \added{Ours$^\dagger$} & 1 reorientable LED / 1 PD & \added{\begin{tabular}[c]{@{}c@{}}Arbitrary \\ Controlled\end{tabular}} & \added{\begin{tabular}[c]{@{}c@{}}D-F \\ 3D\end{tabular}} & Model-based (closed-form GLS) & \added{\begin{tabular}[c]{@{}c@{}}$0.54^\circ$ \\ 2.00\,cm\end{tabular}} & \(3 \times 3 \times 2\) & Sim. \\
+2026 & Ours$^\dagger$ & 1 reorientable LED / 1 PD & \begin{tabular}[c]{@{}c@{}}Arbitrary \\ Controlled\end{tabular} & \begin{tabular}[c]{@{}c@{}}D-F \\ 3D\end{tabular} & Model-based (closed-form GLS) & \begin{tabular}[c]{@{}c@{}}$0.54^\circ$ \\ 2.00\,cm\end{tabular} & \(3 \times 3 \times 2\) & Sim. \\
 \hline
 \end{tabular}
 }
 \begin{flushleft}
-\scriptsize \emph{Note:} ``Sim.'' denotes simulation results; ``Exp.'' denotes experimental results. \added{$^\dagger$Two-stage system: direction finding (D-F) operates with any receiver orientation (arbitrary); 3D distance recovery requires a single cooperative PD reorientation toward the transmitter (controlled). See Section~\ref{subsec:nr_independence}.}
+\scriptsize \emph{Note:} ``Sim.'' denotes simulation results; ``Exp.'' denotes experimental results. $^\dagger$Two-stage system: direction finding (D-F) operates with any receiver orientation (arbitrary); 3D distance recovery requires a single cooperative PD reorientation toward the transmitter (controlled). See Section~\ref{subsec:nr_independence}.
 \end{flushleft}
 \end{table*}
 
-\added{The majority of OWP implementations follow a multi-LED paradigm, where several fixed LEDs with known positions act as anchors and the receiver resolves its position via triangulation or trilateration, analogous to GNSS \cite{Zhuang2018, Wang2024b}. When reusing visible-light luminaires---the standard approach in visible light positioning (VLP)---the anchor constellation is co-designed with illumination: placement, power, and beam patterns must satisfy lighting standards and uniformity, constraining anchor geometry and modulation \cite{photonics9100750}. Crucially, at least three to four LEDs must be concurrently visible to the receiver to resolve a three-dimensional (3D) position \cite{Plets2019, electronics8111311, ALMADANI2021126654, Zhang2020}, a condition that may not hold in environments with sparse lighting. Installing and maintaining a dense multi-LED network, with unique identifiers or modulation for each lamp, further increases deployment cost and complexity \cite{Cossu2022}. Consequently, reducing the infrastructure burden by localizing with a single light source is a highly desirable research goal \cite{Rekkas2023}.}
+The majority of OWP implementations follow a multi-LED paradigm, where several fixed LEDs with known positions act as anchors and the receiver resolves its position via triangulation or trilateration, analogous to GNSS \cite{Zhuang2018, Wang2024b}. When reusing visible-light luminaires---the standard approach in visible light positioning (VLP)---the anchor constellation is co-designed with illumination: placement, power, and beam patterns must satisfy lighting standards and uniformity, constraining anchor geometry and modulation \cite{photonics9100750}. Crucially, at least three to four LEDs must be concurrently visible to the receiver to resolve a three-dimensional (3D) position \cite{Plets2019, electronics8111311, ALMADANI2021126654, Zhang2020}, a condition that may not hold in environments with sparse lighting. Installing and maintaining a dense multi-LED network, with unique identifiers or modulation for each lamp, further increases deployment cost and complexity \cite{Cossu2022}. Consequently, reducing the infrastructure burden by localizing with a single light source is a highly desirable research goal \cite{Rekkas2023}.
 
-\added{Table~\ref{tab:single_led_vlp} summarizes representative single-LED OWP systems. The reported solutions adopt a variety of receiver architectures to compensate for the limited information provided by a single source at a fixed orientation: multiple tilted photodiodes (PD) that create directional diversity \cite{Qin2020, Qin2021, Zia-Ul-Mustafa2023, Zhang2024, Li2024}, a single mechanically rotatable PD \cite{Liu2022, Wang2024, Shi2025}, or aiding sensors such as inertial measurement units (IMU) \cite{Ma2024} and intelligent reflecting surfaces \cite{ShiJin2025}. Several systems are restricted to two-dimensional (2D) positioning \cite{Chen2021, Qin2021, Liu2022, Zia-Ul-Mustafa2023, Chassagne2025, Zhang2024, Wang2024, Shi2025, ShiJin2025}, whereas fewer achieve 3D localization \cite{Qin2020, Li2024, Ma2024}. A common thread emerges: with a single LED at a fixed orientation, one received signal strength (RSS) measurement is insufficient to resolve a 3D position; existing single-LED systems therefore compensate by placing hardware or computational complexity at the receiver side---through PD arrays, continuous mechanical rotation, or sensor fusion---limiting the simplicity and scalability of the user equipment.}
+Table~\ref{tab:single_led_vlp} summarizes representative single-LED OWP systems. The reported solutions adopt a variety of receiver architectures to compensate for the limited information provided by a single source at a fixed orientation: multiple tilted photodiodes (PD) that create directional diversity \cite{Qin2020, Qin2021, Zia-Ul-Mustafa2023, Zhang2024, Li2024}, a single mechanically rotatable PD \cite{Liu2022, Wang2024, Shi2025}, or aiding sensors such as inertial measurement units (IMU) \cite{Ma2024} and intelligent reflecting surfaces \cite{ShiJin2025}. Several systems are restricted to two-dimensional (2D) positioning \cite{Chen2021, Qin2021, Liu2022, Zia-Ul-Mustafa2023, Chassagne2025, Zhang2024, Wang2024, Shi2025, ShiJin2025}, whereas fewer achieve 3D localization \cite{Qin2020, Li2024, Ma2024}. A common thread emerges: with a single LED at a fixed orientation, one received signal strength (RSS) measurement is insufficient to resolve a 3D position; existing single-LED systems therefore compensate by placing hardware or computational complexity at the receiver side---through PD arrays, continuous mechanical rotation, or sensor fusion---limiting the simplicity and scalability of the user equipment.
 
-\added{Recent advances in OWC suggest a fundamentally different strategy: shifting the spatial diversity requirement from the receiver to the transmitter infrastructure through beam steering. In particular, microelectromechanical system (MEMS) micromirror gimbals redirect the LED beam mechanically, thereby preserving the native Lambertian emission pattern while achieving kHz-rate reorientation \cite{Liu:25}. Moreover, OWC roadmaps increasingly regard dynamic beam steering as a core enabler for high-capacity, mobile, multiuser links and blockage mitigation \cite{mi13070990, Zeng2023, Jin2023}. A recent comparative study has further shown that beam-steered transmitters substantially outperform fixed-antenna configurations in terms of indoor communication coverage \cite{AlSatai2026}, making it natural to exploit the same transmitter-side capability for positioning. In this work, we employ a near-infrared (NIR) LED transmitter, as opposed to conventional VLP which must respect visible-light illumination standards. Since NIR is imperceptible to humans, the positioning link is decoupled from room lighting constraints, allowing unrestricted steering and reorientation of the source \cite{Zhu2025}.}
+Recent advances in OWC suggest a fundamentally different strategy: shifting the spatial diversity requirement from the receiver to the transmitter infrastructure through beam steering. In particular, microelectromechanical system (MEMS) micromirror gimbals redirect the LED beam mechanically, thereby preserving the native Lambertian emission pattern while achieving kHz-rate reorientation \cite{Liu:25}. Moreover, OWC roadmaps increasingly regard dynamic beam steering as a core enabler for high-capacity, mobile, multiuser links and blockage mitigation \cite{mi13070990, Zeng2023, Jin2023}. A recent comparative study has further shown that beam-steered transmitters substantially outperform fixed-antenna configurations in terms of indoor communication coverage \cite{AlSatai2026}, making it natural to exploit the same transmitter-side capability for positioning. In this work, we employ a near-infrared (NIR) LED transmitter, as opposed to conventional VLP which must respect visible-light illumination standards. Since NIR is imperceptible to humans, the positioning link is decoupled from room lighting constraints, allowing unrestricted steering and reorientation of the source \cite{Zhu2025}.
 
-\added{Building on these observations, we study a novel model-based beam-steered single-LED single-PD OWP architecture for 3D indoor localization. The core idea is to steer a single LED through $K$ predefined orientations while a PD at an unknown position---held at an arbitrary fixed orientation---collects the resulting $K$ RSS measurements. Forming the ratio of received powers between any two orientations cancels the unknown distance, transmitted power, and all receiver-orientation-dependent terms, yielding linear constraints on the transmitter-to-receiver direction vector; a closed-form eigenvector solution then provides the direction estimate. Because the ratio-based formulation eliminates all receiver-dependent factors, the direction-finding stage is mathematically independent of the receiver orientation $\mathbf{n}_r$, requiring no receiver pose knowledge or control.}
+Building on these observations, we study a novel model-based beam-steered single-LED single-PD OWP architecture for 3D indoor localization. The core idea is to steer a single LED through $K$ predefined orientations while a PD at an unknown position---held at an arbitrary fixed orientation---collects the resulting $K$ RSS measurements. Forming the ratio of received powers between any two orientations cancels the unknown distance, transmitted power, and all receiver-orientation-dependent terms, yielding linear constraints on the transmitter-to-receiver direction vector; a closed-form eigenvector solution then provides the direction estimate. Because the ratio-based formulation eliminates all receiver-dependent factors, the direction-finding stage is mathematically independent of the receiver orientation $\mathbf{n}_r$, requiring no receiver pose knowledge or control.
 
-\added{This direction-finding capability constitutes the primary contribution of this work: once the transmitter-to-receiver direction is known, it directly enables beam steering toward the receiver to maximize the link signal-to-noise ratio (SNR) for a subsequent communication or ranging measurement. As an extension for full 3D positioning, a single additional cooperative measurement with the LED steered toward the estimated direction and the PD reoriented in the opposite direction from the estimated one, recovers the LED-to-PD distance, completing the 3D position estimate. Unlike prior single-LED approaches that require continuous PD rotation \cite{Liu2022, Wang2024, Shi2025}, the direction-finding stage requires zero receiver movement, and the entire beam-steering complexity resides in the infrastructure.}
+This direction-finding capability constitutes the primary contribution of this work: once the transmitter-to-receiver direction is known, it directly enables beam steering toward the receiver to maximize the link signal-to-noise ratio (SNR) for a subsequent communication or ranging measurement. As an extension for full 3D positioning, a single additional cooperative measurement with the LED steered toward the estimated direction and the PD reoriented in the opposite direction from the estimated one, recovers the LED-to-PD distance, completing the 3D position estimate. Unlike prior single-LED approaches that require continuous PD rotation \cite{Liu2022, Wang2024, Shi2025}, the direction-finding stage requires zero receiver movement, and the entire beam-steering complexity resides in the infrastructure.
 
-\added{The main contributions are summarized as follows:}
+The main contributions are summarized as follows:
 \begin{itemize}
-    \item \added{A novel single-LED single-PD 3D OWP framework that achieves full 3D localization without camera sensing or PD arrays, by shifting the spatial diversity from the receiver to the transmitter through $K$ steered beam orientations. We prove that all proposed direction-finding estimators, namely the generalized least squares (GLS), weighted least squares (WLS) and nonlinear least-squares (NLS) estimators, are mathematically independent of the receiver orientation $\mathbf{n}_r$, enabling direction finding without receiver pose knowledge.}
-    \item \added{Direction error bound (DEB) and position error bound (PEB) analysis. We derive Fisher-information matrix (FIM) expressions, define the DEB as the Cramér--Rao lower bound (CRLB) for the angular direction error on $\mathbb{S}^2$, and characterize identifiability and FIM rank conditions as a function of $K$.}
-    \item \added{Genetic algorithm (GA)-based orientation-set design. We cast the transmitter orientation selection as an offline GA optimization that minimizes the root-mean-square (RMS) DEB over a 3D testbed, yielding practical design rules for the choice of $K$ and the set of orientations.}
-    \item \added{Closed-form linear direction estimators. Using a ratio-based linearization of the Lambertian power model, we develop a statistically efficient GLS direction estimator and a lightweight WLS approximation, both solvable via a single $3\times3$ eigendecomposition with microsecond-level latency.}
-    \item \added{An iterative NLS direction estimator that fits the normalized Lambertian model on $\mathbb{S}^2$. This estimator is also $\mathbf{n}_r$-independent through power normalization, and achieves direction-finding accuracy closest to the DEB.}
+    \item A novel single-LED single-PD 3D OWP framework that achieves full 3D localization without camera sensing or PD arrays, by shifting the spatial diversity from the receiver to the transmitter through $K$ steered beam orientations. We prove that all proposed direction-finding estimators, namely the generalized least squares (GLS), weighted least squares (WLS) and nonlinear least-squares (NLS) estimators, are mathematically independent of the receiver orientation $\mathbf{n}_r$, enabling direction finding without receiver pose knowledge.
+    \item Direction error bound (DEB) and position error bound (PEB) analysis. We derive Fisher-information matrix (FIM) expressions, define the DEB as the Cramér--Rao lower bound (CRLB) for the angular direction error on $\mathbb{S}^2$, and characterize identifiability and FIM rank conditions as a function of $K$.
+    \item Genetic algorithm (GA)-based orientation-set design. We cast the transmitter orientation selection as an offline GA optimization that minimizes the root-mean-square (RMS) DEB over a 3D testbed, yielding practical design rules for the choice of $K$ and the set of orientations.
+    \item Closed-form linear direction estimators. Using a ratio-based linearization of the Lambertian power model, we develop a statistically efficient GLS direction estimator and a lightweight WLS approximation, both solvable via a single $3\times3$ eigendecomposition with microsecond-level latency.
+    \item An iterative NLS direction estimator that fits the normalized Lambertian model on $\mathbb{S}^2$. This estimator is also $\mathbf{n}_r$-independent through power normalization, and achieves direction-finding accuracy closest to the DEB.
 \end{itemize}
 
-\added{This paper is organized as follows.}
+This paper is organized as follows.
 Section~\ref{sec:SystemModel} presents the system model and the proposed 3D localization procedure.
-Section~\ref{sec:PEB} derives the \added{DEB and PEB}.
+Section~\ref{sec:PEB} derives the DEB and PEB.
 Section~\ref{sec:optimization} optimizes the transmitter beam-orientation set.
-Section~\ref{sec:NoLineal} develops \added{the NLS} direction estimator.
-Section~\ref{sec:Lineal} introduces closed-form linear estimators (GLS and WLS)\added{, and establishes receiver-orientation independence}.
-Section~\ref{sec:results} reports \added{the estimators comparison}.
+Section~\ref{sec:NoLineal} develops the NLS direction estimator.
+Section~\ref{sec:Lineal} introduces closed-form linear estimators (GLS and WLS), and establishes receiver-orientation independence.
+Section~\ref{sec:results} reports the estimators comparison.
 Section~\ref{sec:Conclusion} concludes the paper.
 
 \paragraph*{Notation}
@@ -130,7 +126,7 @@ the identity matrix of dimension $n$ and the $n\times m$ zero matrix are $\mathb
 % *******************************************
 \subsection{System Model}
 
-Figure~\ref{fig:system} illustrates the single-LED single-PD OWP setup analyzed in this work. A LED transmitter is mounted on the ceiling at a known position \(\mathbf{t}=[0,0,H]^{\mathsf T}\) and can steer its optical axis along a unit vector \(\mathbf{n}_{t,i}\!\in\!\mathbb{S}^{2}\) for the \(i\)-th orientation, \(i=1,\dots,K\). The receiver is a single PD with \added{normal vector} \(\mathbf{n}_{r}\) \added{$\in\mathbb{S}^2$} located at an unknown position \(\mathbf{r}=[x,y,z]^{\mathsf T}\). \added{For concreteness, we set $\mathbf{n}_r=[0,0,1]^{\mathsf T}$ in the simulations. As shown in Section~\ref{subsec:nr_independence}, all proposed direction estimators are independent of $\mathbf{n}_r$; therefore, the direction-finding results hold for any receiver orientation.} Let \(\mathbf{d}=\mathbf{r}-\mathbf{t}\) denote the transmitter--receiver displacement vector, \(d=\lVert \mathbf{d}\rVert\) the separation distance, and \(\mathbf{n}_{d}= \mathbf{d}/d\) the corresponding unit direction vector.
+Figure~\ref{fig:system} illustrates the single-LED single-PD OWP setup analyzed in this work. A LED transmitter is mounted on the ceiling at a known position \(\mathbf{t}=[0,0,H]^{\mathsf T}\) and can steer its optical axis along a unit vector \(\mathbf{n}_{t,i}\!\in\!\mathbb{S}^{2}\) for the \(i\)-th orientation, \(i=1,\dots,K\). The receiver is a single PD with normal vector \(\mathbf{n}_{r}\) $\in\mathbb{S}^2$ located at an unknown position \(\mathbf{r}=[x,y,z]^{\mathsf T}\). For concreteness, we set $\mathbf{n}_r=[0,0,1]^{\mathsf T}$ in the simulations. As shown in Section~\ref{subsec:nr_independence}, all proposed direction estimators are independent of $\mathbf{n}_r$; therefore, the direction-finding results hold for any receiver orientation. Let \(\mathbf{d}=\mathbf{r}-\mathbf{t}\) denote the transmitter--receiver displacement vector, \(d=\lVert \mathbf{d}\rVert\) the separation distance, and \(\mathbf{n}_{d}= \mathbf{d}/d\) the corresponding unit direction vector.
 
 For the \(i\)-th LED orientation, the RSS at the PD is modeled as \cite{Kahn1997}:
 \begin{equation}
@@ -164,7 +160,7 @@ where \(m\) is the Lambertian order of the LED, related to the semi-angle at hal
     \label{fig:system}
 \end{figure}
 
-Dividing \eqref{eq:Sr_i} by \(R_p\) yields the received optical power\added{ at a given time instant}:
+Dividing \eqref{eq:Sr_i} by \(R_p\) yields the received optical power at a given time instant:
 \begin{equation}
 P_{r,i} = P_{t}\,h_{\text{LOS},i} + n_i,
 \label{eq:Pr_i}
@@ -197,12 +193,12 @@ The proposed localization process comprises two consecutive stages:
 %.............................................................
 \subsubsection{Direction Finding}
 
-The first stage estimates the direction vector \(\mathbf{n}_{d}\) by steering the LED through the \(K\) predefined orientations \(\{\mathbf{n}_{t,i}\}_{i=1}^{K}\) and processing the power means \(\{\bar P_{r,i}\}_{i=1}^{K}\). Section~\ref{sec:NoLineal} (\added{NLS} estimator) and Section~\ref{sec:Lineal} (linear GLS/WLS estimators) detail statistically grounded solutions.
+The first stage estimates the direction vector \(\mathbf{n}_{d}\) by steering the LED through the \(K\) predefined orientations \(\{\mathbf{n}_{t,i}\}_{i=1}^{K}\) and processing the power means \(\{\bar P_{r,i}\}_{i=1}^{K}\). Section~\ref{sec:NoLineal} (NLS estimator) and Section~\ref{sec:Lineal} (linear GLS/WLS estimators) detail statistically grounded solutions.
 
 %.............................................................
 \subsubsection{Distance Recovery}
 
-After direction finding, the LED is \added{steered to the estimated direction $\hat{\mathbf{n}}_{d}$ so that its beam is directed toward the receiver, and the PD is reoriented to $\mathbf{n}_r = -\hat{\mathbf{n}}_d$ so that it faces the transmitter.} Under this beam-steered configuration and using \eqref{eq:hLOS}, \eqref{eq:cosines}, and \eqref{eq:Pr_i}, \added{the received optical power at a given time instant for orientation $(K+1)$ obeys:}
+After direction finding, the LED is steered to the estimated direction $\hat{\mathbf{n}}_{d}$ so that its beam is directed toward the receiver, and the PD is reoriented to $\mathbf{n}_r = -\hat{\mathbf{n}}_d$ so that it faces the transmitter. Under this beam-steered configuration and using \eqref{eq:hLOS}, \eqref{eq:cosines}, and \eqref{eq:Pr_i}, the received optical power at a given time instant for orientation $(K+1)$ obeys:
 \begin{equation}
 P_{r,K+1}= \frac{C}{d^{2}}+n_{K+1},
 \label{eq:beamSteeredMean}
@@ -212,7 +208,7 @@ where \(C\) is an optical constant calibrated once per hardware set-up:
 C = \frac{P_{t}(m+1)A_{\text{det}}}{2\pi},
 \label{eq:constant_C}
 \end{equation} 
-\added{and $n_{K+1}\sim\mathcal{N}(0,\sigma^{2})$ is an i.i.d.\ noise realization at orientation $(K+1)$, with the same distribution as in \eqref{eq:Pr_i}.}
+and $n_{K+1}\sim\mathcal{N}(0,\sigma^{2})$ is an i.i.d.\ noise realization at orientation $(K+1)$, with the same distribution as in \eqref{eq:Pr_i}.
 
 Collecting \(N\) independent samples \(\{P_{r,K+1,j}\}_{j=1}^{N}\) and using~\eqref{eq:sampleMean}, the sample mean satisfies \(\bar P_{r,K+1}\sim\mathcal{N}\bigl(C/d^{2},\sigma^{2}/N\bigr)\). Substituting \(\bar P_{r,K+1}\) into~\eqref{eq:beamSteeredMean} provides the distance estimate:
 \begin{equation}
@@ -221,17 +217,17 @@ Collecting \(N\) independent samples \(\{P_{r,K+1,j}\}_{j=1}^{N}\) and using~\eq
 \end{equation}
 and, finally, the 3D estimated position of the receiver, denoted as \(\hat{\mathbf{r}}\), is $\hat{\mathbf{r}} = \mathbf{t} + \hat d \,\hat{\mathbf{n}}_{d}$.
 
-\added{This cooperative alignment maximizes both $\cos\phi\approx 1$ and $\cos\psi\approx 1$, thereby maximizing the received power and the SNR of the ranging measurement. The PD reorientation is performed once, after the $K$ direction-finding measurements during which the PD remains at an arbitrary fixed pose. This contrasts with prior single-LED approaches that require continuous PD rotation \cite{Liu2022,Wang2024,Shi2025}.}
+This cooperative alignment maximizes both $\cos\phi\approx 1$ and $\cos\psi\approx 1$, thereby maximizing the received power and the SNR of the ranging measurement. The PD reorientation is performed once, after the $K$ direction-finding measurements during which the PD remains at an arbitrary fixed pose. This contrasts with prior single-LED approaches that require continuous PD rotation \cite{Liu2022,Wang2024,Shi2025}.
 
 % *******************************************
-\section{\added{Direction Error Bound and Position Error Bound}}
+\section{Direction Error Bound and Position Error Bound}
 \label{sec:PEB}
 % *******************************************
 
-\added{This section derives the CRLB for direction estimation from the $K$ steered-orientation measurements. We term this limit the DEB. As an extension, we also define the PEB, which additionally accounts for the distance-recovery measurement and serves as a benchmark for the full 3D pipeline.}
+This section derives the CRLB for direction estimation from the $K$ steered-orientation measurements. We term this limit the DEB. As an extension, we also define the PEB, which additionally accounts for the distance-recovery measurement and serves as a benchmark for the full 3D pipeline.
 
 % ------------------------------------------------------------------
-\added{\subsection{Direction-Finding Observation Model}
+\subsection{Direction-Finding Observation Model}
 % ------------------------------------------------------------------
 At each transmitter orientation $i=1,\ldots,K$, the sample-mean received power~\eqref{eq:sampleMean} is distributed as:
 \begin{equation}
@@ -254,10 +250,10 @@ is the direction cosine between the $i$-th LED orientation and the true transmit
 \eta = \frac{C\,\cos\psi}{d^2}
 \label{eq:eta_nuisance}
 \end{equation}
-is a positive scalar common to all $K$ orientations.  The constant $\eta$ absorbs the unknown distance~$d$ and the receiver orientation $\mathbf{n}_r$ (through $\cos\psi$).  Since the direction-finding stage aims to recover $\mathbf{n}_d$ alone, $\eta$ is a nuisance parameter that must be accounted for in the bound derivation.}
+is a positive scalar common to all $K$ orientations.  The constant $\eta$ absorbs the unknown distance~$d$ and the receiver orientation $\mathbf{n}_r$ (through $\cos\psi$).  Since the direction-finding stage aims to recover $\mathbf{n}_d$ alone, $\eta$ is a nuisance parameter that must be accounted for in the bound derivation.
 
 % ------------------------------------------------------------------
-\added{\subsection{Fisher Information for Direction Estimation}
+\subsection{Fisher Information for Direction Estimation}
 \label{subsec:FIM}
 % ------------------------------------------------------------------
 We parameterize the direction in nadir-referenced spherical coordinates:
@@ -280,10 +276,10 @@ where the normalized gradient vector for the $i$-th orientation is:
 \tilde{\mathbf g}_i = \bigl[m\,Q_i^{m-1}(\mathbf{n}_{t,i}\!\cdot\!\mathbf{u}_\theta),\;\;m\,Q_i^{m-1}(\mathbf{n}_{t,i}\!\cdot\!\mathbf{u}_\phi),\;\;Q_i^m\bigr]^{\mathsf T}.
 \label{eq:grad_xi}
 \end{equation}
-The first two components capture the sensitivity of $\mu_i$ to angular perturbations of $\mathbf{n}_d$, while the third component captures sensitivity to the amplitude $\eta$.}
+The first two components capture the sensitivity of $\mu_i$ to angular perturbations of $\mathbf{n}_d$, while the third component captures sensitivity to the amplitude $\eta$.
 
 % ------------------------------------------------------------------
-\added{\subsection{Direction Error Bound}
+\subsection{Direction Error Bound}
 \label{subsec:DEB}
 % ------------------------------------------------------------------
 Since $\alpha$ is not of interest, it is profiled out via the Schur complement of the $(3,3)$ block of $\mathcal{I}_{\mathrm{DF}}$~\cite{Kay1993}.  The resulting CRLB for the angular parameters $(\theta_d,\phi_d)$ is the upper-left $2\times2$ block of the inverse FIM:
@@ -299,10 +295,10 @@ To express the bound in terms of the Cartesian direction error $\lVert\hat{\math
 = \sqrt{\operatorname{tr}\!\bigl\{\mathbf{J}_{\mathrm{sph}}\,\mathbf{C}_{\mathrm{ang}}\,\mathbf{J}_{\mathrm{sph}}^{\mathsf T}\bigr\}}.
 \label{eq:DEB}
 \end{equation}
-For small errors, $\mathrm{DEB}\approx$ angular RMS error (RMSE) in radians. The DEB depends on the receiver position~$\mathbf{r}$ (through $\eta$ and $\{Q_i\}$), on the orientation set $\{\mathbf{n}_{t,i}\}$, and on the system parameters $(N,\sigma^2,m,P_t,A_{\mathrm{det}})$.  Crucially, it uses only the $K$ direction-finding measurements and is therefore the appropriate benchmark for direction estimators.}
+For small errors, $\mathrm{DEB}\approx$ angular RMS error (RMSE) in radians. The DEB depends on the receiver position~$\mathbf{r}$ (through $\eta$ and $\{Q_i\}$), on the orientation set $\{\mathbf{n}_{t,i}\}$, and on the system parameters $(N,\sigma^2,m,P_t,A_{\mathrm{det}})$.  Crucially, it uses only the $K$ direction-finding measurements and is therefore the appropriate benchmark for direction estimators.
 
 % ------------------------------------------------------------------
-\added{\subsection{Position Error Bound}
+\subsection{Position Error Bound}
 \label{subsec:PEB}
 % ------------------------------------------------------------------
 When the full two-stage pipeline is evaluated (direction finding followed by distance recovery), an additional measurement $\bar P_{r,K+1}\sim\mathcal{N}(C/d^2,\,\sigma^2/N)$ becomes available.  Including this $(K{+}1)$-th observation in the FIM yields the Cartesian-parameterized $3\times3$ matrix:
@@ -334,10 +330,10 @@ and the distance-recovery gradient is $\nabla_{\mathbf r}\mu_{K+1} = -2C\,\mathb
 = \sqrt{\operatorname{tr}\!\bigl\{\mathcal{I}^{-1}(\mathbf r)\bigr\}}.
 \label{eq:PEB}
 \end{equation}
-Since the PEB assumes perfect beam alignment in the $(K{+}1)$-th measurement, it is an optimistic lower bound that no practical two-stage estimator can attain~\cite{Kay1993}.  In this work, the DEB~\eqref{eq:DEB} is adopted as the primary metric and GA objective; the PEB is reported in Section~\ref{sec:results} for completeness.}
+Since the PEB assumes perfect beam alignment in the $(K{+}1)$-th measurement, it is an optimistic lower bound that no practical two-stage estimator can attain~\cite{Kay1993}.  In this work, the DEB~\eqref{eq:DEB} is adopted as the primary metric and GA objective; the PEB is reported in Section~\ref{sec:results} for completeness.
 
 %-------------------------------------------------------------------------------
-\added{\subsection{Number of LED Orientations}
+\subsection{Number of LED Orientations}
 \label{subsec:Kchoice}
 %-------------------------------------------------------------------------------
 
@@ -350,7 +346,7 @@ When $K\le2$, at most two gradient vectors $\{\tilde{\mathbf g}_i\}$ are availab
 With three orientations whose gradient vectors $\{\tilde{\mathbf g}_1,\tilde{\mathbf g}_2,\tilde{\mathbf g}_3\}$ are linearly independent---which requires non-coplanar LED orientations---the FIM reaches full rank and $\mathcal{I}_{\mathrm{DF}}^{-1}$ exists, yielding a finite DEB. However, the absence of redundancy makes the bound highly sensitive to small perturbations in orientation geometry \cite{Chen2021}.
 
 \subsubsection{Overdetermined Regime ($K\ge4$)}
-For four or more orientations, additional rank-one contributions improve the numerical conditioning of $\mathcal{I}_{\mathrm{DF}}$ and lower the DEB, since each extra orientation provides independent angular information beyond the minimal three \cite{Ma2024,Wang2024b}. The same conclusions extend to the Cartesian FIM $\mathcal{I}(\mathbf r)$ in~\eqref{eq:FIM_general} and hence to the PEB, with the additional distance-recovery measurement further augmenting the information.} 
+For four or more orientations, additional rank-one contributions improve the numerical conditioning of $\mathcal{I}_{\mathrm{DF}}$ and lower the DEB, since each extra orientation provides independent angular information beyond the minimal three \cite{Ma2024,Wang2024b}. The same conclusions extend to the Cartesian FIM $\mathcal{I}(\mathbf r)$ in~\eqref{eq:FIM_general} and hence to the PEB, with the additional distance-recovery measurement further augmenting the information. 
 
 
 % *******************************************
@@ -358,13 +354,13 @@ For four or more orientations, additional rank-one contributions improve the num
 \label{sec:optimization}
 % *******************************************
 
-\added{The DEB in~\eqref{eq:DEB} depends explicitly on the transmitter orientation set $\{\mathbf{n}_{t,i}\}_{i=1}^K$ through the direction-finding FIM $\mathcal{I}_{\mathrm{DF}}(\boldsymbol\xi)$ in~\eqref{eq:FIM_DEB}. We define the objective function as the RMSE of the DEB evaluated over all receiver positions in the 3D testbed specified in Table~\ref{tab:ga_params}:
+The DEB in~\eqref{eq:DEB} depends explicitly on the transmitter orientation set $\{\mathbf{n}_{t,i}\}_{i=1}^K$ through the direction-finding FIM $\mathcal{I}_{\mathrm{DF}}(\boldsymbol\xi)$ in~\eqref{eq:FIM_DEB}. We define the objective function as the RMSE of the DEB evaluated over all receiver positions in the 3D testbed specified in Table~\ref{tab:ga_params}:
 \begin{equation}
 f(\mathbf{x}) = \sqrt{\frac{1}{|\mathcal{R}|}\sum_{\mathbf{r}\in\mathcal{R}}\mathrm{DEB}^2(\mathbf{r};\,\mathbf{x})},
 \label{eq:GA_objective}
 \end{equation}
-where $\mathbf{x}=[\theta_1,\varphi_1,\ldots,\theta_K,\varphi_K]^{\mathsf T}$ encodes the orientation set.}
-Selecting the orientation set that minimizes this objective is essential for \added{direction-finding} accuracy. However, \(\added{\mathrm{DEB}}(\{\mathbf n_{t,i}\})\) is nonlinear in the orientation parameters, involves multiple coupled terms (e.g., powers of cosines and distance-dependent factors), and exhibits nonsmooth behavior due to the receiver FOV. Consequently, closed-form optimization is not available and purely local methods are prone to suboptimal solutions. To robustly explore the parameter space and approach a globally optimal orientation set for a given \(K\), we employ a GA \cite{Haupt2004}.
+where $\mathbf{x}=[\theta_1,\varphi_1,\ldots,\theta_K,\varphi_K]^{\mathsf T}$ encodes the orientation set.
+Selecting the orientation set that minimizes this objective is essential for direction-finding accuracy. However, \(\mathrm{DEB}(\{\mathbf n_{t,i}\})\) is nonlinear in the orientation parameters, involves multiple coupled terms (e.g., powers of cosines and distance-dependent factors), and exhibits nonsmooth behavior due to the receiver FOV. Consequently, closed-form optimization is not available and purely local methods are prone to suboptimal solutions. To robustly explore the parameter space and approach a globally optimal orientation set for a given \(K\), we employ a GA \cite{Haupt2004}.
 
 \begin{table}[tbh]
 \centering
@@ -390,7 +386,7 @@ Population size $(P)$                    & 300                                  
 Maximum generations $(G_{\mathrm{max}})$     & 200                                    \\ \hline
 Crossover probability $(p_c)$       & 0.8                                    \\ \hline
 Search range $(\Omega)$             & \(\theta_{i}\in[0,80^\circ],\;\varphi_{i}\in[0,360^\circ]\) \\ \hline
-Objective function $(f(\mathbf x))$   & \added{RMSE of the DEB~\eqref{eq:GA_objective}}                        \\ \hline
+Objective function $(f(\mathbf x))$   & RMSE of the DEB~\eqref{eq:GA_objective}                        \\ \hline
 Decision variables $(\mathbf x)$    & \([\theta_{1},\varphi_{1},\dots,\theta_{K},\varphi_{K}]^{\mathsf T}\) \\ \hline
 \multicolumn{2}{|c|}{\textbf{3D Testbed}} \\ \hline
 \textbf{Parameter}                  & \textbf{Value}                         \\ \hline
@@ -398,13 +394,13 @@ Room dimensions \((L\times W \times H)\) & \(3 \times 3 \times 2\,\mathrm{m^3}\)
 Range in \(x,y\)                    & \([-1.5,\,1.5]\,\mathrm{m}\)           \\ \hline
 Range in \(z\)                      & \([0,\,1.2]\,\mathrm{m}\)              \\ \hline
 Grid step                           & \(0.2\,\mathrm{m}\)                    \\ \hline
-Total number of points tested \added{$|\mathcal{R}|$}  & \(1792\)                               \\ \hline
+Total number of points tested $|\mathcal{R}|$  & \(1792\)                               \\ \hline
 \end{tabular}
 \end{table}
 
 Within this GA framework, each individual encodes \(K\) steering directions via tilt–azimuth pairs \(\{(\theta_i,\varphi_i)\}_{i=1}^{K}\), yielding a \(2K\)-dimensional genotype \(\mathbf x = [\theta_1,\varphi_1,\dots,\theta_K,\varphi_K]^{\mathsf T}\).
 
-We adopt a nadir‐referenced spherical parameterisation \added{where $\mathbf u_x=[1,0,0]^{\mathsf T}$, $\mathbf u_y=[0,1,0]^{\mathsf T}$, $\mathbf u_z=[0,0,1]^{\mathsf T}$ are the standard Cartesian basis vectors,} \(\theta_i\) is the tilt from \(-\mathbf u_z\) and \(\varphi_i\) is the azimuth in the \(\mathbf u_x\)–\( \mathbf u_y\) plane measured counterclockwise from \(+\mathbf u_x\), with domains \(\theta_i\in[0,\theta_{\max}]\) and \(\varphi_i\in[0^\circ,360^\circ]\). The mapping to unit‐norm orientation vectors in the reference frame \((\mathbf u_x,\mathbf u_y,\mathbf u_z)\) is:
+We adopt a nadir‐referenced spherical parameterisation where $\mathbf u_x=[1,0,0]^{\mathsf T}$, $\mathbf u_y=[0,1,0]^{\mathsf T}$, $\mathbf u_z=[0,0,1]^{\mathsf T}$ are the standard Cartesian basis vectors, \(\theta_i\) is the tilt from \(-\mathbf u_z\) and \(\varphi_i\) is the azimuth in the \(\mathbf u_x\)–\( \mathbf u_y\) plane measured counterclockwise from \(+\mathbf u_x\), with domains \(\theta_i\in[0,\theta_{\max}]\) and \(\varphi_i\in[0^\circ,360^\circ]\). The mapping to unit‐norm orientation vectors in the reference frame \((\mathbf u_x,\mathbf u_y,\mathbf u_z)\) is:
 \begin{equation}
 \mathbf n_{t,i}
 = \bigl[\sin\theta_i\cos\varphi_i,\;\sin\theta_i\sin\varphi_i,\;-\,\cos\theta_i\bigr]^{\mathsf T}.
@@ -414,13 +410,13 @@ Standard genetic operators—tournament selection, crossover with probability \(
 with early termination when the average relative improvement of the best fitness over \(G_{\max}\) generations falls below \(10^{-6}\).
 The implementation is in MATLAB; optimization parameters are summarized in Table~\ref{tab:ga_params}.
 
-\added{We emphasize that the GA optimization is an offline system-design problem, not an online estimation problem. The $2K$ decision variables (tilt--azimuth pairs) define the orientation set; for each candidate set, the DEB (or PEB) is evaluated analytically over the entire 3D testbed using the closed-form FIM in~\eqref{eq:FIM_general}. No measurements are involved in this optimization---only theoretical performance bounds. The orientation set is optimized to minimize the RMSE of the DEB averaged over all $|\mathcal{R}|=1{,}792$ receiver positions (Table~\ref{tab:ga_params}). The position $\mathbf{r}$ is therefore not fixed but sweeps the spatial grid during fitness evaluation; the resulting orientation set is position-independent and can be deployed universally. Once fixed, the online direction-finding stage uses $K$ power measurements to recover the two-degrees-of-freedom direction on $\mathbb{S}^2$, which is overdetermined for $K\ge3$.}
+We emphasize that the GA optimization is an offline system-design problem, not an online estimation problem. The $2K$ decision variables (tilt--azimuth pairs) define the orientation set; for each candidate set, the DEB (or PEB) is evaluated analytically over the entire 3D testbed using the closed-form FIM in~\eqref{eq:FIM_general}. No measurements are involved in this optimization---only theoretical performance bounds. The orientation set is optimized to minimize the RMSE of the DEB averaged over all $|\mathcal{R}|=1{,}792$ receiver positions (Table~\ref{tab:ga_params}). The position $\mathbf{r}$ is therefore not fixed but sweeps the spatial grid during fitness evaluation; the resulting orientation set is position-independent and can be deployed universally. Once fixed, the online direction-finding stage uses $K$ power measurements to recover the two-degrees-of-freedom direction on $\mathbb{S}^2$, which is overdetermined for $K\ge3$.
 
 \begin{table*}[ht]
 \centering
-\caption{\added{DEB-optimized} orientations \((\theta_i,\varphi_i)\) in degrees \([^\circ]\) for various \(K\) in a \(3\times3\times2\,\mathrm{m^3}\) room\added{, with the achieved RMS-DEB}.}
+\caption{DEB-optimized orientations \((\theta_i,\varphi_i)\) in degrees \([^\circ]\) for various \(K\) in a \(3\times3\times2\,\mathrm{m^3}\) room, with the achieved RMS-DEB.}
 \label{tab:optimal_orientations_2col}
-\added{\resizebox{\linewidth}{!}{\begin{tabular}{|c|c|*{9}{c|}}
+\resizebox{\linewidth}{!}{\begin{tabular}{|c|c|*{9}{c|}}
 \hline
 \(K\) & \textbf{RMS-DEB}  & \(i=1\)                & \(i=2\)                & \(i=3\)                & \(i=4\)                & \(i=5\)                & \(i=6\)                & \(i=7\)                & \(i=8\)                & \(i=9\)                         \\ 
 \hline
@@ -432,20 +428,20 @@ The implementation is in MATLAB; optimization parameters are summarized in Table
 \(8\) & $0.39^\circ$  & \((67.6,\,67.1)\)    & \((66.6,\,247.3)\)   & \((2.8,\,39.7)\)     & \((3.2,\,227.0)\)      & \((64.7,\,2.8)\)       & \((66.1,\,179.7)\)     & \((66.9,\,298.2)\)     & \((65.4,\,114.9)\)     &   -                         \\ \hline
 \(9\) & $0.36^\circ$  & \((66.1,\,165.4)\)   & \((8.7,\,267.1)\)    & \((66.8,\,273.8)\)   & \((62.4,\,219.4)\)     & \((64.2,\,21.6)\)      & \((67.2,\,91.0)\)      & \((13.9,\,105.1)\)     & \((4.5,\,303.1)\)      & \((62.0,\,330.3)\)          \\
 \hline
-\end{tabular}}}
+\end{tabular}}
 \end{table*}
 
 
-Table~\ref{tab:optimal_orientations_2col} lists the \added{DEB-}optimal \(K\)-orientation sets for the system parameters in Table~\ref{tab:ga_params} \added{when $\Phi_{1/2} = 45^{\circ}$, together with the achieved RMS-DEB}. Each set is unique and no set is a subset of another. \added{The RMS-DEB decreases monotonically from $1.30^\circ$ at $K=3$ to $0.36^\circ$ at $K=9$, showing the benefit of additional orientations for direction-finding accuracy. At the selected operating point $K=5$, the DEB-optimized set achieves an RMS-DEB of $0.52^\circ$.}
+Table~\ref{tab:optimal_orientations_2col} lists the DEB-optimal \(K\)-orientation sets for the system parameters in Table~\ref{tab:ga_params} when $\Phi_{1/2} = 45^{\circ}$, together with the achieved RMS-DEB. Each set is unique and no set is a subset of another. The RMS-DEB decreases monotonically from $1.30^\circ$ at $K=3$ to $0.36^\circ$ at $K=9$, showing the benefit of additional orientations for direction-finding accuracy. At the selected operating point $K=5$, the DEB-optimized set achieves an RMS-DEB of $0.52^\circ$.
 
-In Fig.~\ref{fig:Optimized_vs_Random}, for each \(K\) we present box-and-whisker plots of the \added{DEB} computed over all receiver locations in the \(3\times3\times2\,\mathrm{m}^3\) testbed; optimized sets are shown in green, randomly selected sets in orange, and the shaded profiles depict the corresponding probability density function (PDF) estimates. The GA consistently outperforms random orientations: across \(K\), the optimized sets reduce the median \added{DEB} by \(49\%\)–\(72\%\) and exhibit smaller interquartile ranges. These gains are reflected in the distributions, with the central tendency improving monotonically as \(K\) increases.
+In Fig.~\ref{fig:Optimized_vs_Random}, for each \(K\) we present box-and-whisker plots of the DEB computed over all receiver locations in the \(3\times3\times2\,\mathrm{m}^3\) testbed; optimized sets are shown in green, randomly selected sets in orange, and the shaded profiles depict the corresponding probability density function (PDF) estimates. The GA consistently outperforms random orientations: across \(K\), the optimized sets reduce the median DEB by \(49\%\)–\(72\%\) and exhibit smaller interquartile ranges. These gains are reflected in the distributions, with the central tendency improving monotonically as \(K\) increases.
 
-Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the \added{DEB} across a \(3\times3\,\mathrm{m^2}\) floor at \(z=0.8\) m for \(K=5\) orientations with the transmitter at the room centre.  In the optimal configuration, shown in Fig.~\ref{fig:optimo_vs_random_3D}(a), the highest errors occur uniformly along the boundaries and especially at the corners, analogous to multi‐transmitter layouts \cite{acuna2025}, but remain spatially consistent.  By contrast, the random configuration in Fig.~\ref{fig:optimo_vs_random_3D}(b) exhibits both larger and more irregular error patterns.  
+Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the DEB across a \(3\times3\,\mathrm{m^2}\) floor at \(z=0.8\) m for \(K=5\) orientations with the transmitter at the room centre.  In the optimal configuration, shown in Fig.~\ref{fig:optimo_vs_random_3D}(a), the highest errors occur uniformly along the boundaries and especially at the corners, analogous to multi‐transmitter layouts \cite{acuna2025}, but remain spatially consistent.  By contrast, the random configuration in Fig.~\ref{fig:optimo_vs_random_3D}(b) exhibits both larger and more irregular error patterns.  
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/IV. Optimization/DEB_violin_comparison}
-    \caption{\added{Distribution of the DEB [$^\circ$] across all receiver locations in the $3\times3\times2\,\mathrm{m^3}$ testbed for $K\in\{3,\ldots,9\}$, with $\Phi_{1/2} = 45^{\circ}$. Green: GA-optimized orientation set; orange: 50 independently drawn random orientation sets per~$K$. Box-and-whisker plots summarize the sample distribution; shaded profiles depict the estimated PDF. The GA-optimized sets consistently achieve lower DEB and tighter distributions across all~$K$.}}
+    \caption{Distribution of the DEB [$^\circ$] across all receiver locations in the $3\times3\times2\,\mathrm{m^3}$ testbed for $K\in\{3,\ldots,9\}$, with $\Phi_{1/2} = 45^{\circ}$. Green: GA-optimized orientation set; orange: 50 independently drawn random orientation sets per~$K$. Box-and-whisker plots summarize the sample distribution; shaded profiles depict the estimated PDF. The GA-optimized sets consistently achieve lower DEB and tighter distributions across all~$K$.}
     \label{fig:Optimized_vs_Random}
 \end{figure}
 
@@ -453,75 +449,75 @@ Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the \added{DE
 \begin{figure}[tb]
   \centering
   \includegraphics[width=\columnwidth]{Figures/IV. Optimization/DEB_heatmap_K5}
-  \caption{\added{Spatial distribution of the DEB across the $3\times3\,\mathrm{m^2}$ floor at $z=0.8$\,m for $K=5$ orientations, and with $\Phi_{1/2} = 45^{\circ}$. (a)~GA-optimized set; (b)~a single random set with tilt--azimuth pairs drawn uniformly from the GA search range. The color scale is shared and clipped at $3^\circ$.}}
+  \caption{Spatial distribution of the DEB across the $3\times3\,\mathrm{m^2}$ floor at $z=0.8$\,m for $K=5$ orientations, and with $\Phi_{1/2} = 45^{\circ}$. (a)~GA-optimized set; (b)~a single random set with tilt--azimuth pairs drawn uniformly from the GA search range. The color scale is shared and clipped at $3^\circ$.}
   \label{fig:optimo_vs_random_3D}
 \end{figure}
 
-\added{We now turn from optimization to performance characterization. Figure~\ref{fig:PEB_vs_K} plots the RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus~$K$ for the DEB-optimized orientation sets under three semi-angles at half power $\Phi_{1/2}\in\{45^\circ,60^\circ,75^\circ\}$. Both bounds decrease monotonically with~$K$, confirming that additional orientations improve direction-finding and positioning accuracy simultaneously. The direction-finding bound reaches sub-degree RMS-DEB at $K\ge5$ for $\Phi_{1/2}=45^\circ$, while the corresponding RMS-PEB falls below~$2$\,cm. Wider beams ($\Phi_{1/2}=60^\circ$--$75^\circ$) incur higher bounds due to the reduced Lambertian directivity, yet the trends remain consistent. Assuming a fixed per-orientation acquisition time, latency scales linearly with~$K$; under this accuracy--latency trade-off, $K=5$ offers a favourable compromise for both bounds. $\Phi_{1/2}=45^\circ$ achieves competitive performance starting at $K=3$ and, given its widespread use in commercial LEDs, is adopted for the subsequent simulations.}
+We now turn from optimization to performance characterization. Figure~\ref{fig:PEB_vs_K} plots the RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus~$K$ for the DEB-optimized orientation sets under three semi-angles at half power $\Phi_{1/2}\in\{45^\circ,60^\circ,75^\circ\}$. Both bounds decrease monotonically with~$K$, confirming that additional orientations improve direction-finding and positioning accuracy simultaneously. The direction-finding bound reaches sub-degree RMS-DEB at $K\ge5$ for $\Phi_{1/2}=45^\circ$, while the corresponding RMS-PEB falls below~$2$\,cm. Wider beams ($\Phi_{1/2}=60^\circ$--$75^\circ$) incur higher bounds due to the reduced Lambertian directivity, yet the trends remain consistent. Assuming a fixed per-orientation acquisition time, latency scales linearly with~$K$; under this accuracy--latency trade-off, $K=5$ offers a favourable compromise for both bounds. $\Phi_{1/2}=45^\circ$ achieves competitive performance starting at $K=3$ and, given its widespread use in commercial LEDs, is adopted for the subsequent simulations.
 
-\added{
+
 Figure~\ref{fig:PEB_vs_noise} presents the RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets with \(\Phi_{1/2}=45^\circ\). The bold curves correspond to the recommended operating point \(K=5\); the shaded bands span the range \(K\in\{3,\ldots,9\}\). Both bounds decrease monotonically with SNR and exhibit nearly identical slopes of \(-1/2\) on the log--log axes, confirming the theoretical \(1/\sqrt{\mathrm{SNR}}\) scaling of the CRLB under AWGN~\cite{Kay1993}. At a representative SNR of~\(14\)\,dB, the \(K=5\) set achieves an RMS-DEB below~\(0.3^\circ\) and an RMS-PEB below~\(1\)\,cm. The band width at any fixed SNR quantifies the gain from additional orientations; it narrows at high SNR, indicating diminishing returns from increasing~\(K\) in low-noise regimes.
-}
+
 
 % *******************************************
-\section{\added{Nonlinear Least-Squares Direction Estimator}}
+\section{Nonlinear Least-Squares Direction Estimator}
 \label{sec:NoLineal}
 % *******************************************
 
 
-\added{This section develops an iterative NLS direction estimator that operates directly on the Lambertian power model without the linearization employed by GLS/WLS (Section~\ref{sec:Lineal}). The key idea is to normalize the received powers so as to eliminate the common multiplicative factor that depends on the unknown distance~$d$ and receiver orientation~$\mathbf{n}_r$, thereby rendering the estimator $\mathbf{n}_r$-independent.}
+This section develops an iterative NLS direction estimator that operates directly on the Lambertian power model without the linearization employed by GLS/WLS (Section~\ref{sec:Lineal}). The key idea is to normalize the received powers so as to eliminate the common multiplicative factor that depends on the unknown distance~$d$ and receiver orientation~$\mathbf{n}_r$, thereby rendering the estimator $\mathbf{n}_r$-independent.
 
 % ------------------------------------------------------------------
-\added{\subsection{NLS Cost Function and Direction Estimate}}
+\subsection{NLS Cost Function and Direction Estimate}
 % ------------------------------------------------------------------
-\added{As established in Section~\ref{subsec:FIM}, the noise-free received power factorizes as $\mu_i = \eta\,Q_i^m$~\eqref{eq:mu_factorized}, where $Q_i = \mathbf{n}_{t,i}\cdot\mathbf{n}_d$~\eqref{eq:Q} and $\eta = C\cos\psi/d^2$~\eqref{eq:eta_nuisance} is a common positive scalar that absorbs the unknown distance and receiver orientation.}
+As established in Section~\ref{subsec:FIM}, the noise-free received power factorizes as $\mu_i = \eta\,Q_i^m$~\eqref{eq:mu_factorized}, where $Q_i = \mathbf{n}_{t,i}\cdot\mathbf{n}_d$~\eqref{eq:Q} and $\eta = C\cos\psi/d^2$~\eqref{eq:eta_nuisance} is a common positive scalar that absorbs the unknown distance and receiver orientation.
 
-\added{Let $\hat\mu_i = \bar P_{r,i}$ denote the sample-mean power at orientation~$i$ (cf.~\eqref{eq:sampleMean}). We define the normalized power targets as:}
+Let $\hat\mu_i = \bar P_{r,i}$ denote the sample-mean power at orientation~$i$ (cf.~\eqref{eq:sampleMean}). We define the normalized power targets as:
 \begin{equation}
-\added{p_i \triangleq \frac{\hat\mu_i}{\max_{j=1,\ldots,K}\hat\mu_j}, \quad i=1,\ldots,K.}
+p_i \triangleq \frac{\hat\mu_i}{\max_{j=1,\ldots,K}\hat\mu_j}, \quad i=1,\ldots,K.
 \label{eq:p_target}
 \end{equation}
-\added{In the noiseless regime, substituting~\eqref{eq:mu_factorized} yields:}
+In the noiseless regime, substituting~\eqref{eq:mu_factorized} yields:
 \begin{equation}
-\added{p_i = \frac{\eta\,Q_i^m}{\eta\,Q_{\max}^m} = \frac{Q_i^m}{Q_{\max}^m},}
+p_i = \frac{\eta\,Q_i^m}{\eta\,Q_{\max}^m} = \frac{Q_i^m}{Q_{\max}^m},
 \label{eq:p_target_noiseless}
 \end{equation}
-\added{where $Q_{\max}=\max_j Q_j$. The common factor~$\eta$ cancels exactly, so the normalized targets $p_i$ depend only on the LED orientations $\{\mathbf{n}_{t,i}\}$ and the direction $\mathbf{n}_d$, not on $\mathbf{n}_r$, $d$, $P_t$, or $A_{\mathrm{det}}$.}
+where $Q_{\max}=\max_j Q_j$. The common factor~$\eta$ cancels exactly, so the normalized targets $p_i$ depend only on the LED orientations $\{\mathbf{n}_{t,i}\}$ and the direction $\mathbf{n}_d$, not on $\mathbf{n}_r$, $d$, $P_t$, or $A_{\mathrm{det}}$.
 
-\added{We model the normalized targets as $p_i \approx \eta\,[\max(0,\,\mathbf{n}_{t,i}\cdot\mathbf{v})]^m$, where $\mathbf{v}\in\mathbb{S}^2$ is the candidate direction and $\eta>0$ is a free scale parameter that absorbs the unknown normalization constant $1/Q_{\max}^m$. The NLS direction estimator is then:}
+We model the normalized targets as $p_i \approx \eta\,[\max(0,\,\mathbf{n}_{t,i}\cdot\mathbf{v})]^m$, where $\mathbf{v}\in\mathbb{S}^2$ is the candidate direction and $\eta>0$ is a free scale parameter that absorbs the unknown normalization constant $1/Q_{\max}^m$. The NLS direction estimator is then:
 \begin{equation}
-\added{(\hat{\mathbf{n}}_{d,\mathrm{NLS}},\,\hat\eta) = \arg\min_{\substack{\mathbf{v}\in\mathbb{S}^2,\;\eta>0 \\ \mathbf{n}_{t,i}\cdot\mathbf{v}\ge0,\;i=1,\ldots,K}} F(\mathbf{v},\eta),}
+(\hat{\mathbf{n}}_{d,\mathrm{NLS}},\,\hat\eta) = \arg\min_{\substack{\mathbf{v}\in\mathbb{S}^2,\;\eta>0 \\ \mathbf{n}_{t,i}\cdot\mathbf{v}\ge0,\;i=1,\ldots,K}} F(\mathbf{v},\eta),
 \label{eq:argmin_NL}
 \end{equation}
-\added{with cost function:}
+with cost function:
 \begin{equation}
-\added{F(\mathbf{v},\eta) = \sum_{i=1}^{K}\bigl(\eta\,[\mathbf{n}_{t,i}\cdot\mathbf{v}]^m - p_i\bigr)^2.}
+F(\mathbf{v},\eta) = \sum_{i=1}^{K}\bigl(\eta\,[\mathbf{n}_{t,i}\cdot\mathbf{v}]^m - p_i\bigr)^2.
 \label{eq:NLS_cost}
 \end{equation}
-\added{To solve~\eqref{eq:argmin_NL}, we reparameterize the direction in spherical coordinates $(\theta_d,\phi_d)$ so that $\mathbf{v}=[\sin\theta_d\cos\phi_d,\;\sin\theta_d\sin\phi_d,\;-\cos\theta_d]^{\mathsf T}$, which satisfies $\lVert\mathbf{v}\rVert=1$ by construction and reduces the parameter vector to $(\theta_d,\phi_d,\eta)\in\mathbb{R}^3$. The sum-of-squares structure of~\eqref{eq:NLS_cost} is then exploited by a Levenberg--Marquardt solver (MATLAB's \texttt{lsqnonlin}), which uses the Gauss--Newton Hessian approximation $\mathbf{J}^{\mathsf T}\mathbf{J}$ and achieves quadratic convergence near the zero-residual solution.}
+To solve~\eqref{eq:argmin_NL}, we reparameterize the direction in spherical coordinates $(\theta_d,\phi_d)$ so that $\mathbf{v}=[\sin\theta_d\cos\phi_d,\;\sin\theta_d\sin\phi_d,\;-\cos\theta_d]^{\mathsf T}$, which satisfies $\lVert\mathbf{v}\rVert=1$ by construction and reduces the parameter vector to $(\theta_d,\phi_d,\eta)\in\mathbb{R}^3$. The sum-of-squares structure of~\eqref{eq:NLS_cost} is then exploited by a Levenberg--Marquardt solver (MATLAB's \texttt{lsqnonlin}), which uses the Gauss--Newton Hessian approximation $\mathbf{J}^{\mathsf T}\mathbf{J}$ and achieves quadratic convergence near the zero-residual solution.
 
 % ------------------------------------------------------------------
-\added{\subsection{Consistency and Optimality at the True Direction}}
+\subsection{Consistency and Optimality at the True Direction}
 % ------------------------------------------------------------------
-\added{At the true direction $\mathbf{v}=\mathbf{n}_d$, we have $\mathbf{n}_{t,i}\cdot\mathbf{v}=Q_i$ and hence $[\mathbf{n}_{t,i}\cdot\mathbf{v}]^m=Q_i^m$. From~\eqref{eq:p_target_noiseless}, $p_i=Q_i^m/Q_{\max}^m$. Substituting into~\eqref{eq:NLS_cost}:}
+At the true direction $\mathbf{v}=\mathbf{n}_d$, we have $\mathbf{n}_{t,i}\cdot\mathbf{v}=Q_i$ and hence $[\mathbf{n}_{t,i}\cdot\mathbf{v}]^m=Q_i^m$. From~\eqref{eq:p_target_noiseless}, $p_i=Q_i^m/Q_{\max}^m$. Substituting into~\eqref{eq:NLS_cost}:
 \begin{equation}
-\added{F(\mathbf{n}_d,\eta)=\sum_{i=1}^K Q_i^{2m}\bigl(\eta - 1/Q_{\max}^m\bigr)^2 = 0}
+F(\mathbf{n}_d,\eta)=\sum_{i=1}^K Q_i^{2m}\bigl(\eta - 1/Q_{\max}^m\bigr)^2 = 0
 \end{equation}
-\added{when $\eta^*=1/Q_{\max}^m$. Thus, in the absence of noise, the NLS achieves a global minimum of zero at the true direction, confirming consistency.}
+when $\eta^*=1/Q_{\max}^m$. Thus, in the absence of noise, the NLS achieves a global minimum of zero at the true direction, confirming consistency.
 
-\added{Since $\mathbf{n}_r$ does not appear in~\eqref{eq:p_target}--\eqref{eq:NLS_cost}, the NLS direction estimate is independent of the receiver orientation by construction. The common factor~$\eta$ is eliminated through max-normalization and the free scale parameter~$\hat\eta$, which jointly marginalize over the unknown multiplicative term.}
+Since $\mathbf{n}_r$ does not appear in~\eqref{eq:p_target}--\eqref{eq:NLS_cost}, the NLS direction estimate is independent of the receiver orientation by construction. The common factor~$\eta$ is eliminated through max-normalization and the free scale parameter~$\hat\eta$, which jointly marginalize over the unknown multiplicative term.
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms}
-    \caption{\added{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus the number of orientations~$K$ for the DEB-optimized sets and three LED semi-angles at half power $\Phi_{1/2}\in\{45^\circ,60^\circ,75^\circ\}$. Values are computed over all receiver positions in the $3\times3\times2~\mathrm{m}^3$ testbed. Both bounds decrease monotonically with~$K$; the operating point $K=5$ offers a favourable accuracy--latency trade-off for both direction finding and 3D positioning.}}
+    \caption{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus the number of orientations~$K$ for the DEB-optimized sets and three LED semi-angles at half power $\Phi_{1/2}\in\{45^\circ,60^\circ,75^\circ\}$. Values are computed over all receiver positions in the $3\times3\times2~\mathrm{m}^3$ testbed. Both bounds decrease monotonically with~$K$; the operating point $K=5$ offers a favourable accuracy--latency trade-off for both direction finding and 3D positioning.}
     \label{fig:PEB_vs_K}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/IV. Optimization/Bound_vs_SNR_envelope_rms}
-    \caption{\added{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets ($\Phi_{1/2}=45^\circ$). Bold curves: $K=5$; shaded bands: range over $K\in\{3,\ldots,9\}$; dotted edges: $K=3$ (upper) and $K=9$ (lower). Both bounds decrease as $1/\sqrt{\mathrm{SNR}}$, with the band width reflecting the diminishing incremental gain from additional orientations at high SNR.}}
+    \caption{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets ($\Phi_{1/2}=45^\circ$). Bold curves: $K=5$; shaded bands: range over $K\in\{3,\ldots,9\}$; dotted edges: $K=3$ (upper) and $K=9$ (lower). Both bounds decrease as $1/\sqrt{\mathrm{SNR}}$, with the band width reflecting the diminishing incremental gain from additional orientations at high SNR.}
     \label{fig:PEB_vs_noise}
 \end{figure}
 
@@ -553,7 +549,7 @@ and, from~\eqref{eq:Pr_i}, \eqref{eq:hLOS}, \eqref{eq:cosines} and \eqref{eq:con
 \bigl(\mathbf{n}_r\cdot\mathbf{d}\bigr)}{d^{m+3}}.
 \label{eq:mu_i_C}
 \end{equation}
-\added{The distance $d$ and the receiver-dependent factor $\cos\psi$ appear identically in both $\mu_i$ and $\mu_1$. Their ratio therefore cancels these common factors, yielding $\beta_i = \cos\phi_i / \cos\phi_1$ from \eqref{eq:cosines}, which depends only on the LED orientations and the displacement direction $\mathbf{d}$.}
+The distance $d$ and the receiver-dependent factor $\cos\psi$ appear identically in both $\mu_i$ and $\mu_1$. Their ratio therefore cancels these common factors, yielding $\beta_i = \cos\phi_i / \cos\phi_1$ from \eqref{eq:cosines}, which depends only on the LED orientations and the displacement direction $\mathbf{d}$.
 
 Using \eqref{eq:mu_i_C} in \eqref{eq:beta_def_gls}, each $\beta_i$ imposes the orthogonality condition:
 \begin{equation}
@@ -569,7 +565,7 @@ i.e., $\mathbf a_i \perp \mathbf d$, with:
 \label{eq:definition_a_i}
 \end{equation}
 which therefore supplies $K-1$ homogeneous hyperplanes that intersect at the true~$\mathbf d$.
-\added{Geometrically, each constraint $\mathbf{a}_i\cdot\mathbf{d}=0$ defines a hyperplane through the origin containing the true direction $\mathbf{d}$. With $K-1$ such hyperplanes (from $K$ orientations), their intersection yields the direction estimate.}
+Geometrically, each constraint $\mathbf{a}_i\cdot\mathbf{d}=0$ defines a hyperplane through the origin containing the true direction $\mathbf{d}$. With $K-1$ such hyperplanes (from $K$ orientations), their intersection yields the direction estimate.
 
 \subsubsection{Stochastic Perturbation of the Ratios}
 Recall from~\eqref{eq:sampleMean} that the sample mean is:
@@ -736,8 +732,8 @@ where \(\mathbf v_{\min}(\cdot)\) denotes the eigenvector corresponding to the s
   \EndIf
 
   \Statex
-  \State {\bfseries Distance estimation (\added{cooperative alignment}):}
-  \State \quad \added{Steer LED to} $\mathbf n_t \gets \hat{\mathbf n}_d$,\quad \added{reorient PD to} $\mathbf n_r \gets -\,\hat{\mathbf n}_d$
+  \State {\bfseries Distance estimation (cooperative alignment):}
+  \State \quad Steer LED to $\mathbf n_t \gets \hat{\mathbf n}_d$,\quad reorient PD to $\mathbf n_r \gets -\,\hat{\mathbf n}_d$
   \State \quad Collect $N$ power samples $P_{r,K+1}$ 
   \State \quad Compute $\hat\mu_{K+1} = \tfrac{1}{N}\sum_{k=1}^{N} P_{r,K+1,k}$
   \State \quad $\hat d \gets \sqrt{\tfrac{C}{\hat\mu_{K+1}}}$
@@ -793,7 +789,7 @@ The minimizer is the unit eigenvector corresponding to the smallest eigenvalue o
 The neglected cross-covariances in \eqref{eq:cov_beta_gls} scale with \(\mu_1^{-2}\), whereas the retained diagonal terms scale with \(\mu_i^{-2}+\mu_1^{-2}\). Thus, when the reference orientation \(i=1\) is chosen such that \(\mu_1\gg \mu_i\) for most \(i\), the off-diagonal terms are negligible relative to the diagonal terms and WLS closely tracks GLS while avoiding a full covariance inversion. In more symmetric geometries where \(\mu_i\approx\mu_1\) for many \(i\), the cross-correlations are non-negligible and the full GLS should be used for optimal performance.
 
 %-------------------------------------------------------------------------------
-\added{\subsection{Receiver-Orientation Independence}
+\subsection{Receiver-Orientation Independence}
 \label{subsec:nr_independence}
 % ------------------------------------------------------------------
 Having defined all three direction estimators---NLS in Section~\ref{sec:NoLineal}, and GLS/WLS above---we now establish a property common to all of them: the direction estimates are independent of the receiver orientation $\mathbf{n}_r$. From~\eqref{eq:mu_factorized}--\eqref{eq:eta_nuisance}, the channel model factorizes as $\mu_i = \eta\,Q_i^m$, where $\eta = C\cos\psi/d^2$ is a positive scalar common to all $K$ orientations, since the receiver remains stationary throughout the $K$-orientation acquisition.
@@ -802,7 +798,7 @@ For GLS and WLS, the power ratios $\beta_i = (\mu_i/\mu_1)^{1/m} = Q_i/Q_1$~\eqr
 
 For NLS, the normalized targets $p_i = \mu_i/\max_j\mu_j = Q_i^m/Q_{\max}^m$~\eqref{eq:p_target_noiseless} cancel $\eta$ through a different mechanism: the free scale parameter $\hat\eta$ absorbs the unknown common factor during optimization (cf.\ Section~\ref{sec:NoLineal}).
 
-This property holds regardless of whether $\mathbf{n}_r$ is known or unknown, and numerical confirmation under random receiver tilts is reported in Section~\ref{sec:results}.}
+This property holds regardless of whether $\mathbf{n}_r$ is known or unknown, and numerical confirmation under random receiver tilts is reported in Section~\ref{sec:results}.
 
 
 % *******************************************
@@ -810,7 +806,7 @@ This property holds regardless of whether $\mathbf{n}_r$ is known or unknown, an
 \label{sec:results}
 % *******************************************
 
-\added{%..............................................................
+%..............................................................
 \subsection{Direction-Finding Performance}
 \label{subsec:DF_performance}
 
@@ -858,7 +854,7 @@ DEB   & 0.518 & 0.527 & $+1.69\%$ \\ \hline
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30}
-    \caption{\added{Empirical CDF of the per-position angular RMSE for $K=5$ orientations ($M=1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf{n}_r=[0,0,1]^{\mathsf T}$); dashed curves: random receiver tilt ($N_{\mathrm{tilt}}=100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma=5^{\circ}$, $\theta_{\max}=30^{\circ}$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref{subsec:nr_independence}).}}
+    \caption{Empirical CDF of the per-position angular RMSE for $K=5$ orientations ($M=1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf{n}_r=[0,0,1]^{\mathsf T}$); dashed curves: random receiver tilt ($N_{\mathrm{tilt}}=100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma=5^{\circ}$, $\theta_{\max}=30^{\circ}$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref{subsec:nr_independence}).}
     \label{fig:NR_robust_CDF}
 \end{figure}
 \subsubsection{Computational Complexity and Latency}
@@ -877,32 +873,31 @@ Replacing $\mathbf{\Sigma}_\beta$ by the diagonal $\tilde{\mathbf{\Sigma}}_\beta
 Solving \eqref{eq:argmin_NL} via the spherical reparameterization described above yields a three-variable unconstrained least-squares problem solved by MATLAB's \texttt{lsqnonlin} (Levenberg--Marquardt). At each iteration, the $K$-dimensional residual vector and its $K{\times}3$ Jacobian are evaluated in $\mathcal{O}(K)$, and the $3{\times}3$ normal equation is solved in constant time. With $T_{\rm NLS}$ Levenberg--Marquardt iterations, the per-estimate cost is $\mathcal{O}(NK)+\mathcal{O}(T_{\rm NLS}\,K)$.
 
 Figure~\ref{fig:latency} reports the measured computation latency per direction estimate for $K=5$ (powers pre-acquired). WLS and GLS complete with median latencies of $0.018$\,ms and $0.025$\,ms, respectively, consistent with their closed-form $\mathcal{O}(K)$ and compact $\mathcal{O}(K^3)$ structures acting on a small $(K{-}1)\times(K{-}1)$ system followed by a constant-cost $3\times3$ eigensolve. NLS requires a median of $0.65$\,ms---roughly one order of magnitude slower---due to the iterative Levenberg--Marquardt solve. The 90\% intervals (p5--p95) shown in the figure further reveal that NLS exhibits moderate variability ($0.53$--$1.11$\,ms), whereas GLS and WLS remain tightly concentrated below $0.05$\,ms. These measurements corroborate the complexity analysis: closed-form WLS/GLS enable real-time direction finding without fingerprinting or model retraining, whereas NLS incurs higher but still sub-millisecond latency.
-}% end added
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_Time.png}
-    \caption{\added{Computation latency of the GLS, WLS, and NLS direction-finding estimators for $K=5$. Markers denote the median and mean over all testbed positions; whiskers span the 90\% interval (p5--p95). The dashed line marks the $0.1$\,ms threshold.}}
+    \caption{Computation latency of the GLS, WLS, and NLS direction-finding estimators for $K=5$. Markers denote the median and mean over all testbed positions; whiskers span the 90\% interval (p5--p95). The dashed line marks the $0.1$\,ms threshold.}
     \label{fig:latency}
 \end{figure}
 
 
 
 %.............................................................
-\subsection{\added{3D Positioning Performance}}
+\subsection{3D Positioning Performance}
 \label{subsec:performance}
 
-\added{This subsection extends the evaluation to the full two-stage pipeline (direction finding followed by distance recovery), using the same simulation setup described in Section~\ref{subsec:DF_performance}. Position estimates were computed over the 3D testbed specified in Table~\ref{tab:ga_params}, using the GA-optimized orientation sets detailed below. As in the direction-finding evaluation (Section~\ref{subsec:DF_performance}), each estimator uses its best orientation set: GLS and WLS employ the direction-finding set optimized for GLS, while NLS uses the DEB-optimized set; the PEB is also evaluated with the DEB-optimized orientations. The 3D Euclidean position error was recorded for each of $M=1{,}000$ trials at each of the $|\mathcal{R}|=1{,}792$ testbed positions. Figure~\ref{fig:CDF} plots the empirical CDF of the per-position 3D positioning error for $K\in\{3,5,9\}$. The case $K=3$ employs the deterministic singular value decomposition (SVD) baseline of~\cite{Chassagne2025}, originally proposed for 2D estimation; by applying the SVD to the matrix formed by the vectors in \eqref{eq:definition_a_i}, we extend it to 3D, albeit restricted to three orientations and without a weighted formulation. The setting $K=5$ is selected as a latency--accuracy compromise based on the PEB analysis, and $K=9$ represents the upper bound of the orientation counts studied herein. For GLS, NLS, and the PEB, the $K=9$ configurations (dashed traces) stochastically dominate their $K=5$ counterparts (solid lines), in agreement with the PEB trend that additional orientations reduce the positioning bound. All proposed estimators substantially outperform the $K=3$ baseline~\cite{Chassagne2025}.}
+This subsection extends the evaluation to the full two-stage pipeline (direction finding followed by distance recovery), using the same simulation setup described in Section~\ref{subsec:DF_performance}. Position estimates were computed over the 3D testbed specified in Table~\ref{tab:ga_params}, using the GA-optimized orientation sets detailed below. As in the direction-finding evaluation (Section~\ref{subsec:DF_performance}), each estimator uses its best orientation set: GLS and WLS employ the direction-finding set optimized for GLS, while NLS uses the DEB-optimized set; the PEB is also evaluated with the DEB-optimized orientations. The 3D Euclidean position error was recorded for each of $M=1{,}000$ trials at each of the $|\mathcal{R}|=1{,}792$ testbed positions. Figure~\ref{fig:CDF} plots the empirical CDF of the per-position 3D positioning error for $K\in\{3,5,9\}$. The case $K=3$ employs the deterministic singular value decomposition (SVD) baseline of~\cite{Chassagne2025}, originally proposed for 2D estimation; by applying the SVD to the matrix formed by the vectors in \eqref{eq:definition_a_i}, we extend it to 3D, albeit restricted to three orientations and without a weighted formulation. The setting $K=5$ is selected as a latency--accuracy compromise based on the PEB analysis, and $K=9$ represents the upper bound of the orientation counts studied herein. For GLS, NLS, and the PEB, the $K=9$ configurations (dashed traces) stochastically dominate their $K=5$ counterparts (solid lines), in agreement with the PEB trend that additional orientations reduce the positioning bound. All proposed estimators substantially outperform the $K=3$ baseline~\cite{Chassagne2025}.
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png}
-    \caption{\added{Empirical CDF of the 3D positioning error for $K\in\{3,5,9\}$ ($M=1{,}000$ Monte Carlo trials, $1{,}792$ testbed positions). Solid lines: $K=5$; dashed lines: $K=9$; dash-dotted: $K=3$ SVD baseline~\cite{Chassagne2025}. Each estimator uses its respective GA-optimized orientation set.}}
+    \caption{Empirical CDF of the 3D positioning error for $K\in\{3,5,9\}$ ($M=1{,}000$ Monte Carlo trials, $1{,}792$ testbed positions). Solid lines: $K=5$; dashed lines: $K=9$; dash-dotted: $K=3$ SVD baseline~\cite{Chassagne2025}. Each estimator uses its respective GA-optimized orientation set.}
     \label{fig:CDF}
 \end{figure}
 
-Table~\ref{tab:estimation_performance} summarizes the quantitative positioning metrics: RMSE, $\mathrm{CDF}_{90\%}$, and the average positioning error (APE). \added{For $K=5$, NLS achieved the lowest estimator RMSE of $2.40$~cm and $\mathrm{CDF}_{90\%}=3.23$~cm, followed by GLS ($2.52$~cm) and WLS ($2.92$~cm). GLS remained within a factor $\approx1.54\times$ of the PEB ($1.64$~cm RMSE). Increasing to $K=9$ delivered gains for GLS and NLS: GLS improved to $1.78$~cm (a $29\%$ reduction) and NLS to $1.47$~cm (a $39\%$ reduction), narrowing the gap to the PEB ($1.28$~cm). WLS, however, degraded from $2.92$~cm at $K=5$ to $3.42$~cm at $K=9$; this behavior is consistent with its diagonal covariance approximation becoming increasingly suboptimal as the number of orientations grows and the off-diagonal terms neglected in the WLS simplification become non-negligible.}
-\added{The performance gap between the estimators and the PEB arises from two factors: (i)~the two-stage architecture discards distance information contained in the absolute power levels during direction finding, whereas the PEB assumes joint estimation from all $K+1$ measurements; and (ii)~the PEB assumes perfect beam alignment in the distance-recovery measurement, which no practical estimator can achieve.}
+Table~\ref{tab:estimation_performance} summarizes the quantitative positioning metrics: RMSE, $\mathrm{CDF}_{90\%}$, and the average positioning error (APE). For $K=5$, NLS achieved the lowest estimator RMSE of $2.40$~cm and $\mathrm{CDF}_{90\%}=3.23$~cm, followed by GLS ($2.52$~cm) and WLS ($2.92$~cm). GLS remained within a factor $\approx1.54\times$ of the PEB ($1.64$~cm RMSE). Increasing to $K=9$ delivered gains for GLS and NLS: GLS improved to $1.78$~cm (a $29\%$ reduction) and NLS to $1.47$~cm (a $39\%$ reduction), narrowing the gap to the PEB ($1.28$~cm). WLS, however, degraded from $2.92$~cm at $K=5$ to $3.42$~cm at $K=9$; this behavior is consistent with its diagonal covariance approximation becoming increasingly suboptimal as the number of orientations grows and the off-diagonal terms neglected in the WLS simplification become non-negligible.
+The performance gap between the estimators and the PEB arises from two factors: (i)~the two-stage architecture discards distance information contained in the absolute power levels during direction finding, whereas the PEB assumes joint estimation from all $K+1$ measurements; and (ii)~the PEB assumes perfect beam alignment in the distance-recovery measurement, which no practical estimator can achieve.
 The APE values track the same ordering as RMSE and \(\mathrm{CDF}_{90\%}\), indicating that the improvements are uniform across the distribution rather than confined to the median or the tail.
 
 \begin{table}[t]
@@ -924,27 +919,27 @@ The APE values track the same ordering as RMSE and \(\mathrm{CDF}_{90\%}\), indi
 \end{tabular}
 \\
 \vspace{4pt}
-\added{\footnotesize \textit{Note}: For the PEB rows, ``RMSE'' denotes the RMS of the PEB over all testbed positions (a deterministic spatial statistic, not a Monte Carlo estimate); ``CDF$_{90\%}$'' is the 90th percentile of the PEB distribution across positions; ``APE'' is the spatial mean PEB.}
+\footnotesize \textit{Note}: For the PEB rows, ``RMSE'' denotes the RMS of the PEB over all testbed positions (a deterministic spatial statistic, not a Monte Carlo estimate); ``CDF$_{90\%}$'' is the 90th percentile of the PEB distribution across positions; ``APE'' is the spatial mean PEB.
 \end{table}
 
-\added{Figure~\ref{fig:estimation} depicts the 3D position estimates produced by GLS for $K=5$ at three receiver heights $z\in\{0,\,0.6,\,1.2\}\,\mathrm{m}$, with the LED transmitter located at the ceiling ($z=2\,\mathrm{m}$). The displacement between each reference position and the corresponding estimate reveals the spatial structure of the positioning error. At $z=1.2\,\mathrm{m}$, errors grow towards the testbed boundaries---particularly at the corners---consistent with the DEB heat maps in Fig.~\ref{fig:optimo_vs_random_3D}(a) and attributable to the reduced SNR at large incidence angles. At lower heights ($z=0$ and $z=0.6\,\mathrm{m}$), the estimates remain tightly concentrated around the reference positions, in agreement with the low RMSE reported in Table~\ref{tab:estimation_performance}.}
+Figure~\ref{fig:estimation} depicts the 3D position estimates produced by GLS for $K=5$ at three receiver heights $z\in\{0,\,0.6,\,1.2\}\,\mathrm{m}$, with the LED transmitter located at the ceiling ($z=2\,\mathrm{m}$). The displacement between each reference position and the corresponding estimate reveals the spatial structure of the positioning error. At $z=1.2\,\mathrm{m}$, errors grow towards the testbed boundaries---particularly at the corners---consistent with the DEB heat maps in Fig.~\ref{fig:optimo_vs_random_3D}(a) and attributable to the reduced SNR at large incidence angles. At lower heights ($z=0$ and $z=0.6\,\mathrm{m}$), the estimates remain tightly concentrated around the reference positions, in agreement with the low RMSE reported in Table~\ref{tab:estimation_performance}.
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_Comparison_3D.png}
-    \caption{\added{3D position estimates produced by GLS ($K=5$) at receiver heights $z\in\{0,\,0.6,\,1.2\}\,\mathrm{m}$ in the $3\times3\times2\,\mathrm{m^3}$ room. The LED transmitter is at the ceiling ($z=2\,\mathrm{m}$); segments connect each reference position to the corresponding estimate.}}
+    \caption{3D position estimates produced by GLS ($K=5$) at receiver heights $z\in\{0,\,0.6,\,1.2\}\,\mathrm{m}$ in the $3\times3\times2\,\mathrm{m^3}$ room. The LED transmitter is at the ceiling ($z=2\,\mathrm{m}$); segments connect each reference position to the corresponding estimate.}
     \label{fig:estimation}
 \end{figure}
 
 %.............................................................
-\subsection{\added{Estimator Performance vs.\ SNR}}
+\subsection{Estimator Performance vs.\ SNR}
 \label{subsec:vs_snr}
 
-\added{Whereas Table~\ref{tab:estimation_performance} reports performance at the nominal operating point ($\mathrm{SNR}=14$\,dB), this subsection characterizes how the estimators scale with the noise level. Unlike the theoretical bounds in Fig.~\ref{fig:PEB_vs_noise}, the curves in Fig.~\ref{fig:rmse_vs_snr} represent the realized performance of each estimator obtained from full Monte Carlo simulation ($K=5$, $M=1{,}000$ trials per position, $|\mathcal{R}| = 1,792$ testbed positions, $\mathrm{SNR}\in[10,50]$\,dB). This provides the practical counterpart to the bound-only analysis: while Fig.~\ref{fig:PEB_vs_noise} shows the best achievable performance, Fig.~\ref{fig:rmse_vs_snr} shows what the proposed estimators actually attain.}
+Whereas Table~\ref{tab:estimation_performance} reports performance at the nominal operating point ($\mathrm{SNR}=14$\,dB), this subsection characterizes how the estimators scale with the noise level. Unlike the theoretical bounds in Fig.~\ref{fig:PEB_vs_noise}, the curves in Fig.~\ref{fig:rmse_vs_snr} represent the realized performance of each estimator obtained from full Monte Carlo simulation ($K=5$, $M=1{,}000$ trials per position, $|\mathcal{R}| = 1,792$ testbed positions, $\mathrm{SNR}\in[10,50]$\,dB). This provides the practical counterpart to the bound-only analysis: while Fig.~\ref{fig:PEB_vs_noise} shows the best achievable performance, Fig.~\ref{fig:rmse_vs_snr} shows what the proposed estimators actually attain.
 
-\added{All estimator curves in Fig.~\ref{fig:rmse_vs_snr} decrease with the $1/\sqrt{\mathrm{SNR}}$ slope predicted by Cramér--Rao theory, confirming that the proposed estimators operate in the asymptotic regime across the entire SNR range. For direction finding (Fig.~\ref{fig:rmse_vs_snr}\,(a)), NLS tracks the DEB within a factor ${\approx}1.00$, indicating near-efficient estimation; GLS and WLS remain at constant factors of ${\approx}1.3{\times}$ and ${\approx}1.6{\times}$ above the DEB, respectively, consistent with the suboptimality inherent in the linearized ratio model. For 3D positioning (Fig.~\ref{fig:rmse_vs_snr}\,(b)), the same ordering holds: NLS achieves the lowest RMSE (e.g., $1.10$\,cm at $20$\,dB vs.\ PEB $0.88$\,cm), followed by GLS ($1.41$\,cm) and WLS ($1.66$\,cm). These constant-factor gaps persist across all SNR values, confirming that the performance differences are structural rather than noise-regime-dependent. The SNR axis can also be interpreted in terms of ambient light: higher ambient illuminance increases the shot-noise contribution to $\sigma^2$, reducing the effective SNR and shifting the operating point leftward along the curves.}
+All estimator curves in Fig.~\ref{fig:rmse_vs_snr} decrease with the $1/\sqrt{\mathrm{SNR}}$ slope predicted by Cramér--Rao theory, confirming that the proposed estimators operate in the asymptotic regime across the entire SNR range. For direction finding (Fig.~\ref{fig:rmse_vs_snr}\,(a)), NLS tracks the DEB within a factor ${\approx}1.00$, indicating near-efficient estimation; GLS and WLS remain at constant factors of ${\approx}1.3{\times}$ and ${\approx}1.6{\times}$ above the DEB, respectively, consistent with the suboptimality inherent in the linearized ratio model. For 3D positioning (Fig.~\ref{fig:rmse_vs_snr}\,(b)), the same ordering holds: NLS achieves the lowest RMSE (e.g., $1.10$\,cm at $20$\,dB vs.\ PEB $0.88$\,cm), followed by GLS ($1.41$\,cm) and WLS ($1.66$\,cm). These constant-factor gaps persist across all SNR values, confirming that the performance differences are structural rather than noise-regime-dependent. The SNR axis can also be interpreted in terms of ambient light: higher ambient illuminance increases the shot-noise contribution to $\sigma^2$, reducing the effective SNR and shifting the operating point leftward along the curves.
 
-\added{These results highlight a practical trade-off: NLS achieves the best accuracy (nearly matching the bound) but requires ${\approx}0.65$\,ms per estimate due to its iterative Levenberg--Marquardt solver, whereas GLS and WLS---despite operating $1.3$--$1.6{\times}$ above the bound---complete in ${\approx}0.025$\,ms and $0.018$\,ms, respectively, thanks to their closed-form structure. For latency-critical applications, GLS offers the best accuracy among the closed-form estimators with microsecond-level latency. For scenarios where sub-millisecond latency is acceptable, NLS delivers near-optimal performance.}
+These results highlight a practical trade-off: NLS achieves the best accuracy (nearly matching the bound) but requires ${\approx}0.65$\,ms per estimate due to its iterative Levenberg--Marquardt solver, whereas GLS and WLS---despite operating $1.3$--$1.6{\times}$ above the bound---complete in ${\approx}0.025$\,ms and $0.018$\,ms, respectively, thanks to their closed-form structure. For latency-critical applications, GLS offers the best accuracy among the closed-form estimators with microsecond-level latency. For scenarios where sub-millisecond latency is acceptable, NLS delivers near-optimal performance.
 
 \begin{figure}[tb]
     \centering
@@ -952,7 +947,7 @@ The APE values track the same ordering as RMSE and \(\mathrm{CDF}_{90\%}\), indi
     \label{fig:rmse_vs_snr_DF}}\\
     \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png}%
     \label{fig:rmse_vs_snr_3D}}
-    \caption{\added{Realized estimator performance vs.\ SNR for $K=5$ ($M=1{,}000$ Monte Carlo trials, $1,792$ testbed positions). (a)~RMS angular error (direction finding): NLS coincides with the DEB; GLS and WLS remain at constant factors ${\approx}1.3{\times}$ and ${\approx}1.6{\times}$. (b)~RMS 3D positioning error: all estimators track the PEB with the same constant-factor offsets. All curves follow the $1/\sqrt{\mathrm{SNR}}$ slope.}}
+    \caption{Realized estimator performance vs.\ SNR for $K=5$ ($M=1{,}000$ Monte Carlo trials, $1,792$ testbed positions). (a)~RMS angular error (direction finding): NLS coincides with the DEB; GLS and WLS remain at constant factors ${\approx}1.3{\times}$ and ${\approx}1.6{\times}$. (b)~RMS 3D positioning error: all estimators track the PEB with the same constant-factor offsets. All curves follow the $1/\sqrt{\mathrm{SNR}}$ slope.}
     \label{fig:rmse_vs_snr}
 \end{figure}
 
@@ -963,13 +958,13 @@ The APE values track the same ordering as RMSE and \(\mathrm{CDF}_{90\%}\), indi
 
 This paper introduced a beam–steered single-LED, single-PD OWP architecture that delivers full 3D indoor localization without receiver rotation, cameras, or PD arrays. Our method is explicitly model-based, grounded in radiometry and geometry, so it requires no fingerprinting or data retraining, enabling interpretable performance, principled uncertainty analysis, and efficient co-design of hardware and algorithms.
 
-We proposed a two-stage process: (i) direction finding from \(K\) steered orientations, followed by (ii) distance recovery from a single beam-aligned power measurement. A full \added{DEB and PEB} analysis characterized identifiability (\(K\!\ge\!3\)) and showed the benefits of overdetermination (\(K\!\ge\!4\)). A GA-based orientation-set optimizer minimized the RMSE \added{DEB} across a 3D testbed and yielded practical steering patterns. Additionally, we introduce a ratio-based linearization of the Lambertian power model that yields closed-form GLS/WLS direction estimators for stage (i). \added{We showed (Section~\ref{subsec:nr_independence}) that all three proposed direction estimators (GLS, WLS, NLS) are mathematically independent of the receiver orientation $\mathbf{n}_r$, which eliminates the need for receiver pose calibration during the direction-finding stage.}
+We proposed a two-stage process: (i) direction finding from \(K\) steered orientations, followed by (ii) distance recovery from a single beam-aligned power measurement. A full DEB and PEB analysis characterized identifiability (\(K\!\ge\!3\)) and showed the benefits of overdetermination (\(K\!\ge\!4\)). A GA-based orientation-set optimizer minimized the RMSE DEB across a 3D testbed and yielded practical steering patterns. Additionally, we introduce a ratio-based linearization of the Lambertian power model that yields closed-form GLS/WLS direction estimators for stage (i). We showed (Section~\ref{subsec:nr_independence}) that all three proposed direction estimators (GLS, WLS, NLS) are mathematically independent of the receiver orientation $\mathbf{n}_r$, which eliminates the need for receiver pose calibration during the direction-finding stage.
 
-\added{Monte Carlo simulations over $1{,}792$ testbed positions with $1{,}000$ trials confirmed the effectiveness of the proposed framework. For direction finding with $K=5$, all estimators achieved sub-degree mean angular error: GLS $0.54^\circ$, WLS $0.61^\circ$, NLS $0.52^\circ$, with the DEB at $0.46^\circ$. For full 3D positioning, the APE reached GLS $2.00$\,cm, WLS $2.25$\,cm, and NLS $1.90$\,cm at $K=5$, tracking the PEB ($1.43$\,cm) within a factor $\approx1.4\times$; increasing to $K=9$ improved GLS to $1.46$\,cm and NLS to $1.26$\,cm. Importantly, GLS/WLS reduce inference to a single $3\times3$ eigenproblem, yielding $\mu$s-level latency ($\approx0.025$\,ms), while NLS requires $\approx0.65$\,ms due to its iterative Levenberg--Marquardt optimization. Furthermore, under random receiver tilts (half-normal, $\sigma=5^\circ$, $\max=30^\circ$), all estimators degrade by less than $3\%$, confirming that receiver-orientation variations have negligible effect on direction-finding accuracy, as established analytically in Section~\ref{subsec:nr_independence}.}
+Monte Carlo simulations over $1{,}792$ testbed positions with $1{,}000$ trials confirmed the effectiveness of the proposed framework. For direction finding with $K=5$, all estimators achieved sub-degree mean angular error: GLS $0.54^\circ$, WLS $0.61^\circ$, NLS $0.52^\circ$, with the DEB at $0.46^\circ$. For full 3D positioning, the APE reached GLS $2.00$\,cm, WLS $2.25$\,cm, and NLS $1.90$\,cm at $K=5$, tracking the PEB ($1.43$\,cm) within a factor $\approx1.4\times$; increasing to $K=9$ improved GLS to $1.46$\,cm and NLS to $1.26$\,cm. Importantly, GLS/WLS reduce inference to a single $3\times3$ eigenproblem, yielding $\mu$s-level latency ($\approx0.025$\,ms), while NLS requires $\approx0.65$\,ms due to its iterative Levenberg--Marquardt optimization. Furthermore, under random receiver tilts (half-normal, $\sigma=5^\circ$, $\max=30^\circ$), all estimators degrade by less than $3\%$, confirming that receiver-orientation variations have negligible effect on direction-finding accuracy, as established analytically in Section~\ref{subsec:nr_independence}.
 
-\added{Beyond accuracy, direction finding constitutes the core enabling stage of the architecture. It requires no receiver rotation during the $K$ measurements, nor pose calibration, and the same periodic $K$-orientation scan can serve multiple receivers simultaneously. Once the direction $\hat{\mathbf{n}}_d$ is known, it enables cooperative beam alignment---steering the LED toward the PD and reorienting the PD toward the LED---which maximizes the link SNR for a subsequent distance-recovery measurement that completes the 3D position. Thus, beam-steering complexity is concentrated in the infrastructure (a single source). The full pipeline acquires $K+1$ sequential measurements ($K$ for direction finding and one for distance recovery). For $K=5$ with state-of-the-art steering mechanisms, the total acquisition window is on the order of milliseconds, resulting in sub-centimeter displacement at pedestrian speeds.}
+Beyond accuracy, direction finding constitutes the core enabling stage of the architecture. It requires no receiver rotation during the $K$ measurements, nor pose calibration, and the same periodic $K$-orientation scan can serve multiple receivers simultaneously. Once the direction $\hat{\mathbf{n}}_d$ is known, it enables cooperative beam alignment---steering the LED toward the PD and reorienting the PD toward the LED---which maximizes the link SNR for a subsequent distance-recovery measurement that completes the 3D position. Thus, beam-steering complexity is concentrated in the infrastructure (a single source). The full pipeline acquires $K+1$ sequential measurements ($K$ for direction finding and one for distance recovery). For $K=5$ with state-of-the-art steering mechanisms, the total acquisition window is on the order of milliseconds, resulting in sub-centimeter displacement at pedestrian speeds.
 
-\added{Future works include: (i)~experimental validation; (ii)~integration with beam-steered OWC links, where the direction-finding stage can be embedded into the beam-tracking loop and an intelligent refresh strategy can exploit the previous direction estimate to reduce the number of required orientations; and (iii)~extending the framework to optical integrated sensing and communication.}
+Future works include: (i)~experimental validation; (ii)~integration with beam-steered OWC links, where the direction-finding stage can be embedded into the beam-tracking loop and an intelligent refresh strategy can exploit the previous direction estimate to reduce the number of required orientations; and (iii)~extending the framework to optical integrated sensing and communication.
 
 
 \appendices

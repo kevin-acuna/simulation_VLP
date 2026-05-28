@@ -8,7 +8,7 @@
 
 \label{tab:single_led_vlp}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|p{3.8cm}|c|c|p{3.8cm}|c|c|c|}
+\begin{tabular}{|c|c|m{3.8cm}|c|c|m{3.8cm}|c|c|c|}
 \hline
 \textbf{Year} & \textbf{Work} & \textbf{Configuration} & \textbf{Rx Orientation} & \textbf{2D/3D} & \textbf{Method} & \textbf{Error (APE)} & \textbf{Room ($m^3$)} & \textbf{Notes} \\
 \hline
@@ -18,18 +18,18 @@
 2022 & \cite{Liu2022} & 1 LED / 1 rotatable PD & Fixed & 2D & Extreme Learning Machine & 1.74 cm & \(4 \times 4 \times 3.1\) & Sim. \\ \hline
 2023 & \cite{Zia-Ul-Mustafa2023} & 1 LED / 4 PD & Fixed & 2D & Least Square & 7 cm (CDF$_{90\%}$) & \(6 \times 6 \times 3\) & Exp. \\ \hline
 2024 & \cite{Chassagne2025} & 1 reorientable LED / 1 PD & Arbitrary & 2D & Model-based (Power ratio) & 5.9 cm (CDF$_{90\%}$) & \(4 \times 4 \times 2.5\) & Sim. \\ \hline
-2024 & \cite{Zhang2024} & 1 LED / 4 PD & Fixed & 2D & Extreme Learning Machine / WKNN & 2.93 cm & \(5 \times 5 \times 3\) & Sim. \\ \hline
+2024 & \cite{Zhang2024} & 1 LED / 4 PD & Fixed & 2D & Extreme Learning Machine / Weighted K-Nearest Neighbors & 2.93 cm & \(5 \times 5 \times 3\) & Sim. \\ \hline
 2024 & \cite{Li2024} & 1 LED / 4 PD (1 horizontal + 3 tilted) & Fixed & 3D & Deep Residual Shrinkage method & 5.85 cm & \(3.6 \times 3.6 \times 3.0\) & Exp. \\ \hline
-2024 & \cite{Wang2024} & 1 LED / 1 PD (tilted-rotatable PD) & Rotatable & 2D & Least Squares + Improved Grey Wolf Optimizer (LS-IGWO) & 1.65 cm & \(0.5 \times 0.5 \times 0.3\) & Exp. \\ \hline
+2024 & \cite{Wang2024} & 1 LED / 1 PD (tilted-rotatable PD) & Rotatable & 2D & Least Squares + Improved Grey Wolf Optimizer & 1.65 cm & \(0.5 \times 0.5 \times 0.3\) & Exp. \\ \hline
 2024 & \cite{Ma2024} & 1 LED / 4 PD + IMU (orientation) & Arbitrary & 3D & MultiLayer Perceptron & 1.77 cm & \(1.5 \times 1.5 \times 1.5\) & Exp. \\ \hline
 2025 & \cite{Shi2025} & 1 LED / 1 rotatable PD & Fixed & 2D & Least Square & 4.96 cm & \(5 \times 5 \times 4\) & Exp. \\ \hline
 2025 & \cite{ShiJin2025} & 1 LED / 16 IRS / 1 PD & Fixed & 2D & Levenberg--Marquardt algorithm & 5.6 cm (RMSE) & \(4 \times 5 \times 5\) & Sim. \\ \hline
-2025 & \added{Ours$^\dagger$} & 1 reorientable LED / 1 PD & \added{\begin{tabular}[c]{@{}c@{}}Arbitrary \\ Controlled\end{tabular}} & \added{\begin{tabular}[c]{@{}c@{}}D-F \\ 3D\end{tabular}} & Model-based (closed-form GLS) & \added{\begin{tabular}[c]{@{}c@{}}$0.54^\circ$ \\ 2.00\,cm\end{tabular}} & \(3 \times 3 \times 2\) & Sim. \\
+2025 & \added{Ours$^\dagger$} & 1 reorientable LED / 1 PD & \added{\begin{tabular}[c]{@{}c@{}}Arbitrary \\ Controlled\end{tabular}} & \added{\begin{tabular}[c]{@{}c@{}}DF \\ 3D\end{tabular}} & Model-based (closed-form GLS) & \added{\begin{tabular}[c]{@{}c@{}}$0.54^\circ$ \\ 2.00\,cm\end{tabular}} & \(3 \times 3 \times 2\) & Sim. \\
 \hline
 \end{tabular}
 }
 \begin{flushleft}
-\scriptsize \emph{Note:} ``Sim.'' denotes simulation results; ``Exp.'' denotes experimental results. \added{$^\dagger$Two-stage system: direction finding (D-F) operates with any receiver orientation (arbitrary); 3D distance recovery requires a single cooperative PD reorientation toward the transmitter (controlled). See Section~\ref{subsec:nr_independence}.}
+\scriptsize \emph{Note:} ``Sim.'' denotes simulation results, ``Exp.'' denotes experimental results\added{, and ``DF'' denotes the direction finding stage. $^\dagger$Two-stage system: DF operates with any receiver orientation (arbitrary); 3D distance recovery requires a single cooperative PD reorientation toward the transmitter (controlled). See Section~\ref{subsec:nr_independence}.}
 \end{flushleft}
 \end{table*}
 
