@@ -1,0 +1,5 @@
+Importante:
+- Según LUC debo de empezar a estudiar y migrar a VCSELs o LASERs.
+- Los métodos de estimación TCOM, GLOBECOM, BROADCAST son teóricos. Asumen un PATRON DE RADIACIÓN LAMBERTIANO. Cuano el patrón es QUASI-LAMBERTIANO u es otro PATRON DE RADIACIÓN entonces el resultado se degrada.
+Una opción inicial es usar NLS (Non-Linear Least Squares) que es agnostico al patron, mientras pueda emplear el patron del datasheet.
+Otra opción es emplear ML.
