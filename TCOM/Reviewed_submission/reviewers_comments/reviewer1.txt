@@ -1,0 +1,15 @@
+Reviewer: 1
+
+Comments to the Author
+The authors present a single beam-steered LED single-PD OWP localization architecture, and derived the PEB. They discuss the selection of the orientation sets. They develop direction finding methods and demonstrate their feasibility by numerical simulation.
+
+Some minor issues need to be addressed before acceptance.
+
+L37-40, left, page 1: please correct the sentence “there is…, which …, such as …, are widely studied …”
+L51, left, page 2: “and” should be added before “silicon-photonics”.
+
+Table II: why do you use the z range of [0, 1.2] instead of a larger one such as [0, 2]? Which half-power semi-angle of the 3 values is selected in “optimization”?
+Fig 2: how many random orientation sets are used?
+Fig 3b: please clarify what you mean by “random configuration”. Is it one of the sets other than the optimized one? How do you select it?
+Fig 4: I didn’t get why 60 deg half-power semi-angle has larger PEB. Doesn’t higher signal strength reduce PEB?
+L49, left, page 10: correct the sentence “… apply the solves needed…”

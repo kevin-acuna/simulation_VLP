@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  29 MAY 2026 02:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  30 MAY 2026 22:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -7,7 +7,7 @@ entering extended mode
 (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Initial_submission/paper/IEEE_TCOM_VSubmitted.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
-(c:/texlive/2026/texmf-dist/tex/latex/ieeetran/IEEEtran.cls
+(./IEEEtran.cls
 Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
 -- See the "IEEEtran_HOWTO" manual for usage information.
 -- http://www.michaelshell.org/tex/ieeetran/
@@ -26,50 +26,42 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 -- Using PDF output.
 \@IEEEnormalsizeunitybaselineskip=\dimen151
 -- This is a 10 point document.
-LaTeX Encoding Info:    Redeclaring text command \textunderscore (encoding ?) on input line 937.
+LaTeX Encoding Info:    Redeclaring text command \textunderscore (encoding ?) on input line 940.
 \CLASSINFOnormalsizebaselineskip=\dimen152
 \CLASSINFOnormalsizeunitybaselineskip=\dimen153
 \IEEEnormaljot=\dimen154
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <11> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <11> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <17> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <20> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <24> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <18> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <18> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
 \IEEEquantizedlength=\dimen155
 \IEEEquantizedlengthdiff=\dimen156
 \IEEEquantizedtextheightdiff=\dimen157
@@ -577,27 +569,916 @@ LaTeX Warning: Citation `Glass2021' on page 1 undefined on input line 61.
 
 LaTeX Warning: Citation `Deng2023' on page 1 undefined on input line 62.
 
+(./Tables/tableI.tex
 
-! LaTeX Error: File `Tables/tableI.tex' not found.
+LaTeX Warning: Citation `Qin2020' on page 1 undefined on input line 30.
 
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: tex)
 
-Enter file name: 
-c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Initial_submission/paper/IEEE_TCOM_VSubmitted.tex:64: Emergency stop.
-<read *> 
-         
-l.64 \input{Tables/tableI}
-                          ^^M
-*** (cannot \read from terminal in nonstop modes)
+LaTeX Warning: Citation `Chen2021' on page 1 undefined on input line 30.
 
- 
+
+LaTeX Warning: Citation `Qin2021' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `Liu2022' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `Zia-Ul-Mustafa2023' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `Chassagne2025' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `Zhang2024' on page 1 undefined on input line 30.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+[]|\OT1/ptm/m/n/7 Extreme Learn-ing Ma-chine /
+ []
+
+
+LaTeX Warning: Citation `Li2024' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `Wang2024' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `Ma2024' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `Shi2025' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `ShiJin2025' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Reference `subsec:nr_independence' on page 1 undefined on input line 32.
+
+)
+
+LaTeX Warning: Citation `Zhuang2018' on page 1 undefined on input line 66.
+
+
+LaTeX Warning: Citation `Wang2024b' on page 1 undefined on input line 66.
+
+
+LaTeX Warning: Citation `photonics9100750' on page 1 undefined on input line 67.
+
+
+LaTeX Warning: Citation `Plets2019' on page 1 undefined on input line 68.
+
+
+LaTeX Warning: Citation `electronics8111311' on page 1 undefined on input line 68.
+
+
+LaTeX Warning: Citation `ALMADANI2021126654' on page 1 undefined on input line 68.
+
+
+LaTeX Warning: Citation `Zhang2020' on page 1 undefined on input line 68.
+
+
+LaTeX Warning: Citation `Cossu2022' on page 1 undefined on input line 68.
+
+
+LaTeX Warning: Citation `Rekkas2023' on page 1 undefined on input line 69.
+
+[1{c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}
+
+
+]
+
+LaTeX Warning: Citation `Qin2020' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Chen2021' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Qin2021' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Liu2022' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Zia-Ul-Mustafa2023' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Chassagne2025' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Zhang2024' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Li2024' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Wang2024' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Ma2024' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `Shi2025' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Citation `ShiJin2025' on page 2 undefined on input line 71.
+
+
+LaTeX Warning: Reference `tab:single_led_vlp' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Qin2020' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Qin2021' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Zia-Ul-Mustafa2023' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Zhang2024' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Li2024' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Liu2022' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Wang2024' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Shi2025' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Ma2024' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `ShiJin2025' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `Chen2021' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Qin2021' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Liu2022' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Zia-Ul-Mustafa2023' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Chassagne2025' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Zhang2024' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Wang2024' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Shi2025' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `ShiJin2025' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Qin2020' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Li2024' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Ma2024' on page 2 undefined on input line 73.
+
+
+LaTeX Warning: Citation `Qin2020' on page 2 undefined on input line 74.
+
+
+LaTeX Warning: Citation `Chen2021' on page 2 undefined on input line 74.
+
+
+LaTeX Warning: Citation `Liu2022' on page 2 undefined on input line 74.
+
+
+LaTeX Warning: Citation `Wang2024' on page 2 undefined on input line 74.
+
+
+LaTeX Warning: Citation `Ma2024' on page 2 undefined on input line 74.
+
+
+LaTeX Warning: Citation `ShiJin2025' on page 2 undefined on input line 74.
+
+
+LaTeX Warning: Citation `Liu:25' on page 2 undefined on input line 77.
+
+
+LaTeX Warning: Citation `Feng2019' on page 2 undefined on input line 77.
+
+
+LaTeX Warning: Citation `mi13070990' on page 2 undefined on input line 77.
+
+
+LaTeX Warning: Citation `mi13070990' on page 2 undefined on input line 78.
+
+
+LaTeX Warning: Citation `Zeng2023' on page 2 undefined on input line 78.
+
+
+LaTeX Warning: Citation `Jin2023' on page 2 undefined on input line 78.
+
+
+Underfull \hbox (badness 2521) in paragraph at lines 86--87
+\OT1/ptm/m/n/10 based lin-eariza-tion, we de-velop a sta-tis-ti-cally ef-fi-
+ []
+
+
+LaTeX Warning: Reference `sec:SystemModel' on page 2 undefined on input line 91.
+
+
+LaTeX Warning: Reference `sec:PEB' on page 2 undefined on input line 92.
+
+
+LaTeX Warning: Reference `sec:optimization' on page 2 undefined on input line 93.
+
+
+LaTeX Warning: Reference `sec:NoLineal' on page 2 undefined on input line 94.
+
+
+LaTeX Warning: Reference `sec:Lineal' on page 2 undefined on input line 95.
+
+
+LaTeX Warning: Reference `sec:results' on page 2 undefined on input line 96.
+
+
+LaTeX Warning: Reference `sec:Conclusion' on page 2 undefined on input line 97.
+
+[2]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\\' on input line 105.
+
+
+LaTeX Warning: Reference `fig:system' on page 3 undefined on input line 110.
+
+
+LaTeX Warning: Citation `Kahn1997' on page 3 undefined on input line 119.
+
+
+LaTeX Warning: Citation `Kahn1997' on page 3 undefined on input line 126.
+
+<Figures/II. System/Figure1.png, id=32, 755.82375pt x 484.81125pt>
+File: Figures/II. System/Figure1.png Graphic file (type png)
+<use Figures/II. System/Figure1.png>
+Package pdftex.def Info: Figures/II. System/Figure1.png  used on input line 149.
+(pdftex.def)             Requested size: 252.0pt x 161.63786pt.
+
+LaTeX Warning: Reference `eq:Sr_i' on page 3 undefined on input line 155.
+
+
+LaTeX Warning: Reference `eq:Pr_i' on page 3 undefined on input line 168.
+
+
+LaTeX Warning: Reference `sec:NoLineal' on page 3 undefined on input line 192.
+
+
+LaTeX Warning: Reference `sec:Lineal' on page 3 undefined on input line 192.
+
+
+LaTeX Warning: Reference `eq:hLOS' on page 3 undefined on input line 200.
+
+
+LaTeX Warning: Reference `eq:cosines' on page 3 undefined on input line 200.
+
+
+LaTeX Warning: Reference `eq:Pr_i' on page 3 undefined on input line 200.
+
+
+LaTeX Warning: Reference `eq:Pr_i' on page 3 undefined on input line 211.
+
+[3 <./Figures/II. System/Figure1.png>]
+
+LaTeX Warning: Reference `eq:sampleMean' on page 4 undefined on input line 214.
+
+
+LaTeX Warning: Reference `eq:beamSteeredMean' on page 4 undefined on input line 216.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 213--217
+[]\OT1/ptm/m/n/10 Collecting $\OML/cmm/m/it/10 N$ \OT1/ptm/m/n/10 in-de-pen-dent sam-ples $\OMS/cmsy/m/n/10 f\OML/cmm/m/it/10 P[]\OMS/cmsy/m/n/10 g[]$
+ []
+
+
+Underfull \hbox (badness 2277) in paragraph at lines 213--217
+\OT1/ptm/m/n/10 and us-ing [], the sam-ple mean sat-is-fies $[] \OMS/cmsy/m/n/10 ^^X
+ []
+
+
+LaTeX Warning: Reference `sec:SystemModel' on page 4 undefined on input line 237.
+
+
+LaTeX Warning: Reference `eq:sampleMean' on page 4 undefined on input line 237.
+
+
+LaTeX Warning: Reference `eq:hLOS' on page 4 undefined on input line 246.
+
+
+LaTeX Warning: Reference `eq:cosines' on page 4 undefined on input line 247.
+
+
+LaTeX Warning: Reference `eq:constant_C' on page 4 undefined on input line 253.
+
+
+LaTeX Warning: Citation `Bishop2006' on page 4 undefined on input line 279.
+
+
+LaTeX Warning: Citation `Kay1993' on page 4 undefined on input line 295.
+
+
+LaTeX Warning: Reference `eq:hLOS' on page 4 undefined on input line 317.
+
+
+LaTeX Warning: Reference `sec:SystemModel' on page 4 undefined on input line 340.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 370.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\le' on input line 370.
+
+
+LaTeX Warning: Reference `eq:FIM_general' on page 4 undefined on input line 371.
+
+
+LaTeX Warning: Citation `Zhuang2018' on page 4 undefined on input line 377.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 380.
+
+
+LaTeX Warning: Citation `Chen2021' on page 4 undefined on input line 386.
+
+[4]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 389.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\ge' on input line 389.
+
+
+LaTeX Warning: Citation `Ma2024' on page 5 undefined on input line 393.
+
+
+LaTeX Warning: Citation `Wang2024b' on page 5 undefined on input line 393.
+
+
+LaTeX Warning: Reference `eq:grad_mu_closed' on page 5 undefined on input line 401.
+
+
+LaTeX Warning: Reference `eq:PEB' on page 5 undefined on input line 404.
+
+
+LaTeX Warning: Reference `tab:ga_params' on page 5 undefined on input line 404.
+
+
+LaTeX Warning: Citation `Haupt2004' on page 5 undefined on input line 405.
+
+
+LaTeX Warning: Reference `tab:ga_params' on page 5 undefined on input line 457.
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 468--468
+ []|$\OT1/cmr/m/n/8 (35\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 4\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 140\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 468--468
+ []|$\OT1/cmr/m/n/8 (29\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 6\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 262\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 469--469
+ []|$\OT1/cmr/m/n/8 (41\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 180\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 469--469
+ []|$\OT1/cmr/m/n/8 (38\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 270\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 470--470
+ []|$\OT1/cmr/m/n/8 (50\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 180\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 470--470
+ []|$\OT1/cmr/m/n/8 (50\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 4\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 359\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 470--470
+ []|$\OT1/cmr/m/n/8 (50\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 6\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 270\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
+ []|$\OT1/cmr/m/n/8 (17\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 306\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
+ []|$\OT1/cmr/m/n/8 (54\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 266\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
+ []|$\OT1/cmr/m/n/8 (22\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 140\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 4)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
+ []|$\OT1/cmr/m/n/8 (52\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 360\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
+ []|$\OT1/cmr/m/n/8 (55\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 185\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
+ []|$\OT1/cmr/m/n/8 (53\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 170\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
+ []|$\OT1/cmr/m/n/8 (58\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 355\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
+ []|$\OT1/cmr/m/n/8 (35\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 220\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
+ []|$\OT1/cmr/m/n/8 (54\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 278\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 6)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
+ []|$\OT1/cmr/m/n/8 (61\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 268\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
+ []|$\OT1/cmr/m/n/8 (27\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 317\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
+ []|$\OT1/cmr/m/n/8 (53\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 171\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
+ []|$\OT1/cmr/m/n/8 (38\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 200\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
+ []|$\OT1/cmr/m/n/8 (36\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 266\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
+ []|$\OT1/cmr/m/n/8 (33\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 182\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
+ []|$\OT1/cmr/m/n/8 (56\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 178\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
+ []|$\OT1/cmr/m/n/8 (57\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 359\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
+ []|$\OT1/cmr/m/n/8 (37\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 355\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
+ []
+
+
+Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--475
+ []|$\OT1/cmr/m/n/8 (58\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 272\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
+ []
+
+
+LaTeX Warning: Reference `tab:optimal_orientations_2col' on page 5 undefined on input line 479.
+
+
+LaTeX Warning: Reference `tab:ga_params' on page 5 undefined on input line 479.
+
+
+LaTeX Warning: Reference `fig:Optimized_vs_Random' on page 5 undefined on input line 480.
+
+
+LaTeX Warning: Reference `fig:optimo_vs_random_3D' on page 5 undefined on input line 483.
+
+
+LaTeX Warning: Reference `fig:optimo_vs_random_3D' on page 5 undefined on input line 483.
+
+
+LaTeX Warning: Citation `acuna2025' on page 5 undefined on input line 483.
+
+
+LaTeX Warning: Reference `fig:optimo_vs_random_3D' on page 5 undefined on input line 483.
+
+<Figures/IV. Optimization/vertical_violin_comparison_peb.png, id=90, 697.4055pt x 269.3262pt>
+File: Figures/IV. Optimization/vertical_violin_comparison_peb.png Graphic file (type png)
+<use Figures/IV. Optimization/vertical_violin_comparison_peb.png>
+Package pdftex.def Info: Figures/IV. Optimization/vertical_violin_comparison_peb.png  used on input line 487.
+(pdftex.def)             Requested size: 252.0pt x 97.319pt.
+<Figures/IV. Optimization/PEB_K5_optimal.png, id=91, 1789.68625pt x 1614.03pt>
+File: Figures/IV. Optimization/PEB_K5_optimal.png Graphic file (type png)
+<use Figures/IV. Optimization/PEB_K5_optimal.png>
+Package pdftex.def Info: Figures/IV. Optimization/PEB_K5_optimal.png  used on input line 498.
+(pdftex.def)             Requested size: 201.60077pt x 181.8045pt.
+<Figures/IV. Optimization/PEB_K5_random.png, id=92, 1780.6525pt x 1614.03pt>
+File: Figures/IV. Optimization/PEB_K5_random.png Graphic file (type png)
+<use Figures/IV. Optimization/PEB_K5_random.png>
+Package pdftex.def Info: Figures/IV. Optimization/PEB_K5_random.png  used on input line 503.
+(pdftex.def)             Requested size: 201.60077pt x 182.71574pt.
+
+LaTeX Warning: Reference `fig:PEB_vs_K' on page 5 undefined on input line 509.
+
+
+LaTeX Warning: Reference `eq:SNRc' on page 5 undefined on input line 509.
+
+
+LaTeX Warning: Citation `Shen2022' on page 5 undefined on input line 509.
+
+[5 <./Figures/IV. Optimization/vertical_violin_comparison_peb.png>]
+Underfull \vbox (badness 3240) has occurred while \output is active []
+
+
+
+LaTeX Warning: Reference `fig:PEB_vs_noise' on page 6 undefined on input line 511.
+
+
+LaTeX Warning: Reference `eq:cosines' on page 6 undefined on input line 522.
+
+
+LaTeX Warning: Reference `eq:cosines' on page 6 undefined on input line 529.
+
+
+LaTeX Warning: Reference `eq:cos_psi_cartesian' on page 6 undefined on input line 530.
+
+
+LaTeX Warning: Reference `eq:Pr_i' on page 6 undefined on input line 531.
+
+
+LaTeX Warning: Reference `eq:constant_C' on page 6 undefined on input line 541.
+
+
+LaTeX Warning: Reference `eq:nonlinear_model' on page 6 undefined on input line 552.
+
+<Figures/IV. Optimization/PEB_vs_theta_half.png, id=105, 511.9125pt x 286.1892pt>
+File: Figures/IV. Optimization/PEB_vs_theta_half.png Graphic file (type png)
+<use Figures/IV. Optimization/PEB_vs_theta_half.png>
+Package pdftex.def Info: Figures/IV. Optimization/PEB_vs_theta_half.png  used on input line 559.
+(pdftex.def)             Requested size: 252.0pt x 140.88022pt.
+<Figures/IV. Optimization/PEB_vs_SNR.png, id=106, 529.0164pt x 419.8887pt>
+File: Figures/IV. Optimization/PEB_vs_SNR.png Graphic file (type png)
+<use Figures/IV. Optimization/PEB_vs_SNR.png>
+Package pdftex.def Info: Figures/IV. Optimization/PEB_vs_SNR.png  used on input line 567.
+(pdftex.def)             Requested size: 252.0pt x 200.01942pt.
+
+LaTeX Warning: Reference `tab:ga_params' on page 6 undefined on input line 568.
+
+
+LaTeX Warning: Reference `tab:ga_params' on page 6 undefined on input line 568.
+
+[6 <./Figures/IV. Optimization/PEB_K5_optimal.png> <./Figures/IV. Optimization/PEB_K5_random.png>]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 603.
+ (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+
+LaTeX Warning: Reference `alg:position' on page 7 undefined on input line 619.
+
+
+Underfull \hbox (badness 1509) in paragraph at lines 612--620
+\OT1/ptm/m/n/10 with full math-e-mat-i-cal rigour and presents two sta-tis-ti-
+ []
+
+
+Underfull \hbox (badness 1478) in paragraph at lines 612--620
+\OT1/ptm/m/n/10 GLS, which is minimum-variance un-der Gaus-sian noise
+ []
+
+
+Underfull \hbox (badness 2393) in paragraph at lines 630--632
+ \OT1/ptm/m/it/10 1) Lam-ber-tian Power Ra-tios and Ho-mo-ge-neous Con-
+ []
+
+
+LaTeX Warning: Reference `eq:Pr_i' on page 7 undefined on input line 636.
+
+
+LaTeX Warning: Reference `eq:hLOS' on page 7 undefined on input line 636.
+
+
+LaTeX Warning: Reference `eq:cosines' on page 7 undefined on input line 636.
+
+
+LaTeX Warning: Reference `eq:constant_C' on page 7 undefined on input line 636.
+
+
+LaTeX Warning: Reference `eq:mu_i_C' on page 7 undefined on input line 642.
+
+
+LaTeX Warning: Reference `eq:beta_def_gls' on page 7 undefined on input line 642.
+
+
+LaTeX Warning: Reference `eq:sampleMean' on page 7 undefined on input line 658.
+
+
+LaTeX Warning: Reference `eq:beta_def_gls' on page 7 undefined on input line 664.
+
+
+LaTeX Warning: Reference `app:beta_lin_gls' on page 7 undefined on input line 671.
+
+[7 <./Figures/IV. Optimization/PEB_vs_theta_half.png> <./Figures/IV. Optimization/PEB_vs_SNR.png>]
+
+LaTeX Warning: Reference `app:cov_beta_gls' on page 8 undefined on input line 690.
+
+
+LaTeX Warning: Reference `eq:beta_lin_gls' on page 8 undefined on input line 690.
+
+
+LaTeX Warning: Reference `eq:var_beta_gls' on page 8 undefined on input line 705.
+
+
+LaTeX Warning: Reference `eq:ratio_error' on page 8 undefined on input line 719.
+
+
+LaTeX Warning: Reference `eq:definition_a_i' on page 8 undefined on input line 719.
+
+
+LaTeX Warning: Reference `eq:homog_gls' on page 8 undefined on input line 723.
+
+
+LaTeX Warning: Reference `eq:var_beta_gls' on page 8 undefined on input line 743.
+
+
+LaTeX Warning: Reference `eq:cov_beta_gls' on page 8 undefined on input line 743.
+
+
+LaTeX Warning: Reference `eq:residual_def' on page 8 undefined on input line 748.
+
+
+LaTeX Warning: Reference `eq:residual_cov' on page 8 undefined on input line 748.
+
+
+LaTeX Warning: Citation `Bishop2006' on page 8 undefined on input line 755.
+
+
+LaTeX Warning: Reference `eq:gls_criterion_final' on page 8 undefined on input line 766.
+
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 787.
+
+LaTeX Warning: Reference `eq:var_beta_gls' on page 8 undefined on input line 809.
+
+
+LaTeX Warning: Reference `eq:cov_beta_gls' on page 8 undefined on input line 809.
+
+
+LaTeX Warning: Reference `eq:gls_criterion_final' on page 8 undefined on input line 843.
+
+
+LaTeX Warning: Citation `golub2013matrix' on page 8 undefined on input line 843.
+
+
+LaTeX Warning: Reference `eq:cov_beta_gls' on page 8 undefined on input line 844.
+
+[8]
+
+LaTeX Warning: Reference `eq:cov_beta_gls' on page 9 undefined on input line 879.
+
+
+LaTeX Warning: Reference `eq:Pr_i' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `eq:hLOS' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `tab:ga_params' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `eq:sampleMean' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `tab:ga_params' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `tab:optimal_orientations_2col' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `fig:CDF' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Citation `Chassagne2025' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `eq:definition_a_i' on page 9 undefined on input line 891.
+
+
+LaTeX Warning: Reference `tab:optimal_orientations_2col' on page 9 undefined on input line 892.
+
+
+LaTeX Warning: Reference `eq:argmin_NL' on page 9 undefined on input line 894.
+
+
+LaTeX Warning: Reference `tab:ga_params' on page 9 undefined on input line 894.
+
+
+LaTeX Warning: Citation `Chassagne2025' on page 9 undefined on input line 896.
+
+<Figures/VII.Simulations/Fig_CDF_v2.png, id=179, 1148.79187pt x 913.91437pt>
+File: Figures/VII.Simulations/Fig_CDF_v2.png Graphic file (type png)
+<use Figures/VII.Simulations/Fig_CDF_v2.png>
+Package pdftex.def Info: Figures/VII.Simulations/Fig_CDF_v2.png  used on input line 900.
+(pdftex.def)             Requested size: 252.0pt x 200.47607pt.
+
+LaTeX Warning: Reference `tab:estimation_performance' on page 9 undefined on input line 905.
+
+
+LaTeX Warning: Citation `Chassagne2025' on page 9 undefined on input line 916.
+
+
+LaTeX Warning: Reference `fig:estimation' on page 9 undefined on input line 928.
+
+
+LaTeX Warning: Reference `fig:optimo_vs_random_3D' on page 9 undefined on input line 928.
+
+<Figures/VII.Simulations/Fig_Comparison_3D.png, id=180, 382.3083pt x 268.48305pt>
+File: Figures/VII.Simulations/Fig_Comparison_3D.png Graphic file (type png)
+<use Figures/VII.Simulations/Fig_Comparison_3D.png>
+Package pdftex.def Info: Figures/VII.Simulations/Fig_Comparison_3D.png  used on input line 932.
+(pdftex.def)             Requested size: 252.0pt x 176.97403pt.
+
+LaTeX Warning: Reference `eq:sampleMean' on page 9 undefined on input line 943.
+
+
+LaTeX Warning: Reference `eq:dhat' on page 9 undefined on input line 943.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9 <./Figures/VII.Simulations/Fig_CDF_v2.png>]
+
+LaTeX Warning: Reference `eq:var_beta_gls' on page 10 undefined on input line 946.
+
+
+LaTeX Warning: Reference `eq:cov_beta_gls' on page 10 undefined on input line 946.
+
+
+LaTeX Warning: Reference `eq:M_GLS_final' on page 10 undefined on input line 947.
+
+
+LaTeX Warning: Reference `eq:Sigma_beta_diag' on page 10 undefined on input line 952.
+
+
+LaTeX Warning: Reference `eq:argmin_NL' on page 10 undefined on input line 959.
+
+
+LaTeX Warning: Reference `fig:latency' on page 10 undefined on input line 961.
+
+<Figures/VII.Simulations/Fig_Time.png, id=190, 235.96155pt x 176.8206pt>
+File: Figures/VII.Simulations/Fig_Time.png Graphic file (type png)
+<use Figures/VII.Simulations/Fig_Time.png>
+Package pdftex.def Info: Figures/VII.Simulations/Fig_Time.png  used on input line 966.
+(pdftex.def)             Requested size: 252.0pt x 188.8454pt.
+[10 <./Figures/VII.Simulations/Fig_Comparison_3D.png (PNG copy)> <./Figures/VII.Simulations/Fig_Time.png (PNG copy)>]
+
+LaTeX Warning: Citation `Chassagne2025' on page 11 undefined on input line 982.
+
+
+LaTeX Warning: Reference `eq:beta_lin_gls' on page 11 undefined on input line 990.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\hbox' on input line 990.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathsurround' on input line 990.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\z@' on input line 990.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\unskip' on input line 990.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\@@italiccorr' on input line 990.
+
+
+LaTeX Warning: Citation `Kay1993' on page 11 undefined on input line 993.
+
+
+LaTeX Warning: Reference `eq:beta_lin_gls' on page 11 undefined on input line 1023.
+
+
+LaTeX Warning: Reference `eq:cov_beta_gls' on page 11 undefined on input line 1026.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\hbox' on input line 1026.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathsurround' on input line 1026.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\z@' on input line 1026.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\unskip' on input line 1026.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\@@italiccorr' on input line 1026.
+
+
+LaTeX Warning: Reference `eq:var_beta_gls' on page 11 undefined on input line 1050.
+
+
+LaTeX Warning: Reference `eq:cov_beta_gls' on page 11 undefined on input line 1071.
+
+(c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Initial_submission/paper/build/IEEE_TCOM_VSubmitted.bbl
+
+c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Initial_submission/paper/build/IEEE_TCOM_VSubmitted.bbl:23: LaTeX Error: Something's wrong--perhaps a missing \item.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.23 \end{thebibliography}
+                          
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+) [11] [12
+
+] (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Initial_submission/paper/build/IEEE_TCOM_VSubmitted.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+ ***********
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `IEEE_TCOM_VSubmitted.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `IEEE_TCOM_VSubmitted.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  BA71812A55D856B9F9C22067499183CE;7724.
+ ) 
 Here is how much of TeX's memory you used:
- 13112 strings out of 467525
- 210994 string characters out of 5423209
- 631773 words of memory out of 5000000
- 41859 multiletter control sequences out of 15000+600000
- 655164 words of font info for 101 fonts, out of 8000000 for 9000
+ 13607 strings out of 467525
+ 220501 string characters out of 5423209
+ 665773 words of memory out of 5000000
+ 42162 multiletter control sequences out of 15000+600000
+ 681389 words of font info for 149 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,4n,79p,1083b,401s stack positions out of 10000i,1000n,20000p,200000b,200000s
-c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Initial_submission/paper/IEEE_TCOM_VSubmitted.tex:64:  ==> Fatal error occurred, no output PDF file produced!
+ 75i,16n,79p,1451b,523s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Initial_submission/paper/build/IEEE_TCOM_VSubmitted.pdf (12 pages, 3353355 bytes).
+PDF statistics:
+ 415 PDF objects out of 1000 (max. 8388607)
+ 309 compressed objects within 4 object streams
+ 140 named destinations out of 1000 (max. 500000)
+ 46 words of extra memory for PDF output out of 10000 (max. 10000000)
+
