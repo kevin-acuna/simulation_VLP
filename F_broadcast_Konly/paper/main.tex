@@ -59,15 +59,15 @@ While this cooperative architecture achieves sub-degree direction-finding accura
 (ii)~each receiver requires its own dedicated beam-aligned measurement, precluding simultaneous localization of multiple users from a single LED scan.
 These constraints are incompatible with broadcast operation, in which a single periodic scan should serve an arbitrary number of passive receivers---a scenario of practical interest for multi-robot coordination, warehouse automation, and dense IoT deployments.
 
-In this paper, we propose a broadcast beam-steered OWP architecture that achieves 3D positioning using \emph{only} the $K$ steered-orientation measurements, without any cooperative alignment or PD reorientation.
-The key insight is that the $K$ absolute power levels---which the ratio-based direction estimators deliberately discard---carry distance information through a common amplitude parameter that couples the unknown distance with the receiver incidence angle.
+In this paper, we propose a broadcast beam-steered OWP architecture that achieves 3D positioning using only the $K$ steered-orientation measurements, without any cooperative alignment or PD reorientation.
+The key insight is that the $K$ absolute power levels, which the ratio-based direction estimators deliberately discard, carry distance information through a common amplitude parameter that couples the unknown distance with the receiver incidence angle.
 By exploiting the receiver orientation provided by a commercial inertial measurement unit (IMU), this ambiguity is resolved and the distance is recovered in closed form from the same measurements used for direction finding.
 
 The main contributions are:
 \begin{enumerate}
-    \item A broadcast single-LED OWP architecture that achieves 3D localization from $K$ measurements alone, enabling simultaneous multi-user positioning without per-receiver dedicated measurements or feedback.
+    \item A broadcast single-LED OWP architecture that achieves 3D localization from $K$ measurements alone, enabling simultaneous multi-user positioning without per-receiver dedicated measurements.
     \item The broadcast position error bound ($\mathrm{PEB}_\mathrm{B}$): the Cram\'{e}r--Rao lower bound for 3D position estimation from $K$ steered-orientation observations with known receiver orientation, together with a characterization of its dependence on the number of orientations, receiver tilt, and SNR.
-    \item A closed-form amplitude estimator derived from the profiled Gaussian likelihood, which, combined with existing NLS direction finding, yields an asymptotically efficient positioning pipeline achieving the $\mathrm{PEB}_\mathrm{B}$ within a factor of $1.01\times$.
+    \item A closed-form amplitude estimator derived from the profiled Gaussian likelihood, which, combined with existing NLS direction finding, yields an asymptotically efficient positioning pipeline achieving the $\mathrm{PEB}_\mathrm{B}$.
 \end{enumerate}
 
 The remainder of this paper is organized as follows.
@@ -134,7 +134,7 @@ Since $\eta$ is eliminated by the ratio operation, the resulting direction estim
 
 \subsubsection{Broadcast Distance Recovery}
 \label{subsubsec:distance_recovery}
-Once $\hat{\mathbf{n}}_d$ is available, the absolute power levels---discarded by the ratio-based direction estimators---are exploited to recover the amplitude parameter~$\eta$ and, subsequently, the distance~$d$.
+Once $\hat{\mathbf{n}}_d$ is available, the absolute power levels are exploited to recover the amplitude parameter~$\eta$ and, subsequently, the distance~$d$.
 
 Under the model~\eqref{eq:mu_compact} with i.i.d.\ Gaussian noise~\eqref{eq:obs_model}, the log-likelihood of $\eta$ for a given direction $\hat{\mathbf{n}}_d$ is:
 \begin{equation}

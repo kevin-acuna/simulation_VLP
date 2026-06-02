@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWP Research Roadmap — LISV/UVSQ</title>
+<style>
+:root{--bg:#0a0f1e;--s:#111827;--s2:#1e2a3a;--brd:#1e3a5f;--txt:#e2e8f0;--muted:#94a3b8;--dim:#64748b;--blue:#3b82f6;--bl:#60a5fa;--bdim:#1e3a5f;--green:#10b981;--gdim:#064e3b;--amber:#f59e0b;--adim:#451a03;--pur:#8b5cf6;--pdim:#2e1065;--cyan:#06b6d4;--cdim:#0c4a6e;--red:#ef4444;--rdim:#450a0a;--gray:#6b7280;--grdim:#1f2937;--gold:#fbbf24;--r:10px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--s)}
+::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);padding:0 1.5rem;display:flex;align-items:center;gap:1.5rem;height:52px}
+.nb{font-weight:700;color:var(--bl);font-size:14px;white-space:nowrap}
+.nl{display:flex;gap:.2rem}
+.nl a{color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:6px;font-size:12px;transition:.2s}
+.nl a:hover{color:var(--txt);background:var(--s2)}
+.ns{margin-left:auto;font-size:11px;color:var(--dim)}
+.hero{padding:2.5rem 1.5rem 1.5rem;background:linear-gradient(135deg,#0a0f1e,#0f1d3a 50%,#0a0f1e);border-bottom:1px solid var(--brd)}
+.hbadge{display:inline-flex;align-items:center;gap:6px;background:var(--bdim);color:var(--bl);padding:3px 10px;border-radius:20px;font-size:11px;border:1px solid var(--blue);margin-bottom:.75rem}
+.hero h1{font-size:1.8rem;font-weight:800;line-height:1.2;margin-bottom:.4rem}
+.hero h1 span{color:var(--bl)}
+.hsub{color:var(--muted);font-size:13px;max-width:620px;margin-bottom:1rem}
+.hstats{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.25rem}
+.sc{background:var(--s);border:1px solid var(--brd);border-radius:var(--r);padding:.75rem 1.25rem;text-align:center;min-width:100px}
+.sc .n{font-size:1.5rem;font-weight:800;color:var(--bl)}
+.sc .l{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+.alert{background:linear-gradient(90deg,#450a0a,#7f1d1d);border:1px solid var(--red);border-radius:var(--r);padding:.9rem 1.25rem;margin:1.25rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.alert strong{color:#fca5a5}
+.alert span{color:#fecaca;font-size:12px}
+.ready{display:inline-flex;align-items:center;gap:4px;background:#14532d;color:#86efac;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;border:1px solid var(--green);margin-left:auto}
+.sec{padding:1.75rem 1.5rem}
+.sh{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+.sh h2{font-size:1.2rem;font-weight:700}
+.sd{flex:1;height:1px;background:var(--brd)}
+.sep{height:1px;background:var(--brd);margin:0 1.5rem}
+/* RESULTS TABLE */
+.rh{background:linear-gradient(135deg,#0f1d3a,#1e2a3a);border:1px solid var(--blue);border-radius:var(--r);padding:1.25rem;margin-bottom:1.25rem}
+.rh h3{color:var(--bl);font-size:14px;margin-bottom:.75rem}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:5px 9px;background:var(--s2);color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+td{padding:5px 9px;border-top:1px solid var(--brd)}
+tr:hover td{background:var(--s2)}
+.best{color:#86efac;font-weight:700}
+.peb{color:var(--bl);font-style:italic}
+.nb2{font-size:12px;color:var(--muted);background:var(--s2);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:.6rem .9rem;margin-top:.75rem}
+/* PIPELINE */
+.pipe{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding-bottom:1rem}
+.ps{display:flex;flex-direction:column;align-items:center;min-width:155px}
+.pn{background:var(--s);border:2px solid var(--brd);border-radius:var(--r);padding:.85rem;width:140px;text-align:center;transition:.2s;cursor:default}
+.pn:hover{transform:translateY(-3px)}
+.pn.p1{border-color:var(--blue);box-shadow:0 0 18px rgba(59,130,246,.3)}
+.pn.p2{border-color:var(--green);box-shadow:0 0 18px rgba(16,185,129,.2)}
+.pn.p3{border-color:var(--pur);box-shadow:0 0 18px rgba(139,92,246,.2)}
+.pn.done{border-color:var(--green);background:linear-gradient(135deg,var(--s),#064e3b22)}
+.pid{font-size:1.4rem;font-weight:900;margin-bottom:.2rem}
+.pt{font-size:11px;color:var(--muted);line-height:1.3}
+.pv{font-size:10px;color:var(--dim);margin-top:.3rem}
+.dl{font-size:10px;margin-top:.25rem;padding:2px 6px;border-radius:4px;display:inline-block}
+.dl.u{background:var(--rdim);color:#fca5a5}
+.dl.s{background:var(--adim);color:#fcd34d}
+.dl.ok{background:var(--gdim);color:#6ee7b7}
+.dl.r{background:var(--grdim);color:var(--dim)}
+.parr{display:flex;align-items:center;padding-top:2.2rem;color:var(--dim);font-size:1.1rem}
+/* TRACKS */
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.25rem}
+.tc{background:var(--s);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden}
+.th{padding:.65rem 1.1rem;display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:12px}
+.tb{padding:.9rem 1.1rem}
+.tp{display:flex;flex-direction:column;gap:.5rem}
+.pr{display:flex;align-items:center;gap:.6rem;background:var(--s2);border-radius:7px;padding:.5rem .65rem;border:1px solid transparent;transition:.2s}
+.pr:hover{border-color:var(--brd)}
+.pi{font-weight:900;font-size:.95rem;width:24px;text-align:center;flex-shrink:0}
+.pinfo{flex:1;min-width:0}
+.pn2{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm{font-size:10px;color:var(--dim)}
+.pbs{display:flex;gap:.25rem;flex-shrink:0}
+.b{font-size:10px;padding:2px 5px;border-radius:3px;font-weight:600;white-space:nowrap}
+.bsim{background:#1e3a5f;color:#93c5fd}
+.bexp{background:#064e3b;color:#6ee7b7}
+.bml{background:#2e1065;color:#c4b5fd}
+.bj{background:#1c1917;color:#d6d3d1;border:1px solid #44403c}
+.brd{background:#14532d;color:#86efac}
+.bhw{background:#422006;color:#fde68a}
+/* Track header colors */
+.m .th{background:linear-gradient(90deg,#1e3a5f,#1e2a3a);color:var(--bl);border-bottom:1px solid var(--blue)}
+.gi .th{background:linear-gradient(90deg,#064e3b,#1e2a3a);color:#6ee7b7;border-bottom:1px solid var(--green)}
+.nl2 .th{background:linear-gradient(90deg,#451a03,#1e2a3a);color:#fcd34d;border-bottom:1px solid var(--amber)}
+.ml .th{background:linear-gradient(90deg,#2e1065,#1e2a3a);color:#c4b5fd;border-bottom:1px solid var(--pur)}
+.ar .th{background:linear-gradient(90deg,#0c4a6e,#1e2a3a);color:#67e8f9;border-bottom:1px solid var(--cyan)}
+.op .th{background:linear-gradient(90deg,#1f2937,#1e2a3a);color:var(--muted);border-bottom:1px solid var(--gray)}
+/* PAPERS GRID */
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1.1rem}
+.pc{background:var(--s);border:1px solid var(--brd);border-radius:var(--r);padding:1.1rem;position:relative;overflow:hidden;transition:.2s}
+.pc:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.pc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.pc.m::before{background:var(--blue)}
+.pc.gi::before{background:var(--green)}
+.pc.nl2::before{background:var(--amber)}
+.pc.ml::before{background:var(--pur)}
+.pc.ar::before{background:var(--cyan)}
+.pc.op::before{background:var(--gray)}
+.ct{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:.6rem}
+.cl{font-size:1.7rem;font-weight:900;line-height:1;width:40px;height:40px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m .cl{background:var(--bdim);color:var(--bl)}
+.gi .cl{background:var(--gdim);color:#6ee7b7}
+.nl2 .cl{background:var(--adim);color:#fcd34d}
+.ml .cl{background:var(--pdim);color:#c4b5fd}
+.ar .cl{background:var(--cdim);color:#67e8f9}
+.op .cl{background:var(--grdim);color:var(--muted)}
+.ctit{font-size:12px;font-weight:700;line-height:1.3}
+.csub{font-size:10px;color:var(--dim);margin-top:.1rem;font-style:italic}
+.ctags{display:flex;gap:.25rem;flex-wrap:wrap;margin-top:.4rem}
+.cv{font-size:11px;margin-top:.6rem}.cv .vl{color:var(--dim);font-size:10px}.cv .vv{color:var(--txt);font-weight:600}
+.cdl{display:inline-flex;align-items:center;gap:.3rem;font-size:10px;padding:2px 7px;border-radius:4px;margin-top:.3rem}
+.cdl.u{background:var(--rdim);color:#fca5a5;border:1px solid var(--red)}
+.cdl.s{background:var(--adim);color:#fcd34d;border:1px solid var(--amber)}
+.cdl.ok{background:var(--gdim);color:#6ee7b7;border:1px solid var(--green)}
+.cdl.r{background:var(--grdim);color:var(--muted);border:1px solid var(--gray)}
+.cdesc{font-size:11px;color:var(--muted);margin-top:.6rem;line-height:1.5}
+.clist{margin-top:.6rem;font-size:11px;color:var(--muted)}
+.clist li{list-style:none;padding-left:12px;position:relative}
+.clist li::before{content:'→';position:absolute;left:0;color:var(--dim)}
+.cmeta{display:flex;gap:.75rem;margin-top:.6rem;flex-wrap:wrap;font-size:10px}
+.cmeta .l{color:var(--dim)}.cmeta .v{color:var(--txt);font-weight:600}
+/* TIMELINE */
+.tl{overflow-x:auto;padding:1rem 0}
+.tlrow{display:flex;min-width:800px;position:relative;padding:.5rem 0}
+.tlrow::before{content:'';position:absolute;top:22px;left:0;right:0;height:2px;background:var(--brd);z-index:0}
+.tli{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.tldot{width:12px;height:12px;border-radius:50%;border:2px solid;background:var(--bg);margin-bottom:.4rem}
+.tldot.done{border-color:var(--green);background:var(--green)}
+.tldot.s{border-color:var(--amber);background:var(--amber)}
+.tldot.ok{border-color:var(--blue);background:var(--blue)}
+.tldot.far{border-color:var(--gray)}
+.tldate{font-size:9px;color:var(--dim);white-space:nowrap}
+.tllabel{font-size:10px;font-weight:700;text-align:center;white-space:nowrap;margin-top:.2rem}
+.tlpapers{font-size:9px;color:var(--muted);text-align:center}
+/* DEPS */
+.dep{background:var(--s);border:1px solid var(--brd);border-radius:var(--r);padding:1.5rem;overflow-x:auto}
+.df{display:flex;gap:2.5rem;min-width:600px;align-items:flex-start}
+.dc{display:flex;flex-direction:column;gap:.6rem;align-items:center}
+.dclbl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:.3rem;font-weight:700}
+.dn{padding:.4rem .85rem;border-radius:7px;font-weight:700;font-size:12px;text-align:center;min-width:70px;border:2px solid}
+.dn.b{background:var(--bdim);border-color:var(--blue);color:var(--bl)}
+.dn.g{background:var(--gdim);border-color:var(--green);color:#6ee7b7}
+.dn.a{background:var(--adim);border-color:var(--amber);color:#fcd34d}
+.dn.p{background:var(--pdim);border-color:var(--pur);color:#c4b5fd}
+.dn.c{background:var(--cdim);border-color:var(--cyan);color:#67e8f9}
+.dn.gr{background:var(--grdim);border-color:var(--gray);color:var(--muted)}
+/* VENUES */
+.vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.vc{background:var(--s);border:1px solid var(--brd);border-radius:var(--r);padding:.9rem}
+.vctop{display:flex;justify-content:space-between;align-items:flex-start}
+.vcn{font-weight:700;font-size:12px}
+.vdb{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600}
+.vdb.u{background:var(--rdim);color:#fca5a5}
+.vdb.s{background:var(--adim);color:#fcd34d}
+.vdb.ok{background:var(--gdim);color:#6ee7b7}
+.vdb.cl{background:var(--grdim);color:var(--dim)}
+.vdb.r{background:#1c1917;color:#d6d3d1}
+.vi{font-size:10px;color:var(--dim);margin-top:.3rem}
+.vps{display:flex;gap:.25rem;flex-wrap:wrap;margin-top:.5rem}
+.vpc{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;border:1px solid}
+footer{padding:1.5rem;text-align:center;border-top:1px solid var(--brd);color:var(--dim);font-size:11px}
+@media(max-width:700px){.hero h1{font-size:1.3rem}.nl{display:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nb">⚡ OWP Roadmap</div>
+  <div class="nl">
+    <a href="#pipeline">Pipeline</a>
+    <a href="#tracks">Tracks</a>
+    <a href="#papers">Papers</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#deps">Deps</a>
+    <a href="#venues">Venues</a>
+  </div>
+  <div class="ns">Actualizado: 26 Mayo 2026 · LISV/UVSQ</div>
+</nav>
+
+<div class="hero">
+  <div class="hbadge">📡 IEEE TCOM — RV2 en revisión · Mayo 2026</div>
+  <h1>Extensiones del Paper <span>TCOM</span><br>hacia Conferencias y Journals</h1>
+  <p class="hsub"><em>"Model-Based Beam-Steered OWP with Single-LED Single-PD for 3D Localization"</em> — Acuna-Condori et al. · Framework: K orientaciones GA-optimizadas · GLS/WLS/NLS · DEB/PEB analíticos · sub-cm accuracy</p>
+  <div class="hstats">
+    <div class="sc"><div class="n">14</div><div class="l">Propuestas</div></div>
+    <div class="sc"><div class="n" style="color:#6ee7b7">1.74cm</div><div class="l">RMSE K=9</div></div>
+    <div class="sc"><div class="n" style="color:#fcd34d">1.01×</div><div class="l">NLS vs PEB_B</div></div>
+    <div class="sc"><div class="n" style="color:#c4b5fd">1792</div><div class="l">Test positions</div></div>
+    <div class="sc"><div class="n" style="color:#67e8f9">3</div><div class="l">Multi-user traj</div></div>
+    <div class="sc"><div class="n" style="color:#f97316">12 Ago</div><div class="l">GLOBECOM WS</div></div>
+  </div>
+</div>
+
+<div class="alert">
+  <div style="font-size:1.3rem">🚨</div>
+  <div>
+    <strong>Paper F — LISTO para enviar</strong>
+    <div><span>Manuscrito completo (6 págs). Broadcast 3D positioning sin cooperación K+1. NLS 1.74 cm ≈ PEB_B (1.72 cm). 3 usuarios simultáneos. Target: <strong style="color:#fca5a5">GLOBECOM 2026 Workshop — 12 Agosto 2026</strong></span></div>
+  </div>
+  <div class="ready">✓ READY</div>
+</div>
+
+<!-- RESULTS -->
+<div class="sec" id="results">
+  <div class="sh"><h2>📊 Resultados Paper F</h2><div class="sd"></div></div>
+  <div class="rh">
+    <h3>Broadcast 3D Indoor Positioning with a Single Beam-Steered LED · Monte Carlo M=1000, |R|=1792 posiciones</h3>
+    <table>
+      <tr><th>K</th><th>Método</th><th>RMSE [cm]</th><th>CDF₉₀% [cm]</th><th>APE [cm]</th><th>vs PEB_B</th></tr>
+      <tr><td>5</td><td>GLS</td><td>3.98</td><td>5.37</td><td>2.69</td><td>1.60×</td></tr>
+      <tr><td>5</td><td>WLS</td><td>4.87</td><td>5.35</td><td>2.83</td><td>1.96×</td></tr>
+      <tr><td>5</td><td class="best">NLS</td><td class="best">2.48</td><td class="best">3.79</td><td class="best">1.99</td><td class="best">1.00×</td></tr>
+      <tr><td>5</td><td class="peb">PEB_B</td><td class="peb">2.49</td><td class="peb">3.76</td><td class="peb">2.02</td><td class="peb">—</td></tr>
+      <tr><td>9</td><td>GLS</td><td>2.46</td><td>3.52</td><td>1.78</td><td>1.43×</td></tr>
+      <tr><td>9</td><td>WLS</td><td>3.60</td><td>4.72</td><td>2.36</td><td>2.09×</td></tr>
+      <tr><td>9</td><td class="best">NLS</td><td class="best">1.74</td><td class="best">2.68</td><td class="best">1.41</td><td class="best">1.01×</td></tr>
+      <tr><td>9</td><td class="peb">PEB_B</td><td class="peb">1.72</td><td class="peb">2.69</td><td class="peb">1.42</td><td class="peb">—</td></tr>
+    </table>
+    <div class="nb2">Contribuciones clave: (1) Arquitectura broadcast K-only · (2) PEB_B derivado via FIM+Slepian-Bangs · (3) η̂ = Σμ̂ᵢQ̂ᵢᵐ/ΣQ̂ᵢ²ᵐ, eficiencia 1.01× · (4) Demo 3 usuarios simultáneos (robot, peatón, AGV) desde un único scan LED.</div>
+  </div>
+</div>
+<div class="sep"></div>
+
+<!-- PIPELINE -->
+<div class="sec" id="pipeline">
+  <div class="sh"><h2>⭐ Pipeline Prioritario</h2><div class="sd"></div></div>
+  <div class="pipe">
+    <div class="ps">
+      <div class="pn done">
+        <div class="pid" style="color:#6ee7b7">TCOM</div>
+        <div class="pt">Paper base<br>Single-LED K-orient.</div>
+        <div class="pv">IEEE TCOM (RV2)</div>
+        <div class="dl ok">✓ Enviado</div>
+      </div>
+    </div>
+    <div class="parr">→</div>
+    <div class="ps">
+      <div class="pn p1">
+        <div class="pid" style="color:var(--bl)">F</div>
+        <div class="pt">Broadcast K-only<br>sin cooperación</div>
+        <div class="pv">GLOBECOM 2026 WS</div>
+        <div class="dl s">⏰ 12 Ago 2026</div>
+      </div>
+      <div style="font-size:11px;color:#86efac;margin-top:.4rem">🟢 LISTO</div>
+    </div>
+    <div class="parr">→</div>
+    <div class="ps">
+      <div class="pn p2">
+        <div class="pid" style="color:#6ee7b7">V</div>
+        <div class="pt">Experimental<br>+ R(φ) calibrado</div>
+        <div class="pv">TCOM / JLT Journal</div>
+        <div class="dl ok">📅 Dic 2026</div>
+      </div>
+    </div>
+    <div class="parr">→</div>
+    <div class="ps">
+      <div class="pn p2">
+        <div class="pid" style="color:#6ee7b7">H</div>
+        <div class="pt">Beam Tracking<br>Pseudo-Quad TX</div>
+        <div class="pv">Journal / ICC-WCNC</div>
+        <div class="dl ok">📅 Ene–May 2027</div>
+      </div>
+    </div>
+    <div class="parr" style="color:var(--green)">↴</div>
+    <div class="ps">
+      <div class="pn p2">
+        <div class="pid" style="color:#6ee7b7">A</div>
+        <div class="pt">ISAC Dual-Beam<br>LiFi + Positioning</div>
+        <div class="pv">ISAC 2026 / TCOM</div>
+        <div class="dl ok">📅 11 Sep 2026</div>
+      </div>
+      <div style="font-size:10px;color:var(--dim);margin-top:.3rem">↑ Paralelo</div>
+    </div>
+  </div>
+  <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:.5rem;background:var(--pdim);border:1px solid var(--pur);border-radius:8px;padding:.4rem .9rem">
+      <span style="color:#c4b5fd;font-weight:700;font-size:13px">L</span><span style="font-size:11px;color:#c4b5fd">Deep RL → ICASSP 2027 <span style="color:var(--dim)">(~Sep 2026)</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:.5rem;background:var(--adim);border:1px solid var(--amber);border-radius:8px;padding:.4rem .9rem">
+      <span style="color:#fcd34d;font-weight:700;font-size:13px">J</span><span style="font-size:11px;color:#fcd34d">Framework NL → TSP/TCOM <span style="color:var(--dim)">(rolling)</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:.5rem;background:var(--cdim);border:1px solid var(--cyan);border-radius:8px;padding:.4rem .9rem">
+      <span style="color:#67e8f9;font-weight:700;font-size:13px">K</span><span style="font-size:11px;color:#67e8f9">Multi-LED → TCOM/JLT <span style="color:var(--dim)">(2027+)</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:.5rem;background:var(--pdim);border:1px solid var(--pur);border-radius:8px;padding:.4rem .9rem">
+      <span style="color:#c4b5fd;font-weight:700;font-size:13px">M</span><span style="font-size:11px;color:#c4b5fd">TL Cambridge → JSAC <span style="color:var(--dim)">(pasantía)</span></span>
+    </div>
+  </div>
+</div>
+<div class="sep"></div>
+
+<!-- TRACKS -->
+<div class="sec" id="tracks">
+  <div class="sh"><h2>🗺 Tracks de Investigación</h2><div class="sd"></div></div>
+  <div class="tg">
+    <div class="tc m">
+      <div class="th">🔵 Pipeline Principal — Broadcast OWP</div>
+      <div class="tb">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:.6rem">Pipeline directo: mismo testbed, mismo framework analítico</div>
+        <div class="tp">
+          <div class="pr"><div class="pi" style="color:var(--bl)">F</div><div class="pinfo"><div class="pn2">Broadcast K-only Architecture</div><div class="pm">GLOBECOM 2026 WS · 12 Ago · <strong style="color:#86efac">LISTO</strong></div></div><div class="pbs"><span class="b bsim">Sim</span><span class="b brd">✓</span></div></div>
+          <div class="pr"><div class="pi" style="color:#6ee7b7">V</div><div class="pinfo"><div class="pn2">Experimental + R(φ) calibrado</div><div class="pm">TCOM / JLT · Dic 2026</div></div><div class="pbs"><span class="b bexp">Exp</span><span class="b bj">J</span></div></div>
+          <div class="pr"><div class="pi" style="color:#6ee7b7">H</div><div class="pinfo"><div class="pn2">Beam Tracking (Pseudo-Quad TX)</div><div class="pm">Journal / ICC-WCNC 2027</div></div><div class="pbs"><span class="b bexp">Exp</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tc gi">
+      <div class="th">🟢 ISAC — Sensing + Communications</div>
+      <div class="tb">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:.6rem">LiFi dongle + gimbal disponible. Congreso debut ISAC 2026</div>
+        <div class="tp">
+          <div class="pr"><div class="pi" style="color:#6ee7b7">A</div><div class="pinfo"><div class="pn2">Dual-beam: Positioning + LiFi</div><div class="pm">ISAC 2026 · 11 Sep · TCOM/JLT</div></div><div class="pbs"><span class="b bexp">Exp</span><span class="b bj">J</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tc nl2">
+      <div class="th">🟡 Non-Lambertian R(φ)</div>
+      <div class="tb">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:.6rem">Extensión teórica + experimental a LEDs reales</div>
+        <div class="tp">
+          <div class="pr"><div class="pi" style="color:#fcd34d">J</div><div class="pinfo"><div class="pn2">Framework Teórico General</div><div class="pm">TSP / TCOM · rolling</div></div><div class="pbs"><span class="b bsim">Sim</span><span class="b bj">J</span></div></div>
+          <div class="pr"><div class="pi" style="color:#fcd34d">C</div><div class="pinfo"><div class="pn2">Validación Experimental NL</div><div class="pm">JLT · rolling</div></div><div class="pbs"><span class="b bexp">Exp</span><span class="b bj">J</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tc ml">
+      <div class="th">🟣 ML / AI — Portfolio Python</div>
+      <div class="tb">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:.6rem">PyTorch. Visibilidad industria AI. ICASSP/JSAC</div>
+        <div class="tp">
+          <div class="pr"><div class="pi" style="color:#c4b5fd">L</div><div class="pinfo"><div class="pn2">Deep RL — Orientaciones Adaptativas</div><div class="pm">ICASSP 2027 · ~Sep–Oct 2026</div></div><div class="pbs"><span class="b bml">🤖</span><span class="b bsim">Sim</span></div></div>
+          <div class="pr"><div class="pi" style="color:#c4b5fd">E</div><div class="pinfo"><div class="pn2">Physics-Informed Neural Correction</div><div class="pm">IEEE SP Letters · rolling</div></div><div class="pbs"><span class="b bml">🤖</span></div></div>
+          <div class="pr"><div class="pi" style="color:#c4b5fd">N</div><div class="pinfo"><div class="pn2">Universal ML Cross-LED (FiLM)</div><div class="pm">TCOM / IoT-J · rolling</div></div><div class="pbs"><span class="b bml">🤖</span><span class="b bj">J</span></div></div>
+          <div class="pr"><div class="pi" style="color:#c4b5fd">M</div><div class="pinfo"><div class="pn2">Transfer Learning (Cambridge/Haas)</div><div class="pm">JSAC · pasantía 3 meses</div></div><div class="pbs"><span class="b bml">🤖</span><span class="b bj">JSAC</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tc ar">
+      <div class="th">🔵 Arquitectura Multi-LED/Multi-User</div>
+      <div class="tb">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:.6rem">Extensiones broadcast. Requieren Paper F como base</div>
+        <div class="tp">
+          <div class="pr"><div class="pi" style="color:#67e8f9">D</div><div class="pinfo"><div class="pn2">Multi-Receptor Broadcast</div><div class="pm">GLOBECOM 2026 WS · 12 Ago</div></div><div class="pbs"><span class="b bsim">Sim</span></div></div>
+          <div class="pr"><div class="pi" style="color:#67e8f9">K</div><div class="pinfo"><div class="pn2">Multi-LED con Gimbals Mecánicos</div><div class="pm">TCOM / JLT · 2027+</div></div><div class="pbs"><span class="b bexp">Exp</span><span class="b bj">J</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tc op">
+      <div class="th">⚪ Complementarios / Opcionales</div>
+      <div class="tb">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:.6rem">Bajo esfuerzo o nicho. Pueden ser secciones de papers mayores</div>
+        <div class="tp">
+          <div class="pr"><div class="pi" style="color:var(--muted)">G</div><div class="pinfo"><div class="pn2">Observabilidad Fundamental ML</div><div class="pm">ISAC 2026 / WCNC 2027</div></div><div class="pbs"><span class="b bsim">Sim</span></div></div>
+          <div class="pr"><div class="pi" style="color:var(--muted)">I</div><div class="pinfo"><div class="pn2">Two-Stage Adaptive Orientations</div><div class="pm">PIMRC WS / WCNC 2027</div></div><div class="pbs"><span class="b bsim">Sim</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sep"></div>
+
+<!-- ALL PAPERS DETAILED -->
+<div class="sec" id="papers">
+  <div class="sh"><h2>📄 Todas las Propuestas</h2><div class="sd"></div></div>
+  <div class="pg">
+
+    <div class="pc m">
+      <div class="ct"><div class="cl m">F</div><div><div class="ctit">Broadcast K-only — Distance Recovery sin cooperación</div><div class="csub">IMU-assisted · η̂ estimator · PEB_B</div><div class="ctags"><span class="b bsim">Simulación</span><span class="b brd">✓ LISTO</span><span style="font-size:10px;color:var(--gold)">⭐⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">GLOBECOM 2026 Workshop</span></div>
+      <div class="cdl s">⏰ 12 Agosto 2026</div>
+      <div class="cdesc">Elimina la medición cooperativa K+1. Recupera distancia d de las K mediciones usando η̂ del likelihood Gaussiano y cos(ψ) del IMU. Sistema broadcast: N receptores simultáneos desde un solo scan LED.</div>
+      <ul class="clist"><li>PEB_B = CRLB bajo K obs. con n_r conocido (FIM via Slepian-Bangs)</li><li>η̂ = Σμ̂ᵢQ̂ᵢᵐ/ΣQ̂ᵢ²ᵐ — proyección ortogonal, MVUE condicionado</li><li>Pipeline NLS+η̂: eficiencia 1.01× PEB_B, RMSE 1.74 cm (K=9)</li><li>Demo 3 usuarios: robot aspirador (z=0.1m), AGV (z=0.5m), peatón (z=0.8m)</li></ul>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">Solo TCOM</span></div><div><span class="l">Tiempo: </span><span class="v">✅ Completo</span></div></div>
+    </div>
+
+    <div class="pc m">
+      <div class="ct"><div class="cl m">V</div><div><div class="ctit">Experimental TCOM+F + Quasi-Lambertian Calibration</div><div class="csub">R(φ) spline · NLS calibrado · 4 escenarios</div><div class="ctags"><span class="b bexp">Experimental</span><span class="b bhw">🔧 Testbed</span><span class="b bj">Journal</span><span style="font-size:10px;color:var(--gold)">⭐⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">IEEE TCOM companion / JLT</span></div>
+      <div class="cdl ok">📅 Submit Dic 2026–Ene 2027</div>
+      <div class="cdesc">Valida experimentalmente la arquitectura broadcast K-only con testbed 3D real. Mide R(φ), ajusta spline cúbico + m_eff. NLS calibrado: cambio mínimo en cost function.</div>
+      <ul class="clist"><li>S1: GLS + cos^m nominal → bias por mismatch Lambertiano</li><li>S2: GLS + cos^m_eff → bias reducido (1 parámetro)</li><li>S3: NLS + R_spline → sin bias, alcanza DEB numérico</li><li>S4: DEB/PEB numérico con R_spline → bound real del sistema</li></ul>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">TCOM + F</span></div><div><span class="l">Tiempo: </span><span class="v">3–4 exp + 2 redac.</span></div></div>
+    </div>
+
+    <div class="pc m">
+      <div class="ct"><div class="cl m">H</div><div><div class="ctit">Beam Tracking — Pseudo-Quad TX</div><div class="csub">4 mediciones dithered · KF geodésico en S²</div><div class="ctags"><span class="b bexp">Experimental</span><span class="b bhw">🔧 Gimbal servo</span><span style="font-size:10px;color:var(--gold)">⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">Journal / ICC–WCNC 2027</span></div>
+      <div class="cdl ok">📅 Ene–May 2027</div>
+      <div class="cdesc">Dos modos: Acquisition (K-scan) y Tracking (4 orientaciones dithered → señales diferenciales ε₁,ε₂ → actualización geodésica en S²). Replica Quad-PD del lado del TX sin hardware extra en el receptor.</div>
+      <ul class="clist"><li>Actualización: n̂_d^(t+1) = Exp_{n̂_d}(α·(ε₁e₁ + ε₂e₂))</li><li>Condición estabilidad: ||ω_d|| &lt; δ/Δt</li><li>KF geodésico en TS² (estado [n_d, ω_d])</li></ul>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">TCOM + V</span></div><div><span class="l">Tiempo: </span><span class="v">5–7 meses</span></div></div>
+    </div>
+
+    <div class="pc gi">
+      <div class="ct"><div class="cl gi">A</div><div><div class="ctit">ISAC Óptico: Dual-Beam Positioning + LiFi</div><div class="csub">Bound DEB→Throughput · LiFi dongle · 2 gimbals</div><div class="ctags"><span class="b bexp">Experimental</span><span class="b bhw">🔧 LiFi</span><span class="b bj">Journal</span><span style="font-size:10px;color:var(--gold)">⭐⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">ISAC 2026 (debut) / TCOM / JLT</span></div>
+      <div class="cdl ok">📅 11 Sep 2026</div>
+      <div class="cdesc">Gimbal 1: LED NIR → K-scan → n̂_d. Gimbal 2: LiFi → apunta a n̂_d → throughput T(δ_θ). Contribución: DEB* tal que degradación throughput &lt; ΔT_max dB. Acoplamiento cuantitativo DEB→throughput.</div>
+      <ul class="clist"><li>T(DEB) = B·log₂(1 + η_LiFi·cos^m(√DEB)/σ²)</li><li>Velocidad máxima admisible: θ(T_pos) &lt; √DEB*</li><li>Experimento estático + dinámico</li></ul>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">Solo TCOM</span></div><div><span class="l">Tiempo: </span><span class="v">4–6 meses</span></div></div>
+    </div>
+
+    <div class="pc nl2">
+      <div class="ct"><div class="cl nl2">J</div><div><div class="ctit">Framework Teórico — Non-Lambertian R(φ) Genérico</div><div class="csub">Imposibilidad GLS · Híbrido GLS+Newton · VCSEL</div><div class="ctags"><span class="b bsim">Simulación</span><span class="b bj">Journal</span><span style="font-size:10px;color:var(--gold)">⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">IEEE TSP / TCOM</span></div>
+      <div class="cdl r">📅 Rolling</div>
+      <div class="cdesc">FIM generalizada con R'(φ) para cualquier patrón diferenciable. Prueba formal de imposibilidad GLS para R genérico. Híbrido O(K): GLS(m_eff) + 1 paso Newton-Riemanniano sobre S².</div>
+      <ul class="clist"><li>J(n_d) ∝ Σ[R'(φᵢ)/sin(φᵢ)]² · P_{T_{n_d}}(n_{t,i})</li><li>GLS linealiza ↔ R(arccos(·)) es monomio (único resultado)</li><li>φ_opt(R): ángulo óptimo por tipo de emisor</li><li>Difusor uniforme → DEB = ∞ (límite fundamental)</li></ul>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">Solo TCOM</span></div><div><span class="l">Tiempo: </span><span class="v">4–5 meses</span></div></div>
+    </div>
+
+    <div class="pc nl2">
+      <div class="ct"><div class="cl nl2">C</div><div><div class="ctit">Validación Experimental Non-Lambertian</div><div class="csub">Goniómetro · R(φ,az) 2D · 4 estimadores</div><div class="ctags"><span class="b bexp">Experimental</span><span class="b bhw">🔧</span><span class="b bj">JLT</span><span style="font-size:10px;color:var(--gold)">⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">JLT / IEEE Photonics Journal</span></div>
+      <div class="cdl r">📅 Rolling</div>
+      <div class="cdesc">Companion experimental de J. Mide R(φ,az) real del LED/liquid lens del LISV. Muestra NLS sin cambio algorítmico (solo R_spline en lugar de cos^m) recupera DEB numérico. Cuantifica bias irreducible de GLS bajo mismatch.</div>
+      <ul class="clist"><li>4 escenarios: Lambertiano / NL+GLS-mismatch / NL+NLS-mismatch / NL+NLS-calibrado</li><li>Conexión K-only: mismatch en R(φ) → bias en η̂ → error en d̂</li></ul>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">TCOM + J (rec.)</span></div><div><span class="l">Tiempo: </span><span class="v">6–8 meses</span></div></div>
+    </div>
+
+    <div class="pc ml">
+      <div class="ct"><div class="cl ml">L</div><div><div class="ctit">Deep RL — Selección Adaptativa de Orientaciones</div><div class="csub">SAC/DQN · Recompensa: Δ(log det J)</div><div class="ctags"><span class="b bml">🤖 RL</span><span class="b bsim">Python</span><span style="font-size:10px;color:var(--gold)">⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">ICASSP 2027 / IEEE SP Letters</span></div>
+      <div class="cdl ok">📅 ~Sep–Oct 2026</div>
+      <div class="cdesc">Aprende política adaptativa: decide qué orientación medir a continuación maximizando la información Fisher por medición. Estado: historial [(n_{t,i},μᵢ)] + n̂_d actual. Recompensa: Δ(log det J). Agente descubre estrategia 2-etapas.</div>
+      <ul class="clist"><li>Arquitectura: Transformer/GRU encoder + SAC actor</li><li>RMSE agente vs. DEB → confirma near-optimality</li><li>Portfolio GitHub · visibilidad industria AI</li></ul>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">TCOM + Python/RL</span></div><div><span class="l">Tiempo: </span><span class="v">2–3 meses</span></div></div>
+    </div>
+
+    <div class="pc ml">
+      <div class="ct"><div class="cl ml">M</div><div><div class="ctit">Transfer Learning — Cambridge Haas Lab</div><div class="csub">Prior físico FIM · Meta-RL · Sim-to-real</div><div class="ctags"><span class="b bml">🤖 TL</span><span class="b bexp">Exp</span><span class="b bj">JSAC</span><span style="font-size:10px;color:var(--gold)">⭐⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">IEEE JSAC (IF ~13) / NeurIPS WS</span></div>
+      <div class="cdl r">📅 Durante pasantía 3 meses</div>
+      <div class="cdesc">Co-authorship con Harald Haas / I. Tavakkolnia. Prior físico FIM como regularizador: L = L_tarea + λ·L_física. 5–10× menos datos de calibración en dominio destino. Escenarios: sim-to-real, cross-room, cross-LED.</div>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">L (simulador Python)</span></div><div><span class="l">Impacto: </span><span class="v">★★★★★ Mayor de la tesis</span></div></div>
+    </div>
+
+    <div class="pc ml">
+      <div class="ct"><div class="cl ml">E</div><div><div class="ctit">Physics-Informed Neural Correction para GLS</div><div class="csub">Residual f_θ · Equivarianza rotación</div><div class="ctags"><span class="b bml">🤖</span><span class="b bsim">Sim</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">IEEE Signal Processing Letters</span></div>
+      <div class="cdl r">📅 Rolling</div>
+      <div class="cdesc">n̂_d = n̂_d_GLS + f_θ(μᵢ, n_{t,i}). MLP ligero que aprende el error residual de GLS. Features físicos: ratios μᵢ/μⱼ, geometría de orientaciones. Equivarianza de rotación en la arquitectura.</div>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">Solo TCOM</span></div><div><span class="l">Tiempo: </span><span class="v">2–3 meses</span></div></div>
+    </div>
+
+    <div class="pc ml">
+      <div class="ct"><div class="cl ml">N</div><div><div class="ctit">Universal ML Cross-LED — FiLM + Set Transformer</div><div class="csub">Condicionado en R(φ) · 30+ LEDs sin reentrenamiento</div><div class="ctags"><span class="b bml">🤖</span><span class="b bsim">Sim</span><span class="b bj">J</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">TCOM / IEEE IoT Journal</span></div>
+      <div class="cdl r">📅 Rolling (~3 meses N₁)</div>
+      <div class="cdesc">Pattern encoder + measurement encoder (DeepSets permutation-invariant) + FiLM conditioning. Banco: datasheets reales Lumileds/Cree/OSRAM + Lambertianos sintéticos + VCSEL/difusor.</div>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">TCOM + simulador Python</span></div><div><span class="l">Tiempo: </span><span class="v">3 meses (sim)</span></div></div>
+    </div>
+
+    <div class="pc ar">
+      <div class="ct"><div class="cl ar">K</div><div><div class="ctit">Multi-LED Beam-Steered con Gimbals Mecánicos</div><div class="csub">FIM multi-LED = ΣJₗ · GA conjunto</div><div class="ctags"><span class="b bexp">Experimental</span><span class="b bhw">🔧 Multi-gimbal</span><span class="b bj">J</span><span style="font-size:10px;color:var(--gold)">⭐⭐⭐</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">IEEE TCOM / JLT</span></div>
+      <div class="cdl r">📅 2027+</div>
+      <div class="cdesc">N LEDs cada uno en su propio gimbal. FIM total = ΣFIMₗ. N=2 LEDs (posiciones opuestas) + K=5 cada uno → PEB más uniforme que single-LED K=10. GA diseña N×K orientaciones conjuntamente.</div>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">TCOM + F</span></div><div><span class="l">Tiempo: </span><span class="v">5–7 meses</span></div></div>
+    </div>
+
+    <div class="pc ar">
+      <div class="ct"><div class="cl ar">D</div><div><div class="ctit">Broadcast Multi-Receptor Concurrent</div><div class="csub">Capacidad · NLOS parcial · Scheduling</div><div class="ctags"><span class="b bsim">Simulación</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">GLOBECOM 2026 WS / WCNC 2027</span></div>
+      <div class="cdl s">⏰ 12 Ago 2026</div>
+      <div class="cdesc">Formaliza el escenario multi-usuario del TCOM: N PDs estiman dirección independientemente. Análisis de capacidad de localización, DEB como función de posición de cada receptor, scheduling round-robin.</div>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">F</span></div><div><span class="l">Tiempo: </span><span class="v">1–2 meses</span></div></div>
+    </div>
+
+    <div class="pc op">
+      <div class="ct"><div class="cl op">G</div><div><div class="ctit">Observabilidad Fundamental para ML en OWP</div><div class="csub">No-inyectividad · ML vs model-based</div><div class="ctags"><span class="b bsim">Simulación</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">ISAC 2026 / WCNC 2027</span></div>
+      <div class="cdl ok">📅 11 Sep 2026</div>
+      <div class="cdesc">Prueba formal que de K potencias solo se extraen 3 parámetros independientes (n_d, η). El mapeo (r,n_r)→(μ₁,...,μ_K) no es inyectivo → ningún estimador ML puede invertirlo sin n_r. Posiciona los bounds del TCOM como límites universales.</div>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">Solo TCOM</span></div><div><span class="l">Tiempo: </span><span class="v">2–3 meses</span></div></div>
+    </div>
+
+    <div class="pc op">
+      <div class="ct"><div class="cl op">I</div><div><div class="ctit">Two-Stage Adaptive Orientations</div><div class="csub">K₁ global + K₂ en φ_opt alrededor de n̂_d</div><div class="ctags"><span class="b bsim">Simulación</span></div></div></div>
+      <div class="cv"><span class="vl">Target: </span><span class="vv">PIMRC WS / WCNC 2027</span></div>
+      <div class="cdl r">📅 Rolling</div>
+      <div class="cdesc">Stage 1: K₁ orientaciones globales → n̂_d grueso. Stage 2: K₂ orientaciones sobre cono de semi-ángulo φ_opt = arccos(√((m-1)/m)) centrado en n̂_d → FIM isotrópica en el plano tangente. Mismo K total, menor DEB.</div>
+      <div class="cmeta"><div><span class="l">Prereq: </span><span class="v">Solo TCOM</span></div><div><span class="l">Tiempo: </span><span class="v">2–3 meses</span></div></div>
+    </div>
+
+  </div>
+</div>
+<div class="sep"></div>
+
+<!-- TIMELINE -->
+<div class="sec" id="timeline">
+  <div class="sh"><h2>📅 Timeline 2026–2027</h2><div class="sd"></div></div>
+  <div class="tl">
+    <div class="tlrow">
+      <div class="tli"><div class="tldot done"></div><div class="tldate">May 2026</div><div class="tllabel" style="color:#6ee7b7">TCOM RV2</div><div class="tlpapers">Base paper</div></div>
+      <div class="tli"><div class="tldot s"></div><div class="tldate">12 Ago 2026</div><div class="tllabel" style="color:#fcd34d">GLOBECOM WS</div><div class="tlpapers">F · D</div></div>
+      <div class="tli"><div class="tldot ok"></div><div class="tldate">11 Sep 2026</div><div class="tllabel" style="color:var(--bl)">ISAC 2026</div><div class="tlpapers">A · G</div></div>
+      <div class="tli"><div class="tldot ok"></div><div class="tldate">Sep–Oct 2026</div><div class="tllabel" style="color:#c4b5fd">ICASSP 2027 DL</div><div class="tlpapers">L · N</div></div>
+      <div class="tli"><div class="tldot ok"></div><div class="tldate">Oct 2026</div><div class="tllabel" style="color:var(--bl)">ICC 2027 DL</div><div class="tlpapers">A · F</div></div>
+      <div class="tli"><div class="tldot ok"></div><div class="tldate">Oct 2026</div><div class="tllabel" style="color:var(--bl)">WCNC 2027 DL</div><div class="tlpapers">H · I · D</div></div>
+      <div class="tli"><div class="tldot ok"></div><div class="tldate">Dic 2026</div><div class="tllabel" style="color:#6ee7b7">Submit V</div><div class="tlpapers">TCOM/JLT</div></div>
+      <div class="tli"><div class="tldot far"></div><div class="tldate">May 2027</div><div class="tllabel">ICASSP 2027</div><div class="tlpapers">L · E · N</div></div>
+      <div class="tli"><div class="tldot far"></div><div class="tldate">2027+</div><div class="tllabel">Deep journals</div><div class="tlpapers">H · K · J · C · M</div></div>
+    </div>
+  </div>
+</div>
+<div class="sep"></div>
+
+<!-- DEPENDENCIES -->
+<div class="sec" id="deps">
+  <div class="sh"><h2>🔗 Mapa de Dependencias</h2><div class="sd"></div></div>
+  <div class="dep">
+    <div class="df">
+      <div class="dc">
+        <div class="dclbl">Fundamento</div>
+        <div class="dn g">TCOM</div>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--dim);font-size:1.2rem">→</div>
+      <div class="dc">
+        <div class="dclbl">Core (⭐⭐⭐)</div>
+        <div class="dn b">F</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">broadcast K-only</div>
+        <div style="height:1rem"></div>
+        <div class="dn g">A</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">ISAC (independ.)</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;color:var(--dim);font-size:1.2rem;padding-top:.5rem">→</div>
+      <div class="dc">
+        <div class="dclbl">F Extension (⭐⭐⭐)</div>
+        <div class="dn g">V</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">experimental</div>
+        <div style="height:.5rem"></div>
+        <div class="dn c">D</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">multi-user</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;color:var(--dim);font-size:1.2rem;padding-top:.5rem">→</div>
+      <div class="dc">
+        <div class="dclbl">V Extensions (⭐⭐)</div>
+        <div class="dn g">H</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">tracking</div>
+        <div style="height:.5rem"></div>
+        <div class="dn c">K</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">multi-LED</div>
+        <div style="height:.5rem"></div>
+        <div class="dn a">J→C</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">non-Lamb.</div>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--dim);font-size:1.5rem">·</div>
+      <div class="dc">
+        <div class="dclbl">Independientes</div>
+        <div class="dn p">L</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">deep RL</div>
+        <div style="height:.5rem"></div>
+        <div class="dn gr">G · I</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">opcionales</div>
+        <div style="height:.5rem"></div>
+        <div class="dn p">E · N</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">ML misc.</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;color:var(--dim);font-size:1.2rem;padding-top:.5rem">→</div>
+      <div class="dc">
+        <div class="dclbl">Cambridge (pasantía)</div>
+        <div class="dn p">M</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:.2rem">L required</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--dim);margin-top:1rem">⚡ = aprovecha hardware disponible (testbed + gimbals + LiFi dongle) · 🤖 = ML/RL Python puro</div>
+  </div>
+</div>
+<div class="sep"></div>
+
+<!-- VENUES -->
+<div class="sec" id="venues">
+  <div class="sh"><h2>🎯 Venues y Deadlines</h2><div class="sd"></div></div>
+  <div class="vg">
+    <div class="vc">
+      <div class="vctop"><div class="vcn">GLOBECOM 2026 Workshop</div><div class="vdb s">12 Ago 2026</div></div>
+      <div class="vi">Macau, China · 7–11 Dic 2026 · 6 págs.</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">F ⭐</div>
+        <div class="vpc" style="border-color:var(--cyan);color:#67e8f9">D</div>
+        <div class="vpc" style="border-color:var(--green);color:#6ee7b7">H</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">IEEE ISAC 2026 ⭐</div><div class="vdb ok">11 Sep 2026</div></div>
+      <div class="vi">Lisboa, Portugal · 16–18 Nov 2026 · 6 págs. · Debut histórico ComSoc+SPS</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--green);color:#6ee7b7">A ⭐</div>
+        <div class="vpc" style="border-color:var(--gray);color:var(--muted)">G</div>
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">F</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">ICASSP 2027</div><div class="vdb ok">~Sep–Oct 2026</div></div>
+      <div class="vi">Toronto, Canada · 16–21 May 2027 · 5 págs. · IEEE Signal Processing Society</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--pur);color:#c4b5fd">L ⭐</div>
+        <div class="vpc" style="border-color:var(--pur);color:#c4b5fd">E</div>
+        <div class="vpc" style="border-color:var(--pur);color:#c4b5fd">N</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">ICC 2027</div><div class="vdb ok">26 Oct 2026</div></div>
+      <div class="vi">Washington DC · 30 May–3 Jun 2027 · 6 págs.</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--green);color:#6ee7b7">A</div>
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">F</div>
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">H</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">WCNC 2027</div><div class="vdb ok">31 Oct 2026</div></div>
+      <div class="vi">Panama City · Mar–Abr 2027 · 6 págs.</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">F</div>
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">H</div>
+        <div class="vpc" style="border-color:var(--cyan);color:#67e8f9">D</div>
+        <div class="vpc" style="border-color:var(--gray);color:var(--muted)">I</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">IEEE TCOM (journal)</div><div class="vdb r">Rolling</div></div>
+      <div class="vi">IF ~7.2 · 3–6 meses review</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">V ⭐</div>
+        <div class="vpc" style="border-color:var(--amber);color:#fcd34d">J</div>
+        <div class="vpc" style="border-color:var(--pur);color:#c4b5fd">N</div>
+        <div class="vpc" style="border-color:var(--cyan);color:#67e8f9">K</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">IEEE/OSA JLT (journal)</div><div class="vdb r">Rolling</div></div>
+      <div class="vi">IF ~4.7 · 3–4 meses · Flagship OWC</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">V</div>
+        <div class="vpc" style="border-color:var(--amber);color:#fcd34d">C</div>
+        <div class="vpc" style="border-color:var(--green);color:#6ee7b7">A</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">IEEE JSAC (journal)</div><div class="vdb r">Rolling</div></div>
+      <div class="vi">IF ~13.0 · 4–6 meses · Mayor impacto</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--pur);color:#c4b5fd">M ⭐⭐</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">IEEE Signal Processing Letters</div><div class="vdb r">Rolling</div></div>
+      <div class="vi">IF ~3.9 · 4 págs. · 2–3 meses</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--pur);color:#c4b5fd">E</div>
+        <div class="vpc" style="border-color:var(--pur);color:#c4b5fd">L</div>
+        <div class="vpc" style="border-color:var(--blue);color:var(--bl)">F</div>
+      </div>
+    </div>
+    <div class="vc">
+      <div class="vctop"><div class="vcn">PIMRC 2026 Workshop</div><div class="vdb cl">5 Jun 2026 (cerrado)</div></div>
+      <div class="vi">Singapore · Sep–Oct 2026 · 5–6 págs.</div>
+      <div class="vps">
+        <div class="vpc" style="border-color:var(--gray);color:var(--dim)">F (cerrado)</div>
+        <div class="vpc" style="border-color:var(--gray);color:var(--dim)">I (cerrado)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIORITY TABLE -->
+  <div style="margin-top:1.5rem">
+    <div style="font-size:12px;font-weight:700;margin-bottom:.75rem;color:var(--muted)">Resumen: Papel → Venue recomendado</div>
+    <table>
+      <tr><th>Paper</th><th>Venue principal</th><th>Deadline</th><th>Alternativa</th><th>Tipo</th></tr>
+      <tr><td style="font-weight:700;color:var(--bl)">F ⭐</td><td>GLOBECOM 2026 WS</td><td style="color:#fcd34d">12 Ago 2026</td><td>ISAC 2026</td><td><span class="b bsim">Sim</span></td></tr>
+      <tr><td style="font-weight:700;color:#6ee7b7">V ⭐</td><td>TCOM companion</td><td>Dic 2026</td><td>JLT</td><td><span class="b bexp">Exp</span> <span class="b bj">J</span></td></tr>
+      <tr><td style="font-weight:700;color:#6ee7b7">H</td><td>Journal / ICC-WCNC</td><td>Ene–May 2027</td><td>—</td><td><span class="b bexp">Exp</span></td></tr>
+      <tr><td style="font-weight:700;color:#6ee7b7">A ⭐</td><td>ISAC 2026</td><td style="color:#86efac">11 Sep 2026</td><td>TCOM/JLT</td><td><span class="b bexp">Exp</span> <span class="b bj">J</span></td></tr>
+      <tr><td style="font-weight:700;color:#c4b5fd">L ⭐</td><td>ICASSP 2027</td><td>~Sep–Oct 2026</td><td>SP Letters</td><td><span class="b bml">🤖</span></td></tr>
+      <tr><td style="font-weight:700;color:#fcd34d">J</td><td>TSP / TCOM</td><td>rolling</td><td>—</td><td><span class="b bsim">Sim</span> <span class="b bj">J</span></td></tr>
+      <tr><td style="font-weight:700;color:#fcd34d">C</td><td>JLT</td><td>rolling</td><td>Photonics J</td><td><span class="b bexp">Exp</span> <span class="b bj">J</span></td></tr>
+      <tr><td style="font-weight:700;color:#67e8f9">K ⭐</td><td>TCOM / JLT</td><td>2027+</td><td>—</td><td><span class="b bexp">Exp</span> <span class="b bj">J</span></td></tr>
+      <tr><td style="font-weight:700;color:#c4b5fd">M ⭐⭐</td><td>JSAC</td><td>pasantía</td><td>NeurIPS WS</td><td><span class="b bml">🤖</span> <span class="b bexp">Exp</span></td></tr>
+      <tr><td style="font-weight:700;color:var(--muted)">G, I, D, E, N</td><td>Conf. WS / SP Letters</td><td>varios</td><td>—</td><td><span class="b bsim">Sim</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<footer>
+  OWP Research Roadmap · LISV/UVSQ · Kevin Acuna-Condori · Generado Mayo 2026<br>
+  Paper base: <em>"Model-Based Beam-Steered OWP with Single-LED Single-PD for 3D Localization"</em> — IEEE TCOM (en revisión)
+</footer>
+</body>
+</html>
