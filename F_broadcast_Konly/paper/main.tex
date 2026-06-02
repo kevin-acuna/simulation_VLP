@@ -6,9 +6,9 @@
 \usepackage{graphicx}
 \usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{booktabs}
-\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 \usepackage{cite}
 \usepackage{bm}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
 \begin{document}
 %Broadcast Beam-Steered Optical Wireless Positioning:\\3D Localization Without Cooperative Alignment
@@ -48,7 +48,7 @@ These limitations have motivated research on single-LED positioning systems, whi
 Reported single-LED solutions compensate for the limited information by placing hardware complexity at the receiver: multiple tilted photodiodes (PDs)~\cite{Qin2020, Li2024}, continuous mechanical PD rotation~\cite{Liu2022, Wang2024, Shi2025}, or multi-PD arrays combined with inertial measurement units (IMUs)~\cite{Ma2024}.
 
 An alternative strategy shifts the spatial diversity from the receiver to the transmitter through beam steering.
-Recent advances in MEMS micromirror gimbals~\cite{Liu:25}, liquid-crystal deflectors~\cite{Feng2019}, and optical phased arrays~\cite{mi13070990} enable high-speed redirection of a single LED beam, creating temporal diversity that replaces the spatial redundancy of multiple sources.
+Recent advances in micro-electromechanical system (MEMS) micromirror gimbals~\cite{Liu:25}, liquid-crystal deflectors~\cite{Feng2019}, and optical phased arrays~\cite{mi13070990} enable high-speed redirection of a single LED beam, creating temporal diversity that replaces the spatial redundancy of multiple sources.
 Building on this principle, Acuna-Condori~\textit{et~al.}~\cite{AcunaTCOM2025} proposed a model-based beam-steered OWP architecture in which a single LED is steered through $K$ predefined orientations; the resulting $K$ received-signal-strength (RSS) variations at a single PD are sufficient to estimate the transmitter-to-receiver direction.
 A dedicated $(K{+}1)$-th measurement, obtained by cooperatively aligning the LED beam toward the receiver and reorienting the PD to face the transmitter, then recovers the distance for full 3D positioning.
 
@@ -65,7 +65,7 @@ The main contributions are:
 \begin{enumerate}
     \item A broadcast single-LED OWP architecture that achieves 3D localization from $K$ measurements alone, enabling simultaneous multi-user positioning without per-receiver dedicated measurements.
     \item The broadcast position error bound ($\mathrm{PEB}_\mathrm{B}$): the Cram\'{e}r--Rao lower bound for 3D position estimation from $K$ steered-orientation observations with known receiver orientation, together with a characterization of its dependence on the number of orientations, receiver tilt, and SNR.
-    \item A closed-form amplitude estimator derived from the profiled Gaussian likelihood, which, combined with NLS direction finding, yields a positioning pipeline that closely tracks the $\mathrm{PEB}_\mathrm{B}$ in Monte Carlo simulations.
+    \item A closed-form amplitude estimator derived from the profiled Gaussian likelihood, which, combined with nonlinear least-squares (NLS) direction finding, yields a positioning pipeline that closely tracks the $\mathrm{PEB}_\mathrm{B}$ in Monte Carlo simulations.
 \end{enumerate}
 
 The remainder of this paper is organized as follows.
@@ -131,9 +131,9 @@ Unlike~\cite{AcunaTCOM2025}, which requires a dedicated $(K{+}1)$-th beam-aligne
 
 \subsubsection{Direction Finding}
 The transmitter-to-receiver direction $\mathbf{n}_d$ is estimated from $\{\hat\mu_i\}_{i=1}^K$ using the estimators developed in~\cite{AcunaTCOM2025}.
-The GLS estimator forms power ratios $\beta_i=(\hat\mu_i/\hat\mu_1)^{1/m}$ that cancel the common factor~$\eta$, producing homogeneous linear constraints on $\mathbf{n}_d$ whose solution is the minimum eigenvector of a $3{\times}3$ matrix; the weighted least-squares (WLS) variant replaces the full noise covariance by its diagonal, reducing computational cost at the expense of statistical efficiency.
+The generalized least-squares (GLS) estimator forms power ratios $\beta_i=(\hat\mu_i/\hat\mu_1)^{1/m}$ that cancel the common factor~$\eta$, producing homogeneous linear constraints on $\mathbf{n}_d$ whose solution is the minimum eigenvector of a $3{\times}3$ matrix; the weighted least-squares (WLS) variant replaces the full noise covariance by its diagonal, reducing computational cost at the expense of statistical efficiency.
 The NLS estimator instead normalizes the observed powers as $p_i = \hat\mu_i/\max_j \hat\mu_j$ and minimizes $\sum_i(\alpha[\mathbf{n}_{t,i}{\cdot}\mathbf{v}]^m - p_i)^2$ jointly over the candidate direction $\mathbf{v}\in\mathbb{S}^2$ and a free nuisance scale $\alpha>0$, using a Levenberg--Marquardt solver~\cite{AcunaTCOM2025}.
-In both cases, the common amplitude cancels from the noiseless direction-finding equations (through ratios for GLS, through the free scale for NLS), so the deterministic direction model does not depend on $\mathbf{n}_r$, $d$, or $P_t$~\cite{AcunaTCOM2025}; in the presence of noise, these quantities still affect the direction-estimation accuracy through the resulting SNR.
+In both cases, the common amplitude cancels from the noiseless direction-finding equations (through ratios for GLS, through the free scale for NLS), so the deterministic direction model does not depend on $\mathbf{n}_r$, $d$, or $P_t$~\cite{AcunaTCOM2025}; in the presence of noise, these quantities still affect the direction-estimation accuracy through the resulting SNR~\cite{AcunaCondori2026ICC}.
 
 \subsubsection{Broadcast Distance Recovery}
 \label{subsubsec:distance_recovery}
@@ -177,7 +177,7 @@ and the complete 3D position estimate is:
 \subsubsection{Multi-User Broadcast Operation}
 The $K$-orientation LED scan is performed periodically and independently of the number of receivers.
 Each receiver~$j$ ($j=1,\ldots,N_{\mathrm{rx}}$) independently collects the $K$ power measurements, applies the direction-finding and distance-recovery pipeline described above using its own known orientation $\mathbf{n}_{r,j}$, and obtains $\hat{\mathbf{r}}_j$ without any dedicated measurement or feedback to the transmitter.
-This constitutes a fully broadcast positioning architecture: one LED scan serves all receivers simultaneously.
+This constitutes a broadcast positioning architecture: one LED scan serves all receivers simultaneously.
 
 % *******************************************
 \section{Broadcast Position Error Bound}
@@ -185,7 +185,7 @@ This constitutes a fully broadcast positioning architecture: one LED scan serves
 % *******************************************
 
 This section derives the Cram\'{e}r--Rao lower bound (CRLB) for 3D position estimation under the broadcast architecture, termed the broadcast position error bound ($\mathrm{PEB}_\mathrm{B}$).
-Unlike bounds that incorporate a dedicated ranging measurement, the $\mathrm{PEB}_\mathrm{B}$ quantifies the fundamental accuracy achievable from the $K$ steered-orientation observations alone when $\mathbf{n}_r$ is known.
+Unlike bounds that incorporate a dedicated ranging measurement, the $\mathrm{PEB}_\mathrm{B}$ quantifies the local lower bound on the accuracy achievable from the $K$ steered-orientation observations alone when $\mathbf{n}_r$ is known.
 
 \subsection{Fisher Information Matrix}
 \label{subsec:fim}
@@ -223,7 +223,7 @@ The broadcast PEB is defined as the square root of the trace of the inverse FIM:
 = \sqrt{\operatorname{tr}\!\bigl\{\mathcal{I}_{\mathrm{B}}^{-1}(\mathbf{r})\bigr\}}.
 \label{eq:peb_b}
 \end{equation}
-This quantity represents the minimum achievable root-mean-square (RMS) position error for any unbiased estimator of $\mathbf{r}$, under the observation model~\eqref{eq:obs_model}, that uses only the $K$ steered-orientation power measurements with known $\mathbf{n}_r$.
+This quantity lower-bounds the local root-mean-square (RMS) position error of any unbiased estimator of $\mathbf{r}$ under the observation model~\eqref{eq:obs_model}, when only the $K$ steered-orientation power measurements and known $\mathbf{n}_r$ are used.
 It depends on the receiver position~$\mathbf{r}$ (through $d$, $\cos\psi$, and $\{Q_i\}$), the orientation set $\{\mathbf{n}_{t,i}\}$, the receiver orientation $\mathbf{n}_r$, and the system parameters $(N, \sigma^2, m, P_t, A_{\mathrm{det}})$.
 
 \subsection{Dependence on Receiver Orientation}
@@ -232,9 +232,9 @@ It depends on the receiver position~$\mathbf{r}$ (through $d$, $\cos\psi$, and $
 A distinguishing property of the broadcast bound is its dependence on the receiver orientation~$\mathbf{n}_r$.
 This dependence enters through two mechanisms in the gradient~\eqref{eq:grad_mu}: (i)~the explicit term $-\cos^m(\phi_i)\,\mathbf{n}_r$, and (ii)~the implicit dependence of $\cos\psi = -\mathbf{n}_r\cdot\mathbf{n}_d$ which scales the remaining terms.
 
-Physically, a tilted receiver collects less optical power ($\cos\psi < 1$), reducing the signal-to-noise ratio and diminishing the magnitude of the gradient vectors.
+Physically, receiver tilt modifies the incidence cosine and, when averaged over arbitrary tilt azimuths, generally reduces the effective received power, thereby diminishing the SNR and the magnitude of the gradient vectors.
 As a consequence, the FIM~\eqref{eq:fim_broadcast} contracts and the $\mathrm{PEB}_\mathrm{B}$ increases.
-This contrasts with the direction-finding stage, which is provably $\mathbf{n}_r$-independent~\cite{AcunaTCOM2025} due to the cancellation of~$\eta$ in the ratio formulation.
+This contrasts with the direction-finding stage, where normalization cancels $\eta$, making the noiseless model $\mathbf{n}_r$-independent and leaving only marginal SNR-driven tilt sensitivity~\cite{AcunaTCOM2025}.
 The broadcast distance-recovery stage, by contrast, relies on the absolute power level $\eta = C\cos\psi/d^2$, which explicitly involves $\mathbf{n}_r$.
 
 The sensitivity of $\mathrm{PEB}_\mathrm{B}$ to receiver tilt is quantified in Section~\ref{sec:parametric}. Since the bound assumes $\mathbf{n}_r$ is perfectly known, this analysis characterizes the effect of physical receiver attitude on positioning performance, rather than the impact of IMU orientation errors, which would require a separate mismatch analysis left to future work.
@@ -247,7 +247,7 @@ A necessary condition for $\mathcal{I}_{\mathrm{B}}$ to be full rank (and hence 
 From~\eqref{eq:grad_mu}, each gradient lies in the subspace spanned by $\{\mathbf{n}_{t,i}, \mathbf{n}_r, \mathbf{n}_d\}$.
 With $K\geq 3$ orientations whose projections onto the plane orthogonal to $\mathbf{n}_d$ are not collinear, the gradients generically span $\mathbb{R}^3$ and the position is identifiable.
 For $K\leq 2$, the FIM is rank-deficient and $\mathrm{PEB}_\mathrm{B}\to\infty$.
-In the overdetermined regime ($K\geq 4$), redundant observations improve the conditioning of~$\mathcal{I}_{\mathrm{B}}$ and monotonically reduce the bound.
+In the overdetermined regime ($K\geq 4$), additional observations can improve the conditioning of~$\mathcal{I}_{\mathrm{B}}$ and reduce the bound, provided that the added orientations contribute non-redundant gradient information.
 
 % *******************************************
 \section{Parametric Analysis}
@@ -258,7 +258,7 @@ This section evaluates the $\mathrm{PEB}_\mathrm{B}$ as a function of three key 
 The analysis is conducted over a $3\times3\times2$\,m$^3$ room with the LED at the ceiling center ($\mathbf{t}=[0,0,2]^{\mathsf T}$\,m).
 The receiver testbed comprises $|\mathcal{R}|=1{,}792$ uniformly spaced positions at $x,y\in[-1.5,1.5]$\,m and $z\in[0,1.2]$\,m (step~$0.2$\,m).
 Unless stated otherwise, the system parameters are: $P_t=0.405$\,W, $\Phi_{1/2}=45^\circ$, $A_{\mathrm{det}}=26.4$\,mm$^2$, $\Psi_{\mathrm{FOV}}=85^\circ$, $N=1{,}000$ samples per orientation, $\sigma^2=3\times10^{-14}$\,W$^2$, and $\mathbf{n}_r=[0,0,1]^{\mathsf T}$.
-The orientation sets $\{\mathbf{n}_{t,i}\}_{i=1}^K$ are those optimized for the direction error bound (DEB) in~\cite{AcunaTCOM2025}.
+The orientation sets $\{\mathbf{n}_{t,i}\}_{i=1}^K$ are those optimized for the direction error bound (DEB) in~\cite{AcunaTCOM2025}; they are not re-optimized for the broadcast PEB derived here, so the results quantify the proposed distance-recovery mechanism under the same beam-steering codebooks as the reference architecture.
 
 \subsection{Spatial Distribution of the Broadcast PEB}
 \label{subsec:heatmap}
@@ -266,7 +266,7 @@ The orientation sets $\{\mathbf{n}_{t,i}\}_{i=1}^K$ are those optimized for the 
 Figure~\ref{fig:heatmap} shows the spatial distribution of $\mathrm{PEB}_\mathrm{B}$ across the $3\times3$\,m$^2$ floor at a receiver height of $z=0.8$\,m for $K=5$ and $K=9$ orientations.
 The bound is lowest near the room center, directly below the LED, where the incidence angle $\psi$ is small and the irradiance cosines $\{Q_i\}$ are large, yielding high SNR and well-conditioned gradients.
 Toward the room boundaries and corners, the bound increases due to the combined effect of larger incidence angles (reducing $\cos\psi$) and reduced angular discrimination as the receiver approaches the edge of the receiver field of view.
-Increasing $K$ from~5 to~9 produces a uniform reduction in $\mathrm{PEB}_\mathrm{B}$ across the entire floor, with the improvement most pronounced at the boundaries where the additional orientations provide supplementary gradient diversity.
+Increasing $K$ from~5 to~9 reduces $\mathrm{PEB}_\mathrm{B}$ across the floor, with the improvement most pronounced at the boundaries where the additional orientations provide supplementary gradient diversity.
 
 \begin{figure}[t]
     \centering
@@ -286,7 +286,7 @@ Increasing $K$ from~5 to~9 produces a uniform reduction in $\mathrm{PEB}_\mathrm
 
 Figure~\ref{fig:peb_vs_K} reports the RMS of $\mathrm{PEB}_\mathrm{B}$ over all testbed positions as a function of~$K$ for $K\in\{3,\ldots,15\}$.
 For reference, the cooperative PEB ($\mathrm{PEB}_\mathrm{C}$) from~\cite{AcunaTCOM2025}---which additionally exploits a $(K{+}1)$-th beam-aligned measurement---is shown as a dashed curve.
-The broadcast bound decreases monotonically with~$K$, reflecting the additional Fisher information contributed by each orientation through a new rank-one term in the FIM~\eqref{eq:fim_broadcast}.
+For the considered DEB-optimized orientation sets, the broadcast bound decreases monotonically with~$K$, reflecting the additional Fisher information contributed by each orientation through a new rank-one term in the FIM~\eqref{eq:fim_broadcast}.
 The improvement is steepest for small~$K$: increasing from $K=3$ to $K=5$ reduces the RMS-$\mathrm{PEB}_\mathrm{B}$ from approximately 8.1\,cm to 2.5\,cm, whereas the gain from $K=9$ to $K=15$ is less than 0.4\,cm.
 This diminishing-return behaviour is consistent with the FIM structure: each additional orientation contributes a gradient vector that becomes increasingly collinear with the subspace already spanned by the existing $K$ gradients.
 For the operating point $K=9$, the RMS-$\mathrm{PEB}_\mathrm{B}$ reaches 1.7\,cm, indicating that centimeter-level 3D accuracy is achievable in the broadcast regime.
@@ -306,7 +306,7 @@ The dependence of $\mathrm{PEB}_\mathrm{B}$ on the receiver orientation, establi
 The receiver is tilted by an angle $\theta_{\mathrm{tilt}}$ from the vertical, with the tilt azimuth uniformly averaged over $[0^\circ, 360^\circ)$ to represent an arbitrary tilt direction.
 For each~$\theta_{\mathrm{tilt}}$, the RMS-$\mathrm{PEB}_\mathrm{B}$ is computed by first averaging the squared bound over azimuth at each position (yielding the effective per-position bound) and then computing the spatial RMS over the testbed.
 
-For moderate tilt angles ($\theta_{\mathrm{tilt}}\leq 6^\circ$), the degradation remains below 5\% for all~$K$. Since the bound assumes perfect knowledge of~$\mathbf{n}_r$, this result indicates that receivers with small physical tilt incur negligible performance loss; the separate question of IMU orientation error is left to future experimental work.
+For moderate tilt angles ($\theta_{\mathrm{tilt}}\leq 6^\circ$), the degradation remains below 5\% for all~$K$. Since the bound assumes perfect knowledge of~$\mathbf{n}_r$, this result indicates that receivers with small physical tilt incur minor performance loss; the separate question of IMU orientation error is left to future experimental work.
 Beyond $\theta_{\mathrm{tilt}}=15^\circ$, the degradation accelerates, reaching a factor of ${\approx}3\times$ at $\theta_{\mathrm{tilt}}=30^\circ$ for $K=5$.
 This acceleration is driven by two mechanisms: (i)~the tilt modifies the incidence cosine and, when averaged over tilt azimuths, generally reduces the effective received power and SNR; and (ii)~at large tilt angles, peripheral receiver positions fall outside the field of view ($\psi>\Psi_{\mathrm{FOV}}$), causing a loss of signal and a sharp increase in the local bound.
 Increasing~$K$ mitigates the degradation: at $\theta_{\mathrm{tilt}}=30^\circ$, $K=9$ limits the RMS-$\mathrm{PEB}_\mathrm{B}$ to approximately 5.1\,cm and $K=15$ to 4.0\,cm, compared to 8.0\,cm for $K=5$, as the additional orientations provide redundant measurements that compensate for the reduced SNR.
@@ -322,7 +322,7 @@ Increasing~$K$ mitigates the degradation: at $\theta_{\mathrm{tilt}}=30^\circ$, 
 \label{subsec:effect_snr}
 
 Figure~\ref{fig:peb_vs_snr} presents the RMS-$\mathrm{PEB}_\mathrm{B}$ as a function of the average SNR for $K=9$ (bold curve) and for $K\in\{5,\ldots,15\}$ (shaded band).
-On the log--log axes, all curves exhibit a slope of $-1/2$, confirming the theoretical $1/\sqrt{\mathrm{SNR}}$ scaling predicted by the CRLB under Gaussian noise~\cite{Kay1993}.
+On the log--log axes, all curves exhibit a slope of $-1/2$, consistent with the theoretical $1/\sqrt{\mathrm{SNR}}$ scaling predicted by the CRLB under Gaussian noise~\cite{Kay1993}.
 At the nominal operating point ($\mathrm{SNR}\approx14$\,dB, corresponding to the system parameters listed above), the $K=9$ bound is 1.7\,cm.
 The sub-centimeter regime ($\mathrm{PEB}_\mathrm{B}<1$\,cm) is reached at $\mathrm{SNR}\geq 22$\,dB for $K=9$, which may be achievable for DC power measurements with narrowband filtering or controlled ambient conditions.
 The width of the shaded band quantifies the gain from additional orientations at any given SNR; this band narrows at high SNR, indicating diminishing returns from increasing~$K$ in low-noise regimes.
@@ -346,23 +346,24 @@ Three direction-finding estimators are evaluated---GLS, WLS, and NLS~\cite{Acuna
 \subsection{Positioning Accuracy}
 \label{subsec:accuracy}
 
-Table~\ref{tab:results} reports the 3D positioning metrics for $K\in\{5,9\}$: root-mean-square error (RMSE), 90th percentile of the error CDF (CDF$_{90\%}$), and average positioning error (APE).
-The NLS estimator achieves a root-mean-square error (RMSE) of 2.49\,cm at $K=5$ and 1.73\,cm at $K=9$, closely tracking the broadcast bound ($\mathrm{PEB}_\mathrm{B}$: 2.49\,cm and 1.72\,cm, respectively).
+Table~\ref{tab:results} reports the 3D positioning metrics for $K\in\{5,9\}$: root-mean-square error (RMSE), 90th spatial percentile of the per-position RMSE ($P_{90}$), and average positioning error (APE).
+For the $\mathrm{PEB}_\mathrm{B}$ rows, these metrics denote the corresponding spatial statistics of the local bound over the same testbed positions.
+The NLS estimator achieves an RMSE of 2.49\,cm at $K=5$ and 1.73\,cm at $K=9$, closely tracking the broadcast bound ($\mathrm{PEB}_\mathrm{B}$: 2.49\,cm and 1.72\,cm, respectively).
 This near-unity ratio ($\mathrm{RMSE}_{\mathrm{NLS}}/\mathrm{PEB}_\mathrm{B}\approx 1.01$) indicates that the two-stage pipeline---NLS direction finding followed by amplitude-based distance recovery~\eqref{eq:eta_hat}--\eqref{eq:d_hat}---closely tracks the $\mathrm{PEB}_\mathrm{B}$.
 This can be attributed to the fact that NLS fits the nonlinear Lambertian power profile directly, whereas GLS and WLS rely on ratio-based linearizations; the more accurate direction estimate provided by NLS yields a more reliable plug-in amplitude estimate~\eqref{eq:eta_hat}, reducing the distance-recovery error.
 
 The GLS estimator exhibits a larger gap: RMSE of 4.06\,cm ($K=5$) and 2.44\,cm ($K=9$), corresponding to factors of 1.63$\times$ and 1.42$\times$ above the bound, respectively.
 However, GLS admits a closed-form solution via a single $3{\times}3$ eigendecomposition, yielding inference latencies approximately $25\times$ lower than NLS (${\approx}0.025$\,ms vs.\ $0.65$\,ms per estimate~\cite{AcunaTCOM2025})---an advantage for latency-critical applications where moderate accuracy loss is acceptable.
 WLS, a diagonal simplification of GLS, further degrades to 4.96\,cm ($K=5$) and 3.72\,cm ($K=9$).
-The reversal of the GLS--WLS hierarchy at $K=9$ (WLS becoming worse than GLS) is consistent with the diagonal covariance approximation becoming increasingly suboptimal as the number of off-diagonal cross-correlation terms grows with~$K$.
+The increasing GLS--WLS gap at large $K$ is consistent with the diagonal covariance approximation becoming increasingly suboptimal as the number of off-diagonal cross-correlation terms grows with~$K$.
 
 \begin{table}[t]
 \centering
-\caption{Broadcast 3D positioning performance ($M{=}1{,}000$ MC trials per position, $|\mathcal{R}|{=}1{,}792$ positions, $\mathbf{n}_r{=}[0,0,1]^{\mathsf T}$).}
+\caption{Broadcast 3D positioning performance ($M{=}1{,}000$ Monte Carlo trials per position, $|\mathcal{R}|{=}1{,}792$ positions, $\mathbf{n}_r{=}[0,0,1]^{\mathsf T}$).}
 \label{tab:results}
 \begin{tabular}{clccc}
 \toprule
-$K$ & Method & RMSE [cm] & CDF$_{90\%}$ [cm] & APE [cm] \\
+$K$ & Method & RMSE [cm] & $P_{90}$ [cm] & APE [cm] \\
 \midrule
 5 & GLS   & 4.06 & 5.54 & 2.75 \\
 5 & WLS   & 4.96 & 5.37 & 2.90 \\
@@ -377,14 +378,14 @@ $K$ & Method & RMSE [cm] & CDF$_{90\%}$ [cm] & APE [cm] \\
 \end{tabular}
 \end{table}
 
-Figure~\ref{fig:cdf} presents the empirical CDF of the per-position RMSE (computed over $M$ trials at each position) for all estimators at $K=5$ (solid lines) and $K=9$ (dashed lines).
+Figure~\ref{fig:cdf} shows the spatial CDF of the per-position RMSE (computed over $M$ trials at each position) for all estimators at $K=5$ (solid lines) and $K=9$ (dashed lines).
 For $K=9$, the NLS curve is virtually indistinguishable from the $\mathrm{PEB}_\mathrm{B}$ distribution, indicating that the estimator closely tracks the bound over the considered testbed.
-All $K=9$ curves stochastically dominate their $K=5$ counterparts, in agreement with the monotonic improvement predicted by the bound analysis of Section~\ref{subsec:effect_K}.
+All $K=9$ curves stochastically dominate their $K=5$ counterparts, in agreement with the monotonic improvement observed in the bound analysis of Section~\ref{subsec:effect_K}.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.9\linewidth]{../simulations/results/broadcast_MC1000/Fig05_CDF_broadcast}
-    \caption{Empirical CDF of the per-position 3D RMSE for $K=5$ (solid) and $K=9$ (dashed). NLS tracks $\mathrm{PEB}_\mathrm{B}$ at both operating points; GLS and WLS exhibit structural gaps.}
+    \caption{Spatial CDF of the per-position 3D RMSE over the testbed for $K=5$ (solid) and $K=9$ (dashed), computed with $M=1{,}000$ Monte Carlo trials per position. NLS tracks $\mathrm{PEB}_\mathrm{B}$ at both operating points; GLS and WLS exhibit structural gaps.}
     \label{fig:cdf}
 \end{figure}
 
@@ -396,12 +397,12 @@ At each waypoint, the static observation model~\eqref{eq:mu_compact} is applied 
 The three use cases represent heterogeneous indoor localization scenarios at different heights:
 \begin{itemize}
     \item A robotic vacuum cleaner ($z\approx 0.10$\,m) following a boustrophedon coverage pattern;
-    \item A pedestrian carrying a smartphone ($z\approx 0.80$\,m) along a random walking trajectory with natural gait sway;
+    \item A pedestrian-carried handheld receiver ($z \approx 0.80$ m), following a random walking trajectory with mild lateral sway;
     \item An automated guided vehicle (AGV) in a warehouse setting ($z\approx 0.50$\,m) following an aisle-based path with 90$^\circ$ turns.
 \end{itemize}
 Each receiver independently applies the NLS direction-finding and broadcast distance-recovery pipeline using its known orientation~$\mathbf{n}_r$.
 The estimated positions (star markers) closely overlap the ground-truth waypoints (open markers) across all three heights and trajectory types, with average positioning errors on the order of 1 cm in this illustrative scenario.
-In practice, these waypoints would correspond to successive LED scans; the static model remains valid at each scan provided that $v\,T_{\mathrm{scan}}\ll\epsilon_{\mathrm{pos}}$, where $v$ is the receiver speed, $T_{\mathrm{scan}}$ is the scan duration, and $\epsilon_{\mathrm{pos}}$ is the target positioning accuracy---a condition expected to hold for typical indoor speeds with fast beam-steering mechanisms~\cite{Liu:25}.
+In practice, these waypoints would correspond to successive LED scans; the static model remains valid at each scan provided that $v\,T_{\mathrm{scan}}\ll\epsilon_{\mathrm{pos}}$, where $v$ is the receiver speed, $T_{\mathrm{scan}}$ is the scan duration, and $\epsilon_{\mathrm{pos}}$ is the target positioning accuracy---a condition that can hold for typical indoor speeds when sufficiently fast beam-steering mechanisms are employed~\cite{Liu:25}.
 
 \begin{figure}[t]
     \centering
@@ -418,11 +419,11 @@ In practice, these waypoints would correspond to successive LED scans; the stati
 This paper introduced a broadcast beam-steered OWP architecture that achieves 3D indoor localization using only the $K$ steered-orientation power measurements, without the cooperative beam-aligned measurement required by prior work.
 The key enabler is the recovery of the transmitter--receiver distance from the absolute power levels via a closed-form amplitude estimator derived from the profiled Gaussian likelihood, combined with known receiver orientation.
 
-The broadcast position error bound ($\mathrm{PEB}_\mathrm{B}$) was derived as the CRLB for 3D position estimation from $K$ measurements with known receiver orientation.
-The parametric analysis established that: (i)~the bound decreases monotonically with~$K$, reaching 1.72\,cm at $K=9$; (ii)~for known receiver tilt angles below $6^\circ$, the degradation remains below 5\%; and (iii)~the bound follows the theoretical $1/\sqrt{\mathrm{SNR}}$ scaling, with sub-centimeter accuracy achievable at SNR~$\geq 22$\,dB.
+The broadcast position error bound ($\mathrm{PEB}_\mathrm{B}$) was derived as the CRLB for 3D position estimation from $K$ measurements with known receiver orientation. 
+The parametric analysis established that: (i)~for the considered DEB-optimized orientation sets, the bound decreases monotonically with~$K$, reaching 1.72\,cm at $K=9$; (ii)~for known receiver tilt angles below $6^\circ$, the degradation remains below 5\%; and (iii)~the bound follows the theoretical $1/\sqrt{\mathrm{SNR}}$ scaling, with sub-centimeter accuracy achievable at SNR~$\geq 22$\,dB.
 
-Monte Carlo simulations over 1,792 testbed positions confirmed that the NLS direction estimator, combined with the proposed broadcast distance recovery, closely tracks the $\mathrm{PEB}_\mathrm{B}$ (RMSE/$\mathrm{PEB}_\mathrm{B}\approx 1.01$), demonstrating that the two-stage pipeline approaches the CRLB without requiring a joint single-stage optimization.
-A multi-user demonstration showed that three receivers at different heights (0.1, 0.5, and 0.8\,m)---representing a robotic vacuum, a warehouse AGV, and a pedestrian with a smartphone---are simultaneously localized with centimeter-level accuracy from a single $K$-orientation LED scan, without any per-user dedicated measurement or feedback.
+Monte Carlo simulations over 1,792 testbed positions showed that the NLS direction estimator, combined with the proposed broadcast distance recovery, closely tracks the $\mathrm{PEB}_\mathrm{B}$ (RMSE/$\mathrm{PEB}_\mathrm{B}\approx 1.01$), indicating that the two-stage pipeline operates near the CRLB without requiring a joint single-stage optimization.
+A multi-user demonstration showed that three receivers at different heights (0.1, 0.5, and 0.8\,m)---representing a robotic vacuum, a warehouse AGV, and a pedestrian with a handheld receiver---are simultaneously localized with centimeter-level accuracy from a single $K$-orientation LED scan, without any per-user dedicated measurement or feedback.
 
 Future work includes experimental validation with mechanical beam steering, analysis of IMU orientation errors on distance recovery, joint optimization of the orientation set for the broadcast bound (as opposed to the direction-finding bound used herein), and extension to multi-LED configurations for enhanced coverage and redundancy.
 
