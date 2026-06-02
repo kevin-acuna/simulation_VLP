@@ -27,7 +27,7 @@ Email: \{kevin-jose.acuna-condori, bastien.bechadergue, hongyu.guan, luc.chassag
 Beam-steered optical wireless positioning with a single LED and a single photodiode can achieve centimeter-level 3D localization, but existing architectures require a cooperative beam-aligned measurement to recover distance, precluding simultaneous multi-user operation.
 This paper proposes a broadcast architecture that recovers the 3D position from the same $K$ steered-orientation power measurements used for direction finding, by exploiting known receiver orientation.
 We derive the broadcast position error bound (PEB$_\mathrm{B}$)---the Cram\'{e}r--Rao lower bound under $K$ observations with known receiver orientation---and propose a closed-form amplitude estimator that, combined with nonlinear least-squares direction finding, closely tracks the bound in Monte Carlo simulations.
-Simulations show an RMS error of 1.74\,cm with $K{=}9$ orientations and illustrate simultaneous 3D localization of three heterogeneous receivers from a single LED scan.
+Simulations show an RMS error of 1.73\,cm with $K{=}9$ orientations and illustrate simultaneous 3D localization of three heterogeneous receivers from a single LED scan.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -176,7 +176,7 @@ and the complete 3D position estimate is:
 
 \subsubsection{Multi-User Broadcast Operation}
 The $K$-orientation LED scan is performed periodically and independently of the number of receivers.
-Each receiver~$j$ ($j=1,\ldots,N_{\mathrm{rx}}$) independently collects the $K$ power measurements, applies the direction-finding and distance-recovery pipeline described above using its own $\mathbf{n}_{r,j}$ (from its local IMU), and obtains $\hat{\mathbf{r}}_j$ without any dedicated measurement or feedback to the transmitter.
+Each receiver~$j$ ($j=1,\ldots,N_{\mathrm{rx}}$) independently collects the $K$ power measurements, applies the direction-finding and distance-recovery pipeline described above using its own known orientation $\mathbf{n}_{r,j}$, and obtains $\hat{\mathbf{r}}_j$ without any dedicated measurement or feedback to the transmitter.
 This constitutes a fully broadcast positioning architecture: one LED scan serves all receivers simultaneously.
 
 % *******************************************
@@ -347,13 +347,13 @@ Three direction-finding estimators are evaluated---GLS, WLS, and NLS~\cite{Acuna
 \label{subsec:accuracy}
 
 Table~\ref{tab:results} reports the 3D positioning metrics for $K\in\{5,9\}$: root-mean-square error (RMSE), 90th percentile of the error CDF (CDF$_{90\%}$), and average positioning error (APE).
-The NLS estimator achieves a root-mean-square error (RMSE) of 2.48\,cm at $K=5$ and 1.74\,cm at $K=9$, closely tracking the broadcast bound ($\mathrm{PEB}_\mathrm{B}$: 2.49\,cm and 1.72\,cm, respectively).
+The NLS estimator achieves a root-mean-square error (RMSE) of 2.49\,cm at $K=5$ and 1.73\,cm at $K=9$, closely tracking the broadcast bound ($\mathrm{PEB}_\mathrm{B}$: 2.49\,cm and 1.72\,cm, respectively).
 This near-unity ratio ($\mathrm{RMSE}_{\mathrm{NLS}}/\mathrm{PEB}_\mathrm{B}\approx 1.01$) confirms that the two-stage pipeline---NLS direction finding followed by amplitude-based distance recovery~\eqref{eq:eta_hat}--\eqref{eq:d_hat}---closely tracks the $\mathrm{PEB}_\mathrm{B}$.
 This can be attributed to the fact that NLS fits the nonlinear Lambertian power profile directly, whereas GLS and WLS rely on ratio-based linearizations; the more accurate direction estimate provided by NLS yields a more reliable plug-in amplitude estimate~\eqref{eq:eta_hat}, reducing the distance-recovery error.
 
-The GLS estimator exhibits a larger gap: RMSE of 3.98\,cm ($K=5$) and 2.46\,cm ($K=9$), corresponding to factors of 1.60$\times$ and 1.43$\times$ above the bound, respectively.
+The GLS estimator exhibits a larger gap: RMSE of 4.06\,cm ($K=5$) and 2.44\,cm ($K=9$), corresponding to factors of 1.63$\times$ and 1.42$\times$ above the bound, respectively.
 However, GLS admits a closed-form solution via a single $3{\times}3$ eigendecomposition, yielding inference latencies approximately $25\times$ lower than NLS (${\approx}0.025$\,ms vs.\ $0.65$\,ms per estimate~\cite{AcunaTCOM2025})---an advantage for latency-critical applications where moderate accuracy loss is acceptable.
-WLS, a diagonal simplification of GLS, further degrades to 4.87\,cm ($K=5$) and 3.60\,cm ($K=9$).
+WLS, a diagonal simplification of GLS, further degrades to 4.96\,cm ($K=5$) and 3.72\,cm ($K=9$).
 The reversal of the GLS--WLS hierarchy at $K=9$ (WLS becoming worse than GLS) is consistent with the diagonal covariance approximation becoming increasingly suboptimal as the number of off-diagonal cross-correlation terms grows with~$K$.
 
 \begin{table}[t]
@@ -364,14 +364,14 @@ The reversal of the GLS--WLS hierarchy at $K=9$ (WLS becoming worse than GLS) is
 \toprule
 $K$ & Method & RMSE [cm] & CDF$_{90\%}$ [cm] & APE [cm] \\
 \midrule
-5 & GLS   & 3.98 & 5.37 & 2.69 \\
-5 & WLS   & 4.87 & 5.35 & 2.83 \\
-5 & NLS   & 2.48 & 3.79 & 1.99 \\
+5 & GLS   & 4.06 & 5.54 & 2.75 \\
+5 & WLS   & 4.96 & 5.37 & 2.90 \\
+5 & NLS   & 2.49 & 3.78 & 2.02 \\
 5 & $\mathrm{PEB}_\mathrm{B}$ & 2.49 & 3.76 & 2.02 \\
 \midrule
-9 & GLS   & 2.46 & 3.52 & 1.78 \\
-9 & WLS   & 3.60 & 4.72 & 2.36 \\
-9 & NLS   & 1.74 & 2.68 & 1.41 \\
+9 & GLS   & 2.44 & 3.55 & 1.80 \\
+9 & WLS   & 3.72 & 4.84 & 2.41 \\
+9 & NLS   & 1.73 & 2.69 & 1.42 \\
 9 & $\mathrm{PEB}_\mathrm{B}$ & 1.72 & 2.69 & 1.42 \\
 \bottomrule
 \end{tabular}
@@ -383,7 +383,7 @@ All $K=9$ curves stochastically dominate their $K=5$ counterparts, in agreement 
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\linewidth]{../simulations/results/broadcast_MC10/Fig05_CDF_broadcast}
+    \includegraphics[width=0.9\linewidth]{../simulations/results/broadcast_MC1000/Fig05_CDF_broadcast}
     \caption{Empirical CDF of the 3D positioning error for $K=5$ (solid) and $K=9$ (dashed). NLS tracks the $\mathrm{PEB}_\mathrm{B}$ at both operating points; GLS and WLS exhibit structural gaps.}
     \label{fig:cdf}
 \end{figure}
@@ -400,7 +400,7 @@ The three use cases represent heterogeneous indoor localization scenarios at dif
     \item An automated guided vehicle (AGV) in a warehouse setting ($z\approx 0.50$\,m) following an aisle-based path with 90$^\circ$ turns.
 \end{itemize}
 Each receiver independently applies the NLS direction-finding and broadcast distance-recovery pipeline using its known orientation~$\mathbf{n}_r$.
-The estimated positions (star markers) closely overlap the ground-truth waypoints (open markers) across all three heights and trajectory types, with an APE of approximately 1\,cm.
+The estimated positions (star markers) closely overlap the ground-truth waypoints (open markers) across all three heights and trajectory types, with average positioning errors on the order of 1 cm in this illustrative scenario.
 In practice, these waypoints would correspond to successive LED scans; the static model remains valid at each scan provided that $v\,T_{\mathrm{scan}}\ll\epsilon_{\mathrm{pos}}$, where $v$ is the receiver speed, $T_{\mathrm{scan}}$ is the scan duration, and $\epsilon_{\mathrm{pos}}$ is the target positioning accuracy---a condition expected to hold for typical indoor speeds with fast beam-steering mechanisms~\cite{Liu:25}.
 
 \begin{figure}[t]
@@ -416,7 +416,7 @@ In practice, these waypoints would correspond to successive LED scans; the stati
 % *******************************************
 
 This paper introduced a broadcast beam-steered OWP architecture that achieves 3D indoor localization using only the $K$ steered-orientation power measurements, without the cooperative beam-aligned measurement required by prior work.
-The key enabler is the recovery of the transmitter--receiver distance from the absolute power levels via a closed-form amplitude estimator derived from the profiled Gaussian likelihood, combined with the receiver orientation provided by an IMU.
+The key enabler is the recovery of the transmitter--receiver distance from the absolute power levels via a closed-form amplitude estimator derived from the profiled Gaussian likelihood, combined with known receiver orientation.
 
 The broadcast position error bound ($\mathrm{PEB}_\mathrm{B}$) was derived as the CRLB for 3D position estimation from $K$ measurements with known receiver orientation.
 The parametric analysis established that: (i)~the bound decreases monotonically with~$K$, reaching 1.72\,cm at $K=9$; (ii)~for known receiver tilt angles below $6^\circ$, the degradation remains below 5\%; and (iii)~the bound follows the theoretical $1/\sqrt{\mathrm{SNR}}$ scaling, with sub-centimeter accuracy achievable at SNR~$\geq 22$\,dB.
