@@ -308,7 +308,7 @@ For each~$\theta_{\mathrm{tilt}}$, the RMS-$\mathrm{PEB}_\mathrm{B}$ is computed
 
 For moderate tilt angles ($\theta_{\mathrm{tilt}}\leq 6^\circ$), the degradation remains below 5\% for all~$K$. Since the bound assumes perfect knowledge of~$\mathbf{n}_r$, this result indicates that receivers with small physical tilt incur negligible performance loss; the separate question of IMU orientation error is left to future experimental work.
 Beyond $\theta_{\mathrm{tilt}}=15^\circ$, the degradation accelerates, reaching a factor of ${\approx}3\times$ at $\theta_{\mathrm{tilt}}=30^\circ$ for $K=5$.
-This acceleration is driven by two mechanisms: (i)~the reduced incidence cosine ($\cos\psi<1$) diminishes the received power and thus the SNR at every position, and (ii)~at large tilt angles, peripheral receiver positions fall outside the effective field of view ($\psi>\Psi_{\mathrm{FOV}}$), causing a loss of signal and a sharp increase in the local bound.
+This acceleration is driven by two mechanisms: (i)~the tilt modifies the incidence cosine and, when averaged over tilt azimuths, generally reduces the effective received power and SNR; and (ii)~at large tilt angles, peripheral receiver positions fall outside the field of view ($\psi>\Psi_{\mathrm{FOV}}$), causing a loss of signal and a sharp increase in the local bound.
 Increasing~$K$ mitigates the degradation: at $\theta_{\mathrm{tilt}}=30^\circ$, $K=9$ limits the RMS-$\mathrm{PEB}_\mathrm{B}$ to approximately 5.1\,cm and $K=15$ to 4.0\,cm, compared to 8.0\,cm for $K=5$, as the additional orientations provide redundant measurements that compensate for the reduced SNR.
 
 \begin{figure}[t]
@@ -348,7 +348,7 @@ Three direction-finding estimators are evaluated---GLS, WLS, and NLS~\cite{Acuna
 
 Table~\ref{tab:results} reports the 3D positioning metrics for $K\in\{5,9\}$: root-mean-square error (RMSE), 90th percentile of the error CDF (CDF$_{90\%}$), and average positioning error (APE).
 The NLS estimator achieves a root-mean-square error (RMSE) of 2.49\,cm at $K=5$ and 1.73\,cm at $K=9$, closely tracking the broadcast bound ($\mathrm{PEB}_\mathrm{B}$: 2.49\,cm and 1.72\,cm, respectively).
-This near-unity ratio ($\mathrm{RMSE}_{\mathrm{NLS}}/\mathrm{PEB}_\mathrm{B}\approx 1.01$) confirms that the two-stage pipeline---NLS direction finding followed by amplitude-based distance recovery~\eqref{eq:eta_hat}--\eqref{eq:d_hat}---closely tracks the $\mathrm{PEB}_\mathrm{B}$.
+This near-unity ratio ($\mathrm{RMSE}_{\mathrm{NLS}}/\mathrm{PEB}_\mathrm{B}\approx 1.01$) indicates that the two-stage pipeline---NLS direction finding followed by amplitude-based distance recovery~\eqref{eq:eta_hat}--\eqref{eq:d_hat}---closely tracks the $\mathrm{PEB}_\mathrm{B}$.
 This can be attributed to the fact that NLS fits the nonlinear Lambertian power profile directly, whereas GLS and WLS rely on ratio-based linearizations; the more accurate direction estimate provided by NLS yields a more reliable plug-in amplitude estimate~\eqref{eq:eta_hat}, reducing the distance-recovery error.
 
 The GLS estimator exhibits a larger gap: RMSE of 4.06\,cm ($K=5$) and 2.44\,cm ($K=9$), corresponding to factors of 1.63$\times$ and 1.42$\times$ above the bound, respectively.
@@ -358,7 +358,7 @@ The reversal of the GLS--WLS hierarchy at $K=9$ (WLS becoming worse than GLS) is
 
 \begin{table}[t]
 \centering
-\caption{Broadcast 3D positioning performance ($M{=}1{,}000$ MC trials, $|\mathcal{R}|{=}1{,}792$ positions, $\mathbf{n}_r{=}[0,0,1]^{\mathsf T}$).}
+\caption{Broadcast 3D positioning performance ($M{=}1{,}000$ MC trials per position, $|\mathcal{R}|{=}1{,}792$ positions, $\mathbf{n}_r{=}[0,0,1]^{\mathsf T}$).}
 \label{tab:results}
 \begin{tabular}{clccc}
 \toprule
@@ -377,14 +377,14 @@ $K$ & Method & RMSE [cm] & CDF$_{90\%}$ [cm] & APE [cm] \\
 \end{tabular}
 \end{table}
 
-Figure~\ref{fig:cdf} presents the empirical cumulative distribution function (CDF) of the per-position RMSE for all estimators at $K=5$ (solid lines) and $K=9$ (dashed lines).
-For $K=9$, the NLS curve is virtually indistinguishable from the $\mathrm{PEB}_\mathrm{B}$ across the entire distribution, confirming that the estimator tracks the bound uniformly over the testbed.
+Figure~\ref{fig:cdf} presents the empirical CDF of the per-position RMSE (computed over $M$ trials at each position) for all estimators at $K=5$ (solid lines) and $K=9$ (dashed lines).
+For $K=9$, the NLS curve is virtually indistinguishable from the $\mathrm{PEB}_\mathrm{B}$ distribution, indicating that the estimator closely tracks the bound over the considered testbed.
 All $K=9$ curves stochastically dominate their $K=5$ counterparts, in agreement with the monotonic improvement predicted by the bound analysis of Section~\ref{subsec:effect_K}.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.9\linewidth]{../simulations/results/broadcast_MC1000/Fig05_CDF_broadcast}
-    \caption{Empirical CDF of the 3D positioning error for $K=5$ (solid) and $K=9$ (dashed). NLS tracks the $\mathrm{PEB}_\mathrm{B}$ at both operating points; GLS and WLS exhibit structural gaps.}
+    \caption{Empirical CDF of the per-position 3D RMSE for $K=5$ (solid) and $K=9$ (dashed). NLS tracks $\mathrm{PEB}_\mathrm{B}$ at both operating points; GLS and WLS exhibit structural gaps.}
     \label{fig:cdf}
 \end{figure}
 
