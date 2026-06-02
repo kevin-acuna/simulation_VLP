@@ -64,42 +64,49 @@ for ik = 1:nP
         sqrt(mean(valid.^2))*100, mean(valid)*100, prctile(valid,90)*100);
 end
 
-%% Figure: side-by-side heatmaps
-fig = figure('Units','inches', 'Position',[0.5 0.5 7.16 3.0], 'Color', 'w');
+%% Figure: one separate figure per K value
+cmap = parula(256);
 
-% Common color scale
+% Common color scale (shared between both panels for fair visual comparison)
 all_valid = cellfun(@(g) g(isfinite(g)), PEB_grids, 'UniformOutput', false);
 cmax = min(prctile(vertcat(all_valid{:})*100, 98), 10);  % Cap at 10 cm or p98
-
-for ik = 1:nP
-    subplot(1, nP, ik);
-    imagesc(x_range*100, y_range*100, PEB_grids{ik}*100);
-    set(gca, 'YDir', 'normal');
-    caxis([0 cmax]);
-    colormap(gca, 'jet');
-    cb = colorbar;
-    ylabel(cb, '[cm]', 'Interpreter', 'latex');
-    axis equal tight;
-    hold on;
-    plot(0, 0, 'w.', 'MarkerSize', 10);
-    
-    xlabel('$x$ [cm]', 'Interpreter', 'latex', 'FontSize', 10);
-    ylabel('$y$ [cm]', 'Interpreter', 'latex', 'FontSize', 10);
-    title(sprintf('$\\mathrm{PEB}_\\mathrm{B}$, $K{=}%d$', K_panels(ik)), ...
-        'Interpreter', 'latex', 'FontSize', 11);
-    set(gca, 'FontSize', 8);
-end
-
-sgtitle(sprintf('Broadcast PEB at $z{=}%.1f$ m ($\\Phi_{1/2}{=}%d^\\circ$, $\\mathbf{n}_r{=}[0,0,1]^T$)', ...
-    z_analysis, theta_half), 'Interpreter', 'latex', 'FontSize', 12);
 
 %% Save
 results_dir = fullfile(pwd, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 
-if SAVE_FIGS
-    exportgraphics(fig, fullfile(results_dir, 'Fig01_PEB_B_heatmap.pdf'), 'ContentType','vector','BackgroundColor','white');
-    exportgraphics(fig, fullfile(results_dir, 'Fig01_PEB_B_heatmap.png'), 'Resolution',600,'BackgroundColor','white');
-    exportgraphics(fig, fullfile(results_dir, 'Fig01_PEB_B_heatmap.eps'), 'ContentType','vector','BackgroundColor','white');
-    fprintf('Heatmap saved (pdf/png/eps)\n');
+for ik = 1:nP
+    K = K_panels(ik);
+    
+    fig = figure('Units','inches', 'Position',[0.5 0.5 1.75 2.0], 'Color', 'w');
+    ax  = axes(fig);
+    
+    imagesc(ax, x_range*100, y_range*100, PEB_grids{ik}*100);
+    set(ax, 'YDir', 'normal');
+    clim(ax, [0, cmax]);
+    colormap(ax, cmap);
+    axis(ax, 'equal', 'tight');
+    hold(ax, 'on');
+    plot(ax, 0, 0, 'w*', 'MarkerSize', 6, 'LineWidth', 1.2);
+    hold(ax, 'off');
+    
+    cb = colorbar(ax, 'Location', 'eastoutside');
+    cb.Label.String      = '$\mathrm{PEB}_\mathrm{B}$ [cm]';
+    cb.Label.Interpreter = 'latex';
+    cb.Label.FontSize    = 7;
+    set(cb, 'FontName', 'Times New Roman', 'FontSize', 6, 'TickLabelInterpreter', 'latex');
+    
+    xlabel(ax, '$x$ [cm]', 'Interpreter', 'latex', 'FontSize', 8);
+    ylabel(ax, '$y$ [cm]', 'Interpreter', 'latex', 'FontSize', 8);
+    set(ax, 'FontName', 'Times New Roman', 'FontSize', 7, ...
+        'TickLabelInterpreter', 'latex', 'Box', 'on', 'LineWidth', 0.5, ...
+        'XTick', [-150 0 150], 'YTick', [-150 0 150]);
+    
+    if SAVE_FIGS
+        fig_name = sprintf('Fig01_PEB_B_heatmap_K%d', K);
+        exportgraphics(fig, fullfile(results_dir, [fig_name '.pdf']), 'ContentType','vector','BackgroundColor','white');
+        exportgraphics(fig, fullfile(results_dir, [fig_name '.png']), 'Resolution',600,'BackgroundColor','white');
+        exportgraphics(fig, fullfile(results_dir, [fig_name '.eps']), 'ContentType','vector','BackgroundColor','white');
+        fprintf('Heatmap K=%d saved (pdf/png/eps)\n', K);
+    end
 end

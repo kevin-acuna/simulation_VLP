@@ -36,7 +36,7 @@ system_params_F;
 % =========================================================================
 % HYPERPARAMETERS
 % =========================================================================
-K_sweep            = [5,7,9];          % K values to evaluate
+K_sweep            = [5,7,9,15];          % K values to evaluate
 theta_tilt_range   = 0:3:30;         % Tilt angles [deg]
 N_az               = 36;              % Azimut samples (every 10°)
 spatial_metric     = 'rms';           % 'rms', 'mean', 'median', 'cdf90'
@@ -163,8 +163,6 @@ end
 
 xlabel('Receiver tilt $\theta_{\mathrm{tilt}}$ [$^\circ$]', 'Interpreter', 'latex');
 ylabel(sprintf('%s $\\mathrm{PEB}_\\mathrm{B}$ [cm]', metric_label), 'Interpreter', 'latex');
-title(sprintf('Broadcast PEB vs Receiver Tilt ($\\Phi_{1/2}{=}%d^\\circ$, DEB-opt., 3D testbed)', ...
-    theta_half), 'Interpreter', 'latex');
 legend(arrayfun(@(k) sprintf('$K{=}%d$', k), K_sweep, 'UniformOutput', false), ...
     'Interpreter', 'latex', 'FontSize', 6, 'Location', 'northwest');
 grid on; box on;

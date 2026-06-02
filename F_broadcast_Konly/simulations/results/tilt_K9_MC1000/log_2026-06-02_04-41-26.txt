@@ -1,0 +1,24 @@
+============================================================
+BROADCAST MC — TILT COMPARISON (K=9)
+Tilts: [0  10  20] deg | N_az=12 | M=1000 | N_pos=1792
+============================================================
+
+
+>>> Tilt = 0 deg
+  az=  0 deg ... {Operation terminated by user during <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('parallel.internal.parfor.ParforEngine/getCompleteIntervals', 'C:\Program Files\MATLAB\R2026a\toolbox\parallel\cluster\+parallel\+internal\+parfor\ParforEngine.m', 209)" style="font-weight:bold">parallel.internal.parfor.ParforEngine/getCompleteIntervals</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2026a\toolbox\parallel\cluster\+parallel\+internal\+parfor\ParforEngine.m',209,0)">line 209</a>)
+
+
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('parallel_function>distributed_execution', 'C:\Program Files\MATLAB\R2026a\toolbox\matlab\lang\parallel_function.m', 711)" style="font-weight:bold">parallel_function>distributed_execution</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2026a\toolbox\matlab\lang\parallel_function.m',711,0)">line 711</a>)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('parallel_function', 'C:\Program Files\MATLAB\R2026a\toolbox\matlab\lang\parallel_function.m', 543)" style="font-weight:bold">parallel_function</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2026a\toolbox\matlab\lang\parallel_function.m',543,0)">line 543</a>)
+    R = distributed_execution(...
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('sim09_MC_broadcast_tilt', 'C:\Users\Owner\Documents\UVSQ\simulation_VLP\F_broadcast_Konly\simulations\sim09_MC_broadcast_tilt.m', 112)" style="font-weight:bold">sim09_MC_broadcast_tilt</a> (<a href="matlab: opentoline('C:\Users\Owner\Documents\UVSQ\simulation_VLP\F_broadcast_Konly\simulations\sim09_MC_broadcast_tilt.m',112,0)">line 112</a>)
+        parfor ip = 1:N_pos
+        ^
+} 
+sim05_MC_broadcast
+Setting up parallel pool...
+Using 6 parallel workers.
+

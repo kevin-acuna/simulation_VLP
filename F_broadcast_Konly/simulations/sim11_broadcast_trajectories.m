@@ -109,8 +109,8 @@ for iu = 1:N_users
     
     estimates{iu} = est_pos;
     errors{iu}    = err_pos;
-    fprintf('  User %d: mean error = %.2f cm, max = %.2f cm\n', ...
-        iu, mean(err_pos)*100, max(err_pos)*100);
+    fprintf('  User %d: RMSE = %.2f cm, CDF90 = %.2f cm, APE = %.2f cm\n', ...
+        iu, sqrt(mean(err_pos.^2))*100, prctile(err_pos*100, 90), mean(err_pos)*100);
 end
 
 %% ===== MAIN FIGURE: 3D Trajectory Estimation =====
@@ -197,9 +197,6 @@ plot3(T(1), T(2), T(3), '.', 'MarkerSize', 15, 'Color', [0.3 0.3 0.3], ...
 xlabel('$x$ [m]', 'Interpreter','latex', 'FontSize', 12);
 ylabel('$y$ [m]', 'Interpreter','latex', 'FontSize', 12);
 zlabel('$z$ [m]', 'Interpreter','latex', 'FontSize', 12);
-title(sprintf(['Broadcast 3D Positioning: %d Simultaneous Users\n' ...
-    '($K{=}%d$, %s, $\\mathbf{n}_r{=}[0,0,1]^T$)'], N_users, K_fixed, show_est), ...
-    'Interpreter','latex', 'FontSize', 13);
 
 legend(leg_h, leg_l, 'Interpreter','latex', 'FontSize', 8, ...
     'Location','northeast', 'NumColumns', 1);
@@ -276,15 +273,14 @@ if SAVE_FIGS
 end
 
 %% Print summary
+all_err = cell2mat(cellfun(@(e) e*100, errors, 'UniformOutput', false));
 fprintf('\n=== BROADCAST TRAJECTORY SUMMARY (K=%d, %s) ===\n', K_fixed, show_est);
-fprintf('%-8s %10s %10s %10s\n', 'User', 'Mean[cm]', 'Max[cm]', 'Std[cm]');
+fprintf('%-8s %10s %12s %10s\n', 'User', 'RMSE[cm]', 'CDF_90[cm]', 'APE[cm]');
 for iu = 1:N_users
     e = errors{iu}*100;
-    fprintf('%-8d %10.2f %10.2f %10.2f\n', iu, mean(e), max(e), std(e));
+    fprintf('%-8d %10.2f %12.2f %10.2f\n', iu, sqrt(mean(e.^2)), prctile(e, 90), mean(e));
 end
-fprintf('%-8s %10.2f %10.2f %10.2f\n', 'ALL', ...
-    mean(cellfun(@(e) mean(e*100), errors)), ...
-    max(cellfun(@(e) max(e*100), errors)), ...
-    std(cell2mat(cellfun(@(e) e*100, errors, 'UniformOutput',false))));
+fprintf('%-8s %10.2f %12.2f %10.2f\n', 'ALL', ...
+    sqrt(mean(all_err.^2)), prctile(all_err, 90), mean(all_err));
 
 fprintf('\nFigure saved.\n');

@@ -139,17 +139,29 @@ plot(SNR_dB, peb_kmin, ':', 'Color', c_peb*0.7, 'LineWidth', 0.8, ...
 plot(SNR_dB, peb_kmax, ':', 'Color', c_peb*0.7, 'LineWidth', 0.8, ...
     'HandleVisibility', 'off');
 
+% Diagonal edge labels (placed after YScale=log so log-space offsets are correct)
+% Deferred — see block after set(ax,'YScale','log')
+
 % Bold highlight curve
 h_hl = plot(SNR_dB, peb_hl, '-o', 'Color', c_peb, ...
     'MarkerFaceColor', c_peb, 'LineWidth', 1.0, 'MarkerSize', 3.5);
 
 % Formatting
 set(ax, 'YScale', 'log');
+
+% Diagonal text labels: K=5 (top edge) and K=15 (bottom edge)
+% Placed at SNR=5 dB; rotation matches visual log-y slope (~-38 deg)
+snr_txt = 40;  % [dB]
+i_txt   = find(SNR_dB == snr_txt, 1);
+text(snr_txt, peb_kmin(i_txt) * 1.35, '$K{=}5$', ...
+    'Interpreter', 'latex', 'FontSize', 6.5, 'Color', c_peb*0.7, ...
+    'Rotation', -38, 'HorizontalAlignment', 'center');
+text(snr_txt-4, peb_kmax(i_txt) * 1.1, '$K{=}15$', ...
+    'Interpreter', 'latex', 'FontSize', 6.5, 'Color', c_peb*0.7, ...
+    'Rotation', -38, 'HorizontalAlignment', 'center');
 xlabel('SNR [dB]', 'Interpreter', 'latex', 'FontSize', 11);
 ylabel(sprintf('%s-$\\mathrm{PEB}_\\mathrm{B}$ [cm]', metric_lbl), ...
     'Interpreter', 'latex', 'FontSize', 11);
-title(sprintf('Broadcast PEB vs SNR ($\\Phi_{1/2}{=}%d^\\circ$, $\\mathbf{n}_r{=}[0,0,1]^T$, DEB-opt.)', ...
-    theta_half), 'Interpreter', 'latex', 'FontSize', 12);
 grid on; grid minor;
 xlim([SNR_dB(1), SNR_dB(end)]);
 set(ax, 'FontSize', 7, 'Box', 'on', 'LineWidth', 0.5);
@@ -172,7 +184,7 @@ h_band_proxy = patch(NaN, NaN, c_peb, 'FaceAlpha', 0.18, 'EdgeColor', 'none');
 legend([h_hl, h_band_proxy], ...
     {sprintf('$\\mathrm{PEB}_\\mathrm{B}$, $K{=}%d$', K_HIGHLIGHT), ...
      sprintf('$\\mathrm{PEB}_\\mathrm{B}$ band, $K{\\in}[%d,%d]$', min(K_VALUES), max(K_VALUES))}, ...
-    'Interpreter', 'latex', 'Location', 'northeast', 'FontSize', 9);
+    'Interpreter', 'latex', 'Location', 'northeast', 'FontSize', 7);
 
 hold(ax, 'off');
 

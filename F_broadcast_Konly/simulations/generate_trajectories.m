@@ -42,7 +42,7 @@ z1 = 0.10 + 0.002*randn(N_steps,1);
 x1=max(min(x1,L/2-0.05),-L/2+0.05); y1=max(min(y1,W/2-0.05),-W/2+0.05); z1=max(z1,0.02);
 
 traj_true{1} = [x1, y1, z1];
-traj_info{1} = struct('z_mean',0.10, 'label','U1: Robot vacuum ($z{\approx}0.10$ m)', 'type','vacuum');
+traj_info{1} = struct('z_mean',0.10, 'label','U1: Robot vacuum ($z{\approx}0.10$ m)', 'type','Vacuum');
 
 %% ===== U2: Pedestrian with Smartphone — Random walk at z ~ 0.80 m =====
 Nwp = 10;  gait_f = 1.8;
@@ -59,7 +59,7 @@ z2 = 0.80 + 0.025*abs(sin(2*pi*gait_f*t_fine)) + 0.01*randn(N_steps,1);
 x2=max(min(x2,L/2-0.05),-L/2+0.05); y2=max(min(y2,W/2-0.05),-W/2+0.05); z2=max(min(z2,1.2),0.3);
 
 traj_true{2} = [x2, y2, z2];
-traj_info{2} = struct('z_mean',0.80, 'label','U2: Pedestrian, smartphone ($z{\approx}0.80$ m)', 'type','pedestrian');
+traj_info{2} = struct('z_mean',0.80, 'label','U2: Pedestrian, smartphone ($z{\approx}0.80$ m)', 'type','Pedestrian');
 
 %% ===== U3: Warehouse AGV — Aisle pattern at z ~ 0.50 m =====
 wp3 = [-1.0,-1.2; -1.0,1.0; -0.3,1.0; -0.3,-1.0; 0.4,-1.0; 0.4,1.0; 1.1,1.0; 1.1,-0.5];
@@ -70,7 +70,7 @@ z3 = 0.50 + 0.003*randn(N_steps,1);
 x3=max(min(x3,L/2-0.05),-L/2+0.05); y3=max(min(y3,W/2-0.05),-W/2+0.05); z3=max(z3,0.2);
 
 traj_true{3} = [x3, y3, z3];
-traj_info{3} = struct('z_mean',0.50, 'label','U3: Warehouse AGV ($z{\approx}0.50$ m)', 'type','agv');
+traj_info{3} = struct('z_mean',0.50, 'label','U3: Warehouse AGV ($z{\approx}0.50$ m)', 'type','AGV');
 
 %% ===== Visualization =====
 figure('Position', [100,100,900,650], 'Color', 'w');

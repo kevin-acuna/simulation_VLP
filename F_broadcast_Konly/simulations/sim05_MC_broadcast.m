@@ -24,7 +24,7 @@ addpath(fullfile(fileparts(pwd), '..\','fundamentals', 'core'));
 % =========================================================================
 rng(42);
 TEST_MODE  = false;      % true = coarse grid for debugging
-M_trials   = 10;         % Monte Carlo trials per position
+M_trials   = 1000;         % Monte Carlo trials per position
 K_sweep    = [5, 9];     % K values to compare in one CDF
 save_files = false;
 SAVE_FIGS  = true;       % Export figures in IEEE format (pdf/png/eps)
