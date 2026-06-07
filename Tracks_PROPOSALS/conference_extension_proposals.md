@@ -170,54 +170,72 @@ El paper presenta una arquitectura OWP con un solo LED beam-steered y un solo PD
 | **M** 🤖⚡ | **L** (simulador Python como dominio origen); E independiente, no requerido | Pasantía Cambridge (3 meses) | ⚠️ Necesita L primero + pasantía |
 | **E** | Solo TCOM | — | ✅ Sí (más esfuerzo) |
 
-#### Orden de ejecución recomendado (actualizado 26 Mayo 2026)
+#### Orden de ejecución recomendado (actualizado 2 Junio 2026)
 
 ```
-⭐ PIPELINE PRIORITARIO (lo más directo — hacer PRIMERO):
-  1. F (simulación)     [K-only distance recovery → GLOBECOM WS, deadline 12 Ago]
-  2. V (experimental)   [TCOM+F validado + R(φ) calibrado → Journal (TCOM/JLT)]
-     └→ F y V comparten framework; V extiende GLOBECOM a journal
-     └→ Testbed ya disponible; R(φ) se mide con el mismo setup
-  3. H (experimental)   [Beam tracking con Pseudo-Quad TX → Journal o ICC/WCNC 2027]
-     └→ Reutiliza mismo testbed + gimbal de V
-     └→ Extiende DF (V) a tracking dinámico: acquisition → tracking mode
+✅ COMPLETADO:
+  1. F (simulación)     [Broadcast K-only → paper listo, target GLOBECOM WS 12 Ago]
 
-PARALELO (iniciar cuando pipeline F→V esté encaminado):
-  L 🤖              [RL adaptativo: Python puro, ICASSP 2027, alta visibilidad ML]
-  A ⚡              [LiFi dongle + gimbal → ISAC experimental, alto impacto]
+⭐ PIPELINE PRIORITARIO (siguiente):
+  2. H (experimental)   [Beam tracking: D-F acquisition → fine tracking → reacquisition]
+     └→ Reutiliza testbed + gimbal
+     └→ Target: ICC/WCNC 2027 o GLOBECOM WS
+  3. V (experimental)   [TCOM+F+GLOBECOM validado + R(φ) calibrado → Journal (TCOM/JLT)]
+     └→ Extensión journal del pipeline F→experimental
+     └→ Incluye NLS con patrón real (no-Lambertiano)
+
+PARALELO (trabajos de simulación):
+  NL-general         [Patrones no-Lambertianos: framework teórico + estimadores]
+     └→ Impacto: analiza qué pasa cuando R(φ) ≠ cos^m(φ)
+     └→ Aplicable a LEDs comerciales genéricos
+  VCSEL              [VCSEL como fuente beam-steered: patrón gaussiano, divergencia estrecha]
+     └→ Diferente de NL-general: es un caso específico con ventajas intrínsecas
+     └→ Muy topical en 6G/OWC
 
 MEDIO PLAZO:
-  J               [teoría NL general: companion teórico profundo de V]
-  K ⚡            [múltiples gimbals → multi-LED experimental, muy novedoso]
-  I               [dos etapas: puede validarse con testbed]
-  G               [observabilidad ML: complemento de F, bajo esfuerzo]
+  A ⚡              [LiFi dongle + gimbal → ISAC experimental, alto impacto]
+  K ⚡              [múltiples gimbals → multi-LED experimental]
+  L 🤖              [RL adaptativo: Python puro, ICASSP 2027]
 
 CAMBRIDGE (durante pasantía):
-  M 🤖⚡         [TL + prior físico + co-authorship Haas → JSAC]
+  M 🤖⚡           [TL + prior físico + co-authorship Haas → JSAC]
 
 OPCIONAL / LARGO PLAZO:
-  D, E, N
+  D, E, G, I, N
 ```
 
-**Mapa de dependencias visual (revisado):**
+**Mapa de dependencias visual (actualizado 2 Junio 2026):**
 
 ```
-               TCOM + GLOBECOM (enviado)
-                 |          \
-                 F           A ⚡
+               TCOM + ICC (enviados/presentados)
                  |
-                 V ⚡⭐
+                 F ✅ (paper listo → GLOBECOM WS 12 Ago)
                  |
-                 H ⚡        [tracking = extensión natural de V]
-                /|\
-               / | \
-              D  K  (informa J, C como journals más profundos)
-                 |
-              J + C ⚡ (companion teórico + experimental avanzado)
+            ┌────┼────┐
+            H    V    NL-general / VCSEL
+            |    |
+    (tracking)  (journal: TCOM+F+exp+NL)
+            |
+            A ⚡ (ISAC experimental)
 
-  Independientes: L 🤖, G, I, E, N
+  Paralelo: L 🤖 (RL, ICASSP), K ⚡ (multi-LED)
   Cambridge: M (requiere L)
+  Opcional: D, E, G, I, N
 ```
+
+**Correspondencia Pensamiento.txt → Propuestas:**
+
+| # Pensamiento | Tema | Propuesta(s) | Estado |
+|:---:|---|---|---|
+| 1 | Beamsteering tracking | **H** | Arquitectura definida en Beam-Tracking.md |
+| 2 | VCSEL | **VCSEL** (nuevo, específico) | Por crear — caso con patrón gaussiano/estrecho |
+| 3 | Patrones no-Lambertianos | **NL-general** (= antiguo J+C combinado) | Framework teórico + experimental |
+| 4 | Demo experimental TCOM+F+NLS | **V** (journal) | Pipeline F→V→experimental |
+
+**Nota sobre NL-general vs VCSEL:**
+- **NL-general**: framework teórico para R(φ) arbitrario. Aplica a LEDs comerciales, liquid lenses, cualquier fuente. Contribución: bounds generalizados + NLS con R_spline. Aquí GLS falla fundamentalmente (demostrable).
+- **VCSEL**: caso específico de fuente beam-steered con patrón gaussiano estrecho. Ventajas intrínsecas: mayor directividad → mejor SNR, menos sensitivity a tilt, compatible con WDM. Contribución diferente: análisis de sistema + comparativa con LED Lambertiano.
+- Son papers separados porque el VCSEL tiene motivación y discusión propias (6G, data center OWC, eye safety), mientras que NL-general es un framework matemático.
 
 #### Impacto vs. esfuerzo (con hardware disponible)
 

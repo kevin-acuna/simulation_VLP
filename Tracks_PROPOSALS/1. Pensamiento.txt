@@ -1,0 +1,55 @@
+[12:16, 1/6/2026] Kevin: 1. Beamsteering tracking
+[12:17, 1/6/2026] Kevin: 2. VCSEL
+                         3. Como tratar con patrones no lambertianos.
+[12:17, 1/6/2026] Kevin: 4. Demo experimental de TCOM + F + NLS.
+
+
+[MAPA DE TRABAJO]
+1. PRESENTAR F_BROADCAST_K_ONLY (FINALIZADO)
+--- COMENTARIO: UNIFORMIZAR MARCO DE TRABAJO R(PHI)=...
+https://chatgpt.com/c/6a1e109c-d7dc-832d-a125-7b6a6a62a263
+
+2. TRABAJAR CON VCSEL TEORICO PARA ESTIMACION DE POSICION 3D: Beam-Steered Optical Wireless Positioning with Non-Monotonic VCSEL Radiation Patterns
+
+2.1. Primer paper: VCSEL Gaussiano para OWP sparse/beam-steered, con bounds y codebook design.
+
+[CONCLUSION] Empezar el problema con VCSEL con un solo VCSEL Similar a TCOM/F_broadcast. El desafio inicial es el nuevo modelo,
+diseñar el FIM, considerar la divergencia del haz y su impacto en la precisión de posicionamiento. Ver que soluciones hay porque 
+si se hace muy grande entonces se pierde la ventaja de SNR , pero si es muy confinado se requieren mas K.
+
+"""https://chatgpt.com/c/6a1e109c-d7dc-832d-a125-7b6a6a62a263
+Un solo VCSEL primero: me parece la ruta correcta
+Yo empezaría con single VCSEL beam-steered / sparse scan, no con array. Razones:
+Está mucho más cerca de tu TCOM y broadcast paper.
+Puedes reutilizar FIM, PEB, NLS y codebook design.
+Te permite aislar la pregunta científica: ¿qué cambia cuando el patrón ya no es Lambertiano?
+Puedes comparar contra dense scanning VCSEL.
+No dependes de calibrar 225 emisores ni de modelar interferencia entre beams.
+El paper no debe ser simplemente “TCOM con una Gaussiana”. Para que sea publicable, el foco debe ser:
+sparse RSS-based positioning with a Gaussian VCSEL beam: !!![[[ divergence–coverage–accuracy–latency ]]]!!! trade-off.
+"""
+Esta idea: Array con elementos pre-orientados o direccionables ?? Interesante, osea podemos plantear en teoria un escenario con pre-orientados.
+
+    [COMENTARIO] El problema es que esto seria basicamente el TCOM pero con R(phi)= Gaussiano. Una variación interesante es considerar el
+    array de VCSEL como el paper de CAMBRIDGE. Y con ello se añade una variable más y se puede trabajar.
+    Enfatiza array/source selection, divergence y sparse scan.
+    
+     --- Sparse RSS-Based 3D Positioning with Gaussian VCSEL Arrays: Bounds, Source Selection, and Divergence Trade-offs
+2.2. Segundo paper: VCSEL no-Gaussiano/pattern-aware con ambigüedad global.
+2.3. Si hay colaboración: tercer paper experimental con patrón medido.
+
+
+3. [JOURNAL] TRABAJAR LA GENERALIZACION EN PATRONES NO-LAMBERTIANOS 
+3.1. Beam-Steered OWP with Arbitrary Radiation Patterns
+    Ahí el Gaussiano aparece como un caso particular, y el paper general incluye:
+    Gaussian VCSEL;
+    batwing/flat-top;
+    measured/spline;
+    NLS calibrado;
+    m_eff;
+    mismatch bias;
+    distancia broadcast.
+
+--- COMENTARIO: UNIFORMIZAR MARCO DE TRABAJO R(PHI)=...
+4. EN PARALELO HACER EL PAPER EXPERIMENTAL.
+5. PAPER DE PINN MACHINE LEARNING. EVALUAR DONDE.
