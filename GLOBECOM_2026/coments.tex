@@ -1,0 +1,23 @@
+
+
+
+% El testbed para la validación experimental de la estimación en 3D es de dimensiones 2.8m x 2.8m x 2m. Para el registro de muestras se considero una altura del receptor máxima de 1.2m y minima de 0.4m, un grillado 3D con separacion de grid 0.2m entre muestras haciendo un total de 1125 muestras. Se eligieron 300 de este universo de muestras para este estudio.
+% El transmisor SBL se posiciona en el centro ubicado en [0,0,2]m, este esta compuesto de un LED IR LZ1-00R702 fijo sobre una base ubicada en el centro del mecanismo gimbal. El LED se encuentra ubicado en la intesección de los ejes de rotación del gimbal para asegurar una rotación pura. El sistema gimbal se basa en 2 motores Thorlabs PRM1Z8 units, de rotación controlable; montado sobre una estructura de perfil de aluminio. El receptor es a silicon PIN PD BPX61 montado en una PCB (compuesta por dos OPAM: TIA + Amplificador) se ubica en el end-effector de un robot 6-DOF Universal Robots UR5 collaborative arm; en todo momento el receptor esta conectado a una DAQ que registra a 1Khz las señales que llegan al receptor. El procedimiento para el registro es el siguiente para cada posición 3D a registrar: el brazo robotico posiciona el PD del receptor, con el LED encendido el gimbal se reorienta cada una de las K=9 orientaciones, en cada orientación la DAQ registra 1000 muestras (1seg de muestreo), se computa el promedio de estas 1K samples de cada orientación y se registra en una base de datos.
+
+
+
+
+
+
+[ubicacion]
+Final de 3D Robotic Testbed Configuration
+
+
+Fig.~\ref{fig:voltage_samples_3d} depicts a representative example of the recorded voltage traces at one receiver location. The nine plateaus correspond to the sequential steering orientations of the SBL transmitter, while the fluctuations within each plateau reflect the measurement noise and residual hardware variability. These averaged measurements constitute the input to the 3D positioning model and, more importantly, enable us to directly assess the mismatch between the ideal Lambertian assumption and the actual behavior of the commercial emitter.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{Fig_GLOBECOM/voltage_samples.png}
+    \caption{Representative voltage samples recorded at one 3D receiver position during the sequential acquisition of the $K=9$ steering orientations. Each plateau corresponds to one transmitter orientation, and the intra-plateau fluctuations capture measurement noise and residual hardware variability.}
+    \label{fig:voltage_samples_3d}
+\end{figure}

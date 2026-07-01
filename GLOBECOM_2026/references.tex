@@ -1,0 +1,469 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{tabularx}
+\usepackage{gensymb}  
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}  
+\usepackage{xfrac}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{cite}
+\usepackage{lipsum}
+\usepackage{multirow}
+\usepackage{comment}
+\newcommand{\imgw}{0.38\linewidth} %0.42
+
+%\title{Beam-Steering Optical Wireless Positioning: Pose Estimation and Tilt Robustness}
+\title{Robust Optical Wireless Positioning With Beam Steering:\\Pose Estimation and Tilt Robustness}
+\author{
+\IEEEauthorblockN{ Kevin Acuna-Condori*, Bastien Bechadergue*, Hongyu Guan*, and Luc Chassagne*}
+
+\IEEEauthorblockA{ *Laboratoire d’Ingénierie des Systèmes de Versailles \\
+                    Université Paris-Saclay, UVSQ, 78140 Vélizy-Villacoublay, France \\
+                    Email: \{kevin-jose.acuna-condori, bastien.bechadergue, hongyu.guan, luc.chassagne\}@uvsq.fr}
+}
+
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+\maketitle
+
+\begin{abstract}
+Received signal strength (RSS)-based optical wireless positioning (OWP) is attractive but notoriously sensitive to transmitter/receiver tilt. Here, we study three OWP configurations with ceiling-mounted light emitting diodes (LED) under identical optical power, noise, and workspace: conventional multi-fixed LEDs (MFL), used as benchmark for comparison with new single beam-steerable LED (SBL) and multi beam-steerable LEDs (MBL) methods. For the latter two, we develop closed-form estimators that exploit steering diversity. We formulate the SBL position estimator as a singular value decomposition-based ratio method that cancels the incidence angle term, and we introduce an MBL orientation estimator that recovers the receiver pose from steered RSS measurements. Simulations quantify the accuracy/robustness trade-offs across configurations, and hardware experiments with a gimbaled LED and a 6 degrees-of-freedom robotic arm validate robustness to uncertainty in receiver tilt up to $20^\circ$ over a $0.8{\times}0.8~\mathrm{m}^2$ area, achieving a root mean square error of $2.66~\mathrm{cm}$, and a pooled within-position root mean square radius of $4.8~\mathrm{mm}$. The results consistently favor beam steering-based methods over MFL: SBL maintains centimeter-level accuracy under tilt, while MBL delivers the best absolute accuracy and enables pose estimation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Optical wireless positioning, indoor localization, beam steering, pose estimation.
+\end{IEEEkeywords}
+
+% =======================================================
+\section{Introduction}
+% =======================================================
+Optical wireless positioning (OWP) has emerged as a compelling complement to radio-based localization for indoor environments, leveraging ceiling-mounted light emitting diodes (LEDs) and photodiode (PD) receivers to infer user location from received signal strength (RSS), angle, or time metrics. In contrast to visible light positioning (VLP) tightly coupled to illumination constraints, OWP with infrared (IR) emitters decouples communication/positioning from lighting, enabling dedicated links and flexible deployment while retaining the attractive interference properties of the optical domain \cite{Zhuang2018, Zhu2025}. Recent advances in optical wireless communications and LiFi further motivate OWP as a building block toward high-capacity, secure, and spatially reusable indoor networks that can also support localization services.
+
+Despite this promise, practical accuracy in RSS-based OWP/VLP is highly sensitive to emitter/receiver pointing \cite{Chaudhary2021,Plets2019}. Small, unavoidable deviations in the PD boresight (receiver tilt) and static offsets in LED alignment (transmitter tilt) modulate the effective channel gain and introduce geometry-dependent biases that degrade ranging and amplify geometric dilution—effects that persist across multilateration, fingerprinting, and hybrid estimators alike. A large body of work still assumes an ideally upright PD, an assumption often violated outside controlled lab conditions; empirical studies have shown that user device orientation varies widely over time and across users, and that this variability materially impacts link budget, coverage continuity, and handover performance \cite{Soltani2019WCNC,Soltani2019}. These observations underscore the need for estimators that explicitly account for orientation uncertainty rather than treating it as negligible measurement noise.
+
+A second, closely related challenge is pose recovery: many applications benefit from estimating not only position but also the receiver’s orientation (e.g., for robotics registration, pointing services, or adaptive networking). In parallel, static ceiling layouts suffer from coverage edge effects \cite{Acuna2025} and field-of-view (FOV) clipping, motivating mechanisms that deliver reliable estimates even under mild, time-varying tilts and at the  workspace boundaries \cite{Zhuang2018,Zhou2018}.
+
+The literature on OWP/VLP offers accurate closed-form and optimization-based solvers under classical multi-fixed LEDs (MFL) layouts, including joint position–orientation formulations \cite{Zhou2018} and extensive system surveys \cite{Zhuang2018,Zhu2025}. More recently, optical beam steering has gained traction in communications—via MEMS mirrors, liquid lenses, or integrated photonics \cite{Kang2019,Kwon2024}—and is beginning to be explored for positioning because it introduces controllable angular diversity without extra anchors \cite{Chassagne2025}. However, because beam-steered positioning is comparatively new, there remains a need for controlled, head-to-head comparisons against MFL baselines under identical optical power, noise, and workspace conditions, as well as methods that capitalize on steering to mitigate receiver-tilt uncertainty and to enable orientation (pose) estimation. Concurrently, calibration techniques for transmitter tilt and gain have been shown to significantly improve RSS-based OWP/VLP accuracy, further emphasizing the role of orientation-awareness in practical deployments \cite{Wu2025}.
+
+
+%This work addresses these gaps with three contributions. First, we provide a unified evaluation of three ceiling-LED configurations under identical conditions—MFL, a single beam-steerable LED (SBL), and multiple beam-steerable LEDs (MBL)—using closed-form estimators tailored to each configuration. Second, we reformulate the SBL position estimator via an singular values decomposition (SVD)-based RSS-ratio method that is inherently robust to receiver-tilt uncertainty. Third, we introduce an MBL orientation estimator that recovers the PD orientation from steered RSS measurements, enabling pose sensing. We corroborate the analysis with experiments employing a gimbaled IR LED and a 6 degrees-of-freedom (DOF) robotic arm, and we report accuracy and repeatability under random PD tilts, enabling a rigorous comparison between steering and fixed-anchor layouts.
+
+The main contributions of this work are summarized as follows:
+\begin{enumerate}
+    \item We provide a unified evaluation of three ceiling-LED configurations under identical conditions—MFL, a single beam-steerable LED (SBL), and multiple beam-steerable LEDs (MBL)—using closed-form estimators tailored to each configuration.
+
+    \item We reformulate the SBL position estimator via a singular value decomposition (SVD)-based RSS-ratio method that is inherently robust to receiver-tilt uncertainty. We further provide, to the best of our knowledge, the first 2D experimental validation of this ratio-based SBL positioning approach.
+        
+    \item We introduce an MBL orientation estimator that recovers the PD orientation from steered RSS measurements, providing a closed-form route to pose sensing (i.e., joint position and orientation estimation).
+    
+    \item We corroborate the analysis with experiments employing a gimbaled IR LED and a 6 degrees-of-freedom (6-DOF) robotic arm, and we report accuracy and repeatability under random PD tilts for SBL.
+    
+\end{enumerate}
+% -------------------------------------------------------
+
+
+
+% =======================================================
+\section{System Model}
+% =======================================================
+
+We consider an indoor room of dimensions $L \times W \times H$ with a height difference $h$ between transmitter and receiver planes. The system comprises $N$ ceiling-mounted LEDs and one PD receiver. Let the $i$-th LED be mounted at fixed height $H$ with coordinates $\mathbf{p}_{t,i} = [x_{t,i}, y_{t,i}, H]^\top$, and let the PD be located at a fixed height $z_0$ with coordinates $\mathbf{p}_{r} = [x_{r}, y_{r}, z_0]^\top$, as illustrated in Fig.~\ref{fig:generalOWP}. The RSS depends on the optical channel model. In general, for the $i$-th LED steered to its $k$th orientation, with radiation pattern modeled by $R(\phi_{i,k})$, with $\phi_{i,k}$ the irradiance angle, and for a PD having an effective area $A_{\mathrm{eff}}(\psi_i)$ with respect to the incidence angle $\psi_i$ of the $i$-th link, the line-of-sight (LOS) RSS $S_{i,k}$ is \cite{Kahn1997}:
+\begin{equation}
+    S_{i,k} = R_{\mathrm{pd}}\, P_t\, R(\phi_{i,k})\, A_{\mathrm{eff}}(\psi_i)/d_i^{2},
+    \label{eq:general}
+\end{equation}
+where $R_{\mathrm{pd}}$ is the PD responsivity, $P_t$ is the LED optical transmit power and $d_i$ is the $i$-th LED–to-PD LOS distance. Assuming a Lambertian emitter, \eqref{eq:general} can be written as \cite{Kahn1997}:
+\begin{equation}
+    S_{i,k} = R_{\mathrm{pd}} P_t \frac{(m+1) A_{\mathrm{det}}}{2\pi d_i^{2}} \cos^{m}\!\bigl(\phi_{i,k}\bigr)\, \cos(\psi_i) + n,
+    \label{eq:channel}
+\end{equation}
+where $m$ denotes the Lambertian order, obtained from the LED semi-angle at half power $\Phi_{1/2}$ as
+$m = -\ln(2)/\ln\!\bigl(\cos \Phi_{1/2}\bigr)$, $A_{\mathrm{det}}$ is the sensitive area of the PD, and $n$ models additive noise. Throughout this work, $n$ is treated as independent and identically distributed (i.i.d.) Gaussian noise dominated by shot and Johnson (thermal) noise.
+
+Let us then define the baseline geometry and angles as follows. The displacement vector from the $i$-th LED to the PD is $\mathbf{d}_i = \mathbf{p}_r - \mathbf{p}_{t,i}$, with 2-norm $||\mathbf{d}_i|| = d_i$, and the corresponding LOS unit vector is $\mathbf{n}_{d,i} = \mathbf{d}_i/d_i$. Let $\mathbf{n}_{t,i,k}$ be the $i$-th LED boresight unit vector under its $k$th orientation, and let $\mathbf{n}_r$ be the PD surface normal (boresight) unit vector. Then the irradiance and incidence angle cosines in \eqref{eq:channel} are:
+\begin{equation}
+    \cos(\phi_{i,k}) = \mathbf{n}_{t,i,k} \cdot \mathbf{n}_{d,i}, 
+    \qquad
+    \cos(\psi_i) = \mathbf{n}_{r} \cdot \bigl(-\mathbf{n}_{d,i}\bigr).
+    \label{eq:cosine}
+\end{equation}
+For notational convenience, we also define the following radiometric constant, which is assumed to be known:
+\begin{equation}
+    C = R_{\mathrm{pd}} P_t \frac{(m+1) A_{\mathrm{det}}}{2\pi}.
+    \label{eq:constant}
+\end{equation}
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.4\linewidth]{Fig_ICC/diagramLEDPD.png}
+    \caption{Geometry of the $i$-th ceiling-mounted LED and the PD receiver with position and orientation vectors.}
+    \label{fig:generalOWP}
+\end{figure}
+
+% =======================================================
+\section{Configuration and Estimators}
+% =======================================================
+This section discusses three ceiling-mounted LED configurations and their associated position estimators: the conventional MFL setup (Section~\ref{subsec:multiled}), a SBL (Section~\ref{subsec:singleLED}), and MBL (Section~\ref{subsec:multibeamLED}). For a fair, configuration-focused comparison, we consider in each case closed-form, model-based estimators that leverage the information and constraints specific to the configuration under study. Data-driven (machine-learning) estimators are excluded, as their black-box nature would mask the intrinsic advantages and drawbacks of each configuration, especially for RSS-based OWP under Lambertian channels.
+
+
+% ====================================
+\subsection{OWP With a Conventional MFL Configuration}
+\label{subsec:multiled}
+% ====================================
+In this conventional configuration, each LED is located on the ceiling plane $z=H$ at known coordinates $\{(x_{t,i},y_{t,i})\}_{i=1,\dots,N}$ and held with a fixed boresight pointing downward, i.e., $\mathbf{n}_{t,i,1} = [0,\,0,\,-1]^\top$. We emphasize that this is a special case of the more general MBL configuration in Section~\ref{subsec:multibeamLED}, obtained by setting the number of orientations to $K=1$.
+%
+In particular, for $N=4$ LEDs and a vertically oriented PD, i.e., $\mathbf{n}_{r} = [0,\,0,\,1]^\top$, the position can be estimated via multilateration \cite{Zhuang2018}. Using the Lambertian LOS model, with vertical LED/PD alignment, i.e., $\cos(\phi_{t,i})=\cos(\psi_i)=h/d_i$, the RSS $S_{i,1}$ from the $i$-th LED yields a distance estimate:
+\begin{equation} 
+\hat{d}_i= \left( \frac{C \, h^{\,m+1}} {S_{i,1}} \right)^{\tfrac{1}{m+3}}, \end{equation}
+where $h$ is the vertical transmitter–receiver separation and $C$ and $m$ are as defined in \eqref{eq:constant} and \eqref{eq:channel}. The corresponding horizontal (radial) ranges $\{r_i\}_{i=1,...,4}$ are then $\hat{r}_i=\sqrt{\hat{d}_i^{\,2}-h^{2}}$. Noting that geometrically,
+\(
+(x_r-x_{t,i})^2 + (y_r-y_{t,i})^2 \;=\; r_i^2,
+\), we can form a linear system in $(x_r,y_r)$ that we solve by linear least squares (LLS):
+\begin{equation}
+    \begin{bmatrix}\hat{x}_r\\[2pt]\hat{y}_r\end{bmatrix}
+    \;=\;
+    (\mathbf{A}^{\top}\mathbf{A})^{-1}\mathbf{A}^{\top}\mathbf{b},
+\end{equation}
+with:
+\begin{equation}
+\mathbf{A} = \begin{bmatrix}
+2(x_{t,2} - x_{t,1}) & 2(y_{t,2} - y_{t,1}) \\
+2(x_{t,3} - x_{t,1}) & 2(y_{t,3} - y_{t,1}) \\
+2(x_{t,4} - x_{t,1}) & 2(y_{t,4} - y_{t,1})
+\end{bmatrix}, \\    
+\end{equation}
+\begin{equation}
+\mathbf{b} = \begin{bmatrix}
+(\hat{r}_1^2 - \hat{r}_2^2) + (x_{t,2}^2 + y_{t,2}^2) - (x_{t,1}^2 + y_{t,1}^2) \\
+(\hat{r}_1^2 - \hat{r}_3^2) + (x_{t,3}^2 + y_{t,3}^2) - (x_{t,1}^2 + y_{t,1}^2) \\
+(\hat{r}_1^2 - \hat{r}_4^2) + (x_{t,4}^2 + y_{t,4}^2) - (x_{t,1}^2 + y_{t,1}^2) \\
+\end{bmatrix}.    
+\end{equation}
+This closed-form solution relies on a Lambertian emission model and perfectly vertical PD assumptions that are widely adopted in the OWP literature for analytic tractability of RSS-based multilateration and often used as baselines \cite{Zhuang2018, Wang2024b}.
+
+% ====================================
+\subsection{OWP With a SBL Configuration}
+\label{subsec:singleLED}
+% ====================================
+Let us now consider a single LED in the center of the room, whose orientation $\mathbf{n}_{t,1,k}$ can be controlled while maintaining its position $\mathbf{p}_{t,1}$ fixed. We can then define a set of $K$ orientations ($\mathbb{U}$), which are used by the LED to reorient itself while PD records the $K$ resulting RSS values. Due to the geometric characteristics of the proposed method, each time the LED is reoriented, the angle $\phi_{1,k}$ changes, but $\psi_1$ remains constant, meaning that $S_{1,k}$ in \eqref{eq:general} will depend on $R(\phi_{1,k})$ while $R_{\mathrm{pd}}$, $P_t$, and $A_{\mathrm{eff}}(\psi_1)$ remain constant. This property, which MFL does not have, motivates the use of RSS ratios between pairs of orientations $\in \mathbb{U}$, as such ratios are theoretically insensitive to variations in $\psi_i$ and thus to uncertainties in PD tilt as long as $\psi_i \in \mathrm{FOV}$, a problem widely discussed in \cite{Stevens2020}.
+
+The method initially presented in \cite{Chassagne2025} is here reformulated to obtain the solutions using SVD. Let $\{a,b\}\in \mathbb{U}$ be a pair of orientations, with respective RSS values $S_{1,a}$ and $S_{1,b}$. Considering \eqref{eq:channel} and \eqref{eq:cosine}, we define the RSS ratio $\hat\beta_{a,b}$ as:
+\begin{equation}
+    \hat\beta_{a,b}=\left(\frac{S_{1,a}}{S_{1,b}}\right)^{1/m}
+               =\frac{\cos{(\phi_{1,a})}}{\cos{(\phi_{1,b})}}
+               =\frac{ \mathbf{n}_{t,1,a} \cdot \mathbf{n}_d }{ \mathbf{n}_{t,1,b} \cdot \mathbf{n}_d },
+\label{eq:beta_def}               
+\end{equation}
+which can also be written as $(\mathbf{n}_{t,1,a} - \hat\beta_{a,b} \mathbf{n}_{t,1,b}) \cdot \mathbf{n}_d = 0$. This equation alone is not sufficient to estimate $\mathbf{n}_d$. However, with at least 3 orientations $\{a, b, c\} \in \mathbb{U}$, the following system of equations can be formed:
+\begin{equation}
+    \begin{bmatrix}
+        \mathbf{n}_{t,1,a}^{\top} - \hat \beta_{a,b} \mathbf{n}_{t,1,b}^{\top} \\
+        \mathbf{n}_{t,1,b}^{\top} - \hat \beta_{b,c} \mathbf{n}_{t,1,c}^{\top} \\ 
+        \mathbf{n}_{t,1,a}^{\top} - \hat \beta_{a,c} \mathbf{n}_{t,1,c}^{\top}
+    \end{bmatrix}
+    \mathbf{n}_d=
+    \mathbf{B} \, \mathbf{n}_d= \mathbf{0}.
+\end{equation}
+In the presence of noise, the equality $\mathbf{B} \, \mathbf{n}_d=\mathbf{0}$ will no longer hold exactly, so that we seek instead a vector $\hat{\mathbf{n}}_d$ that minimizes the residual. This problem can be modeled as:
+\begin{equation}
+    \hat{\mathbf{n}}_d = \arg \min_{\| \mathbf{n} \|=1} \| \mathbf{B} \mathbf{n} \|
+        = \arg\min_{\|\mathbf{n}\|=1} \mathbf{n}^\top(\mathbf{B}^\top\mathbf{B})\,\mathbf{n}.
+\end{equation}
+By Rayleigh–Ritz principle, the minimizer is an eigenvector of $\mathbf{B}^\top\mathbf{B}$ associated with its minimum eigenvalue. This is equivalent to obtaining the right singular vector corresponding to $\sigma_{\min}$ in the SVD $\mathbf{B}=\mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top$, since the eigenvectors of $\mathbf{B}^\top\mathbf{B}$ are the columns of $\mathbf{V}$ and their eigenvalues are $\sigma_i^2$. In MATLAB, this is calculated using the function \texttt{null} and the resulting vector is normalized, i.e., $\hat{\mathbf{n}}_d \propto \texttt{null}(\mathbf{B})$.
+
+Finally, once $\hat{\mathbf n}_d$ is available, the range follows from the known vertical separation $h$ as $\hat d = h/(-\hat{\mathbf n}_d\!\cdot\!\mathbf e_z)$, where $\mathbf e_z=[0,0,1]^\top$, and the receiver position is $\hat{\mathbf p}_r=\mathbf p_{t,1}+\hat d\,\hat{\mathbf n}_d$. 
+
+% ====================================
+\subsection{OWP With MBL Configuration}
+\label{subsec:multibeamLED}
+% ====================================
+
+We finally consider a scenario with $N$ steerable LEDs ($N \ge 2)$ mounted at different locations on the ceiling. Each $i$-th LED can be oriented along one of the $K$ orientations in its set $\mathbb{U}_i$. Following the same method presented in Section \ref{subsec:singleLED}, each PD can estimate its position $N$ times (1 for each LED). In order to eventually select the best estimate, we then use a selection criterion based on the reliability of the set of $K$ measurements. To do this, the SNRs of the $K$ RSS obtained with each LED are added. The estimated position associated with the LED corresponding to the highest SNR among the $N$ resulting SNR values is then chosen as the best.
+
+As in the case of SBL, this multi-LED configuration is insensitive to PD tilt. Moreover, it can estimate the orientation $\mathbf{n}_r$ of the PD, so that with a minimum of two beam-steerable LEDs, the proposed system enables pose estimation, i.e. estimation of the position and orientation of the PD. The procedure for estimating orientation is detailed below. Let us consider that the $i$-th LED has $K=3$ orientations. The corresponding RSS values are thus determined by \eqref{eq:channel}. Given the previously estimated $\hat{\mathbf n}_{d,i}$ and $\hat{\mathbf p}_r$, the distance and irradiance angles follow directly as $d_i=\|\hat{\mathbf p}_r-\mathbf p_{t,i}\|$ and $\cos\phi_{i,k}=\mathbf n_{t,i,k}^{\top}\hat{\mathbf n}_{d,i}$. Using \eqref{eq:constant} in \eqref{eq:channel}, homogenizing the equation and stacking the terms in a matrix form, we obtain the following system of equations:
+\begin{equation}
+     \begin{bmatrix}
+        S_{i,1} \\
+        S_{i,2} \\
+        S_{i,3}
+    \end{bmatrix}
+    -
+    \begin{bmatrix}
+        \cos^m{(\phi_{i,1})} / d_i^2\\
+        \cos^m{(\phi_{i,2})} / d_i^2\\
+        \cos^m{(\phi_{i,3})} / d_i^2
+    \end{bmatrix}
+    C\cos(\psi_i) = \mathbf{0}.
+    \label{eq:formulacion_orientacion}
+\end{equation}
+Defining $\mathbf{g}_i=(1/d_i^2)[\cos^m{(\phi_{i,1})},\cos^m{(\phi_{i,2})},\cos^m{(\phi_{i,3})}]^\top$,
+$\mathbf{s}_{r,i}=[S_{i,1},S_{i,2},S_{i,3}]^\top$, and $s_c = C\cos(\psi_i)$, we can rewrite \eqref{eq:formulacion_orientacion} as $\mathbf{s}_{r,i} - \mathbf{g}_i s_{c,i} = \mathbf{0}$.
+In a noise-free environment, there is a single value for $s_c$, but in practice, with noise, any value of $s_c$ will generate residuals, so we seek the $s_c$ that minimizes the residual:
+\begin{equation}
+    \hat s_{c,i} = \arg \min \| \mathbf{s}_{r,i} -  \mathbf{g}_i s_{c,i} \|.
+    \label{eq:opt_orientation}
+\end{equation}
+This problem can be solved by least squares as
+\(
+\hat s_{c,i} = {\mathbf{g}_i^{\top}\mathbf{s}_{r,i}} / {\mathbf{g}_i^{\top}\mathbf{g}_i}.
+\)
+Replacing $s_{c,i}$ and using \eqref{eq:cosine} in \eqref{eq:formulacion_orientacion}, we have:
+\begin{equation}
+    \hat{\mathbf{n}}_r \cdot (-\mathbf{n}_{d,i})
+        = \frac{\mathbf{g}_i^{\top}\mathbf{s}_{r,i}}{ C \, \mathbf{g}_i^{\top}\mathbf{g}_i}
+        = K_i.
+    \label{eq:resolver_n_r}
+\end{equation}
+
+According to \eqref{eq:resolver_n_r}, each LED \(i\) induces a linear constraint on \(\mathbf n_r\). In the minimum case of two LEDs, we can obtain:
+\begin{equation}
+    \begin{aligned}
+    \mathbf{D} \, \hat{\mathbf{n}}_r = \mathbf{k}, \\
+    \hat{\mathbf{n}}_r \in S^2,
+    \end{aligned}    
+    \label{eq:orientacion}
+\end{equation}
+where $\mathbf{D}=[-\mathbf{n}_{d,1}\,, -\mathbf{n}_{d,2}]^\top \in\mathbb R^{2\times 3}$ and $\mathbf{k}=[K_1,K_2]^\top$.
+This is a least squares problem with spherical constraints. Let the corresponding SVD be \(\mathbf D=\mathbf U\boldsymbol\Sigma\mathbf V^\top\), with \(\boldsymbol\Sigma=\operatorname{diag}(\sigma_1,\sigma_2)\).
+The particular least squares solver is then:
+\begin{equation}
+\mathbf n_p=\mathbf V_{1:2}\,\boldsymbol\Sigma^{-1}\,\mathbf U_{1:2}^{\top}\,\mathbf k,
+\end{equation}
+whereas the null space is generated by \(\mathbf v_0=\mathbf v_3\) (third column of \(\mathbf V\), since \(\mathbf D\,\mathbf v_0=\mathbf 0\)).
+Imposing \(\|\hat{\mathbf n}_r\|=1\), the only feasible solutions are:
+\begin{equation}
+\mathbf n_{\pm}=\mathbf n_p \;\pm\; \sqrt{\max\!\bigl(0,\,1-\|\mathbf n_p\|^2\bigr)}\;\mathbf v_0.
+\end{equation}
+The physically valid solution (e.g., the one pointing upwards with \(\mathbf u=[0,0,1]^\top\)) is eventually chosen and normalized to obtain the final pose estimate $\hat{\mathbf n}_r$:
+\begin{equation}
+\mathbf n^\star=\underset{\mathbf n\in\{\mathbf n_+,\mathbf n_-\}}{\arg\max}\;\mathbf n\cdot\mathbf u,
+\qquad
+\;\hat{\mathbf n}_r=\dfrac{\mathbf n^\star}{\|\mathbf n^\star\|}\;.    
+\end{equation}
+
+If \(\|\mathbf n_p\|\ge 1\) (high noise), the radical term is canceled out and we obtain \(\hat{\mathbf n}_r=\mathbf n_p/\|\mathbf n_p\|\).
+In practice, the numerical condition improves when \(\mathbf n_{d,1}\) and \(\mathbf n_{d,2}\) are not quasi-collinear.
+
+
+% =======================================================
+\section{Simulation Study}
+% =======================================================
+\label{sec:simulation}
+
+This section evaluates the three configurations—MFL, SBL, and MBL—on the testbed of Table~\ref{tab:sys_params}. The workspace was discretized with a $0.1~\mathrm{m}$ grid. At each point, RSS were synthesized with the Lambertian channel in \eqref{eq:channel} under i.i.d. Gaussian noise of variance $\sigma^2$. Two receiver states were considered: a vertical PD, $\mathbf n_r=[0,0,1]$, and a randomly tilted PD with tilt and azimuth angles $\theta\in[0,20^\circ]$, $\varphi\in[0,360^\circ]$, constrained to remain within the FOV. Results are reported using the 90th percentile of the error $P_{90}$ for position and, where applicable, for orientation. 
+
+\begin{table}[tb]
+\centering
+\caption{Simulations Parameters.}
+\label{tab:sys_params}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Parameter}} & \multicolumn{1}{c|}{\textbf{Value}} \\ \hline
+\multicolumn{2}{|c|}{\textbf{Testbed}} \\ \hline
+Room ($L\times W\times H$) & $3\times3\times2.5~\mathrm{m}^3$ \\ \hline
+Workspace ranges $(x,y,z_0)$ & $[-1.5,\,1.5]\times[-1.5,\,1.5] \times 0.75~\mathrm{m}^3$ \\ \hline
+Grid step & $0.1~\mathrm{m}$ \\ \hline
+Noise variance $\sigma^2$ & $1.0\times10^{-16}$ W/Hz \\ \hline
+\multicolumn{2}{|c|}{\textbf{PD}} \\ \hline
+Effective area $A_{\mathrm{det}}$ & $2.65~\mathrm{mm}^2$ \\ \hline
+FOV (semi-angle) & $68^\circ$ \\ \hline
+Responsivity $R_{\mathrm{pd}}$ & $0.62~\mathrm{A/W}$ \\ \hline
+Receiver's orientation $\mathbf n_r$ & 
+\begin{tabular}[t]{@{}l@{}}
+Vertical: $[0,\,0,\,1]$ \\
+Tilted: $(\theta \in [0,20^\circ], \varphi \in[0,360^\circ])$ 
+\end{tabular} \\ \hline
+\multicolumn{2}{|c|}{\textbf{LED (common to all configurations)}} \\ \hline
+Optical power $P_t$ & $0.405~\mathrm{W}$ \\ \hline
+Semi-angle at half power $\Phi_{1/2}$ & $45^\circ$ \\ \hline
+%Lambertian order $m$ & $2$ \\ \hline
+\multicolumn{2}{|c|}{\textbf{Configurations}} \\ \hline
+\multirow{5}{*}{\textbf{MFL}} &
+\begin{tabular}[t]{@{}l@{}}
+$\mathbf p_{t,1}=[-0.75,\,0.75,\,2.5]~\mathrm{m}$ \\
+$\mathbf p_{t,2}=[0.75,\,0.75,\,2.5]~\mathrm{m}$;\\
+$\mathbf p_{t,3}=[-0.75,\,-0.75,\,2.5]~\mathrm{m}$ \\
+$\mathbf p_{t,4}=[0.75,\,-0.75,\,2.5]~\mathrm{m}$; \\
+$\mathbf n_{t,i}$: $[0,\,0,\,-1]$ (fixed)
+\end{tabular} \\ \hline
+\multirow{3}{*}{\textbf{SBL}} &
+\begin{tabular}[t]{@{}l@{}}
+$\mathbf p_{t,1}$: $[0,\,0,\,2.5]~\mathrm{m}$\\
+Beam-steering set $(\theta^\circ,\varphi^\circ)$:\\
+$\{(20,0),\,(20,120),\,(20,240)\}$
+\end{tabular} \\ \hline
+\multirow{4}{*}{\textbf{MBL}} &
+\begin{tabular}[t]{@{}l@{}}
+$\mathbf p_{t,1}=[-0.75,\,0,\,2.5]~\mathrm{m}$ \\
+$\mathbf p_{t,2}=[0.75,\,0,\,2.5]~\mathrm{m}$;\\
+Beam-steering set per LED $(\theta^\circ,\varphi^\circ)$:\\
+$\{(20,0),\,(20,120),\,(20,240)\}$
+\end{tabular} \\ \hline
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:geometricLayout} depicts the three geometric layouts used simulated: (a) MFL with four LEDs pointing downward, (b) SBL with one LED steered over three orientations, and (c) MBL with two LEDs, each steered over the same three orientations. Figure~\ref{fig:rssdistribution} shows the resulting RSS landscapes. In MFL, the factors $\cos^m(\phi_i)/d^2$ yield strong attenuation away from the optical axes and near the edges of the workspace. When the PD tilts, the additional $\cos(\psi_i)$ modulations introduce spatially inconsistent ranging cues. In SBL, the three controlled pointings vary ($\phi_{1,k}$) while leaving $\psi_1$ effectively constant for a fixed PD location. Forming RSS ratios cancels common radiometric terms and the $\cos(\psi_1)$ factor, which stabilizes the inference under tilt. MBL combines angular diversity with spatial diversity from two anchors, improving coverage in low‐illumination regions and reducing geometric dilution.
+
+\begin{figure}[tb]
+  \centering
+  \subfloat[]{\includegraphics[width=0.33\linewidth]{Fig_ICC/c1.png}}\hfill
+  \subfloat[]{\includegraphics[width=0.33\linewidth]{Fig_ICC/c2.png}}\hfill
+  \subfloat[]{\includegraphics[width=0.33\linewidth]{Fig_ICC/c3.png}}
+    \caption{Configurations simulated: (a) MFL with 4 LEDs, (b) SBL with 1 LED and 3 orientations, (c) MBL with 2 LEDs and 3 orientations per LED.}
+  \label{fig:geometricLayout}
+\end{figure}
+
+
+\begin{figure}[tb]
+  \centering
+  \subfloat[]{\includegraphics[width=0.20\textwidth]{Fig_ICC/c1-rss.png}}\hspace{0.02\textwidth}
+  \subfloat[]{\includegraphics[width=0.20\textwidth]{Fig_ICC/c1-tilted.png}}\\[-12pt] 
+  \subfloat[]{\includegraphics[width=0.20\textwidth]{Fig_ICC/c2-rss.png}}\hspace{0.02\textwidth}
+  \subfloat[]{\includegraphics[width=0.20\textwidth]{Fig_ICC/c2-tilted.png}}\\[-12pt] 
+  \subfloat[]{\includegraphics[width=0.20\textwidth]{Fig_ICC/c3-rss.png}}\hspace{0.02\textwidth}
+  \subfloat[]{\includegraphics[width=0.20\textwidth]{Fig_ICC/c3-tilted.png}}
+  \caption{RSS values distribution in the testbed. The three rows correspond to the MFL (a,b), SBL (c,d), and MBL (e,f) configurations, respectively. For each configuration, the left subfigure shows the case when the PD is oriented vertically (a,c,e), while the right one corresponds to a PD randomly tilted with an angle of up to 20° (b,d,f).}
+    \label{fig:rssdistribution}
+\end{figure}
+
+
+\begin{table}[tb]
+  \centering
+  \caption{$P_{90}$ error for position and orientation across methods.}
+  \label{tab:p90}
+  \begin{tabular}{|l|c|c|c|c|}
+   \hline
+    & \multicolumn{2}{c|}{ \textbf{Position} ($P_{90}$)} & \multicolumn{2}{c|}{ \textbf{Orientation} ($P_{90}$)} \\ \hline
+    \textbf{Method} & Vertical PD & Tilted PD & Vertical PD & Tilted PD \\ \hline
+    MFL    & $8.02$ cm & $\mathbf{34.45}$ cm & --   & --   \\ \hline
+    SBL   & $2.74$ cm & $3.16$ cm & --   & --   \\ \hline
+    MBL   & $1.54$ cm & $1.61$ cm & $1.17^\circ$ & $2.07^\circ$ \\ \hline
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  % ----- Line 1 -----
+  \subfloat[]{\includegraphics[width=0.22\textwidth]{Fig_ICC/heatmap/c1-vertical.png}}\hspace{0.02\textwidth}
+  \subfloat[]{\includegraphics[width=0.22\textwidth]{Fig_ICC/heatmap/c1-tilted.png}}\\[-8pt]
+% ----- Line 2 -----
+  \subfloat[]{\includegraphics[width=0.22\textwidth]{Fig_ICC/heatmap/c2-vertical.png}}\hspace{0.02\textwidth}
+  \subfloat[]{\includegraphics[width=0.22\textwidth]{Fig_ICC/heatmap/c2-tilted.png}}\\[-8pt]
+  % ----- Line 3 -----
+  \subfloat[]{\includegraphics[width=0.22\textwidth]{Fig_ICC/heatmap/c3-vertical.png}}\hspace{0.02\textwidth}
+  \subfloat[]{\includegraphics[width=0.22\textwidth]{Fig_ICC/heatmap/c3-tilted.png}}
+  %\caption{Position estimation results with a vertical PD (a,c,e) and a tilted PD (b,d,f) for MLF, SBL, MBL configuration respectivly,under the same noise level. Each estimated point is color-coded according to the positioning error, ranging from 0\,cm (blue) to 8\,cm (red), with values above 8\,cm shown in magenta.}
+    \caption{Position-estimation error heatmaps for the three configurations under the same noise level: MFL (a,b), SBL (c,d), and MBL (e,f). For each configuration, the left column corresponds to a vertical PD and the right column to a randomly tilted PD (up to $20^\circ$). Each estimated point is color-coded according to the positioning error, ranging from 0\,cm (blue) to 8\,cm (red), with values above 8\,cm shown in magenta.}
+  
+  \label{fig:heatmaps}
+\end{figure}
+
+Table~\ref{tab:p90} lists positioning accuracy: with a vertical PD, MFL attains $P_{90}=8.02~\mathrm{cm}$; under random tilt, the error increases to $34.45~\mathrm{cm}$, highlighting the sensitivity of multilateration to unknown receiver orientation. SBL remains robust to tilt, moving from $2.74~\mathrm{cm}$ (vertical) to $3.16~\mathrm{cm}$ (tilted), consistent with the ratio formulation that removes the $\psi_1$ dependency. MBL achieves the best absolute accuracy, with $P_{90}=1.54~\mathrm{cm}$ (vertical) and $1.61~\mathrm{cm}$ (tilted), owing to joint angular–spatial diversity. These trends are corroborated by the error heatmaps of Fig.~\ref{fig:heatmaps}: MFL exhibits extended regions above $8~\mathrm{cm}$ (notably edges and corners), which expand under tilt; SBL confines high errors to the boundary of the effective steering footprint; MBL maintains uniformly low errors across the workspace.
+
+
+
+%\begin{figure*}[tb]
+%  \centering
+%  \subfloat[MFL - Vertical PD.]{\includegraphics[width=0.15\linewidth]{Fig_ICC/heatmap/c1-vertical.png}}\hfill
+%  \subfloat[SBL - Vertical PD.]{\includegraphics[width=0.15\linewidth]{Fig_ICC/heatmap/c2-vertical.png}}\hfill
+%  \subfloat[MBL - Vertical PD.]{\includegraphics[width=0.15\linewidth]{Fig_ICC/heatmap/c3-vertical.png}}\hfill
+%  \subfloat[MFL - Tilted PD.]{\includegraphics[width=0.15\linewidth]{Fig_ICC/heatmap/c1-tilted.png}}\hfill 
+%  \subfloat[SBL - Tilted PD.]{\includegraphics[width=0.15\linewidth]{Fig_ICC/heatmap/c2-tilted.png}}\hfill
+%  \subfloat[MBL - Tilted PD.]{\includegraphics[width=0.15\linewidth]{Fig_ICC/heatmap/c3-tilted.png}}
+%  \caption{Position estimation results with a vertical PD (a–c) and a tilted PD (d–f) for each configuration under the same noise level. Each estimated point is color-coded according to the positioning error, ranging from 0\,cm (blue) to 8\,cm (red), with values above 8\,cm shown in magenta.}
+%  \label{fig:heatmaps}
+%\end{figure*}
+
+Orientation estimation was then assessed for MBL in the tilted–PD case. The CDF in Fig.~\ref{fig:resultorientation}(a) shows $P_{90}=2.07^\circ$, the dashed reference indicates that $90\%$ of the estimates lie below this threshold. The heatmap in Fig.~\ref{fig:resultorientation}(b) reveals a localized band of larger angular error associated with a near‐collinear LOS geometry, consistent with the discussion in Section~\ref{subsec:multibeamLED}. This limitation can be mitigated by adding a third LED. Overall, the estimator provides accurate orientation reconstruction across the workspace under tilt.
+
+\begin{figure}[tb]
+  \centering
+  \subfloat[]{\includegraphics[width=0.75\linewidth]{Fig_ICC/orientation/CDF.png}
+  }\\[4pt]
+  \subfloat[]{\includegraphics[width=0.55\linewidth]{Fig_ICC/orientation/heatmap.png}
+  }
+  \caption{Distribution of the PD orientation error: (a) CDF, (b) Heatmap.}
+  \label{fig:resultorientation}
+\end{figure}
+
+
+In summary, under identical optical power and noise, beam steering is the dominant factor for robustness to PD tilt. SBL offers an attractive complexity–accuracy tradeoff without requiring knowledge of $\mathbf n_r$. For full pose (position and orientation) with the lowest overall error, MBL with $N\ge 2$ LEDs and $K\ge 3$ orientations per LED is recommended. 
+%These conclusions persist at the tested noise level; as SNR decreases, MFL is expected to degrade most due to its residual ($\cos(\psi)$) sensitivity, whereas SBL preserves tilt invariance via RSS ratios and MBL remains superior by leveraging both angular and spatial diversity.
+
+
+
+% =======================================================
+\section{Experimental Validation}
+% =======================================================
+This section validates, on a real testbed, the robustness of the SBL estimator against receiver tilt uncertainty of up to $20^\circ$ over an $0.8~\mathrm{m}\times0.8~\mathrm{m}$ planar workspace. The mechanical SBL prototype consists of two stacked motorized rotation stages configured as a gimbal that steers a high–power IR LED. The stages are Thorlabs PRM1Z8 units, which provide closed–loop rotary positioning over $360^\circ$ and are controlled by KDC101 drivers for precise motion; the emitter is an OSRAM LED LZ1-00R702. The receiver is a silicon PIN PD BPX61 mounted on the end-effector of a 6-DOF Universal Robots UR5 collaborative arm, which allows both translation and controlled reorientation of the PD. A photograph of the setup is shown in Fig.~\ref{fig:experimental_setup}.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Fig_ICC/setup_exp.png}
+    \caption{Experimental setup of the mechanical SBL scenario implemented using two motors in a gimbal configuration. The receiver consists of a PD mounted on the end-effector of a robotic arm capable of both translation and reorientation of the PD.}
+    \label{fig:experimental_setup}
+\end{figure}
+
+The experiment follows the same three steering orientations used in simulation, and acquires $10^3$ voltage samples per orientation via a data-acquisition (DAQ) device. 
+The robotic arm was positioned at 18 random locations within the $x$-$y$ workspace; for each ground-truth location, ten independent runs were performed with random receiver tilt ($\theta\in[0^\circ,20^\circ]$) and random azimuth ($\varphi\in[0^\circ,360^\circ]$), keeping the PD within its FOV. The resulting traces at one representative position, ($\mathbf p_r=[0.70,,0.54,,0.75]$), are shown in Fig.~\ref{fig:samples}; distinct plateaus correspond to the three SBL orientations, while the intra-plateau variability reflects noise.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{Fig_ICC/Samples.png}
+    \caption{Voltage samples recorded at the receiver position $\mathbf{p}_r = [0.70,\,0.54,\,0.75]$ for ten different receiver orientations (represented by different colors), with a random PD tilt between $0^\circ$ and $20^\circ$ and a random azimuth between $0^\circ$ and $360^\circ$.}
+    \label{fig:samples}
+\end{figure}
+
+Two–dimensional position estimates obtained with the closed-form SBL solver are reported in Fig.~\ref{fig:experimental_comparison}. Across all tested locations, the root mean square error (RMSE) is $2.66~\mathrm{cm}$, and the average position error (APE) is $2.35~\mathrm{cm}$. To quantify pure repeatability under orientation changes, we compute the pooled within-position root mean square radius (WRMS), defined as:
+\begin{equation}
+\mathrm{WRMS}=\sqrt{\frac{\sum_{p}\sum_{e}\lVert \hat{\mathbf x}_{p,e}-\bar{\mathbf x}_{p}\rVert^2}{\sum_{p}(E_p-1)}},
+\end{equation}
+where $\hat{\mathbf x}_{p,e}$ is the $e$-th estimate at position $p$, $\bar{\mathbf x}_{p}$ is the sample mean at $p$, and $E_p$ is the number of realizations at $p$ (degrees of freedom $E_p-1$ per position). The experiment yields $\mathrm{WRMS}=4.8~\mathrm{mm}$, indicating sub-centimetric dispersion of repeated estimates at each location despite random receiver tilts up to $20^\circ$.
+
+Overall, the experimental findings are consistent with the simulation results. The SBL ratio-based formulation demonstrates strong robustness to receiver-tilt uncertainty, producing tightly clustered estimates for each position and maintaining centimeter-level global accuracy across the workspace. Beyond this validation, the beam-steerable LED approach shows particular promise for addressing two long-standing challenges in OWP: transmitter and receiver tilt. On the receiver side, the proposed method is inherently insensitive to PD tilt within the FOV, while on the transmitter side, any static tilt offsets introduced by mechanical alignment or mounting constraints can be compensated through a straightforward calibration routine.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Fig_ICC/compare.png}
+    \caption{Experimental 2D position estimation of the PD using the SBL configuration. For each ground-truth position, ten independent estimations were performed with different random PD tilts ranging from $0^\circ$ to $20^\circ$.}
+
+    \label{fig:experimental_comparison}
+\end{figure}
+
+
+\subsection{Latency and Practical Scalability}
+\label{subsec:latency_discussion}
+
+Beam steering provides controllable angular diversity at the cost of a time overhead that scales linearly with the number of steering orientations. For an update cycle with $K$ orientations, a practical time-to-fix ($T_{fix}$) can be modeled as:
+\begin{equation}
+T_{fix} = K\,(T_{steer} + T_{acq}) + T_{comp},
+\label{eq:latency}
+\end{equation}
+where $T_{steer}$ accounts for re-pointing plus settling (e.g., $T_{steer}=T_{slew}+T_{settle}$), $T_{acq}$ denotes the per-orientation acquisition time, and $T_{comp}$ is the processing time. In our implementation, $T_{comp}$ is negligible relative to actuation and acquisition, as the estimator only involves small matrix operations (e.g., a $3{\times}3$ SVD/eigendecomposition). 
+
+In the experimental validation, beam steering is implemented with a mechanical gimbal (Thorlabs PRM1Z8, $\approx 25^\circ/\mathrm{s}$), for which the dominant contribution is typically $T_{slew}$. With the $120^\circ$ azimuth spacing in Table~\ref{tab:sys_params}, each re-pointing requires several seconds; therefore, the end-to-end $T_{fix}$ for $K=3$ is on the order of $10~\mathrm{s}$, in addition to the acquisition/settling terms. While adequate for static validation, this latency motivates solid-state steering for dynamic tracking. Importantly, the proposed estimators are agnostic to the steering mechanism: when $T_{steer}$ is reduced to the millisecond regime by solid-state solutions (e.g., MEMS mirrors or liquid lenses), \eqref{eq:latency} becomes acquisition-limited and approaches $T_{fix}\approx K\,T_{acq}$.
+
+In MBL, each of the $N$ steerable LEDs cycles through $K$ steering orientations per update cycle, yielding $NK$ RSS measurements (one per LED and steering orientation). Under a straightforward sequential sweep, the corresponding latency scales linearly with $NK$. This overhead can be reduced by (i) scheduling strategies that avoid sweeping all LEDs at every update (e.g., selecting a subset based on SNR or geometry), and (ii) parallelization across LEDs when supported by the hardware (together with appropriate multiplexing to prevent interference).  
+The design and experimental validation of such low-latency steering and scheduling strategies will be investigated in future work.
+
+
+\section{Conclusion}
+Under identical optical power, noise level, and workspace conditions, we compared three LED configurations for OWP and observed a consistent advantage for beam steering. The SBL preserved centimeter-level accuracy in the presence of receiver-tilt uncertainty up to $20^\circ$, a result corroborated experimentally on a $0.8{\times}0.8~\mathrm{m}^2$ testbed with a RMSE of $2.66~\mathrm{cm}$, APE of $2.35~\mathrm{cm}$, and pooled within-position WRMS of $4.8~\mathrm{mm}$. The MBL configuration provided the best absolute accuracy and, moreover, enabled pose sensing via the SVD-based orientation estimator introduced here.
+
+Building upon prior single-LED beam steering concepts, our study refines the estimator using an SVD formulation, extends experimental validation from 1D to 2D, and quantifies repeatability under randomized PD tilts. Future work will examine the impact of non-Lambertian emission on the estimator, explore machine-learning techniques for position estimation, experimentally validate full PD pose estimation, and develop an online calibration routine to compensate static transmitter tilt.
+
+\section*{Acknowledgment} This work was supported by the European Union's Smart Networks and Services Joint Undertaking (SNS JU) under grant agreement No. 101139292.
+
+\bibliographystyle{IEEEtran}
+\bibliography{singleLED}
+
+\end{document}
