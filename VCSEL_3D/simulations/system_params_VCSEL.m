@@ -39,7 +39,25 @@ step = 0.2;                          % Testbed X,Y step [m]
 stepH = 0.2;                         % Testbed Z step [m]
 
 % ============================================================================================
+% Orientation Codebook / Sparse-Scan Configuration
+% ============================================================================================
+K_values   = [5, 9, 15, 25, 49];    % Number of steered orientations (scan slots)
+theta_cap  = 50;                     % Spherical-cap half-angle for codebook [deg]
+                                     %   corners of the room subtend ~47 deg from nadir at H=2 m,
+                                     %   so a 50 deg cap lets beams reach the whole testbed.
+
+% ============================================================================================
+% Coverage Thresholds (a position is "covered" if BOTH are met)
+% ============================================================================================
+SNR_min_dB   = 10;                   % Minimum peak averaged-measurement SNR [dB]
+PEB_max_cov  = 1.0;                  % Maximum PEB to count as covered [m]
+
+% ============================================================================================
 % Derived Constants
 % ============================================================================================
-C_VCSEL = P_t * A_det / (2*pi);     % Radiometric constant for VCSEL (without m+1 factor)
-C_LED = P_t_LED * (m_LED+1) * A_det / (2*pi);  % Radiometric constant for LED
+% Fixed-emitted-power Gaussian model (far field): peak on-axis irradiance
+%   I0 = 2*P_t / (pi*(theta_div*d)^2)  =>  mu = C_VCSEL/(theta_div^2*d^2)*exp*cos(psi)
+% Ref.: Safi et al., "Q-Learning for 3D Coverage in VCSEL-based OWC", Eq. (8),
+%       and explore_VCSEL_irradiance.m (far-field Model B).
+C_VCSEL = 2 * P_t * A_det / pi;                % Radiometric constant for VCSEL
+C_LED   = P_t_LED * (m_LED+1) * A_det / (2*pi); % Radiometric constant for LED baseline

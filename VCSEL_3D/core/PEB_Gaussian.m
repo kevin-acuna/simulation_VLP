@@ -46,8 +46,8 @@ if d < 1e-10
 end
 nd = d_vec / d;
 
-% Radiometric constant (no (m+1) factor for Gaussian)
-C_opt = Pt * A_det / (2*pi);
+% Radiometric constant (fixed-emitted-power far-field Gaussian: I0 = 2*Pt/(pi*w^2))
+C_opt = 2 * Pt * A_det / pi;
 
 % Incidence angle
 cos_psi = -(nr' * nd);  % cos(psi) = -n_r . n_d
