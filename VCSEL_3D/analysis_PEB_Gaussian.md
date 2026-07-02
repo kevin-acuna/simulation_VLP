@@ -11,7 +11,8 @@ For a Gaussian VCSEL with divergence θ_div, the noise-free received power is:
 ```
 
 where:
-- C = P_t · A_det / (2π)  — radiometric constant
+- C = 2 · P_t · A_det / π  — radiometric constant (fixed-emitted-power far-field Gaussian:
+  peak on-axis irradiance I₀ = 2P_t/(πw²), w = d·θ_div; see Safi et al., Eq. 8)
 - d = ||r - t||  — TX-RX distance
 - φ_i = arccos(n_{t,i} · n_d)  — beam angular offset for orientation i
 - cos(ψ) = -n_r · n_d  — incidence cosine (receiver)
