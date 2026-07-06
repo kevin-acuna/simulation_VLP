@@ -1,8 +1,9 @@
-%% sim03_PEB_vs_K_theta.m — PEB over covered region vs K, per divergence angle
+%% sim03_PEB_vs_K_theta.m — PEB (and outage) over covered region vs K, per divergence angle
 %
-% Plots mean and P90 broadcast PEB (evaluated over COVERED positions only) as a
-% function of K, one curve per theta_div. Loads the cached sweep from sim02;
+% Plots mean PEB, P90 PEB (over COVERED positions only) and localization OUTAGE
+% as a function of K, one curve per theta_div. Loads the cached sweep from sim02;
 % recomputes it if the cache is missing.
+% (Fig. 3 in paper_plan: PEB mean / P90 / outage vs K per theta_div.)
 %
 % Message: small divergence gives strong local accuracy where covered, but
 % coverage (sim02) must be read jointly — see the tradeoff in sim04.
@@ -65,20 +66,36 @@ grid on; box on; set(gca, 'XTick', S.K, 'FontSize', 7, 'LineWidth', 0.5);
 legend(h2, arrayfun(@(t) sprintf('$\\theta_{\\mathrm{div}}{=}%d^\\circ$', t), ...
     S.theta_deg, 'UniformOutput', false), 'Interpreter','latex', 'FontSize', 6, 'Location','northeast');
 
+%% Figure 3: localization outage vs K
+fig3 = figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color','w'); hold on;
+h3 = gobjects(numel(S.theta_deg),1);
+for it = 1:numel(S.theta_deg)
+    h3(it) = plot(S.K, 100*S.outage(it,:), '-^', 'LineWidth', 1.0, ...
+        'MarkerSize', 4, 'Color', colors(it,:), 'MarkerFaceColor', colors(it,:));
+end
+xlabel('Number of orientations $K$', 'Interpreter','latex', 'FontSize', 8);
+ylabel('Localization outage [\%]', 'Interpreter','latex', 'FontSize', 8);
+ylim([0 100]); grid on; box on; set(gca, 'XTick', S.K, 'FontSize', 7, 'LineWidth', 0.5);
+legend(h3, arrayfun(@(t) sprintf('$\\theta_{\\mathrm{div}}{=}%d^\\circ$', t), ...
+    S.theta_deg, 'UniformOutput', false), 'Interpreter','latex', 'FontSize', 6, 'Location','northeast');
+
 if SAVE_FIGS
     exportgraphics(fig1, fullfile(results_dir, 'Fig03_meanPEB_vs_K.pdf'), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(fig1, fullfile(results_dir, 'Fig03_meanPEB_vs_K.png'), 'Resolution',600,'BackgroundColor','white');
     exportgraphics(fig2, fullfile(results_dir, 'Fig03_p90PEB_vs_K.pdf'), 'ContentType','vector','BackgroundColor','white');
     exportgraphics(fig2, fullfile(results_dir, 'Fig03_p90PEB_vs_K.png'), 'Resolution',600,'BackgroundColor','white');
+    exportgraphics(fig3, fullfile(results_dir, 'Fig03_outage_vs_K.pdf'), 'ContentType','vector','BackgroundColor','white');
+    exportgraphics(fig3, fullfile(results_dir, 'Fig03_outage_vs_K.png'), 'Resolution',600,'BackgroundColor','white');
     fprintf('Figures saved (pdf/png) to %s\n', results_dir);
 end
 
 %% Summary table
-fprintf('\n=== Mean / P90 PEB over covered region [cm] ===\n');
+fprintf('\n=== Mean / P90 PEB over covered region [cm] and outage ===\n');
 for it = 1:numel(S.theta_deg)
     fprintf('theta=%2d deg:\n', S.theta_deg(it));
     for ik = 1:numel(S.K)
-        fprintf('   K=%2d : mean=%6.2f  P90=%6.2f  (cov=%5.1f%%)\n', ...
-            S.K(ik), 100*S.mean_peb(it,ik), 100*S.p90_peb(it,ik), 100*S.coverage(it,ik));
+        fprintf('   K=%2d : mean=%6.2f  P90=%6.2f  cov=%5.1f%%  outage=%5.1f%%\n', ...
+            S.K(ik), 100*S.mean_peb(it,ik), 100*S.p90_peb(it,ik), ...
+            100*S.coverage(it,ik), 100*S.outage(it,ik));
     end
 end

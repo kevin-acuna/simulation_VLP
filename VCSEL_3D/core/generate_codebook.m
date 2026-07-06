@@ -8,8 +8,11 @@ function nt = generate_codebook(K, theta_cap_deg, type)
 % INPUTS:
 %   K             : number of orientations
 %   theta_cap_deg : cap half-angle from nadir [deg]
-%   type          : 'sunflower' (default) area-uniform Fibonacci spiral, or
-%                   'rings'     concentric rings + a boresight beam
+%   type          : 'sunflower' (default) area-uniform Fibonacci spiral,
+%                   'rings'     concentric rings + a boresight beam,
+%                   'random'    area-uniform random beams in the cap
+%                               (seed with rng() before calling for reproducibility),
+%                   'dense'     naive uniform-ANGLE grid (scanning-style placement)
 %
 % OUTPUT:
 %   nt : 3xK matrix of unit vectors. Nadir-referenced: n = [sin(t)cos(p); sin(t)sin(p); -cos(t)]
@@ -56,6 +59,37 @@ switch lower(type)
         % Fill any leftover (rounding) along the outer ring
         while idx <= K
             rho = 2*pi * rand;
+            nt(:, idx) = [sin(theta_cap)*cos(rho); sin(theta_cap)*sin(rho); -cos(theta_cap)];
+            idx = idx + 1;
+        end
+
+    case 'random'
+        % Area-uniform random beams in the cap (baseline with placement variance).
+        % Seed with rng() before calling for reproducible draws.
+        for i = 1:K
+            theta = theta_cap * sqrt(rand);   % area-uniform mapping
+            rho   = 2*pi * rand;
+            nt(:, i) = [sin(theta)*cos(rho); sin(theta)*sin(rho); -cos(theta)];
+        end
+
+    case 'dense'
+        % Naive scanning-style placement: near-uniform grid in ANGLE (theta uniform,
+        % NOT area-weighted), equal beams per ring. Oversamples near nadir vs area.
+        n_rings = max(1, round(sqrt(K)));
+        thetas  = linspace(theta_cap / n_rings, theta_cap, n_rings);
+        edges   = round((0:n_rings) * K / n_rings);   % ~equal beams per ring
+        idx = 1;
+        for r = 1:n_rings
+            nb = edges(r+1) - edges(r);
+            for j = 1:nb
+                if idx > K, break; end
+                rho = 2*pi * (j - 1) / max(nb, 1) + 0.3*r;   % offset each ring
+                nt(:, idx) = [sin(thetas(r))*cos(rho); sin(thetas(r))*sin(rho); -cos(thetas(r))];
+                idx = idx + 1;
+            end
+        end
+        while idx <= K   % fill any rounding leftover on the outer ring
+            rho = 2*pi * (idx - 1) / K;
             nt(:, idx) = [sin(theta_cap)*cos(rho); sin(theta_cap)*sin(rho); -cos(theta_cap)];
             idx = idx + 1;
         end

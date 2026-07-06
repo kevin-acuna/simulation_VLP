@@ -1,4 +1,4 @@
-function PEB = PEB_Gaussian(R, nt_orientations, T, Pt, theta_div, A_det, Psi_FOV, sigma2, N, nr)
+function [PEB, cond_num] = PEB_Gaussian(R, nt_orientations, T, Pt, theta_div, A_det, Psi_FOV, sigma2, N, nr)
 % PEB_Gaussian - Position Error Bound for Gaussian VCSEL beam-steered OWP
 %
 % Computes the CRLB for 3D position estimation using K steered-orientation
@@ -7,7 +7,8 @@ function PEB = PEB_Gaussian(R, nt_orientations, T, Pt, theta_div, A_det, Psi_FOV
 % CHANNEL MODEL:
 %   mu_i(r) = [C / (theta_div^2 * d^2)] * exp(-2*(phi_i/theta_div)^2) * cos(psi)
 %
-%   where C = Pt * A_det / (2*pi), phi_i = arccos(n_{t,i} . n_d)
+%   where C = 2 * Pt * A_det / pi (fixed-emitted-power far-field Gaussian,
+%   peak on-axis irradiance I0 = 2*Pt/(pi*w^2), w = d*theta_div), phi_i = arccos(n_{t,i} . n_d)
 %
 % GRADIENT (derived in analysis_PEB_Gaussian.md):
 %   nabla_r mu_i = (mu_i / d) * [alpha_i*(n_{t,i} - Q_i*n_d) - n_r/cos(psi) - 3*n_d]
@@ -27,8 +28,10 @@ function PEB = PEB_Gaussian(R, nt_orientations, T, Pt, theta_div, A_det, Psi_FOV
 %   N               : scalar, number of samples per orientation
 %   nr              : 3x1 vector, receiver orientation (unit vector)
 %
-% OUTPUT:
-%   PEB : scalar, position error bound (m RMS). Inf if outage.
+% OUTPUTS:
+%   PEB      : scalar, position error bound (m RMS). Inf if outage.
+%   cond_num : (optional) condition number of the broadcast FIM. Inf on outage.
+%              Exposed for the narrow-beam FIM-conditioning analysis (paper_plan §5.4).
 
 %% Input defaults
 if nargin < 10
@@ -37,6 +40,7 @@ end
 
 R = R(:); T = T(:); nr = nr(:);
 K = size(nt_orientations, 2);
+cond_num = Inf;   % defined on all early-return (outage) paths
 
 %% Geometry
 d_vec = R - T;
