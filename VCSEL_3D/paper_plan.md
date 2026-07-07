@@ -112,7 +112,7 @@ sujeto a    P90-PEB(𝒮_L) ≤ ε   y   |𝒞| = K
 o su dual (minimizar P90-PEB con cobertura ≥ objetivo). **Implementado** como escalarización con GA (espejo del `optimization/` de F): fitness = agregado del *PEB efectivo* `min(PEB, PEB_pen)` con las posiciones sin cubrir fijadas a `PEB_pen` (outage clamp). Métrica del GA = `mean` (da gradiente aun con cobertura baja; `p90` satura en la penalización). Archivos: `optimization/PEB_Gaussian_objective.m`, `PEB_Gaussian_monitor.m`, `optimize_codebook_GA.m`.
 
 ### 6.3 Baselines para comparar
-Todos en `generate_codebook.m`: `sunflower` (área-uniforme), `rings` (anillos + boresight), **`random`** (aleatorio área-uniforme, promediado sobre semillas en `sim06`), **`dense`** (rejilla uniforme-en-ángulo, símil barrido single-VCSEL). La referencia "dense-scanning de alto overhead" = `dense`/`sunflower` con `K` grande.
+Todos en `generate_codebook.m`: `sunflower` (área-uniforme, espiral áurea → **no simétrica**), `rings` (anillos + boresight), **`random`** (aleatorio área-uniforme, promediado sobre semillas en `sim06`), **`dense`** (rejilla uniforme-en-ángulo, símil barrido single-VCSEL), **`symmetric`** (D4: rotación 90° + espejos; mapas de cobertura simétricos, requiere `K = 4m` o `4m+1`). La referencia "dense-scanning de alto overhead" = `dense`/`sunflower` con `K` grande.
 
 ### 6.4 Overhead y complejidad
 Reportar `K` como overhead de probing; comparar `K_optimizado` vs `K_baseline` para igual cobertura/precisión.
@@ -134,7 +134,7 @@ Reportar `K` como overhead de probing; comparar `K_optimizado` vs `K_baseline` p
 |------|-----------|--------|--------|
 | **1** | Comparación de patrón LED vs VCSEL (mono/multimodo) | `sim01_pattern_comparison` | ✅ Hecho |
 | **2** | Cobertura vs `K`, curva por `θ_div` | `sim02_coverage_vs_K_theta` | ✅ Hecho |
-| **2b** | **Mapas espaciales de cobertura** (rejilla `θ_div×K`) + cobertura vs altura *(caracterización visual)* | `sim02_b_coverage_maps` | ✅ Hecho |
+| **2b** | **Mapas espaciales de cobertura** (rejilla `θ_div×K`, codebook `symmetric` D4) + cobertura vs altura *(caracterización visual)* | `sim02_b_coverage_maps` | ✅ Hecho |
 | **3** | PEB media/P90/**outage** vs `K` por `θ_div` | `sim03_PEB_vs_K_theta` | ✅ Hecho |
 | **4** | Frontera Pareto cobertura–precisión *(central)* | `sim04_accuracy_coverage_tradeoff` | ✅ Hecho |
 | **5** | Heatmaps de PEB (optimizado vs baseline) | `sim05_PEB_heatmaps` (+`sim06`) | ⚠️ Falta overlay optimizado |
@@ -226,3 +226,4 @@ Estrategia: escribir desde el inicio como **TWC**, con ruta de fallback a JLT.
 | 4 Jul 2026 | Verificación alineación Fase 1 (outage en sim03, cond(FIM) expuesto, comentario constante) | ✅ |
 | 4 Jul 2026 | Fase 2: baselines random/dense; `optimization/` (objetivo+monitor+driver GA); `sim06`; GA verificado end-to-end (cov 59.9%) | 🔄 falta corrida GA completa |
 | 6 Jul 2026 | `sim02_b_coverage_maps`: mapas binarios de cobertura (θ×K) + cobertura vs altura (Fig. 2b) | ✅ |
+| 6 Jul 2026 | Diagnóstico asimetría Fig. 2b = sunflower (espiral áurea). Añadido codebook `symmetric` (D4); sim02_b usa `K∈{9,17,25}`. Verificado mismatch=0 | ✅ |

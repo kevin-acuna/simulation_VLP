@@ -12,7 +12,11 @@ function nt = generate_codebook(K, theta_cap_deg, type)
 %                   'rings'     concentric rings + a boresight beam,
 %                   'random'    area-uniform random beams in the cap
 %                               (seed with rng() before calling for reproducibility),
-%                   'dense'     naive uniform-ANGLE grid (scanning-style placement)
+%                   'dense'     naive uniform-ANGLE grid (scanning-style placement),
+%                   'symmetric' D4-symmetric (90-deg rotation + mirror): optional
+%                               nadir beam + concentric rings of 4*m beams with
+%                               axis-aligned azimuths. Exact for K = 4*m or 4*m+1;
+%                               other K are rounded to the nearest 4*m+1 (warning).
 %
 % OUTPUT:
 %   nt : 3xK matrix of unit vectors. Nadir-referenced: n = [sin(t)cos(p); sin(t)sin(p); -cos(t)]
@@ -92,6 +96,41 @@ switch lower(type)
             rho = 2*pi * (idx - 1) / K;
             nt(:, idx) = [sin(theta_cap)*cos(rho); sin(theta_cap)*sin(rho); -cos(theta_cap)];
             idx = idx + 1;
+        end
+
+    case 'symmetric'
+        % D4-symmetric codebook (invariant under 90-deg rotation AND mirroring):
+        % optional nadir beam + concentric rings whose beam counts are multiples
+        % of 4 with axis-aligned azimuths (include 0/90/180/270 deg). This makes
+        % the coverage map symmetric on the square room, unlike 'sunflower'.
+        r = mod(K, 4);
+        if r ~= 0 && r ~= 1
+            Kc = 4*round((K - 1)/4) + 1;   % nearest 4*m+1
+            warning('generate_codebook:symmetric', ...
+                'K=%d is not C4-compatible; using K=%d (nearest 4*m+1).', K, Kc);
+            K = Kc;
+            nt = zeros(3, K);
+        end
+        idx = 1;
+        if mod(K, 4) == 1
+            nt(:, 1) = [0; 0; -1];         % nadir beam (invariant under C4)
+            idx = 2;
+        end
+        quads   = (K - (idx - 1)) / 4;     % number of 4-beam orbits
+        n_rings = max(1, round(sqrt(quads)));
+        base    = floor(quads / n_rings);
+        extra   = quads - base * n_rings;
+        ring_quads = base * ones(1, n_rings);
+        ring_quads(n_rings - extra + 1 : n_rings) = ring_quads(n_rings - extra + 1 : n_rings) + 1;  % add to outer rings
+        for rr = 1:n_rings
+            cnt = 4 * ring_quads(rr);
+            if cnt == 0, continue; end
+            theta = theta_cap * sqrt((rr - 0.5) / n_rings);   % area-uniform-ish radii
+            for j = 1:cnt
+                rho = 2*pi * (j - 1) / cnt;                    % axis-aligned -> D4
+                nt(:, idx) = [sin(theta)*cos(rho); sin(theta)*sin(rho); -cos(theta)];
+                idx = idx + 1;
+            end
         end
 
     otherwise
