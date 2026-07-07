@@ -41,7 +41,7 @@ stepH = 0.2;                         % Testbed Z step [m]
 % ============================================================================================
 % Orientation Codebook / Sparse-Scan Configuration
 % ============================================================================================
-K_values   = [5, 9, 15, 25, 49];    % Number of steered orientations (scan slots)
+K_values   = [25, 57, 101, 241, 501];    % Number of steered orientations (scan slots)
 theta_cap  = 50;                     % Spherical-cap half-angle for codebook [deg]
                                      %   corners of the room subtend ~47 deg from nadir at H=2 m,
                                      %   so a 50 deg cap lets beams reach the whole testbed.
