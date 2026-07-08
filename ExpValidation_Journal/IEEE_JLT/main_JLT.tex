@@ -1,0 +1,112 @@
+\documentclass[journal]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{tabularx}
+\usepackage{gensymb}  
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}  
+\usepackage{xfrac}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{cite}
+
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+
+\title{Experimental Demonstration of 3D Optical Wireless Positioning with Single Beam-Steered LED and Empirical Radiation Pattern}
+\author{
+    Kevin Acuna-Condori,
+    Bastien Béchadergue, 
+    Hongyu Guan, and
+    Luc Chassagne, 
+    \thanks{Manuscript received MM DD, 2025.
+    This work was supported in part by the French National Research Agency (ANR) through the Project SAFELiFi under Grant ANR-21-CE25-0001-01, and in part by the European Union's Smart Networks and Services Joint Undertaking (SNS JU) under grant agreement No. 101139292 (\textit{Corresponding author: Kevin Acuna-Condori.})
+    }
+    \thanks{The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Villacoublay, France (e-mail: kevin-jose.acuna-condori@uvsq.fr).}
+}
+\markboth{JOURNAL OF LIGHTWAVE TECHNOLOGY,~Vol.~XX, No.~XX, October XX, 2026}%
+{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+\maketitle
+
+\begin{abstract}
+TBD
+\end{abstract}
+
+\begin{IEEEkeywords} 
+    TBD
+\end{IEEEkeywords}
+
+\section{Introduction}
+\section{Working Principles of 3D OWP}
+    \subsection{System Model}
+    \subsection{Direction Finding}
+    \subsection{Distance Recovery}
+    \textcolor{blue}{Se consideraria dos metodos (a) el PD apunta hacia el LED asumiendo que el receptor tiene capacidad de reorientación, se apuntan entre ellos y se recupera la distancia, en total K+1 reorientaciones (b) el PD se mantiene fijo y se estima la distancia a partir de la información previamente registrada de las K orientaciones.}
+    \subsection{Transmitter Irradiation Pattern and Positioning Estimation Enhancement}
+    \textcolor{blue}{ (a) Se discute acerca del modelo de irradiancia del LED transmisor ideal Lambertiano versus el patron de irradiacion experimental. (b) Se propone un método de como usar la información experimental del patron de irradiancia para mejorar la estimación de posición.}
+
+\section{Details on the Prototype Implementation}
+    \subsection{3D Robotic Testbed Configuration }
+    \textcolor{blue}{
+        Entre las potenciales modificaciones experimentales a discutir se encuentran:
+        \begin{itemize}
+            \item Mejora de disipacion de calor en el LED transmisor. Se propone añadir un disipador de calor de aluminio montado en el Gimbal en conjunto con la compra de un LED montado en un star PCB. Esto permitiria elevar la corriente a la corriente nominal del LED de 1A (en el GLOBECOM paper se uso 750mA).
+            \item Actualmente la limitante para tener un testbed de 3m x 3m x 1.4m no está en el sistema de transmisión SBL, sino en los limites del FOV del PD. El PD que usamos es el BPX 61 con un FOV/2 de $\approx$60°, lo que geométricamente limita el tamaño del testbed a 2.4 x 2.4 x 1.2 m, fuera del mismo el RSS recibido cae drastricamente por el angulo de recepcion, incluso con un perfecto LOS o beam-steering el RSS la informacion no es suficiente para determinar la posicion. La solución seria elaborar la PCB con el PD S6967 de un FOV/2 mayor ($\approx$90°), con esto se podría llegar a 3m x 3m x 1.4m.
+            \item Aumento en las posiciones evaluadas. Actualmente en el paper GLOBECOM 2026 se evaluaron 300 posiciones. Manteniendo el grid de 0.2m : En el caso de emplear el BPX 61 llegariamos a 845 posiciones (h = 0.4m a 1.4m, w = 2.4m, l = 2.4m), a 1014 (h = 0.2m a 1.4m, w = 2.4m, l = 2.4m); mientras que con el S6967 llegariamos a 1280 (h = 0.4m a 1.4m, w = 3m, l = 3m) o 1536 (h = 0.2m a 1.4m, w = 3m, l = 3m). En todos los casos superamos las 300 de muestras del GLOBECOM.
+            \item (a) del lado del transmisor: En la descripción del mecanismo gimbal añadir las ecuaciones de rotación y transformación de coordenadas. (b) del lado del receptor: Describir las ecuaciones que transforman la posición deseada del PD en el sistema de referencia del testbed en el vector de posicion y orientación en el sistema de coordenadas del robot.
+        \end{itemize}
+        }
+
+    \subsection{Experimental Protocol for the SBL data adquisition}
+    \textcolor{blue}{
+        \begin{itemize}
+            \item Considerar registrar en la misma posición diferentes ángulos del PD para evaluar la robustez ante el tilt en PD del método SBL en 3D o especialmente en finding-Direction.
+        \end{itemize}
+    }
+
+    \subsection{Experimental Protocol for the empirical irradiation pattern}
+    \textcolor{blue}{
+        \begin{itemize}
+            \item Se presenta el protocolo para la adquisicion del patron de irradiación del LED.
+        \end{itemize}
+    }
+
+\section{Evaluation of the Direction Finding Performance}
+\section{Evaluation of the Positioning Performance}
+\section{Evaluation of the Empirical Irradiation Pattern for Improving Direction and Position Estimation}
+
+\section{Conclusion and Future Works}
+
+
+
+\cite{Acuna2025,acuna2026robust,acuna2025model}
+\bibliographystyle{IEEEtran}
+\bibliography{OWP_v2}
+
+\begin{IEEEbiographynophoto}{Kevin Acuna-Condori}
+received his B.S. degree in electronical engineering from Universidad Nacional Mayor de San Marcos, Lima, Peru, in 2015, and M.S. degree in mechatronics engineering from Pontifical Catholic University of Peru, Lima, Peru, in 2017. 
+From 2018 to 2023, he led research activities at Cirsys, a company developing social robots and artificial intelligence for environmental applications.
+Since 2024, he has been pursuing the Ph.D. degree at Université Paris-Saclay, Gif-sur-Yvette, France, with a focus on 3D visible light positioning.
+His research interests include optical wireless positioning, machine learning, optical beam steering, and visible light communications.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Bastien Béchadergue}
+received the aeronautical engineering degree from ISAE-Supaero, Toulouse, France, the M.S. degree in communication and signal processing from Imperial College London, London, U.K., in 2014, and the Ph.D. degree in signal and image processing from UVSQ, Université Paris-Saclay, Gif-sur-Yvette, France, in 2017, for his work on visible light communication and sensing for automotive applications. From 2017 to 2020, he was in charge of the research activities at Oledcomm, one of the leading companies in the development of optical wireless communication products. Since 2020, he has been an Associate Professor with UVSQ, Université Paris-Saclay, where his research focuses on optical wireless communication and sensing.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Hongyu Guan}
+received the B.S. degree in electrical engineering from ENSEIRB, Talence, France, in 2007, and the Ph.D. degree in computer science from the University of Bordeaux I, Bordeaux, France, in 2012, for his work on embedded systems for home automation. He is currently a Research Associate and the Chief Project Engineer with the LISV laboratory, Versailles Saint-Quentin-en-Yvelines University, University of Paris-Saclay, Gif-sur-Yvette, France. His research interests include visible light communications, communication protocol, ubiquitous, data fusion, sensors, and nanometrology.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Luc Chassagne}
+received the B.S. degree in electrical engineering from Supelec, Gif-sur-Yvette, France, in 1994, and the Ph.D. degree in optoelectronics from the University of Paris XI, Orsay, France, in 2000, for his work in the field of atomic frequency standard metrology. He is currently a Professor with the LISV laboratory, University of Versailles, University Paris-Saclay, France. His research interests include nanometrology, sensors, and visible light communications.
+\end{IEEEbiographynophoto}
+
+\end{document}
