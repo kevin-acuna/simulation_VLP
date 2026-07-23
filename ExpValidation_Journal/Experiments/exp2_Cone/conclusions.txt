@@ -1,0 +1,2 @@
+El Phi_1/2 es 36.7°
+El valor de m que genera un mejor fit es m=3.13
