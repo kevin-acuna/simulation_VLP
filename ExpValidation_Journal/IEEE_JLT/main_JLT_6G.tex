@@ -1,0 +1,336 @@
+%=====================================================================
+%  JOURNAL OF LIGHTWAVE TECHNOLOGY -- STRUCTURE / SKELETON
+%  Experimental validation of the beam-steered single-LED OWP work
+%  (GLOBECOM broadcast paper + TCOM journal), REFRAMED for 6G / ISAC.
+%
+%  This file proposes: (1) a new title, (2) a new abstract, and
+%  (3) the full section/subsection structure with a description of
+%  the intended content of each part.
+%
+%  Convention in this skeleton:
+%    - \textcolor{blue}{...}  = PLAN / content description (what to write)
+%    - \ph{...}               = numeric PLACEHOLDER to be filled from the
+%                               experimental campaign (dataset_specification.md)
+%    - \figsuggest{...}       = SUGGESTED FIGURE (green box) + its caption
+%    - % ...                  = editorial notes to the authors
+%
+%  ---------------------------------------------------------------
+%  TITLE (chosen): Beam-Steered Single-LED 3D Optical Wireless
+%      Localization for 6G Indoor Positioning: A Comprehensive
+%      Experimental Study
+%  Alternatives considered:
+%   - Beam-Steered Single-LED, Single-PD OWL: An Experimental Study
+%     Toward 6G Optical ISAC
+%   - Cooperative and Broadcast 3D OWL With a Single Beam-Steered LED
+%   - Experimental Demonstration ...: A Single-LED Sensing Modality
+%     for 6G Integrated Sensing and Communication
+%  ---------------------------------------------------------------
+%=====================================================================
+\documentclass[journal]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{tabularx}
+\usepackage{gensymb}  
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}  
+\usepackage{xfrac}
+\usepackage{xcolor}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{cite}
+\usepackage{float}
+
+% --- placeholder for experimental numbers still to be measured ---
+\newcommand{\ph}[1]{\textcolor{red}{[\,#1\,]}}
+
+% --- figure-suggestion marker (GREEN = which figure to place + its caption) ---
+\definecolor{figcol}{rgb}{0.0,0.5,0.0}
+\newcommand{\figsuggest}[3]{% #1 label, #2 graphic description, #3 caption
+  \begin{figure}[H]
+    \centering
+    \fcolorbox{figcol}{white}{\parbox[c][2.3cm][c]{0.9\linewidth}{\centering\textcolor{figcol}{\textbf{[FIGURE]}\\[2pt] #2}}}
+    \caption{\textcolor{figcol}{#3}}
+    \label{#1}
+  \end{figure}}
+
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+
+\title{Beam-Steered Single-LED 3D Optical Wireless Localization for 6G Indoor Positioning: A Comprehensive Experimental Study}
+\author{
+    Kevin Acuna-Condori,
+    Bastien B\'{e}chadergue, 
+    Hongyu Guan, and
+    Luc Chassagne, 
+    \thanks{Manuscript received MM DD, 2026.
+    This work was supported in part by the French National Research Agency (ANR) through the Project SAFELiFi under Grant ANR-21-CE25-0001-01, and in part by the European Union's Smart Networks and Services Joint Undertaking (SNS JU) under grant agreement No. 101139292 (\textit{Corresponding author: Kevin Acuna-Condori.})
+    }
+    \thanks{The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Villacoublay, France (e-mail: kevin-jose.acuna-condori@uvsq.fr).}
+}
+\markboth{JOURNAL OF LIGHTWAVE TECHNOLOGY,~Vol.~XX, No.~XX, Month~2026}%
+{Acuna-Condori \MakeLowercase{\textit{et al.}}: Beam-Steered Single-LED 3D Optical Wireless Localization for 6G Indoor Positioning}
+\maketitle
+
+%=====================================================================
+\begin{abstract}
+Accurate three-dimensional (3D) indoor localization is a key enabler of sixth-generation (6G) networks, whose ITU IMT-2030 framework targets centimeter-level positioning. Optical wireless communication (OWC) is a strong candidate for this role, offering a vast unlicensed spectrum, immunity to electromagnetic interference, and a deterministic line-of-sight channel well suited to positioning. We recently proposed a model-based framework in which a single light-emitting diode (LED) is steered through $K$ known orientations while a single static photodiode (PD) records the received-signal-strength profile, yielding receiver-orientation-independent direction finding and full 3D position recovery in either a cooperative or a broadcast mode. Previously studied only in simulation, this framework is validated here experimentally on an automated 3D robotic testbed that provides sub-millimeter ground truth over $\approx\ph{2000}$ positions. The system attains a mean 3D positioning error of $\ph{X.X}$~cm ($\ph{X.X}$~cm at the $90$th percentile) and a direction error of $\ph{X.X}^\circ$, remaining robust under receiver tilts up to $\ph{30}^\circ$. These results confirm that beam-steered OWC can meet the IMT-2030 centimeter-level target for 3D indoor positioning with minimal receiver hardware.
+\end{abstract}
+
+\begin{IEEEkeywords}
+6G, indoor localization, 3D optical wireless positioning, beam steering, received signal strength, LiFi, receiver-orientation independence, experimental validation.
+\end{IEEEkeywords}
+%=====================================================================
+
+
+
+
+%=====================================================================
+% FLAGSHIP FIGURE (Fig. 1) --- page-1 teaser: 3D error map + CDF.
+\begin{figure*}[!t]
+    \centering
+    \fcolorbox{figcol}{white}{\parbox[c][3.4cm][c]{0.46\linewidth}{\centering\textcolor{figcol}{\textbf{[FLAGSHIP FIG.~1a]}\\[3pt] 3D error map: room with the ceiling-mounted steered LED ($K$ beams) and the $\approx$2000-point workspace cloud, each point colored by its 3D positioning error (colorbar in cm).}}}
+    \hfill
+    \fcolorbox{figcol}{white}{\parbox[c][3.4cm][c]{0.46\linewidth}{\centering\textcolor{figcol}{\textbf{[FLAGSHIP FIG.~1b]}\\[3pt] CDF of the 3D positioning error: cooperative vs.\ broadcast against PEB/PEB$_\mathrm{B}$, with the $P_{90}$ centimeter value annotated.}}}
+    \caption{\textcolor{figcol}{\textbf{Flagship.} Experimental 3D localization with a \emph{single} beam-steered LED and a \emph{single} photodiode. (a)~Reconstructed positioning error over the $\approx\ph{2000}$-point 3D workspace (color: 3D error in cm); (b)~empirical CDF of the 3D error for the cooperative and broadcast pipelines against the PEB/PEB$_\mathrm{B}$ bounds, meeting the IMT-2030 centimeter-level target.}}
+    \label{fig:flagship}
+\end{figure*}
+
+\section{Introduction}
+\IEEEPARstart{T}{he} transition toward the sixth generation (6G) of wireless networks is redefining localization from an auxiliary feature into a native network capability. Under the International Telecommunication Union (ITU) IMT-2030 framework, high-accuracy positioning---targeting centimeter-level accuracy in indoor scenarios---is listed among the core capabilities of future networks, alongside integrated sensing and communication (ISAC), in which a shared infrastructure jointly performs data transport and physical-world sensing \cite{ITU2023IMT2030, LiuF2022ISAC}. Accurate localization is thus increasingly regarded as a key enabler of 6G rather than a peripheral service \cite{Trevlakis2023}. Yet the radio-frequency (RF) technologies that dominate indoor positioning---Wi-Fi, Bluetooth Low Energy, ultra-wideband, and cellular 5G/6G signals---are hampered in cluttered interiors by multipath and shared-spectrum interference, and typically deliver only meter-level accuracy unless dense infrastructure or specialized hardware is deployed \cite{Italiano2025, Trevlakis2023}.
+
+Optical wireless communication (OWC) has emerged as a compelling complement to RF for indoor 6G. It accesses a vast, globally unlicensed optical spectrum, is inherently immune to electromagnetic interference, and is spatially confined, since light does not penetrate opaque walls; adjacent rooms can therefore reuse the same band without cross-interference, while offering intrinsic physical-layer security \cite{Haas:16, Zhu2025}. These properties, combined with the deterministic nature of line-of-sight (LOS) propagation, also make the optical channel remarkably favorable for positioning: the received signal strength (RSS) at a photodiode (PD) is a stable, well-modeled function of the link geometry, enabling centimeter-level accuracy with low-cost front-ends \cite{Zhu2025, Wang2024b}. Because a single luminaire can in principle jointly provide illumination, high-rate data through light-fidelity (LiFi) \cite{Haas:16, Soltani2023LiFi2}, and positioning, OWC is a natural candidate for the sensing--communication convergence envisioned by ISAC. We emphasize, however, that this work addresses the localization (sensing) function only; embedding a data-bearing waveform on the same link is a compatible extension that lies beyond the present scope.
+
+A defining trend of 6G optical access is the migration of spatial-diversity and beam-management functions from the receiver toward the transmitter. Two lines of work illustrate this shift: dense vertical-cavity surface-emitting laser (VCSEL) arrays that emit many narrow, highly directional beams to tile an indoor volume \cite{Zeng2022VCSEL, Safi2025VCSEL3D}, and single-aperture beam steering that reorients one beam at high rate through microelectromechanical mirrors, liquid-crystal deflectors, or optical phased arrays \cite{Liu:25, mi13070990, SaidEroglu2018, Koonen2021}. The pencil-like beams of laser and VCSEL sources maximize link rate but illuminate only a small footprint per beam, so preserving coverage demands dense arrays and careful divergence control as the receiver moves \cite{Safi2025VCSEL3D}. A light-emitting diode (LED), in contrast, is eye-safe and radiates a broad, quasi-Lambertian pattern that covers a wide angular region from a single aperture. This broad coverage is precisely the property our approach exploits: steering a single LED through a small set of known orientations illuminates a large portion of the room, and each orientation produces a distinct, geometry-dependent RSS at the PD, generating rich angular diversity from only a handful of reorientations \cite{acuna2025model, acuna2026broadcast}. A pencil beam would instead require far more orientations merely to reach the receiver and sample its angular response. The wide emission of the LED therefore turns a single steerable source into an efficient generator of the angular diversity on which localization relies.
+
+Minimizing the localization infrastructure to a single light source has long been a goal in OWC positioning \cite{Zhu2025, Rekkas2023}. Conventional multi-LED systems require at least three or four luminaires to be simultaneously visible to the receiver, each carrying a distinct identifier or modulation, with an anchor geometry that must be co-designed with the lighting layout and calibrated at installation \cite{Wang2024b, Cossu2022}. Such fixed constellations adapt poorly to irregular or sparsely lit spaces---for instance hospital corridors or warehouse aisles---where the required anchor density is often unavailable. A single steerable LED behaves instead as a self-contained, independently deployable module whose coverage is reconfigured in software by re-aiming the beam, offering a flexibility that a fixed, calibration-heavy array cannot. Prior single-LED systems recover the missing spatial information at the receiver, through tilted-PD arrays, mechanically rotating PDs, or inertial fusion \cite{Qin2020, Li2024, Ma2024, Liu2022, Shi2025, ShiJin2025}. Our architecture keeps the receiver to a single PD and instead leverages the emerging transmitter-side beam-steering technology to synthesize the required diversity. We are careful not to overstate this as relocating all complexity to the transmitter: broadcast operation still requires the receiver to know its own orientation (e.g., from a low-cost inertial sensor), while cooperative operation additionally assumes a receiver-side reorientation capability. The distinguishing feature is rather the pairing of a single-PD receiver with a single beam-steered LED, exploiting a promising and actively developed transmitter technology in place of a dense anchor grid.
+
+%=====================================================================
+% TABLE I --- state-of-the-art comparison (sells the novelty).
+\begin{table*}[!t]
+\centering
+\caption{Representative single-/few-anchor OWC indoor positioning systems. \textcolor{figcol}{(Skeleton --- fill references and values.)}}
+\label{tab:sota}
+\begin{tabular}{@{}lllccccc@{}}
+\toprule
+Work & Technique & Light source & Rx hardware & Dim. & Rx orientation & Exp. & Accuracy \\
+\midrule
+\ph{[ref]} & RSS + LS       & Multi-LED (3--4) & Single PD         & 2D & Assumed $\perp$ & Yes & \ph{X}~cm ($P_{90}$) \\
+\ph{[ref]} & AoA / imaging  & Multi-LED        & Camera / PD array & 3D & Estimated       & Yes & \ph{X}~cm \\
+\ph{[ref]} & RSS + IMU      & Single LED       & Tilted PD / IMU   & 3D & Sensor-aided    & Yes & \ph{X}~cm \\
+\cite{acuna2026experimental} & RSS, beam steering (coop.) & Single steered LED & Single PD & 3D & Agnostic (DF) & Yes & \ph{X}~cm ($\sim$300 pts) \\
+\midrule
+\textbf{This work} & \textbf{RSS, beam steering (coop.\ \& broadcast)} & \textbf{Single steered LED} & \textbf{Single PD} & \textbf{3D} & \textbf{Agnostic (DF)} & \textbf{Yes} & \textbf{\ph{X.X}~cm ($P_{90}$, $\approx$2000 pts)} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+We recently formalized this idea as a model-based framework in which a single LED is steered through $K$ orientations to first estimate the LED-to-PD direction and then recover the distance. The direction is obtained from ratio-based least-squares estimators that cancel every receiver-dependent term and are hence provably independent of the receiver orientation $\mathbf{n}_r$; the distance is recovered either cooperatively, from one additional $(K{+}1)$-th beam-aligned measurement \cite{acuna2025model}, or in broadcast mode, in closed form from the same $K$ measurements once $\mathbf{n}_r$ is known \cite{acuna2026broadcast}. We further derived the corresponding direction and position error bounds and analyzed robustness to receiver tilt \cite{acuna2026robust}. These results are, however, almost entirely analytical and simulation-based, resting on idealized noise statistics and an ideal Lambertian source. A preliminary experimental study validated only the cooperative pipeline with the generalized and weighted least-squares (GLS/WLS) estimators over a limited grid of about $300$ points \cite{acuna2026experimental}, leaving the broadcast pipeline, the nonlinear least-squares (NLS) estimator, large-scale spatial statistics, and real receiver-tilt behavior experimentally unverified.
+
+This paper provides that missing experimental foundation through a comprehensive validation of both pipelines on a purpose-built three-dimensional (3D) robotic testbed, in which a UR5 manipulator supplies sub-millimeter position ground truth over a densified grid of approximately \ph{2000} positions. The main contributions are as follows:
+\begin{itemize}
+    \item \textbf{Complete experimental estimator comparison.} We report the first experimental comparison of the three direction estimators (GLS, WLS, and NLS) against their theoretical bounds, confirming on real data---for the first time---that NLS approaches the direction error bound while the closed-form GLS/WLS estimators exhibit the structural gap previously observed only in simulation.
+    \item \textbf{First experimental validation of the broadcast pipeline.} Using the receiver pose recorded at every point, the same dataset is reprocessed with both pipelines, yielding the first experimental characterization of broadcast distance recovery together with a large-scale statistical evaluation---cumulative distributions and spatial heatmaps---against the cooperative (PEB) and broadcast (PEB$_\mathrm{B}$) bounds.
+    \item \textbf{Cooperative-versus-broadcast trade-off.} We quantify experimentally, on identical data, the accuracy cost of eliminating the dedicated $(K{+}1)$-th measurement, directly answering how much is lost by serving multiple passive receivers simultaneously---a scenario of particular relevance to low-overhead Internet-of-Things (IoT) deployments.
+    \item \textbf{Robustness to receiver orientation.} We experimentally confirm the receiver-orientation independence of the direction-finding stage and characterize positioning robustness under deliberate receiver tilts, corroborating the $\mathbf{n}_r$-agnostic property and the tilt sensitivity predicted analytically \cite{acuna2026robust}.
+\end{itemize}
+
+Collectively, these results show that a single beam-steered LED paired with a single PD can meet the IMT-2030 centimeter-level indoor positioning target while keeping receiver hardware minimal, and they provide the experimental grounding required to position beam-steered OWC as a practical localization building block for future 6G optical ISAC systems \cite{Trevlakis2023, LiuF2022ISAC}. The remainder of this paper is organized as follows. Section~\ref{sec:principles} recalls the system model and the two localization pipelines. Section~\ref{sec:experimental} details the experimental testbed and acquisition protocol. Section~\ref{sec:results} reports and discusses the experimental results, and Section~\ref{sec:conclusion} concludes and outlines directions for future work.
+
+%=====================================================================
+\section{Working Principles of Beam-Steered Single-LED 3D Localization}
+\label{sec:principles}
+% Keep this section compact: it recaps the theory already published in
+% \cite{acuna2025model, acuna2026broadcast} and sets notation for the experiments.
+
+    \subsection{System Geometry and RSS Signal Model}
+    \textcolor{blue}{Recap the geometry: ceiling-mounted steerable LED at $\mathbf{t}=[0,0,H]^{\mathsf T}$ steered along $\{\mathbf{n}_{t,i}\}_{i=1}^K$; single PD at unknown $\mathbf{r}$ with orientation $\mathbf{n}_r$. State the Lambertian LOS RSS model, the irradiance/incidence cosines $\cos\phi_i=(\mathbf{n}_{t,i}\!\cdot\!\mathbf{d})/d$, $\cos\psi=-(\mathbf{n}_r\!\cdot\!\mathbf{d})/d$, the compact factorization $\mu_i=\eta\,Q_i^{\,m}$ with $\eta=C\cos\psi/d^2$, and the $N$-sample MVU mean and Gaussian noise model. Cite \cite{Kahn1997, acuna2025model}. Note that the radiometric constant $C$ is calibrated experimentally (Section~\ref{sec:experimental}), while the ideal Lambertian profile $\cos^m\phi$ is retained; refining it with the measured pattern is left to future work.}
+
+    \figsuggest{fig:geometry}{3D system-geometry schematic (LED, PD, angles $\phi_i$, $\psi$, range $d$)}{System geometry of the beam-steered single-LED 3D localization setup: a ceiling-mounted LED at $\mathbf{t}$ is steered through $K$ known orientations $\{\mathbf{n}_{t,i}\}$ toward a single photodiode at unknown position $\mathbf{r}$ and orientation $\mathbf{n}_r$; the $i$-th beam defines the irradiance angle $\phi_i$ and the incidence angle $\psi$ at range $d$.}
+
+    \subsection{Receiver-Orientation-Independent Direction Finding}
+    \textcolor{blue}{Summarize the three estimators from \cite{acuna2025model}: closed-form GLS and lightweight WLS (ratio-based, $3{\times}3$ eigenproblem) and iterative NLS (normalized Lambertian fit on $\mathbb{S}^2$). State the key property to be tested experimentally: all three cancel the common amplitude and are mathematically independent of $\mathbf{n}_r$ \cite{acuna2025model, acuna2026robust}.}
+
+    \subsection{3D Position Recovery: Cooperative and Broadcast Pipelines}
+    \textcolor{blue}{Both pipelines reuse the same $K$-measurement direction estimate and recover the range from the RSS amplitude; they are evaluated on the \emph{same} dataset, since the recorded UR5 pose supports both with no extra acquisition.}
+
+        \subsubsection{Cooperative Pipeline (Active Receiver)}
+        \textcolor{blue}{The LED is steered toward the estimated direction and the PD is reoriented toward the LED (emulated by the UR5 end-effector) for a dedicated $(K{+}1)$-th beam-aligned measurement, from which the range $d$ is obtained---the TCOM pipeline \cite{acuna2025model}.}
+
+        \subsubsection{Broadcast Pipeline (Passive Receiver)}
+        \textcolor{blue}{The PD stays static and $d$ is recovered in closed form from the same $K$ measurements, given $\mathbf{n}_r$, via the profiled amplitude estimator $\hat\eta=\sum_i\hat\mu_i\hat Q_i^m/\sum_i\hat Q_i^{2m}$ and $\hat d=\sqrt{C\,\widehat{\cos\psi}/\hat\eta}$---the broadcast pipeline \cite{acuna2026broadcast}, which enables simultaneous multi-user positioning.}
+
+    \figsuggest{fig:pipelines}{Block diagram of the two localization pipelines (shared direction finding $\to$ cooperative / broadcast range)}{Processing flow of the two pipelines: a shared front-end estimates the LED--PD direction from the $K$ RSS measurements, after which the 3D position is recovered either cooperatively (an additional $(K{+}1)$-th beam-aligned measurement) or in broadcast mode (closed-form range from the same $K$ measurements, given $\mathbf{n}_r$).}
+
+%=====================================================================
+\section{Experimental Testbed and Data-Acquisition Methodology}
+\label{sec:experimental}
+% This section operationalizes ExpValidation_Journal/dataset_specification.md.
+
+    \subsection{Overview of the 3D Robotic Testbed}
+    \textcolor{blue}{Overview: a ceiling-mounted steerable near-infrared (NIR) LED illuminates a workspace scanned by a single photodiode carried by a UR5 manipulator that provides programmable, sub-millimeter ground truth. Summarize the key hardware parameters in a table (LED power, $\Phi_{1/2}$, $A_{\mathrm{det}}$, FOV, TIA gain, DAQ rate), then detail the three subsystems below.}
+
+%=====================================================================
+% TABLE II --- system / hardware parameters.
+\begin{table}[!t]
+\centering
+\caption{Experimental system and hardware parameters. \textcolor{figcol}{(Skeleton --- fill values.)}}
+\label{tab:hw}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Parameter & Value \\
+\midrule
+LED wavelength $\lambda$              & \ph{XXX}~nm \\
+LED optical power                     & \ph{XX}~mW @ $1$~A \\
+Semi-angle at half power $\Phi_{1/2}$ & \ph{XX}$^\circ$ \\
+Effective Lambertian order $m$        & \ph{X.X} \\
+Gimbal (2-axis) resolution            & $0.1^\circ$ (Thorlabs PRM1Z8) \\
+Photodiode                            & \ph{BPX61 / S6967} \\
+Detector area $A_{\mathrm{det}}$      & \ph{X.X}~mm$^2$ \\
+Receiver FOV $\Psi_c$                 & \ph{60/90}$^\circ$ \\
+TIA gain                              & \ph{XX}~k$\Omega$ \\
+Samples per measurement $N$           & $1000$ \\
+Sampling rate                         & $1$~kHz \\
+Steering orientations $K$             & $9$ (DEB-optimized) \\
+UR5 ground-truth repeatability        & $\pm0.03$~mm \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+    \figsuggest{fig:testbed}{Annotated photograph/render of the 3D robotic testbed}{Annotated view of the experimental testbed: the ceiling-mounted two-axis beam-steered NIR LED, the single photodiode carried by the UR5 end-effector (providing sub-millimeter ground truth), and the reachable $3.0\times3.0$~m workspace.}
+
+        \subsubsection{Steerable LED Transmitter}
+        \textcolor{blue}{NIR LED on a two-axis motorized gimbal (Thorlabs PRM1Z8, $0.1^\circ$ resolution). Thermal-management upgrade over the conference setup: aluminum heat sink and star-PCB mount enabling a nominal $1$~A drive (vs.\ $750$~mA), which raises the emitted power and hence the SNR.}
+
+        \subsubsection{Photodiode Receiver and Front-End Upgrades}
+        \textcolor{blue}{Single PD with a transimpedance front-end. Field-of-view upgrade: baseline narrow-FOV PD (BPX\,61, $\approx60^\circ$) vs.\ the wide-FOV device (S6967, $\approx90^\circ$), which enlarges the reachable workspace from $2.4\times2.4$~m to $3.0\times3.0$~m.}
+
+        \subsubsection{UR5 Manipulator as Ground-Truth Reference}
+        \textcolor{blue}{The UR5 positions and orients the PD across a high-density grid ($0.2$~m resolution, up to $\approx\ph{2000}$ positions over heights $h\in\ph{[0.2,1.4]}$~m), recording each pose as the position and orientation ground truth.}
+
+    \subsection{Coordinate Frames and Ground-Truth Kinematics}
+    \textcolor{blue}{Give the rigid-body transforms needed for ground truth:
+    (a)~\textit{Transmitter kinematics} --- rotation matrices of the two-axis gimbal mapping commanded $(\phi_{\mathrm{cmd}},\text{az}_{\mathrm{cmd}})$ to $\mathbf{n}_{t,i}$;
+    (b)~\textit{Receiver kinematics} --- mapping the desired PD pose in the global testbed frame to the UR5 base/tool frames, and extracting $\mathbf{n}_r$ from \texttt{pose\_UR5} (with a note on sign/convention vs.\ the theoretical model). Document UR5 repeatability ($\pm0.03$~mm) as the ground-truth uncertainty.}
+
+    \figsuggest{fig:frames}{Coordinate frames and rigid-body transformations}{Coordinate frames used to derive ground truth---the global testbed frame, the UR5 base/tool frames, and the LED gimbal frame---and the transformations mapping commanded gimbal angles to $\mathbf{n}_{t,i}$ and extracting $\mathbf{n}_r$ from \texttt{pose\_UR5}.}
+
+    \subsection{Radiometric Calibration}
+    \textcolor{blue}{Two calibration sub-datasets from \texttt{dataset\_specification.md}:
+    \emph{Sub-dataset 1 --- $R(\phi)$}: at fixed known $d$, sweep the irradiance angle $\phi\in[0^\circ,90^\circ]$ (step $2$--$5^\circ$) over several azimuth cuts ($0/90/180/270^\circ$) to capture asymmetry; record raw $V_{\mathrm{raw}}[n]$, dark $V_{\mathrm{dark}}[n]$, driving current $I_{\mathrm{LED}}$, temperatures. Fit $\hat R(\phi)$ (spline / multi-Gaussian).
+    \emph{Sub-dataset 2 --- constant $C$}: PD under the LED (nadir/zenith) at known distances ($0.4$--$1.2$~m) to estimate the radiometric constant $C$ used by the estimators. The measured $\hat R(\phi)$ is reported only as a channel characterization; its use to correct the estimators is deferred to future work.}
+
+    \subsection{Spatial Data-Acquisition Campaign}
+    \textcolor{blue}{Describe Sub-dataset 3: for each of the $\approx\ph{2000}$ points, record ground truth ($x,y,z$, full \texttt{pose\_UR5}, $\mathbf{n}_r$); for each of the $K{=}9$ TCOM-optimized orientations record $\mathbf{n}_{t,i}$, raw/dark samples ($N{=}1000$ @ $1$~kHz) and timestamps; plus the cooperative $(K{+}1)$-th beam-aligned measurement. Repeat the full $\{K,K{+}1\}$ scan $M\in[10,30]$ times per point for empirical noise statistics ($\hat\sigma^2$), enabling direct comparison with the $\sigma^2$ assumed in \cite{acuna2025model, acuna2026broadcast}. Emphasize that storing \texttt{pose\_UR5} lets the \emph{same} data feed both cooperative and broadcast pipelines.}
+
+%=====================================================================
+% TABLE III --- acquisition-campaign / dataset summary.
+\begin{table}[!t]
+\centering
+\caption{Summary of the experimental acquisition campaign. \textcolor{figcol}{(Skeleton --- fill values.)}}
+\label{tab:dataset}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Sub-dataset & Purpose & Size \\
+\midrule
+1 --- $R(\phi)$    & Radiation-pattern char.\ & \ph{X} az.\ cuts $\times$ \ph{XX} angles \\
+2 --- constant $C$ & Radiometric calibration  & \ph{X} distances \\
+3 --- spatial      & Main 3D campaign         & $\approx\ph{2000}$ pts $\times\, K{=}9 \times M$ \\
+D2 --- tilt        & Receiver-tilt robustness & \ph{100--200} pts $\times$ 4 tilts \\
+\midrule
+\multicolumn{2}{@{}l}{Grid resolution / heights} & $0.2$~m / $h\in\ph{[0.2,1.4]}$~m \\
+\multicolumn{2}{@{}l}{Repeats per point $M$}      & \ph{10--30} \\
+\multicolumn{2}{@{}l}{Total measurements}         & $\approx\ph{X}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+    \subsection{Receiver-Tilt Campaign}
+    \textcolor{blue}{Describe the deliberate-tilt sweep (axis D2): on a subset of $\ph{100\text{--}200}$ points, repeat the $\{K\}$ scan with the PD tilted to $\theta_{\mathrm{tilt}}\in\{0,6,15,30\}^\circ$ over varied tilt azimuths, replicating the PEB-vs-tilt analysis of the broadcast paper. This isolates the experimental impact of physical attitude on both direction finding ($\mathbf{n}_r$-agnostic) and distance recovery ($\mathbf{n}_r$-dependent).}
+
+    \subsection{Dataset Structure and Reproducibility}
+    \textcolor{blue}{Specify the storage schema (one row per \texttt{(point\_id, orientation\_id, repeat\_id)}, separate tables for $(K{+}1)$ and for the calibration sub-datasets), retention of raw $V_{\mathrm{raw}}[n]$ for $\hat\sigma^2$ recomputation, and session metadata for traceability. State the intention to release the dataset (open-data / reproducibility angle, valued for JLT and for the 6G community).}
+
+%=====================================================================
+\section{Experimental Results and Discussion}
+\label{sec:results}
+
+%=====================================================================
+% TABLE IV --- main quantitative results (estimators x pipelines vs bounds).
+\begin{table*}[!t]
+\centering
+\caption{Experimental accuracy over the $\approx\ph{2000}$-point grid: direction finding and 3D positioning versus the theoretical bounds. \textcolor{figcol}{(Skeleton --- fill values.)}}
+\label{tab:results}
+\begin{tabular}{@{}lccc|ccc|ccc@{}}
+\toprule
+ & \multicolumn{3}{c|}{Direction error [deg]} & \multicolumn{3}{c|}{3D error --- cooperative [cm]} & \multicolumn{3}{c}{3D error --- broadcast [cm]} \\
+Estimator & Mean & $P_{90}$ & DEB & RMSE & $P_{90}$ & PEB & RMSE & $P_{90}$ & PEB$_\mathrm{B}$ \\
+\midrule
+GLS & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} \\
+WLS & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} \\
+NLS & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} & \ph{X.X} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+    \subsection{Optical Channel Characterization}
+    \textcolor{blue}{Present the measured normalized radiation response $\hat R(\phi)$ (including azimuthal asymmetry) against the best-fit ideal $\cos^m\phi$ profile; report the fitted effective Lambertian order $m$ and the RMS model mismatch. This characterizes the real optical channel used throughout the evaluation and delimits the regime where the ideal-Lambertian assumption holds; exploiting $\hat R(\phi)$ to further correct the estimators is left to future work.}
+
+    \figsuggest{fig:radpattern}{Measured vs.\ ideal LED radiation pattern (several azimuth cuts)}{Measured normalized radiation response $\hat R(\phi)$ along azimuth cuts $0/90/180/270^\circ$ versus the best-fit ideal Lambertian profile $\cos^m\phi$, illustrating the angular (a)symmetry of the COTS LED.}
+
+    \subsection{Direction-Finding Accuracy}
+    % Common front-end for both pipelines; compare estimators against the DEB.
+    \textcolor{blue}{Report the GLS/WLS/NLS direction-finding error (mean, median, $P_{90}$) over the dense grid, compared against the theoretical direction error bound (DEB) from \cite{acuna2025model}. Include the error CDF and a spatial heatmap, and discuss where and why the measured error departs from the bound---notably the structural gap of the closed-form GLS/WLS estimators against the near-bound NLS. Since direction finding is common to both pipelines, this establishes the front-end accuracy on which 3D positioning builds.}
+
+    \figsuggest{fig:df_cdf}{CDF of the direction-finding error (GLS/WLS/NLS vs.\ DEB)}{Empirical cumulative distribution of the direction-finding error over the $\approx\ph{2000}$-point grid for the GLS, WLS, and NLS estimators, with the theoretical direction error bound (DEB) as reference.}
+
+    \figsuggest{fig:df_heatmap}{Spatial heatmap of direction-finding error over the workspace}{Spatial heatmap of the mean direction-finding error across the workspace for the NLS estimator, revealing the center-to-periphery accuracy trend.}
+
+    \subsection{3D Positioning Accuracy: Cooperative vs.\ Broadcast Pipelines}
+    \textcolor{blue}{Report the full 3D positioning error (RMSE, $P_{90}$, APE) over the dense grid for both pipelines, compared against the cooperative (PEB) and broadcast (PEB$_\mathrm{B}$) bounds \cite{acuna2025model, acuna2026broadcast}. The headline 3D error map and CDF are promoted to the flagship Fig.~\ref{fig:flagship}, and the per-estimator, per-pipeline values are collected in Table~\ref{tab:results}. Emphasize the head-to-head trade-off on identical data: the accuracy gap between the two pipelines versus their operational cost (broadcast is passive and serves multiple users simultaneously with no PD reorientation; cooperative adds one beam-aligned measurement for higher accuracy). Tie the broadcast mode back to low-overhead multi-user 6G/IoT scenarios (multi-robot, AGV).}
+
+    \subsection{Robustness to Receiver Orientation}
+    \textcolor{blue}{Use the tilt-sweep data to show experimentally that direction finding is (near-)invariant to $\theta_{\mathrm{tilt}}$ while broadcast distance recovery degrades in the predicted way; quantify degradation vs.\ $\theta_{\mathrm{tilt}}$ and vs.\ $K$. This validates the theoretical $\mathbf{n}_r$-independence and the tilt sensitivity of the amplitude term.}
+
+    \figsuggest{fig:tilt}{Error vs.\ receiver tilt $\theta_{\mathrm{tilt}}$ (direction finding flat; broadcast range degrading)}{Direction-finding and broadcast 3D positioning error versus the receiver tilt $\theta_{\mathrm{tilt}}\in\{0,6,15,30\}^\circ$, showing the near-invariance of direction finding and the predicted degradation of the amplitude-dependent range term.}
+
+    \subsection{Discussion: Implications for 6G Optical ISAC}
+    \textcolor{blue}{Map results onto IMT-2030 KPIs (accuracy $1$--$10$~cm, latency), argue the hardware-reuse ISAC synergy (same steered transmitter serves data + localization), and honestly scope the claim: this paper demonstrates the \emph{sensing/localization pillar}; joint data transmission is the natural next integration step (not demonstrated here). Contrast positioning-oriented steering with coverage-oriented VCSEL divergence control \cite{Safi2025VCSEL3D, Zeng2022VCSEL}.}
+
+%=====================================================================
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+\textcolor{blue}{Summarize the comprehensive experimental validation of the beam-steered single-LED / single-PD localization framework: a complete GLS/WLS/NLS estimator comparison against the bounds, the first experimental characterization of the broadcast pipeline, the cooperative-vs-broadcast accuracy trade-off, and robustness to receiver tilt---together meeting the IMT-2030 centimeter-level target with minimal receiver hardware and supporting beam-steered OWC as a localization building block for 6G optical ISAC (without claiming a joint-communication demonstration). Future work: (i)~empirical modeling and correction of the real (quasi-Lambertian) radiation pattern within the estimators \cite{Moreno2008}; (ii)~embedding a data-bearing waveform on the steered link toward full ISAC operation \cite{Bechadergue2024ISAC}; (iii)~non-mechanical, high-speed steering (liquid-crystal, optical phased arrays) for mobility \cite{Liu:25, mi13070990}; (iv)~analysis of receiver-orientation-sensor error in broadcast mode; and (v)~scaling to multi-AP and VCSEL-array transmitters \cite{Zeng2022VCSEL, Safi2025VCSEL3D}.}
+
+%=====================================================================
+% Force the skeleton's key references into the bibliography while drafting.
+\nocite{ITU2023IMT2030,LiuF2022ISAC,Trevlakis2023,Italiano2025,Haas:16,Soltani2023LiFi2,Zhu2025,Wang2024b,Rekkas2023,Zeng2022VCSEL,Safi2025VCSEL3D,Liu:25,mi13070990,SaidEroglu2018,Koonen2021,Qin2020,Li2024,Ma2024,Liu2022,Shi2025,ShiJin2025,Kahn1997,Moreno2008,Bechadergue2024ISAC,acuna2025model,acuna2026robust,acuna2026broadcast,acuna2026experimental}
+\bibliographystyle{IEEEtran}
+\bibliography{OWP_v2}
+
+\begin{IEEEbiographynophoto}{Kevin Acuna-Condori}
+received his B.S. degree in electronical engineering from Universidad Nacional Mayor de San Marcos, Lima, Peru, in 2015, and M.S. degree in mechatronics engineering from Pontifical Catholic University of Peru, Lima, Peru, in 2017. 
+From 2018 to 2023, he led research activities at Cirsys, a company developing social robots and artificial intelligence for environmental applications.
+Since 2024, he has been pursuing the Ph.D. degree at Université Paris-Saclay, Gif-sur-Yvette, France, with a focus on 3D visible light positioning.
+His research interests include optical wireless positioning, machine learning, optical beam steering, and visible light communications.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Bastien Béchadergue}
+received the aeronautical engineering degree from ISAE-Supaero, Toulouse, France, the M.S. degree in communication and signal processing from Imperial College London, London, U.K., in 2014, and the Ph.D. degree in signal and image processing from UVSQ, Université Paris-Saclay, Gif-sur-Yvette, France, in 2017, for his work on visible light communication and sensing for automotive applications. From 2017 to 2020, he was in charge of the research activities at Oledcomm, one of the leading companies in the development of optical wireless communication products. Since 2020, he has been an Associate Professor with UVSQ, Université Paris-Saclay, where his research focuses on optical wireless communication and sensing.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Hongyu Guan}
+received the B.S. degree in electrical engineering from ENSEIRB, Talence, France, in 2007, and the Ph.D. degree in computer science from the University of Bordeaux I, Bordeaux, France, in 2012, for his work on embedded systems for home automation. He is currently a Research Associate and the Chief Project Engineer with the LISV laboratory, Versailles Saint-Quentin-en-Yvelines University, University of Paris-Saclay, Gif-sur-Yvette, France. His research interests include visible light communications, communication protocol, ubiquitous, data fusion, sensors, and nanometrology.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Luc Chassagne}
+received the B.S. degree in electrical engineering from Supelec, Gif-sur-Yvette, France, in 1994, and the Ph.D. degree in optoelectronics from the University of Paris XI, Orsay, France, in 2000, for his work in the field of atomic frequency standard metrology. He is currently a Professor with the LISV laboratory, University of Versailles, University Paris-Saclay, France. His research interests include nanometrology, sensors, and visible light communications.
+\end{IEEEbiographynophoto}
+
+\end{document}

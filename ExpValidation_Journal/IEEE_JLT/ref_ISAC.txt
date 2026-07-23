@@ -1,0 +1,953 @@
+7070                                                                                JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+
+       Experimental Demonstration of Integrated Optical
+            Wireless Sensing and Communication
+Lina Shi , Ziqi Liu , Bastien Béchadergue , Member, IEEE, Hongyu Guan , Member, IEEE, Luc Chassagne ,
+                                  and Xun Zhang , Senior Member, IEEE
+
+
+   Abstract—Whilethe contours of 6G are still being defined, inte-                 major evolution such as integrated sensing and communication
+grated sensing and communication (ISAC) has been identified by                     (ISAC) [2].
+the International Telecommunications Union (ITU) as a key feature                     ISAC consists in sharing the same resources in the time,
+of next-generation wireless communications. Given the maturity
+already demonstrated for data transmission on the one hand, and                    frequency and space domains to perform both sensing and
+positioning on the other hand, optical wireless communications                     communication in a fully integrated system [3]. The sensing
+(OWC) could offer promising solutions for ISAC implementation,                     function itself includes positioning, which should aim at an
+especially in indoor scenarios. In this paper, we propose and im-                  accuracy between 1 and 10 cm according to the IMT-2030
+plement an OWC-based ISAC system that relies on multi-band                         framework [2], but may also include environment sensing or
+carrierless amplitude and phase (m-CAP) modulation associated
+with received signal strength (RSS)-based positioning to achieve                   even gesture recognition, so that future networks have the ability
+data transmission and localization from the same signal. This                      to “see” the physical world. Such ISAC systems could enable
+m-CAP/RSS system is deployed in a 1.2 × 1.2 × 2.16 m3 room                         the emergence of a wide range of applications, from agile inter-
+using four access points installed on the ceiling, and can provide                 device communications or accurate human-device interaction
+a communication link at a data rate of 12 Mbps with a bit error
+                                                                                   and control in the context of massive Internet of Things networks
+rate of less than 3.8 × 10−3 to any user in a reception plane 20 cm
+above the ground, while estimating its position with an error of less              and Industry 4.0, to non-terrestrial networks [4], [5].
+than 5.9 cm in 90% of cases.                                                          As 6G is expected to also improve by an order of magnitude
+                                                                                   several key performance indicators, such as throughput and
+  Index Terms—Integrated sensing and communication (ISAC),
+multiband carrierless amplitude and phase (m-CAP), optical
+                                                                                   latency, new frequency bands will be required, among which
+wireless communications (OWC), received signal strength (RSS).                     millimeter, THz and optical waves are seen as promising can-
+                                                                                   didates [6], [7], [8]. The use of the optical spectrum for com-
+                                                                                   munications has especially been intensively studied for several
+                            I. INTRODUCTION                                        decades, for the transmission of data over long distances using
+        HILE the rollout of 5G is still underway, the world                        optical fibers. The maturity of this technology then accelerated
+W       of research along with standards bodies such as the
+International Telecommunications Union (ITU) are now fully
+                                                                                   the emergence of optical wireless communications (OWC) for
+                                                                                   wireless data transmission over short distances indoors – includ-
+focused on the sixth generation (6G) of international mobile                       ing the implementation of optically-based wireless local area
+telecommunications (IMT) [1]. In November 2023, the ITU thus                       networks, known as light-fidelity (LiFi) networks [8] – as well as
+unveiled, under the official name of IMT-2030, its vision of 6G,                   for outdoor communication over longer distances in free-space
+which includes improvements to existing 5G networks, as well as                    optics configurations.
+                                                                                      The advantages of OWC are multiple, ranging from the ability
+                                                                                   to use wide frequency bands from the ultraviolet to the infrared
+   Manuscript received 1 March 2024; revised 22 May 2024; accepted 11 June         (IR) spectrum, to the high security of communication links, and
+2024. Date of publication 17 June 2024; date of current version 16 October
+2024. This work was supported in part by the company Oledcomm through              including the availability of mature optoelectronic components
+the UVSQ-Oledcomm industrial partnership, in part by the French National           such as light-emitting diodes (LED), laser diodes, vertical cavity
+Research Agency (ANR) through the Project SAFELiFi under Grant ANR-21-             surface emitting lasers, positive-intrinsic-negative (PIN) and
+CE25-0001-01, in part by European Union’s Horizon 2020 Research and Inno-
+vation Programme through the Project 6G-BRAINS under Grant 101017226,              avalanche photodiodes (PD). Therefore, these technologies have
+and in part by Smart Networks and Services Joint Undertaking (SNS JU) under        been the subject of research efforts for several years, to the point
+Grant 101139292. (Corresponding author: Bastien Béchadergue.)                      of now being standardized within the ITU [9], but also as a
+   Lina Shi, Ziqi Liu, Bastien Béchadergue, Hongyu Guan, and Luc Chas-
+sagne are with the Laboratoire d’Ingénierie des Systèmes de Versailles (LISV),     complementary technology to WiFi within the 802.11 group of
+UVSQ - Université Paris-Saclay, 78140 Vélizy-Villacoublay, France (e-mail:         the Institute of Electrical and Electronics Engineers (IEEE) [10],
+bastien.bechadergue@uvsq.fr).                                                      and commercialized by companies such as Oledcomm, pureLiFi
+   Xun Zhang is with the Laboratoire d’Ingénierie des Systèmes de Versailles
+(LISV), UVSQ - Université Paris-Saclay, 78140 Vélizy-Villacoublay, France,         or Signify [11].
+and also with the Institut Supérieur d’Electronique de Paris (ISEP), 92130 Issy-      Much of this research has focused on optimizing the spectral
+les-Moulineaux, France.                                                            and energy efficiency of OWCs, using various types of orthog-
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/JLT.2024.3415417.                                          onal frequency division multiplexing (OFDM) schemes [12],
+   Digital Object Identifier 10.1109/JLT.2024.3415417                              or other techniques such as muti-band carrierless amplitude and
+
+                         0733-8724 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+  Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+SHI et al.: EXPERIMENTAL DEMONSTRATION OF INTEGRATED OPTICAL WIRELESS SENSING AND COMMUNICATION                                                             7071
+
+
+
+                                                              TABLE I
+  COMPARISON BETWEEN THE EXISTING LITERATURE ON EXPERIMENTAL DEMONSTRATION OF OWC-BASED ISAC AND OUR WORK (CDMA: CODE DIVISION
+            MULTIPLE ACCESS, DDM: DIFFERENCE IN DEPTH OF MODULATION, FBMC: FILTER BANK MULTI-CARRIER, ND: NON-DEFINED)
+
+
+
+
+phase (m-CAP) modulations, which offer better peak-to-average                    implemented within the ITU-T G.9991 layers [9] for ISAC
+power ratio (PAPR) performance for a lower computational                         in industrial environments. In [31], an OFDM/PDOA system
+complexity [13], [14], [15], [16]. At the same time, remarkable                  is extensively studied and shown to offer a good compromise
+efforts have been made to increase the data rate, with some                      between communication and positioning, providing a pre-FEC
+works reaching Tbps [17]. In parallel, various solutions for                     data rate of 22.3 Mbps while ensuring positioning with an error
+optical-based positioning, gathered under the label of visible                   below 8 cm in 80% of cases.
+light positioning, have been proposed and studied. These include                    This brief review shows, however, that m-CAP modulation
+techniques such as received signal strength (RSS), time of arrival               and RSS have never been combined experimentally in an OWC-
+(TOA), time or phase difference of arrival (TDPA/PDOA) and                       based ISAC system, which confirms the interest of validating
+angle of arrival (AOA), which all have their advantages and                      our previous simulation results with a prototype. In addition, it
+drawbacks, even though RSS remains less complex and can be                       shows that at the exception of [26], the systems proposed rely
+used with a single PD, which is why it has been adopted in many                  mainly on custom-made optical emitters and receivers based on
+works [18].                                                                      commercial LED or PD modules not necessarily optimized for
+   The use of OWC systems for ISAC is also beginning to be                       OWC applications. In this paper, we therefore aim at demon-
+studied, not only through simulations [19], [20], [21], [22], [23]               strating experimentally the feasibility of such an OWC-based
+but also experimentally [24], [25], [26], [27], [28], [29], [30],                ISAC system with two main priorities: the use of m-CAP and
+[31]. In [23], we proposed an ISAC system based on white LED                     RSS on the one hand, the use of optical antennas available on
+sources and capable, according to simulations, of providing an                   the OWC market on the other hand. In addition, we focused our
+illuminance between 300 and 500 lx over an entire 4 × 4 ×                        efforts on the positioning performance rather than the data rate
+2.5 m3 room, while ensuring two dimensional (2D) positioning                     performance, given the multitude of works already published on
+using RSS with an error of less than 7.17 cm in 90% of cases,                    the latter subject.
+and continuous data connectivity with m-CAP at 32 Mbps.                             To that end, we implemented a prototype with universal
+Compared to the existing literature, the interest of that work                   software radio peripheral (USRP) boards for signal generation
+was to validate that m-CAP and RSS could be combined together                    and processing, connected to optical transceivers – or antennas –
+and to find the optimal m-CAP parameters for ISAC with decent                    initially designed by Oledcomm for a commercial OWC product,
+performance while taking into account lighting constraints and                   and based on IR LEDs for emission and PIN PDs for reception.
+LED limitations in terms of bandwidth and dynamic range.                         Using four such antennas, installed on the ceiling of a 1.2
+The results thus obtained however needed to be consolidated                      × 1.2 × 2.16 m3 room, this system transmits data at a pre-FEC
+experimentally, which is what we propose to do in this article.                  rate of 12 Mbps with a bit error rate (BER) below 3.8 × 10−3 ,
+   From an experimental point of view, a few works on OWC-                       whatever the user’s position in a receiver plane 20 cm above
+based ISAC have already been published, demonstrating very in-                   the ground. At the same time, the user’s coordinates can be
+teresting performances, as shown in Table I. Pulsed modulations                  estimated with an error of less than 5.9 cm in 90% of cases,
+like on-off keying (OOK) have been combined with multiple                        hence demonstrating positioning performance in line not only
+positioning techniques, including RSS [27], [28] and computer                    with the current literature, as highlighted in Table I, but also with
+vision [29], to provide positioning accuracy of about 2 to 3 cm,                 the ITU-2030 requirements.
+at the cost, however, of low data rates in the order of 1 Mbps,                     The general architecture and operating principle of this sys-
+before forward error correction (FEC). Multicarrier modulations                  tem are described in greater detail in Section II, where the
+like OFDM/OFDM multiple access (OFDMA) have thus been                            basics of m-CAP modulation and RSS positioning are presented.
+studied to demonstrate larger data rates with positioning accu-                  Section III then shows how this system has been implemented in
+racy still below 10 cm, as in [24] where it is combined with                     practice, and lists the differences between the theoretical system
+RSS to reach an average positioning error of 1.68 cm, or in [26]                 and its experimental version, as well as their possible impact
+where a time-of-flight (TOF) technique derived from TOA is                       on positioning and data transmission performance, which is
+
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+7072                                                                               JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+
+Fig. 1.   Architecture of the proposed OWC-based ISAC system.
+
+
+
+assessed in Section IV. Finally, Section V concludes the article                  corresponds to the experimental setup implemented later, and
+with the main findings and suggestions of future work.                            highlights some fundamental assumptions made in this work for
+                                                                                  the RSS positioning method to work: 1) at least four different
+       II. WORKING PRINCIPLES OF OWC-BASED ISAC WITH                              light sources are needed, 2) the APs and the UE must have
+                       m-CAP AND RSS                                              co-linear normal vectors oriented respectively along the z and
+                                                                                  −z axis, and 3) the vertical distance along the z axis between
+   In this section, we detail the fundamental principles of the
+                                                                                  each AP and the UE is known and equal to h, which means
+proposed OWC-based ISAC system, namely its architecture
+                                                                                  localization of the UE is performed in the x-y receiver plane.
+(Section II-A) and modeling (Section II-B), the m-CAP mod-
+                                                                                  These assumptions will be further commented in Section II-C.
+ulation it relies on for data transmission (Section II-C) and the
+                                                                                     In addition, Fig. 1 shows that for the experiments, some build-
+RSS positioning technique it uses for sensing (Section II-D).
+                                                                                  ing blocks were implemented with MATLAB while others were
+                                                                                  based on an Ettus USRP X300. Although details of the prototype
+A. Architecture of the Proposed ISAC System                                       will be given in Section III-A, we can already state that the final
+   The structure of the proposed OWC-based ISAC system is                         objective of such a demonstrator was to evaluate the performance
+detailed in Fig. 1. On the infrastructure side, it is composed                    of the proposed system according to several metrics: the BER
+of NAP access points (AP) distributed across the ceiling of an                    and communication coverage for the communication function
+L × W × H m3 room, each pointing in the direction defined by                      (block ‘BER’ in Fig. 1), and the root mean square (RMS)
+the unit director vector of their optical axis nAP,i . At the other              positioning error for the sensing function (‘Positioning error’
+end of the link, an user equipment (UE) can move anywhere in                      block in Fig. 1).
+an x-y receiver plane located at a vertical distance h from the
+APs, with an orientation defined according to the unit director                   B. Modeling of the Proposed System
+vector nUE of its optical axis.
+   In such a configuration, the system operates as follows:                          1) Theoretical Modeling: From a theoretical point of view,
+for each AP, a binary data stream is first modulated into a                       the different signals listed in Fig. 1 can be linked with each other
+digital m-CAP signal stx,i , with i the index of the i-th AP,                     through convolutions with different impulse responses. To begin
+and then converted into an analog current signal Itx,i (t) by a                   with, we can observe that the optical signal Φtx,i (t) emitted by
+digital-to-analog converter (DAC). This current signal drives                     the i-th AP depends directly on its modulation signal Itx,i (t).
+the transmitting end of the IR optical antenna that equips the                    Each AP is indeed equipped with at least one IR LED combined
+i-th AP, which therefore adds a direct current (DC) bias current                  with its control circuit, which role is to add a DC bias current Ib to
+Ib to Itx,i (t) and converts it into an optical signal Φtx,i (t) that             Itx,i (t) and then convert the resulting signal into a photon flux.
+propagates in free space via multiple paths to the receiving end                  LEDs are generally modeled as first-order RC electro-optical
+of the UE’s optical antenna. The collected optical signal Φrx,i (t)               converters [32], which recent physics-based modeling work
+is converted into an electrical signal Irx,i (t), which is then                   has revisited to better capture certain non-linearities [33], [34].
+digitized by an analog-to-digital converter (ADC). The resulting                  Assuming the AP’s response can eventually be captured in a
+digital signal srx,i is finally processed in parallel to recover the              generic impulse response hAP,i (t), we can deduce that:
+transmitted data (‘m-CAP demodulation’ block), and estimate                                        Φtx,i (t) = (Itx,i (t) + Ib ) ∗ hAP,i (t),                   (1)
+the coordinates X  e = (x̂e , ŷe ) of the UE after receiving signals
+from at least four different APs (‘RSS positioning’ block).                       where ‘*’ is the convolution product.
+   In Fig. 1, only four APs, pointing each toward the floor, and                     At the UE’s receiver level, the incident optical signal Φrx,i (t)
+one UE pointing toward the ceiling are represented, as this                       is theoretically equal to the transmitted optical signal Φtx,i (t)
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+SHI et al.: EXPERIMENTAL DEMONSTRATION OF INTEGRATED OPTICAL WIRELESS SENSING AND COMMUNICATION                                                             7073
+
+
+
+convolved with the impulse response hc,i (t) of the optical wire-                srx,i , may be known at any given time. The optical signals
+less channel. In practice, this impulse response is made up of a                 Φtx,i (t) and Φrx,i (t), respectively transmitted by the i-th AP
+line-of-sight (LOS) component hLOS,i (t), corresponding to the                   and received by the UE, cannot be measured by the system,
+direct path between the i-th AP and the UE, and of a non-LOS                     unless it is equipped with dedicated power meters or sensors,
+(NLOS) component hNLOS,i (t) coming from the multiple paths                      which would considerably complicate its architecture. However,
+that include at least one reflection between the AP and the                      as we will see in more detail in Section II-C, estimates of the
+UE. In other words, hc,i (t) = hLOS,i (t) + hNLOS,i (t), where                   average values of these signals need to be calculated for the RSS
+hLOS,i (t) = HLOS (0)δ(t − di /c), with δ(·) the Dirac function,                 positioning algorithm to work properly. It is therefore necessary
+di the absolute distance between the i-th AP and the UE, c the                   to derive expressions for these estimates, which can be done by
+celerity of light (so that di /c is the propagation delay between                modeling explicitly the responses of the APs and UE.
+the i-th AP and the UE), and where HLOS (0) is the OWC channel                      In this work, we have targeted to keep the complexity of our
+DC-gain, which mainly depends on the link geometry.                              system as low as possible, and have hence adopted the following
+   Assuming this link geometry is as represented on the right part               simple linear relationship to estimate the average transmitted
+of Fig. 1, i.e. that the APs are all pointing to the floor and the               optical power, noted Φ  tx,i , from the modulation signal Itx,i (t)
+UE is pointing to the ceiling, then whatever the position of the                 only (i.e. without taking into account the DC bias, as this
+UE in the x-y receiver plane, the radiation and incidence angles                 component is then filtered out by the UE):
+φi and ψi are such that cos φi = cos ψi = h/di . In such a case,
+                                                                                                         tx,i = ηAP,i V {Itx,i (t)} ,
+                                                                                                        Φ                                                   (5)
+and if the incidence angle ψi is lower than the UE’s field-of-view
+(FOV) Ψc , then [35]:                                                            where ηAP,i is a constant electro-optical conversion factor and
+                       APD (mi + 1)                                              V {·} is the variance function.
+          HLOS,i (0) =              cosmi φi cos ψi
+                          2πd2i                                                     Similarly, we have adopted a linear relationship of the follow-
+                                                                                 ing form to estimate the average optical power incident on the
+                            APD (mi + 1) hmi +1                                  UE’s optical antenna, noted Φ  rx,i , from the electrical power of
+                        =                       ,                         (2)
+                                 2πdm
+                                    i
+                                      i +3
+                                                                                 the resulting analog signal Irx,i (t):
+with APD the overall sensitive area of the UE and mi the
+                                                                                                         rx,i = ηUE V {Irx,i (t)} ,
+                                                                                                        Φ                                                   (6)
+order of Lambertian emission of the IR LED on the i-th AP,
+which is related to its semi-angle at half-power Φ1/2,i by                       with ηUE a constant opto-electrical conversion factor. Note that
+mi = − ln 2/ ln(cos(Φ1/2,i )).                                                   since the UE behaves like a band-pass opto-electrical converter,
+   Finally, we can note that the analog signal Irx,i (t) produced                Irx,i (t) does not have any DC component, which means the
+by the UE’s optical antenna is obtained after conversion of the                  contribution from the DC bias current Ib to the incident optical
+incident optical signal Φrx,i (t) from the optical domain to the                 signal is indeed removed, as stated previously.
+electrical domain by one or more PDs combined with their                            Although very simple to implement, these two estimators are
+respective transimpedance amplifiers (TIA). These components                     obviously biased. First, they do not take into account the filtering
+are often modelled together as a band-pass opto-electrical con-                  behavior of both the AP and the UE, i.e. their possible non-flat
+verter, which gain results from the combination of the PD re-                    frequency responses. In addition, the estimator of the average
+sponsivity RP D and the TIA gain, which high-pass and low-pass                   received optical power is based on the analog signal Irx,i (t)
+cut-off frequencies are mainly set by capacitors within the PDs                  produced by the UE, which is by construction tainted by the
+and the feedback loop of the TIA, and which outputs a parasitic                  AWGN n(t). We can therefore deduce that the estimate of the
+noise signal n(t) resulting mainly from dark noise, shot noise                   UE’s location provided by the system will necessarily contain
+and thermal noise sources [35]. Assuming the UE’s response                       an error, as we are now going to see in more details.
+can eventually be captured in a generic impulse response hUE (t)
+and that the noise signal n(t) is an additive white Gaussian noise
+                                                                                 C. RSS for Positioning
+(AWGN) independent from the received optical signal, we can
+deduce that:                                                                        From a sensing perspective, the role of the proposed OWC-
+                                                                                 based ISAC system is to find the location of the UE in the
+               Irx,i (t) = Φrx,i (t) ∗ hUE (t) + n(t).                    (3)                                                      e = (x̂e , ŷe )
+                                                                                 x-y receiver plane, i.e. to provide an estimate X
+   By combining (1), (2) and (3), we can eventually express the                  of the real coordinates Xe = (xe , ye ) of the UE, assuming its
+following relationship between the modulation signal Itx,i (t)                   position on the z-axis is already known (ze = h). The sensing
+and the received signal Irx,i (t), which captures the distortion                 performance of the system can then be evaluated through the
+experienced by the original data signal after emission, propaga-                 root-mean square (RMS) positioning error Δ, given by:
+tion and reception:                                                                                  
+                                                                                                Δ = (x̂e − xe )2 + (ŷe − ye )2 .               (7)
+ Irx,i (t) = (Itx,i (t) + Ib ) ∗ hAP,i (t) ∗ hc,i (t) ∗ hUE (t) + n(t).
+                                                                    (4)             To obtain the estimate of the UE coordinates, the proposed
+   2) Practical Modeling: From the system’s point of view,                       system uses an RSS-based method coupled with linear least-
+only the digital and analog modulation signals stx,i and Itx,i (t),              squares estimation [36], as outlined in our previous work [23],
+as well as the analog and digitized received signals Irx,i (t) and               to which reference can be made for further details. Here, we
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+7074                                                                              JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+                   e can be obtained using :
+simply recall that X                                                             D. Communication With m-CAP
+                                                                                    While the received analog signal Irx,i (t) is processed for
+                                
+                       e = B T B −1 B T C,
+                       X                                                 (8)    estimation of the UE’s location, it is in parallel demodulated
+                                                                                 to retrieve the transmitted data. From a communication per-
+             are given by:                                                      spective, the role of the proposed OWC-based ISAC system is
+where B and C
+                                                                                 to provide continuous communication coverage throughout the
+               ⎡                    ⎤                                            room, i.e. whatever the position of the UE on the x-y receiver
+             x2 − x 1 y2 − y1                                                    plane. In practice, the system uses an m-CAP waveform for
+       B = ⎣x 3 − x 1 y3 − y1 ⎦ ,                                         (9)    data transmission, whose performance is evaluated according
+             x 4 − x 1 y4 − y1                                                   to two metrics: the BER, i.e. the ratio between the number of
+             ⎡ 2                                            ⎤
+               (r̂1 − r̂22 ) + (x22 + y22 ) − (x21 + y12 )                       bits received in error and the total number of bits transmitted;
+        = 1 ⎣(r̂12 − r̂32 ) + (x23 + y32 ) − (x21 + y12 )⎦ .
+       C                                                                 (10)    and the communication coverage, which we define as the set
+           2                                                                     of points on the receiver plane where the BER ≤ 3.8 × 10−3 ,
+               (r̂12 − r̂42 ) + (x24 + y42 ) − (x21 + y12 )
+                                                                                 a threshold below which FEC may be used efficiently, with a
+    In these equations, the set of variables {(xi , yi )}i=1,...,4 refer         nominal overhead of 7% [37].
+to the x and y coordinates of the four APs, whereas the variables                   As further detailed in [23], we adopt here m-CAP because
+{r̂i }i=1,...,4 are estimates of the radial distances ri between the             this multi-carrier scheme is an interesting alternative to conven-
+UE and each AP, as illustrated in Fig. 1. In practice, these r̂i are             tional techniques, adding to the attributes of standard CAP a
+not estimated directly, but through estimates dˆi of the absolute                reduced sensitivity to non-flat channels and providing a lower
+distances di between the UE and the APs, using the relationship                  PAPR compared to common OFDM schemes [14]. To that end,
+                                                                                 m-CAP divides the frequency spectrum into m sub-bands, each
+r̂i = dˆ2 − h2 .
+           i                                                                     modulated with CAP through the use of digital or analog pulse
+    These dˆi are themselves obtained indirectly through estimates               shaping filters rather than fast Fourier transform and inverse fast
+
+Φtx,i and Φ   rx,i of the optical powers transmitted by the APs                 Fourier transform in OFDM [16].
+and received by the UE, which are theoretically linked with                         More precisely, the m-CAP modulation we implemented in
+each other via the optical wireless channel. In order to reduce                  each AP operates as follows: an input binary stream is first
+the complexity of estimation of these di , we have chosen to                     mapped over m parallel branches into M -QAM symbols, that
+neglect the NLOS contribution to the optical wireless channel,                   are then upsampled by a factor Nss and separated into their real
+so that Φ                     tx,i . Assuming in addition that the
+           rx,i = HLOS,i (0)Φ                                                   and imaginary (i.e., in-phase and quadrature, or I/Q) compo-
+APs point to the ground, that the UE points to the ceiling, and                  nents, noted XIi,n (t) and XQ  i,n
+                                                                                                                    (t) in the time domain and with
+that it is equipped with neither optical concentrators nor optical               respect to the n-th branch of the i-th AP. The resulting m pairs
+filters, then the relationship between dˆi , Φ           rx,i can be
+                                              tx,i and Φ                        of I/Q signals are then loaded onto the m sub-bands of width
+deduced from (2), (5) and (6) as:                                                Bsc by digital finite impulse response (FIR) filters, characterized
+                                                                                 by their length LSPAN , their roll-off factor α and their impulse
+                                                                1
+       APD (mi + 1) hmi +1 ηAP,i V {Itx,i (t)}                 mi +3             response. For the n-th sub-band of the i-th AP, the responses of
+ dˆi =                    ·                                            . (11)                                                     i,n
+                                                                                 these I and Q filters, noted here fIi,n (t) and fQ   (t), are designed
+               2π           ηUE V {Irx,i (t)}
+                                                                                 to form a Hilbert pair, and can be expressed as:
+   According to this equation, we first understand that since                                                                   
+                                                                                                                 t
+positioning is performed by the UE, the latter must be able to                        fIi,n (t) = gSRRC (t) · cos
+                                                                                                               π (2n − 1)(1 + α) ,                         (12)
+estimate the variance of the drive current Itx,i (t) of each AP,                                                Ts
+which in practice cannot be done directly. However, note that                                                                   
+                                                                                       i,n                       t
+these variables can be measured by the APs themselves and                             fQ (t) = gSRRC (t) · sin π (2n − 1)(1 + α) ,                         (13)
+                                                                                                                Ts
+then transmitted to the UE in specific data frames, as proposed
+in [23].
+   Then, (11) also illustrates the various limitations of the RSS                with Ts = 1/Bsc the m-CAP symbol duration and gSRRC (t) the
+method we have adopted for estimating the UE’s location. First                   response of the square-root raised cosine (SRRC) pulse shaping
+of all, the estimates dˆi will necessarily be biased insofar as NLOS             filter, defined as:
+contributions are neglected. Furthermore, and as stated previ-                                                                               
+                                                                                                                 (1−α)πt                (1+α)πt
+ously, the signals produced by the UE are themselves tainted                                           sin          Ts      + 4αt
+                                                                                                                              Ts  cos      Ts
+by AWGN noise and the non-flat portions of the frequency re-                           gSRRC (t) =                             2                .        (14)
+                                                                                                                     πt         4αt
+sponses of the AP and UE are not taken into account in the optical
+                                                                                                                     Ts    1 − Ts
+power estimates, and thus in (11), which introduces an additional
+bias. To mitigate these limitations and their incidence on the
+RMS positioning error while still using a simple system model,                      After filtering, the final m-CAP waveform Itx,i (t) is obtained
+we have adopted a calibration process that will be detailed in                   by summing together all sub-bands and then converting the
+Section III-B.                                                                   resulting digital signal into its analog counterpart with a DAC,
+
+  Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+SHI et al.: EXPERIMENTAL DEMONSTRATION OF INTEGRATED OPTICAL WIRELESS SENSING AND COMMUNICATION                                                             7075
+
+
+
+which translates mathematically into:
+               m 
+                                                               
+ Itx,i (t) =                                  i,n
+                     XIi,n (t) ∗ fIi,n (t) − XQ          i,n
+                                                  (t) ∗ fQ   (t) . (15)
+               n=1
+
+   As it will be further detailed in Section III-A, this modulation
+signal is first amplified and then added to a DC current by the
+AP’s optical antenna, in order to match the characteristics of
+the transmit IR LED. After free space propagation from the i-th
+AP to the UE, this DC component is directly removed by the
+UE using high-pass filtering, so that the received signal Irx,i (t)
+is centered on zero. This received signal is then digitized by an
+ADC, and duplicated into 2 m equal signals that are filtered with
+time-reversed versions of the pulse shaping filters used at the
+transmitter side, i.e. with filters of impulse responses fIi,n (−t)
+       i,n
+and fQ     (−t). The resulting I/Q signals are then down-sampled,
+recombined and demapped to recover the received binary data
+stream, which can be compared to the original data to evaluate
+the BER performance of the link.
+   As can be seen, the use of an m-CAP waveform requires
+the definition of a number of parameters, such as the number
+of sub-bands m, their center frequency fsc , width Bsc , QAM
+order M and oversampling factor Nss , along with the filters
+parameters like their length LSPAN and roll-off factor α. For
+this, it is necessary to take into account the characteristics of the
+transmitting and receiving optical antennas – bandwidth, fre-
+quency response, drive current-to-optical power linearity, etc. –,
+which is why the values of these parameters will be defined in
+Section III-B, after the characterization of the optical antennas
+used experimentally.
+
+      III. DETAILS ON THE PROTOTYPE IMPLEMENTATION
+A. Overview of the Experimental Test Bench
+   As mentioned in Fig. 1, we have in practice implemented
+our OWC-based ISAC system using MATLAB, an Ettus USRP
+X300 and optical antennas. Fig. 2 shows in more detail how
+these fundamental components were arranged to build our ex-
+perimental test bench. As shown in Fig. 2(a), a computer ➀ is
+used to first generate the m-CAP signal stx,i with MATLAB,
+and then transmit it to the USRP X300 ➁ via an Ethernet link
+controlled by the GNU Radio software.
+   The USRP then transmits in loop the m-CAP waveform stx,i
+in its baseband analog form Itx,i (t) thanks to an Ettus BasicTX
+daughterboard. However, this analog signal has a too low peak-
+to-peak amplitude of 0.6 Vpp to drive the AP’s optical antenna
+correctly, and must therefore be amplified beforehand. A Mini-
+Circuit ZHL-6A-S+ power amplifier ➂, coupled to two 6 dB                         Fig. 2. Overview of the OWC-based ISAC prototype implemented, composed
+                                                                                 of a control area (a) and of a test area (b).
+SMA attenuators, and powered by an external power supply
+➃, is therefore added at the output of the USRP X300 to amplify
+Itx,i (t) with a gain of 13 dB, thus ensuring that its peak-to-peak
+amplitude is around 2.8 Vpp. It is indeed crucial that this peak-                antenna’s only interface is an RJ45 connector, it is in practice
+to-peak voltage threshold is not exceeded, in order to remain                    connected to the power amplifier ➂ and power supply ➃ via a
+within the LED’s electro-optical linearity zone after addition of                simple custom-made SMA/RJ45 interface board, not shown in
+the bias current, as further detailed in Section III-B2).                        Fig. 2. At the other end of the link, a second optical antenna ➅,
+   As shown in Fig. 2(b), this optical antenna ➄ is installed                    this time serving as a UE, is mounted on a double rail ➆ enabling
+on the ceiling of a 1.2 × 1.2 × 2.16 m3 test area. Since the                     it to be positioned precisely in an x−y receiving plane, located
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+7076                                                                               JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+
+Fig. 3.   Experimental protocol followed for the communication and positioning data acquisition.
+
+
+
+                               TABLE II                                           We then transmitted the m-CAP waveform and recorded the
+                  EXPERIMENTAL TEST-BENCH PARAMETERS
+                                                                                  received signal sjrx,i over a duration of around 80 ms to allow
+                                                                                  the transmission of 106 bits, which we finally post-processed
+                                                                                  with MATLAB. This process was then repeated for all UE
+                                                                                  positions j on the receiver plane, moving along the latter in
+                                                                                  10 cm steps in x and y, i.e. placing it in Nx and Ny different
+                                                                                  locations along these respective axis. Once this process was
+                                                                                  completed with a given AP location, the optical antenna was
+                                                                                  moved to the next AP location and the procedure was repeated,
+                                                                                  until all data signals were acquired from all Nx Ny UE positions
+                                                                                  of all NAP positions. These signals were then post-processed
+                                                                                  with MATLAB to evaluate both the communication and po-
+                                                                                  sitioning performance of the system, as it will be detailed in
+                                                                                  Sections IV and V. Such a protocol is thus in practice equivalent
+                                                                                  to using NAP = 4 different APs transmitting successively their
+at a distance h = 20 cm from the ground, so that the vertical                    data signals.
+distance between AP and UE is h = 1.96 m. The entire test area
+is protected from external light interference by black curtains ➇.
+                                                                                  B. Details on the Optical Antenna
+   The UE’s optical antenna, fed on the one hand by the external
+power supply ➃ via a second SMA/RJ45 interface board, is                             Before detailing the experimental performance of our proto-
+on the other hand connected via this interface board to the                       type, it is necessary to characterize the optical antennas we have
+USRP X300 ➁, which uses a BasicRX daughter board to convert                       used in order to: 1) define the parameters of the m-CAP wave-
+the received analog signal Irx,i (t) into its digital equivalent                  form to be transmitted, and 2) identify any differences between
+srx,i . This digital signal is eventually recorded as a vector of                 the model we have adopted and presented in Section II-B, and
+samples in real time by the computer ➀ through GNU Radio.                         our real OWC-based ISAC system.
+Note, however, that due to the limited computing power of ➀,                         1) Motivations for Using a Commercial Optical Antenna:
+the sampling frequency could not exceed 20 MHz, otherwise                         It appears clearly from the previous section that the optical
+overflow errors would occur. Once recorded, these samples were                    antennas are among the fundamental components of our demon-
+eventually post-processed with MATLAB in order to evaluate                        strator. In practice, the optical antennas we have used, shown in
+the communication and positioning performance of the proposed                     Fig. 4(a), have been designed by Oledcomm for its LiFiMAX
+system.                                                                           product, which implements the ITU-T G.9991 standard [9] to
+   It is important to note that, as mentioned in Section II-A, four               provide 150 Mbps LiFi network access to any UE equipped
+APs are normally required for the positioning technique used                      with a compatible dongle. It should be noted here that the use
+by our system to work properly. In addition, it is preferable for                 of such antennas rather than separate off-the-shelf transmit-
+the UE to receive the signal from each AP while the other APs                     ters and receivers, as is often the case in the literature, is a
+are switched off, to avoid receiving parasitic optical power that                 deliberate choice motivated by two main reasons. Firstly, we
+would distort the positioning results. In [23], we proposed to                    intended to show that OWC-based ISAC systems could already
+use a time division multiplexing-like protocol to ensure such                     be implemented on commercial systems. Secondly, the antenna’s
+conditions are met. However, in the present work, for reasons                     reception characteristics are actually superior to those of com-
+of limited availability of the optical antennas, we used only one                 mercially available receivers [11]. However, as pointed out in the
+AP during our tests, which we successively placed in the four                     previous section, the use of this antenna requires a non-optimal
+positions listed in Table II according to the coordinate system                   intermediate amplifier stage, particularly in emission, to ensure
+represented in Fig. 2(b).                                                         correct operation with a USRP, as a detailed description of the
+   We then followed the protocol detailed in Fig. 3. For a given                  antenna’s architecture will further justify.
+position i of the AP, the UE was on its side placed at a starting                    2) Architecture of the Optical Antenna: The internal archi-
+position j = 1 on the x-y receiver plane (e.g. x1 = 0, y1 = 0).                   tecture of the antennas, shown in Fig. 4(b), consists of four
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+SHI et al.: EXPERIMENTAL DEMONSTRATION OF INTEGRATED OPTICAL WIRELESS SENSING AND COMMUNICATION                                                              7077
+
+
+
+                                                                                   reasons: on the one hand, the electro-optical response of the LED
+                                                                                   remains relatively linear over this range of optical power, thus
+                                                                                   avoiding the non-linearity usually observed for drive currents
+                                                                                   that are too low or too high; on the other hand, such optical
+                                                                                   power values remain well below standard photobiological safety
+                                                                                   limits [38].
+                                                                                      In practice, the average optical power of 472.5 mW is obtained
+                                                                                   using a bias current Ib , added within the transmission chain and
+                                                                                   set at 350 mA, while the swing of ± 337.5 mW corresponds to
+                                                                                   the input drive current Itx,i (t) amplified and pre-equalized by
+                                                                                   the transmission chain. It should be noted that this internal ampli-
+                                                                                   fication stage, initially designed to ensure the antenna’s correct
+                                                                                   operation with commercial G.9991 semiconductors, requires an
+                                                                                   input signal with a dynamic range of ± 250 mA to guarantee
+                                                                                   an optical dynamic range of ± 337.5 mW at the output of the
+                                                                                   transmission chain. However, and as previously mentioned, the
+                                                                                   USRP alone is not able to provide such a high-amplitude drive
+                                                                                   signal, which justifies the 13 dB gain we have introduced using
+                                                                                   the ZHL-6A-S+ amplifier coupled with SMA attenuators. It
+                                                                                   should also be noted that the pre-equalization stage consists
+                                                                                   mainly of an RC resonator [39] that introduces peaking in the
+                                                                                   frequency response of the transmission chain around 31 MHz, to
+                                                                                   compensate for the onset of roll-off in the receiver’s frequency
+                                                                                   response, as we will see in the following Section III-B3).
+                                                                                      On its side, the receiver chain converts the incident optical
+                                                                                   signal Φrx,i (t) into its electrical equivalent Irx,i (t), using three
+                                                                                   silicon PDs, each coupled to a TIA, whose respective signals
+Fig. 4. Real view and block diagram of the optical antenna used for light signal   are then summed and post-equalized. The internal capacitance
+transmission and reception in our OWC-based ISAC prototype.                        of each PD introduces indeed low-pass filtering, which cut-off
+                                                                                   frequency decreases as this internal capacitance, and therefore
+                               TABLE III                                           the PD sensitive area, increase. The role of post-equalization
+                    OPTICAL ANTENNA CHARACTERISTICS                                is then, in the same way as pre-equalization, to push back
+                                                                                   this cut-off frequency, this time introducing peaking into the
+                                                                                   receiver’s frequency response around 30 MHz. As summarized
+                                                                                   in Table III, the resulting receiver has eventually a total sensi-
+                                                                                   tive area of 79.2 mm2 with a photosensitivity of 0.62 A/W at
+                                                                                   940 nm, and with a −3 dB bandwidth of 30 MHz. Note that this
+                                                                                   sensitive area-bandwidth compromise, which is high compared
+                                                                                   to commercial photoreceivers [11], is made possible by the use
+                                                                                   of three PDs in parallel rather than in series, which therefore
+                                                                                   prevents their capacitance from adding up, thus considerably
+                                                                                   enhancing bandwidth.
+                                                                                      3) Implications on the m-CAP Waveform Design: As men-
+                                                                                   tioned in Section III-A, only two such optical antennas were
+main stages: a transmitter chain, a receiver chain, a power stage                  used in the experiments, the first playing successively the role
+and an interface stage. The latter enables the input and output                    of the four APs and the second playing the role of the UE. In
+signals of the antenna to be combined on a single RJ45 connector,                  order to set properly the parameters of the m-CAP waveform to
+whereas the power stage consists mainly of DC-DC converters                        transmit from one to the other, we first measured the frequency
+generating, from a single external power supply ‘Power’, the                       response of the system made of these two antennas. To do this, we
+various power supplies required by the antenna.                                    observed with an Agilent Technologies E5071 C vector network
+   The role of the transmission chain is to convert the electrical                 analyzer (VNA) the frequency evolution of the S21 parameter
+drive signal Itx,i (t) into its optical equivalent Φtx,i (t). The                  while the AP antenna, connected to the VNA output, was driven
+central component of this chain is thus the IR LED which, as                       by a frequency sweep ranging from 100 kHz to 100 MHz, and
+detailed in Table III, has a central wavelength of 940 nm, a                       the UE antenna, connected to the VNA input, received this signal
+semi-angle at half power of 45Â°, and is calibrated to emit an                     after a short and calibrated optical wireless propagation.
+optical signal of average power 472.5 mW with a swing of ±                            According to the resulting frequency response, represented
+337.5 mW. This optical power range was chosen for two main                         in Fig. 5, we can conclude that the end-to-end link has a
+
+    Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+7078                                                                                 JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+
+Fig. 5. Frequency response of the system composed of an optical antenna as
+light transmitter and another optical antenna as light receiver. The dashed-dotted
+orange lines highlight the −3 dB bandwidth of this system.
+
+
+                                TABLE IV
+                             m-CAP PARAMETERS
+
+
+
+
+−3 dB bandwidth of around 30 MHz, between 1.17 MHz and
+31.2 MHz. Note that, on the one hand, the high-pass roll-off
+observed around 1 MHz actually comes from the use of a
+high pass filter at the receiver level of the optical antenna, in
+order to filter out ambient lighting, which spectrum can extend
+up to a few hundred kHz. On the other hand, the low-pass
+roll-off observed around 31 MHz is mainly due to the internal
+capacitances of the PDs which, despite being slightly com-
+pensated by pre- and post-equalization, behave like low-pass                         Fig. 6. Calibration of the beam pattern of the IR LED mounted on the optical
+                                                                                     antenna used as AP on (a) a z-x plane and (b) an x-y plane.
+filters [39].
+    In order to optimize communication performance, the central
+frequencies of the m-CAP sub-bands should thus be set between
+these two limits. In practice, however, given the maximum sam-                       the same time, we deliberately placed the first sub-band at the
+pling frequency of 20 MHz induced by the limited processing                          limit of the system bandwidth, in order to study the influence of
+power of the computer used to drive the USRP and GNU Radio                           the corresponding non-flat portion of the antennas’ frequency
+in reception, we had to limit the maximum frequency of the                           response on communication performance.
+m-CAP waveform to 10 MHz. As a result, we have chosen                                    The other m-CAP waveform parameters, also listed in Ta-
+to set the number of sub-bands to m = 4, their width Bsc to                          ble IV, and notably the rolloff factor α, the length of the FIR
+1 MHz and their respective center frequencies fsc to 1, 3, 5 and                     filters LSPAN , the oversampling factor Nss and final sampling
+7 MHz, as listed in Table IV. In other words, we deliberately                        frequency fsamp , were set at values providing the best compro-
+under-dimensioned the number of sub-bands in order to facilitate                     mise in terms of communication and positioning performance
+the analysis of data transmission results, while guaranteeing an                     based on our previous simulations [23]. Furthermore, and given
+adequate guard band between them and with the usual frequency                        that reaching high throughput was not our priority, we have
+spectrum of interfering artificial and natural light sources. At                     limited the QAM order of the sub-bands to M = 16, enabling
+
+  Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+SHI et al.: EXPERIMENTAL DEMONSTRATION OF INTEGRATED OPTICAL WIRELESS SENSING AND COMMUNICATION                                                             7079
+
+
+
+our system to ultimately support data transmission at a data rate                   IV. EVALUATION OF THE COMMUNICATION PERFORMANCE
+Rb = m log2 (M )Bsc = 16 Mbps.                                                      As mentioned in Section III-A, communication performance
+   4) Deviations From the System Model: The characterization                     was evaluated by acquiring approximately 106 bits for each UE
+of the optical antennas used experimentally provides funda-                      position on the receiver plane, traversed in 10 cm steps along
+mental insights for the analysis of positioning results. We have                 the x and y axes, and for each AP position. After demodulation
+already pointed out in the Section II-C that the RSS positioning                 of the received signal, we then compared the acquired bits
+method used in our system is based on simplified models of                       with the transmitted bits to evaluate different values of the link
+the optical wireless channel and the impulse response of the                     BER. In practice, we were mainly interested in the BER per
+optical transmitter and receiver. On the one hand, only the LOS                  sub-band, which then allowed us to analyze the communication
+contribution is used to calculate the distances between APs                      performance of our system in greater detail.
+and UE from the estimated transmitted and received optical                          Fig. 7 shows the BER distributions for each sub-band in the
+powers (11). On the other hand, the estimation of these powers                   receiver plane, while the transmitting optical antenna is located
+is based on simple proportionality coefficients ηUE and ηAP                      at AP3 (x = 30 cm, y = 90 cm). Only this position of AP is shown
+which, while providing good first-order approximations, do not                   here, as the results obtained for the other AP positions follow
+capture the non-flat behavior of the frequency response of the                   similar trends. We can therefore extract several conclusions from
+transmit-receive chain illustrated in Fig. 5.                                    Fig. 7, starting with the notable fact that BER values for the
+   Analysis of the emission pattern of the AP’s IR LED reveals                   first sub-band (fsc = 1 MHz) are rather high (around 0.12 in
+two additional deviations between our prototype and the model                    Fig. 7(a)), while those for the other sub-bands are of the order
+used for position estimation. The latter assumes that the optical                of 10−5 to 10−3 , as visible in Fig. 7(b), (c) and (d). Assuming
+sources used to transmit positioning signals have a generalized                  FEC may be used efficiently as long as the BER ≤ 3.8 × 10−3
+Lambertian profile, whose orders for semi-angles at half-power                   [37], we can deduce that the first sub-band is not able to provide
+of 45◦ would be mi = 2. Fig. 6(a) shows, however, that the                       a reliable communication link, whereas the others are.
+actual emission profile of the AP’s IR LED, extracted from the                      This is because the first sub-band lies at the bandwidth limit
+datasheet in solid blue line and measured in red dots, sometimes                 of the AP-UE system, and is therefore subject to distortions
+differs significantly from a generalized Lambertian profile of                   induced by its non-flat frequency response, as shown in Fig. 5.
+order 2, in dashed orange line.                                                  The other sub-bands are located in frequency ranges where the
+   Furthermore, the RSS model used assumes that the emission                     gain of the AP-UE system is constant, and are therefore not
+pattern of the optical sources is symmetrical by rotation around                 subject to such distortions. Indeed, we can see that BER tends,
+the normal nAP,i . Using a test bench similar to that shown in                  at least occasionally, to increase as the UE moves further away
+Fig. 2(b), but replacing the UE with a Thorlabs PMD100 power                     from the AP, i.e., in the case of AP3 , when the UE is located in
+meter equipped with a S120 C sensor, we measured the power                       positions with coordinates x close to 120 cm and/or y close to
+received along a circle of radius 1 m and center coincident with                 0 cm. In these cases, the distance increases propagation losses, as
+the AP in x and y, by variation of the polar angle θ in steps of 10◦ .           highlighted by (2), leading to a reduction in the signal-to-noise
+Fig. 6(b) shows the relative difference, in %, between the average               ratio (SNR) and therefore an increased risk of errors at the UE
+optical power on the whole circle and the optical power measured                 level.
+at angle θ when the AP points perfectly to the ground (green                        Nevertheless, this risk remains limited, as shown in Fig. 8,
+curve) or imperfectly, with an angle of 5◦ between −z and nAP,i                which represents for each sub-band of each AP (with the ex-
+(orange curve). In both cases, this relative difference, far from                ception of the first sub-band, excluded for the reasons previ-
+being zero, can reach up to 2.8% in absolute value. We therefore                 ously mentioned) the empirical cumulative distribution function
+conclude that the AP’s IR LED is not symmetrical, which could                    (CDF) of all BER measured on the receiver plane (i.e. 169 values
+therefore have an impact on localization performance.                            per sub-band). We can see that for a given AP position, the
+   It may also be noted that despite slightly different orientations,            BER of the various sub-bands, represented in the same color but
+the average received optical power is in both cases extremely                    with different markers, are mostly below the FEC threshold of
+similar, with an only 0.1% relative difference. At the same time,                3.8×10−3 . Some curves are even barely visible (e.g. sub-band
+the fluctuations in received optical power caused by the asym-                   2 of AP2 ), as the vast majority of measured BER values are 0 in
+metrical pattern of the IR LED in the case of a 5◦ misalignment                  these cases.
+are of at most around 2.5% in absolute value, i.e. rather close to                  However, we can clearly observe a borderline case, with the
+that of the case without misalignment. At the same time, since                   3 rd sub-band of AP2 , whose CDF remains very low compared
+the Lambertian order of the IR source is mi = 2, we can deduce                   to that of the other sub-bands. This is because the BER of this
+from (2) that a slight misalignment of the AP will have a stronger               sub-band fluctuates around 0.02 over the entire receiver plane.
+impact on the received optical power than a slight misalignment                  Despite several tests, we were unfortunately unable to explain
+of the UE. In other words, when the misalignment of the AP or                    this behavior, which we consider abnormal, given the results
+the UE with respect to the vertical axis is small, its impact on                 obtained for this same sub-band at other AP positions.
+the received optical power can be considered to be negligible                       Fig. 8 also shows that in some other cases, the BER is higher
+compared to the effects of the asymmetrical pattern of the IR                    than the FEC threshold (e.g. sub-band 3 of AP4 ), meaning that
+source.                                                                          communication coverage is in these cases not ensured over the
+
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+7080                                                                               JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+
+Fig. 7.   Spatial distribution in the x-y receiver plane of the BER of each sub-band when the AP is at location AP3 (x = 30 cm, y = 90 cm).
+
+
+
+whole receiver plane. These higher BER zones can again be                                                      TABLE V
+                                                                                    OUTAGE PROBABILITIES OVER THE RECEPTION PLANE FOR THE DIFFERENT
+explained by greater AP-UE distances, and therefore lower SNR.                                   APS AND THEIR RESPECTIVE SUB-BANDS
+We can also observe that they are mostly located at the bound-
+aries of the receiver plane, i.e. close to the protective curtains,
+which although not very reflective, may induce performance
+degradation due to multi-path.
+   In order to quantify the coverage performance of the various
+APs, we used the results in Fig. 8 to calculate the outage prob-
+ability Pout , defined as the probability that the BER is greater
+than the FEC threshold of 3.8×10−3 over the entire receiver
+plane. Table V shows the evolution of Pout with the sub-band                         We can therefore conclude from these various results that
+index and the AP position. In line with our previous conclusions,                 the proposed OWC-based ISAC system provides continuous
+we observe that this probability is extremely high for the first                  communication coverage over the entire receiver plane, with
+sub-band of each AP (Pout = 100%) and for the 3 rd sub-band                       an effective pre-FEC data rate of at least 12 Mbps (since the
+of AP2 (Pout = 96.45%). Similarly, we observe that it is null or                  1st sub-band is not functional if positioned at 1 MHz). Given
+very close to zero in the majority of the remaining cases, with                   the frequency response of the transmit-receive chain, we can
+the exception of the 3 rd sub-band of AP4 , where Pout reaches                    nevertheless extrapolate much higher data rates if the number of
+5.92 %.                                                                           sub-bands is increased along with the QAM order (e.g. 56 Mbps
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+SHI et al.: EXPERIMENTAL DEMONSTRATION OF INTEGRATED OPTICAL WIRELESS SENSING AND COMMUNICATION                                                             7081
+
+
+
+                                                                                 model (i.e. of the equations enabling position estimation) rela-
+                                                                                 tively low.
+                                                                                    The post-calibration process we followed is detailed in Fig. 9.
+                                                                                 Let us define the ratios ηi as:
+                                                                                                                 ηAP,i
+                                                                                                            ηi =       .                      (16)
+                                                                                                                  ηUE
+                                                                                 In a first step, we set all these ηi ratios to a value ηmin identical
+                                                                                 for all APs. For a given UE position j ∈ [1, Nx Ny ], the variances
+                                                                                 of the digital signals transmitted stx,i and acquired srx,i can then
+                                                                                 be calculated in order to compute the estimated distances dˆi and
+                                                                                 eventually the UE’s location estimate X      e using (11) to (8). By
+                                                                                 comparing this estimate with the actual position of the UE, the
+                                                                                 RMS error Δj at this location j and with the specific ratios ηi ,
+                                                                                 can be determined. This process is then repeated for all positions
+                                                                                 of the UE to obtain a set of Nx Ny RMS errors, from which the
+                                                                                 corresponding empirical CDF FΔ (δ) can be extracted, along
+Fig. 8. Empirical CDF of the BER of each sub-band (except the 1st sub-band),     with the value δ90 at which this CDF equals 0.9. This whole
+in each AP location.
+                                                                                 process is eventually repeated for different values of ηi , up to
+                                                                                 the point they all equal ηmax . The values ηi giving the lowest
+                                                                                 δ90 are then the optimal values ηopt,i that minimize the error
+                                                                                 threshold δopt below which 90% of the errors Δj lie.
+with 14 sub-bands centered on odd frequencies between 3 to
+29 MHz and loaded with 16-QAM symbols).
+                                                                                 B. Positioning Performance Evaluation
+                                                                                    In a first step, we assumed that the four APs in our system
+     V. EVALUATION OF THE POSITIONING PERFORMANCE                                were characterized by identical conversion constant ratios ηi ,
+                                                                                 since these APs were in practice set up successively using the
+A. About the Need for Post-Calibration
+                                                                                 same optical antenna. The blue-dashed curve in Fig. 10(a), which
+   Alongside data transmission, the signals acquired during the                  shows the evolution of the CDF of the RMS error in the receiving
+experiments enabled us to evaluate the positioning performance                   plane after post-calibration, allows us to deduce that in this case,
+of our system. To do this, we used the method detailed in                        for all the 169 positions, 90% of the errors are smaller than
+Section II-C which consists, for each UE position, in estimating                 15.4 cm.
+the distances dˆi separating it from the four APs using (11),                       Nevertheless, as shown in Fig. 6(b), the emission pattern of the
+after calculating first the variances of the generated and ac-                   IR LED that equips the AP’s optical antenna is not symmetrical.
+quired digital signals stx,i and srx,i . However, estimating the                 This means that, depending on the relative position between an
+distances dˆi also requires knowledge of the electro-optical and                 AP and the UE and especially on the corresponding direction
+opto-electrical conversion factors ηAP,i and ηUE . Rather than                   of emission, the optical power transmitted by the AP may vary
+finely determining these conversion factors a priori, we have                    by ±3% around its average value. However, as highlighted in
+opted here for a posteriori calibration, which in practice consists              (16), since ηi depends directly on the electro-optical conversion
+in determining, from the acquired signals, the values of ηAP,i and               factor of the i-th AP ηAP,i , a fluctuation in transmitted optical
+ηUE that will optimize the statistical distribution of the RMS error             power will result in a fluctuation in ηi . Therefore, we assumed
+of all Nx Ny position estimates made in the AP configuration                     that the ηi can vary from one AP to another, within a slightly
+detailed in Table II.                                                            lower limit of ±2.5% around the optimum value obtained when
+   To justify the use of such a post-calibration, it is important to             they are assumed to be equal.
+recall here that the RSS positioning technique we have adopted                      The CDF of the corresponding error, plotted as a solid orange
+is based on a system model with multiple deviations from the real                line in Fig. 10(a), then shows that in this case, 90% of the errors
+prototype. As mentioned in Section II-C, it takes into account                   are less than 12.2 cm. It should also be noted that this error
+only the LOS component of the received optical signal for                        threshold at 90% falls to 11.9 cm and 11.3 cm when the variation
+estimating dˆi , and is based on simplified transmitter and receiver             range in ηi is raised to 5% and 10% respectively, and reaches
+models, which are assumed to point perfectly towards the ground                  10.7 cm when the ηi can be set without constraints. The latter
+and ceiling respectively, and are separated by a known vertical                  case, however, has little physical significance, and we therefore
+distance h. Furthermore, this method assumes that the optical                    consider here that the nominal performance of our system after
+sources used at the APs have a generalized Lambertian beam                       post-calibration, but before complementary corrections, is that
+pattern and are symmetrical about their optical axis. In practice,               corresponding to a maximum variation of ±2.5%.
+these assumptions are not always verified. Using post-calibration                   Fig. 10(b) shows another way to visualize the distribution
+thus allows us to partially correct the errors induced by these                  of RMS positioning error in the receiving plane, with blue
+various deviations, while keeping the complexity of the system                   circles representing the tested reference positions and red stars
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+7082                                                                               JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+
+Fig. 9.   Process followed to post-calibrate the positioning system.
+
+                                                                                  representing the estimated positions when allowing a maximum
+                                                                                  ±2.5% variation in the ηi (i.e. corresponding to the orange curve
+                                                                                  in Fig. 10(a)). Grey dotted lines have been added to identify
+                                                                                  more clearly to which reference position each estimated position
+                                                                                  corresponds. From these dotted lines, it can be seen that the RMS
+                                                                                  errors of two adjacent estimated positions are often oriented in
+                                                                                  very close directions, which could also be estimated during the
+                                                                                  post-calibration phase.
+                                                                                     Assuming these directions are known, it would then be pos-
+                                                                                  sible to add an second error correction step, by removing the
+                                                                                  average RMS error, calculated over the entire receiver plane,
+                                                                                  from each estimated position and in the direction given by the
+                                                                                  dotted line running from the estimated point to the reference
+                                                                                  point.
+                                                                                     To verify this assumptions, we made for each reference posi-
+                                                                                  tion of the UE 100 consecutive estimates of its position. Then, we
+                                                                                  calculated the coordinates of the support vectors running from
+                                                                                  the reference position to each of the 100 position estimates, to
+                                                                                  finally calculate the angles between the support vector shown in
+                                                                                  Fig. 10(b) (grey dotted lines) and these 100 support vectors. This
+                                                                                  approach allows to assess the dispersion of the orientation of the
+                                                                                  error, which is represented in Fig. 11 in the form of the empirical
+                                                                                  CDF of all error angles calculated for all reference positions (i.e.
+                                                                                  100 × 169 = 16900 values). We can see that in 90% of cases,
+                                                                                  the error in angle is below 17◦ , which remains reasonably low
+                                                                                  and thus allows us to apply the proposed additional correction
+                                                                                  step.
+                                                                                     The positions corrected using this method, shown as black
+                                                                                  crosses in Fig. 10(b), appear to be closer to the reference po-
+                                                                                  sitions, as confirmed by the empirical CDF of the correspond-
+                                                                                  ing error distribution, shown as yellow dashed-dotted lines in
+                                                                                  Fig. 10(a). In this case, 90% of errors are indeed less than 5.9 cm.
+                                                                                     In practice, these directions of correction can only be esti-
+                                                                                  mated during the calibration phase for the reference positions
+                                                                                  tested. Consequently, if the UE subsequently finds itself at an
+                                                                                  actual position that does not correspond to any of the tested
+                                                                                  reference positions, the support vector defining the direction of
+                                                                                  correction will have to be a weighted average of the support
+                                                                                  vectors of the adjacent reference points. Consequently, the cor-
+Fig. 10. CDF and spatial distribution of the RMS positioning error over the
+whole reception plane.
+                                                                                  rected coordinates and their CDF, shown in Fig. 10, correspond
+                                                                                  to an ideal case of correction, which defines a minimum value
+
+
+
+
+   Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+SHI et al.: EXPERIMENTAL DEMONSTRATION OF INTEGRATED OPTICAL WIRELESS SENSING AND COMMUNICATION                                                               7083
+
+
+
+                                                                                   1 and 10 cm as part of its IMT-2030 framework. Future work
+                                                                                   should even enable us to further reduce this positioning error,
+                                                                                   while considerably limiting the number of calibration points
+                                                                                   currently required, in particular by adopting a more realistic
+                                                                                   RSS model along with machine learning techniques to deter-
+                                                                                   mine the direction of error correction more precisely. At the
+                                                                                   same time, it would be useful for future applications to switch
+                                                                                   from two-dimensional to three-dimensional positioning, while
+                                                                                   increasing communication throughput by exploiting the full
+                                                                                   available bandwidth of the optical antennas we have developed,
+                                                                                   for example by using directly a commercial system.
+
+
+                                                                                                                     REFERENCES
+                                                                                    [1] H. Tataria, M. Shafi, A. F. Molisch, M. Dohler, H. Sjöland, and F. Tufves-
+                                                                                        son, “6G wireless systems: Vision, requirements, challenges, insights, and
+                                                                                        opportunities,” Proc. IEEE, vol. 109, no. 7, pp. 1166–1199, Jul. 2021.
+Fig. 11. CDF of the error in the angle defining the orientation of the estimated    [2] Framework and overall objectives of the future development of IMT
+positions compared to the reference positions.                                          for 2030 and beyond, Rec. ITU-R M.2160-0, International Telecommu-
+                                                                                        nications Union, Geneva, Switzerland, Nov. 2023. [Online]. Available:
+                                                                                        https://www.itu.int/rec/R-REC-M.2160/en
+                                                                                    [3] A. Liu et al., “A survey on fundamental limits of integrated sensing and
+for positioning error. Note also that this second error-correction                      communication,” IEEE Commun. Surv. Tuts., vol. 24, no. 2, pp. 994–1034,
+step, like the first, requires the prior acquisition of a set of                        Secondquarter 2022.
+measurements that should ideally be repeated when using a new                       [4] D. K. Pin Tan et al., “Integrated sensing and communication in 6G:
+                                                                                        Motivations, use cases, requirements, challenges and future directions,”
+UE, which remains quite restrictive for a large-scale deployment                        in Proc. IEEE 1st Int. Online Symp. Joint Commun. Sens., 2021, pp. 1–6.
+of the proposed system.                                                             [5] A. Kaushik et al., “Integrated sensing and communications for IoT: Syn-
+   We can nevertheless conclude that our OWC-based ISAC                                 ergies with key 6G technology enablers,” Sep. 2023. [Online]. Available:
+                                                                                        https://arxiv.org/abs/2309.13542
+system is capable of estimating the position of a UE with a                         [6] W. Hong et al., “The role of millimeter-wave technologies in 5G/6G
+relatively high resolution compared with state of the art systems                       wireless communications,” IEEE J. Microw., vol. 1, no. 1, pp. 101–122,
+operating over similar test areas, and that our post-calibration                        Jan. 2021.
+                                                                                    [7] C. Chaccour, M. N. Soorki, W. Saad, M. Bennis, P. Popovski, and M.
+technique, while unlikely to correct all errors due to deviations                       Debbah, “Seven defining features of terahertz (THz) wireless systems: A
+of the real system from the model, does provide flexibility for                         fellowship of communication and sensing,” IEEE Commun. Surv. Tuts.,
+fine-tuning the positioning.                                                            vol. 24, no. 2, pp. 967–993, Secondquarter 2022.
+                                                                                    [8] M. D. Soltani et al., “Terabit indoor laser-based wireless communications:
+                                                                                        Lifi 2.0 for 6G,” IEEE Wireless Commun., vol. 30, no. 5, pp. 36–43,
+              VI. CONCLUSIONS AND FUTURE WORKS                                          Oct. 2023.
+                                                                                    [9] High-speed indoor visible light communication transceiver - System ar-
+   In this article, an OWC-based ISAC system using m-CAP                                chitecture, physical layer and data link layer specification, Rec. ITU-T
+                                                                                        G.9991, International Telecommunications Union, Geneva, Switzerland,
+modulation for data transmission and RSS-based positioning is                           Mar. 2019. [Online]. Available: https://www.itu.int/rec/T-REC-G.9991-
+proposed and implemented using USRPs and custom-made IR                                 201903-I/en
+optical transceivers. The assumptions on which this system rely                    [10] IEEE Standard for Information Technology-Telecommunications and In-
+                                                                                        formation Exchange between Systems Local and Metropolitan Area
+are clearly stated: in order to estimate the user’s coordinates, the                    Networks-Specific Requirements Part 11: Wireless LAN Medium Access
+RSS model used is based solely on the LOS component of the                              Control (MAC) and Physical Layer (PHY) Specifications Amendment
+received optical signal, and on simplified optical transmitter and                      6: Light Communications, IEEE Std 802.11bb-2023, Institute of Elec-
+                                                                                        trical and Electronics Engineers, Nov. 2023. [Online]. Available: https:
+receiver models which are assumed to point perfectly towards                            //ieeexplore.ieee.org/document/10315104
+the ground and ceiling respectively, with a known vertical dis-                    [11] B. Béchadergue and B. Azoulay, “An industrial view on lifi challenges and
+tance and with a symmetrical and generalized Lambertian beam                            future,” in Proc. IEEE 12th Int. Symp. Commun. Syst.Netw. Digit. Signal
+                                                                                        Process., 2020, pp. 1–6.
+pattern.                                                                           [12] X. Zhang, Z. Babar, P. Petropoulos, H. Haas, and L. Hanzo, “The evo-
+   Although some of these assumptions are not or partially                              lution of optical OFDM,” IEEE Commun. Surv. Tuts., vol. 23, no. 3,
+verified in practice, experimental tests carried out in a 1.2 ×1.2 ×                    pp. 1430–1457, Thirdquarter 2021.
+                                                                                   [13] M. I. Olmedo et al., “Multiband carrierless amplitude phase modulation
+2.16 m3 room still show that, after a two steps correction process,                     for high capacity optical data links,” J. Lightw. Technol., vol. 32, no. 4,
+the proposed system is able to estimate the user coordinates with                       pp. 798–804, Feb. 2014.
+an RMS error below 5.9 cm in 90% of cases. At the same time,                       [14] M.-A. Khalighi, S. Long, S. Bourennane, and Z. Ghassemlooy, “PAM-
+                                                                                        and CAP-based transmission schemes for visible-light communications,”
+a pre-FEC data rate of 12 Mbps with a BER under 3.8×10−3                                IEEE Access, vol. 5, pp. 27002–27013, 2017.
+is guaranteed to the user whatever its location on the receiver                    [15] M. M. Merah, H. Guan, and L. Chassagne, “Experimental multi-user
+plane, 20 cm above the ground (i.e. 11.16 Mbps of useful data                           visible light communication attocell using multiband carrierless amplitude
+                                                                                        and phase modulation,” IEEE Access, vol. 7, pp. 12742–12754, 2019.
+rate if taking into account a 7% FEC overhead [37]).                               [16] X. Li et al., “A full-digital m-CAP receiver with synchronisation and
+   Such performance is very encouraging, given that the ITU                             adaptive blind equalisation for visible light communications,” J. Lightw.
+expects ISAC systems with a positioning accuracy of between                             Technol., vol. 40, no. 8, pp. 2409–2426, Apr. 2022.
+
+
+    Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+7084                                                                                   JOURNAL OF LIGHTWAVE TECHNOLOGY, VOL. 42, NO. 20, OCTOBER 15, 2024
+
+
+
+[17] Y. Hong et al., “Demonstration of > 1 tbit/s WDM OWC with wavelength-            Lina Shi received the engineering degree in computer science and electronics for
+     transparent beam tracking-and-steering capability,” Opt. Exp., vol. 29,          embedded systems from the Université Grenoble Alpes, Grenoble, France, in
+     no. 21, pp. 33694–33702, Oct. 2021.                                              2017, and the Ph.D. degree in telecommunication from Sorbonne Université,
+[18] Y. Zhuang et al., “A survey of positioning systems using visible LED             Paris, France. From 2021 to 2022, she was a Postdoctoral Researcher with
+     lights,” IEEE Commun. Surv. Tuts., vol. 20, no. 3, pp. 1963–1988,                UVSQ, Université Paris-Saclay, Gif-sur-Yvette, France. She is currently a Nokia
+     Thirdquarter 2018.                                                               Bell Labs Researcher in France. Her research interests include performance
+[19] Y. Xu et al., “Accuracy analysis and improvement of visible light position-      estimation and monitoring in optical transmission systems, machine learning,
+     ing based on VLC system using orthogonal frequency division multiple             optical communication and sensing.
+     access,” Opt. Exp., vol. 25, no. 26, pp. 32618–32630, 2017.
+[20] H. Yang, C. Chen, W.-D. Zhong, S. Zhang, and P. Du, “An integrated
+     indoor visible light communication and positioning system based on
+     FBMC-SCM,” in Proc. IEEE Photon. Conf., 2017, pp. 129–130.
+[21] H. Yang, W.-D. Zhong, C. Chen, A. Alphones, and P. Du, “QoS-driven
+     optimized design-based integrated visible light communication and posi-
+     tioning for indoor IoT networks,” IEEE Internet Things J., vol. 7, no. 1,
+     pp. 269–283, Jan. 2020.                                                          Ziqi Liu received the Bachelor of Science degree in electronics information
+[22] M. Nassiri, G. Baghersalimi, and Z. Ghassemlooy, “A hybrid VLP and               engineering from the China University of Geosciences, Beijing, China, in
+     VLC system using m-CAP modulation and fingerprinting algorithm,” Opt.            2018, and the Master of Science degree in embedded systems from the Institut
+     Commun., vol. 473, 2020, Art. no. 125699.                                        Supérieur d’Électronique de Paris, Paris, France, in 2022. He is currently work-
+[23] L. Shi, B. Béchadergue, L. Chassagne, and H. Guan, “Joint visible light          ing toward the Ph.D. degree in the area of device fingerprinting within visible
+     sensing and communication using m-CAP modulation,” IEEE Trans.                   light communication with Sorbonne University, Paris, France. His research
+     Broadcast., vol. 69, no. 1, pp. 276–288, Mar. 2023.                              interests include physical layer security, artificial intelligence, and visible light
+[24] B. Lin, X. Tang, Z. Ghassemlooy, C. Lin, and Y. Li, “Experimental                communication.
+     demonstration of an indoor VLC positioning system based on OFDMA,”
+     IEEE Photon. J., vol. 9, no. 2, pp. 1–9, Apr. 2017.
+[25] H. Yang, C. Chen, W.-D. Zhong, A. Alphones, S. Zhang, and P. Du,
+     “Demonstration of a quasi-gapless integrated visible light communication
+     and positioning system,” IEEE Photon. Technol. Lett., vol. 30, no. 23,
+     pp. 2001–2004, Dec. 2018.
+[26] S. M. Kouhini et al., “LiFi positioning for industry 4.0,” IEEE J. Sel. Topics
+     Quantum Electron., vol. 27, no. 6, pp. 1–15, Nov./Dec. 2021.                     Bastien Béchadergue (Member, IEEE) received the aeronautical engineering
+[27] D. Chen et al., “Integrated visible light communication and positioning          degree from ISAE-Supaero, Toulouse, France, the M.S. degree in communi-
+     CDMA system employing modified ZCZ and Walsh code,” Opt. Exp.,                   cation and signal processing from Imperial College London, London, U.K.,
+     vol. 30, no. 22, pp. 40455–40469, Oct. 2022.                                     in 2014, and the Ph.D. degree in signal and image processing from UVSQ,
+[28] J. Jin et al., “Adaptive feedback threshold based demodulation for mobile        Université Paris-Saclay, Gif-sur-Yvette, France, in 2017, for his work on visible
+     visible light communication and positioning integrated system,” Opt. Exp.,       light communication and sensing for automotive applications. From 2017 to
+     vol. 30, no. 8, pp. 13331–13344, Apr. 2022.                                      2020, he was in charge of the research activities at Oledcomm, one of the
+[29] J. Fang, J. Pan, X. Huang, J. Lin, and C. Jiang, “Integrated physical-layer      leading companies in the development of optical wireless communication prod-
+     secure visible light communication and positioning system based on polar         ucts. Since 2020, he has been an Associate Professor with UVSQ, Université
+     codes,” Opt. Exp., vol. 31, no. 25, pp. 41756–41772, Dec. 2023.                  Paris-Saclay, where his research focuses on optical wireless communication and
+[30] Z. Liu and C. Yu, “Multi-user visible light communication and positioning        sensing.
+     system based on dual-domain multiplexing scheme,” Photonics, vol. 10,
+     no. 3, 2023, Art. no. 306.
+[31] H. Yang et al., “An advanced integrated visible light communication and lo-      Hongyu Guan received the B.S. degree in electrical engineering from EN-
+     calization system,” IEEE Trans. Commun., vol. 71, no. 12, pp. 7149–7162,         SEIRB, Talence, France, in 2007, and the Ph.D. degree in computer science from
+     Dec. 2023.                                                                       the University of Bordeaux I, Bordeaux, France, in 2012, for his work on em-
+[32] X. Li, Z. Ghassemlooy, S. Zvanovec, and L. N. Alves, “An equivalent              bedded systems for home automation. He is currently a Research Associate and
+     circuit model of a commercial LED with an ESD protection component               the Chief Project Engineer with the LISV laboratory, Versailles Saint-Quentin-
+     for VLC,” IEEE Photon. Technol. Lett., vol. 33, no. 15, pp. 777–779,             en-Yvelines University, University of Paris-Saclay, Gif-sur-Yvette, France. His
+     Aug. 2021.                                                                       research interests include visible light communications, communication proto-
+[33] X. Deng et al., “Physics-based LED modeling and nonlinear distortion             col, ubiquitous, data fusion, sensors, and nanometrology.
+     mitigating with real-time implementation,” IEEE Photon. J., vol. 14, no. 6,
+     pp. 1–6, Dec. 2022.
+[34] D. Shi et al., “Physics-based modeling of GAN MQW LED for visible light          Luc Chassagne received the B.S. degree in electrical engineering from Supelec,
+     communication systems,” IEEE Trans. Electron Devices, vol. 71, no. 1,            Gif-sur-Yvette, France, in 1994, and the Ph.D. degree in optoelectronics from the
+     pp. 337–342, Jan. 2024.                                                          University of Paris XI, Orsay, France, in 2000, for his work in the field of atomic
+[35] Z. Ghassemlooy, M.-A. Khalighi, and D. Wu, “Channel modeling,” in                frequency standard metrology. He is currently a Professor and the Director of
+     Visible Light Communications. Boca Raton, FL, USA: CRC Press, 2017,              the LISV laboratory, University of Versailles, Versailles, France. His research
+     pp. 71–96.                                                                       interests include nanometrology, sensors, and visible light communications.
+[36] W. Zhang, M. I. S. Chowdhury, and M. Kavehrad, “Asynchronous indoor
+     positioning system based on visible light communications,” Opt. Eng.,
+     vol. 53, no. 4, pp. 1–10, 2014.                                                  Xun Zhang (Senior Member, IEEE) received the Ph.D. degree in instru-
+[37] Forward error correction for high bit-rate DWDM submarine systems, Rec.          mentation and microelectronics (IM) science from the University of Nancy,
+     ITU-T G.975.1, International Telecommunications Union, Feb. 2004. [On-           Nancy, France, in 2009. From 2009 to 2011, he undertook a Postdoctoral
+     line]. Available: https://www.itu.int/rec/T-REC-G.975.1-200402-I/en              position with the SCEE Laboratory, CentraleSupélec, Gif-sur-Yvette, France,
+[38] Photobiological safety of lamps and lamp systems, IEC-62471, Inter-              where he focused on applying auto-reconfigurable management methods and
+     national Electrotechnical Commission, Jul. 2006. [Online]. Available:            control strategies in FPGAs for cognitive radio systems. In 2011, he joined
+     https://webstore.iec.ch/publication/7076                                         the LISITE Laboratory, ISEP, Paris, France, as an Associate Professor. He is
+[39] H. Le Minh et al., “100-Mb/s NRZ visible light communications using a            currently a Professor with ISEP, and conducts permanent research with the
+     postequalized white LED,” IEEE Photon. Technol. Lett., vol. 21, no. 15,          LISV Laboratory within the University of Paris Saclay-Versailles. His research
+     pp. 1063–1065, Aug. 2009.                                                        interests include PHY layer optimization for 5G cellular networks and visible
+[40] Hamamatsu Si PIN photodiodes S2506/S6775/S6967 series, 2021. [On-                light communication (VLC) systems. He is also pioneering the development of
+     line]. Available: https://www.hamamatsu.com/content/dam/hamamatsu-               VLC-based indoor high-accuracy positioning and tracking algorithms. He is an
+     photonics/sites/documents/99_SALES_LIBRARY/ssd/s2506-                            Associate Editor for IEEE TRANSACTIONS ON BROADCASTING and is a Member
+     02_etc_kpin1048e.pdf                                                             of the BTS Awards Committee.
+
+
+
+  Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on March 16,2026 at 01:27:52 UTC from IEEE Xplore. Restrictions apply.
+

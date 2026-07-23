@@ -1,0 +1,146 @@
+\documentclass[journal]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{tabularx}
+\usepackage{gensymb}  
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}  
+\usepackage{xfrac}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{cite}
+
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+
+\title{Experimental Demonstration of 3D Optical Wireless Positioning with Single Beam-Steered LED and Empirical Radiation Pattern}
+\author{
+    Kevin Acuna-Condori,
+    Bastien Béchadergue, 
+    Hongyu Guan, and
+    Luc Chassagne, 
+    \thanks{Manuscript received MM DD, 2025.
+    This work was supported in part by the French National Research Agency (ANR) through the Project SAFELiFi under Grant ANR-21-CE25-0001-01, and in part by the European Union's Smart Networks and Services Joint Undertaking (SNS JU) under grant agreement No. 101139292 (\textit{Corresponding author: Kevin Acuna-Condori.})
+    }
+    \thanks{The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Villacoublay, France (e-mail: kevin-jose.acuna-condori@uvsq.fr).}
+}
+\markboth{JOURNAL OF LIGHTWAVE TECHNOLOGY,~Vol.~XX, No.~XX, Month~2026}%
+{Acuna-Condori \MakeLowercase{\textit{et al.}}: Experimental Demonstration of 3D Optical Wireless Positioning Using a Single Beam-Steered LED}
+\maketitle
+
+\begin{abstract}
+TBD
+\end{abstract}
+
+\begin{IEEEkeywords}
+Optical wireless positioning, visible light positioning, beam steering, 3D localization, radiation pattern modeling.
+\end{IEEEkeywords}
+
+
+
+
+
+\section{Introduction}
+% Ensure you explicitly state the novelties compared to the GLOBECOM paper here.
+
+\section{Working Principles of 3D OWP}
+    \subsection{System Model}
+    \subsection{Direction Finding Formulation}
+    
+    \subsection{Distance Recovery: Active vs. Passive Receiver Approaches}
+    % Translated and enhanced from your blue text:
+    \textcolor{blue}{This subsection explores two distinct methods for distance recovery: 
+    (a) \textit{Active Receiver Orientation:} Assuming the receiver possesses reorientation capabilities (emulated via the robotic arm's end-effector), the PD is actively aligned to face the LED. This establishes a direct line-of-sight link to recover the distance, requiring a total of $K+1$ orientation steps.
+    (b) \textit{Passive Fixed Receiver:} The PD remains strictly static, and the distance is mathematically derived solely from the Received Signal Strength (RSS) information gathered during the $K$ initial beam-steering orientations of the transmitter.}
+
+    \subsection{Empirical Radiation Modeling for Estimation Enhancement}
+    % Translated and enhanced from your blue text:
+    \textcolor{blue}{This subsection addresses the limitations of classical optical channel models:
+    (a) It presents a theoretical discussion contrasting the ideal Lambertian irradiance model with the empirical, quasi-Lambertian radiation pattern exhibited by Commercial Off-The-Shelf (COTS) LEDs.
+    (b) It proposes a novel mathematical framework to integrate this high-fidelity empirical radiation data into the estimation algorithms (e.g., via Look-Up Tables or non-linear calibration functions) to mitigate spatial biases and enhance 3D positioning accuracy.}
+
+\section{Experimental Framework and Implementation Details}
+    \subsection{3D Robotic Testbed and Hardware Upgrades}
+    % Translated and enhanced from your blue text:
+    \textcolor{blue}{To scale the evaluation beyond preliminary conference results, several hardware upgrades were implemented:
+        \begin{itemize}
+            \item \textbf{Thermal Management and Nominal Current Operation:} An aluminum heat sink was integrated into the motorized gimbal, and the transmitter LED was mounted on a star PCB. This thermal dissipation enhancement allowed the LED to operate safely at its nominal forward current of 1A (a significant increase from the 750 mA used in our previous work), thereby improving the Signal-to-Noise Ratio (SNR) and reducing potential thermal implications.
+            \item \textbf{Receiver FOV and High-Density Spatial Grid:} To thoroughly validate the spatial robustness of the SBL method, the experimental evaluation grid will be massively densified from the baseline of 300 positions. Maintaining a constant spatial resolution of 0.2 m, two receiver configurations could be considered:
+            \begin{enumerate}
+                \item \textit{Baseline PD (BPX 61):} Constrained by a narrower half-angle FOV ($\approx 60^\circ$), the reliable evaluation area is limited to $2.4 \times 2.4$ m. Depending on the evaluated height range, this configuration yields 845 positions ($h \in [0.4, 1.4]$ m) or 1014 positions ($h \in [0.2, 1.4]$ m).
+                \item \textit{Wide-Angle PD Upgrade (S6967):} By transitioning to a receiver with a wider half-angle FOV ($\approx 90^\circ$), the testbed can be expanded to its physical limit of $3.0 \times 3.0$ m. This allows for a massive dataset collection of 1280 positions ($h \in [0.4, 1.4]$ m) or 1536 positions ($h \in [0.2, 1.4]$ m).
+            \end{enumerate}
+            In all considered scenarios, the dataset scale is increased to provide a comprehensive statistical evaluation of the peripheral error degradation.
+        \end{itemize}
+    }
+
+    \subsection{Kinematics and Coordinate Transformations}
+    % Translated and enhanced from your blue text:
+    \textcolor{blue}{This subsection details the rigid-body transformations required for accurate ground-truth mapping:
+    (a) \textit{Transmitter Kinematics:} Derivation of the rotation matrices and coordinate transformations governing the two-axis motorized gimbal mechanism.
+    (b) \textit{Receiver Kinematics:} Formulation of the equations mapping the desired PD spatial coordinates within the global testbed reference frame to the local position and orientation vectors of the robotic arm's coordinate system.}
+
+    \subsection{Experimental Protocol for SBL Data Acquisition}
+    % Translated and enhanced from your blue text:
+    \textcolor{blue}{In addition to spatial variations, this protocol includes a specific procedure to validate the system's robustness against receiver misalignment. Measurements were recorded at identical spatial positions while systematically varying the PD's tilt (inclination and azimuth). This aims to experimentally demonstrate the tilt-agnostic properties of the ratio-based SBL method, particularly concerning direction-finding performance.}
+
+    \subsection{Experimental Protocol for Empirical Radiation Mapping}
+    % Translated and enhanced from your blue text:
+    \textcolor{blue}{Details the automated procedure utilized to acquire the high-resolution empirical radiation pattern of the transmitter LED, capturing dense angular RSS measurements to construct a faithful 3D spatial map of the optical beam.}
+
+\section{Experimental Results and Discussion}
+    \subsection{Baseline Performance: Direction Finding and Positioning}
+    % Here you will put the results using the standard (Globecom-like) algorithms but with the larger dataset.
+    
+    \subsection{System Robustness: The Impact of Receiver Tilt}
+    % Here you analyze the data from the protocol where you changed the PD tilt at the same position.
+    
+    \subsection{Performance Enhancement via Empirical Radiation Modeling}
+    % Translated and enhanced from your blue text:
+    \textcolor{blue}{This is the capstone results section. It compares the baseline estimation errors (which assume an ideal Lambertian source) against the improved estimation obtained by integrating the empirical radiation pattern. It demonstrates how compensating for the quasi-Lambertian asymmetries minimizes peripheral errors and significantly reduces both the direction-finding error ($\alpha$) and the 3D positioning RMSE.}
+
+\section{Conclusion and Future Works}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\cite{Acuna2025,acuna2026robust,acuna2025model}
+\bibliographystyle{IEEEtran}
+\bibliography{OWP_v2}
+
+\begin{IEEEbiographynophoto}{Kevin Acuna-Condori}
+received his B.S. degree in electronical engineering from Universidad Nacional Mayor de San Marcos, Lima, Peru, in 2015, and M.S. degree in mechatronics engineering from Pontifical Catholic University of Peru, Lima, Peru, in 2017. 
+From 2018 to 2023, he led research activities at Cirsys, a company developing social robots and artificial intelligence for environmental applications.
+Since 2024, he has been pursuing the Ph.D. degree at Université Paris-Saclay, Gif-sur-Yvette, France, with a focus on 3D visible light positioning.
+His research interests include optical wireless positioning, machine learning, optical beam steering, and visible light communications.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Bastien Béchadergue}
+received the aeronautical engineering degree from ISAE-Supaero, Toulouse, France, the M.S. degree in communication and signal processing from Imperial College London, London, U.K., in 2014, and the Ph.D. degree in signal and image processing from UVSQ, Université Paris-Saclay, Gif-sur-Yvette, France, in 2017, for his work on visible light communication and sensing for automotive applications. From 2017 to 2020, he was in charge of the research activities at Oledcomm, one of the leading companies in the development of optical wireless communication products. Since 2020, he has been an Associate Professor with UVSQ, Université Paris-Saclay, where his research focuses on optical wireless communication and sensing.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Hongyu Guan}
+received the B.S. degree in electrical engineering from ENSEIRB, Talence, France, in 2007, and the Ph.D. degree in computer science from the University of Bordeaux I, Bordeaux, France, in 2012, for his work on embedded systems for home automation. He is currently a Research Associate and the Chief Project Engineer with the LISV laboratory, Versailles Saint-Quentin-en-Yvelines University, University of Paris-Saclay, Gif-sur-Yvette, France. His research interests include visible light communications, communication protocol, ubiquitous, data fusion, sensors, and nanometrology.
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Luc Chassagne}
+received the B.S. degree in electrical engineering from Supelec, Gif-sur-Yvette, France, in 1994, and the Ph.D. degree in optoelectronics from the University of Paris XI, Orsay, France, in 2000, for his work in the field of atomic frequency standard metrology. He is currently a Professor with the LISV laboratory, University of Versailles, University Paris-Saclay, France. His research interests include nanometrology, sensors, and visible light communications.
+\end{IEEEbiographynophoto}
+
+\end{document}
