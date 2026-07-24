@@ -25,7 +25,7 @@ addpath(this_dir);                                 % objective + monitor (this f
 
 %% ======================== CONFIGURATION ========================
 K_orientations = [5,9];
-PEB_QoS             = 0.05;     % coverage QoS: PEB_B <= this counts as covered [m]
+PEB_QoS             = 0.1;     % coverage QoS: PEB_B <= this counts as covered [m]
 optimization_metric = 'rms';    % ACCURACY aggregator among covered points
                                 % (tie-breaker): 'mean'|'max'|'rms'|'percentile_90'
 max_elevation_angle = 80;       % LED tilt upper bound [deg]
