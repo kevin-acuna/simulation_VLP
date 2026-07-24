@@ -40,17 +40,17 @@ z_analysis      = 1;        % analysis height for the coverage map [m]
 orientation_preset = 'DEB_45';
 
 % --- Coverage QoS thresholds (a position is covered if BOTH are met) ---
-PEB_max_cov = 0.1;           % max PEB_B to count as covered [m]
+PEB_max_cov = 0.05;           % max PEB_B to count as covered [m]
 SNR_min_dB  = 10;             % min best-link SNR [dB]
 
 % --- Grids ---
-step_map    = 0.05;           % fine floor grid for the coverage map [m]
+step_map    = 0.1;           % fine floor grid for the coverage map [m]
 step_cov    = 0.1;           % grid for the coverage-vs-height sweep [m]
 step_h      = 0.1;           % height step for the coverage-vs-height sweep [m]
 
 % --- Coverage-map overlay (per-beam illumination footprints) ---
 SHOW_BEAM_FOOTPRINTS = true;  % solid = SNR>=SNR_min footprint; dashed = -3 dB cone
-SAVE_FIGS            = false; % true -> export PDF/PNG to Coverage/results/
+SAVE_FIGS            = true; % true -> export PDF/PNG to Coverage/results/
 % =====================================================================
 
 %% Build the codebook and derived quantities
