@@ -106,7 +106,16 @@ det_val = det(I_fisher);
 % Define thresholds for numerical stability
 COND_THRESHOLD = 1e12;  % Condition number threshold
 DET_THRESHOLD = 1e-15;  % Determinant threshold
-REG_FACTOR = 1e-8;      % Regularization factor
+% --- [SCALE-INVARIANT REG FIX] -------------------------------------------
+% Before, REG_FACTOR was an ABSOLUTE quantity, so the regularization strength
+% depended on the (arbitrary) magnitude of the FIM (~1e6 in this setup). It is
+% now a RELATIVE (dimensionless) factor applied to the FIM scale (see below),
+% making the singular-case handling invariant to the overall scaling of I.
+% TO REVERT: uncomment the old line, comment the new one, and restore the
+% "I_fisher_reg = I_fisher + REG_FACTOR * eye(3);" line further down.
+% REG_FACTOR = 1e-8;    % (OLD, absolute) -- kept for reference / easy revert
+REG_FACTOR = 1e-12;     % (NEW, relative to the FIM scale)
+% -------------------------------------------------------------------------
 
 if det_val < DET_THRESHOLD || cond_num > COND_THRESHOLD
     % Matrix is singular or ill-conditioned
@@ -117,7 +126,12 @@ if det_val < DET_THRESHOLD || cond_num > COND_THRESHOLD
     end
     
     % Try regularization (Tikhonov regularization)
-    I_fisher_reg = I_fisher + REG_FACTOR * eye(3);
+    % --- [SCALE-INVARIANT REG FIX] scale the ridge by the FIM magnitude ---
+    % TO REVERT: replace the two lines below with:
+    %   I_fisher_reg = I_fisher + REG_FACTOR * eye(3);
+    fim_scale = trace(I_fisher) / 3;   % mean eigenvalue = characteristic FIM scale
+    I_fisher_reg = I_fisher + REG_FACTOR * fim_scale * eye(3);
+    % ----------------------------------------------------------------------
     cond_reg = cond(I_fisher_reg);
     
     if cond_reg < COND_THRESHOLD
