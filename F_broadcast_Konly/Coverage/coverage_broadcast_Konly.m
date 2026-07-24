@@ -30,7 +30,7 @@ system_params_coverage;                          % *** COVERAGE-ONLY parameters 
 %                          CONFIGURATION
 % =====================================================================
 % --- Operating point (hyperparameters) ---
-K               = 9;          % number of orientations/measurements: 5 or 9
+K               = 5;          % number of orientations/measurements: 5 or 9
 theta_half_deg  = 36.7;         % LED half-power angle [deg]
 z_analysis      = 1;        % analysis height for the coverage map [m]
 
@@ -39,10 +39,10 @@ z_analysis      = 1;        % analysis height for the coverage map [m]
 %   'DEB_30'       -> DEB-optimized at 30 deg    (K = 3..10)
 %   'PEB_37_QoS05' -> PEB-optimized at 36.7 deg, QoS=5 cm  (K = 5, 9)
 %   'PEB_37_QoS10' -> PEB-optimized at 36.7 deg, QoS=10 cm (K = 5, 9)
-orientation_preset = 'PEB_37_QoS05';
+orientation_preset = 'PEB_37_QoS10';
 
 % --- Coverage QoS thresholds (a position is covered if BOTH are met) ---
-PEB_max_cov = 0.05;           % max PEB_B to count as covered [m]
+PEB_max_cov = 0.1;           % max PEB_B to count as covered [m]
 SNR_min_dB  = 10;             % min best-link SNR [dB]
 
 % --- Grids ---
