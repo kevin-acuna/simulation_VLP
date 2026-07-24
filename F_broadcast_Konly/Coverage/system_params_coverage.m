@@ -25,7 +25,7 @@ m_t        = -log(2)/log(cosd(theta_half));  % Lambertian order
 p = 2.65e-3; q = 2.65e-3;                   % PD dimensions [m] 
 A_det = p*q;                                % Sensitive area [m^2]
 R_pd  = 0.62*0.9;                           % Responsivity [A/W] 0.62 (850nm), 0.9 (940nm)
-FOV   = 55;                                 % Field of view [deg]
+FOV   = 60;                                 % Field of view [deg]: After this is almost 0.
 n_r   = [0, 0, 1];                          % PD normal vector (known via IMU)
 
 % ========================================================================
@@ -65,7 +65,6 @@ stepH = 0.2;                            % Testbed Z step [m]
 orientations_DEB_K3  = [17.48,203.70, 17.22,332.20, 18.71,88.79];
 orientations_DEB_K4  = [29.88,315.03, 29.87,134.99, 29.87,45.03, 29.86,225.02];
 orientations_DEB_K5  = [0.10,74.22, 65.68,269.84, 65.73,179.90, 65.91,359.82, 65.88,89.91];
-orientations_DEB_K5  = [0,0,30,0,30,90,30,180,30,270];
 orientations_DEB_K6  = [67.60,253.38, 66.63,321.05, 70.03,176.90, 0.12,274.29, 68.91,98.38, 66.82,24.94];
 orientations_DEB_K7  = [65.60,353.25, 2.46,10.07, 66.17,273.62, 64.59,196.54, 62.48,130.76, 2.56,191.66, 63.78,68.11];
 orientations_DEB_K8  = [67.61,67.08, 66.59,247.26, 2.79,39.70, 3.21,226.96, 64.71,2.81, 66.06,179.67, 66.89,298.24, 65.37,114.85];

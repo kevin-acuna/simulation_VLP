@@ -30,9 +30,9 @@ system_params_coverage;                          % *** COVERAGE-ONLY parameters 
 %                          CONFIGURATION
 % =====================================================================
 % --- Operating point (hyperparameters) ---
-K               = 5;          % number of orientations/measurements: 5 or 9
+K               = 9;          % number of orientations/measurements: 5 or 9
 theta_half_deg  = 36.7;         % LED half-power angle [deg]
-z_analysis      = 0.6;        % analysis height for the coverage map [m]
+z_analysis      = 1;        % analysis height for the coverage map [m]
 
 % --- Optimized codebook to use (DEB-optimized for the broadcast proposal) ---
 %   'DEB_45' -> orientations optimized at 45 deg (K = 3..15)

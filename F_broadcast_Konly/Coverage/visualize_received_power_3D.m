@@ -37,7 +37,7 @@ system_params_coverage;                          % *** COVERAGE-ONLY parameters 
 % =====================================================================
 z_analysis      = 0.8;        % plane height [m]
 theta_half_deg  = 36.7;         % LED half-power angle [deg]
-tilt_deg        = 30;         % LED inclination from nadir [deg]
+tilt_deg        = 70;         % LED inclination from nadir [deg]
 azimuth_deg     = 0;          % LED azimuth from +x axis [deg]
 
 step_map        = 0.03;       % floor grid step [m]
