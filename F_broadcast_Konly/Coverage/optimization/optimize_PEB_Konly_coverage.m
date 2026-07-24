@@ -33,7 +33,7 @@ FILTER_INFOV        = true;     % exclude receiver positions outside the PD FOV
                                 % (they are unreachable regardless of LED tilt,
                                 %  so they only add a constant penalty)
 % Testbed grid (defaults to the room defined in system_params_coverage.m)
-testbed_step = 0.2;             % X,Y,Z spacing [m]
+testbed_step = 0.1;             % X,Y,Z spacing [m]
 
 % GA parameters
 pop_size        = 400;

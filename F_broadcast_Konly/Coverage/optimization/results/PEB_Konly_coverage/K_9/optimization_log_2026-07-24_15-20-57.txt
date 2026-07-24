@@ -1,0 +1,123 @@
+
+============================================================
+PEB_B ORIENTATION OPTIMIZATION LOG (Coverage / REAL params)
+============================================================
+Date: 24-Jul-2026 15:20:57
+Metric: rms
+K = 9 orientations
+Testbed: 11789 positions (FOV-filtered=1)
+Room: 3x3x2.0 m^3
+LED: Pt=0.670 W, Phi_half=36.7 deg, m=3.14
+PD: A=7.02e-06 m^2, FOV=60 deg
+Noise: sigma2=3.00e-14 W^2, N=1000 samples
+GA: pop=400, gen=400, parallel=24 workers
+============================================================
+
+Starting GA optimization for PEB_B (K=9)...
+
+Single objective optimization:
+18 Variables
+
+Options:
+CreationFcn:       @gacreationuniform
+CrossoverFcn:      @crossoverscattered
+SelectionFcn:      @selectionstochunif
+MutationFcn:       @mutationadaptfeasible
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+    1              800       0.0001067           2.736        0
+    2             1180        2.12e-05           2.252        0
+    3             1560       2.119e-05           2.357        0
+    4             1940       2.118e-05           2.298        0
+    5             2320       2.112e-05           2.071        0
+    6             2700       2.087e-05            2.43        0
+    7             3080       2.081e-05           1.944        0
+    8             3460       2.075e-05           1.689        0
+    9             3840       2.059e-05           1.502        0
+   10             4220       2.051e-05           1.041        0
+   11             4600       2.048e-05          0.7799        0
+   12             4980       2.035e-05          0.5707        0
+   13             5360       2.033e-05          0.2914        0
+   14             5740       2.029e-05          0.1653        0
+   15             6120       2.025e-05          0.1068        0
+   16             6500       2.024e-05          0.1052        0
+   17             6880        2.02e-05          0.1332        0
+   18             7260       2.016e-05         0.05228        0
+   19             7640       2.014e-05         0.02536        0
+   20             8020        2.01e-05       2.088e-05        0
+   21             8400       2.006e-05         0.05214        0
+   22             8780       2.005e-05         0.05212        0
+   23             9160       2.004e-05         0.02613        0
+   24             9540       1.998e-05         0.02605        0
+   25             9920       1.998e-05         0.02605        1
+   26            10300       1.997e-05         0.05207        0
+   27            10680       1.995e-05         0.07679        0
+   28            11060       1.993e-05         0.02605        0
+   29            11440       1.991e-05          0.1043        0
+   30            11820       1.991e-05          0.1032        0
+
+                                  Best           Mean      Stall
+Generation      Func-count        f(x)           f(x)    Generations
+   31            12200       1.991e-05         0.05199        0
+   32            12580        1.99e-05         0.02683        0
+   33            12960       1.988e-05       1.993e-05        0
+   34            13340       1.986e-05          0.0267        0
+   35            13720       1.985e-05          0.1038        0
+   36            14100       1.984e-05         0.07859        0
+   37            14480       1.984e-05          0.1059        0
+   38            14860       1.982e-05          0.1318        0
+   39            15240       1.982e-05         0.07926        1
+   40            15620       1.982e-05          0.1045        0
+   41            16000       1.981e-05            0.13        0
+   42            16380       1.981e-05          0.1839        0
+   43            16760        1.98e-05         0.07693        0
+   44            17140       1.979e-05         0.02542        0
+   45            17520       1.979e-05          0.1803        0
+   46            17900       1.978e-05          0.2299        0
+   47            18280       1.978e-05          0.2334        0
+   48            18660       1.977e-05          0.1561        0
+   49            19040       1.977e-05          0.2058        1
+   50            19420       1.976e-05           0.233        0
+   51            19800       1.976e-05          0.2568        0
+   52            20180       1.975e-05           0.231        0
+ga stopped because the average change in the fitness value is less than options.FunctionTolerance.
+
+=== PEB_B Optimization Complete ===
+Final best PEB_B: 0.000020 m
+Total generations: 52
+
+Optimal LED orientations (PEB_B-optimized):
+LED 1: θ = 53.88°, ρ = 171.80°
+LED 2: θ = 67.66°, ρ = 126.01°
+LED 3: θ = 57.62°, ρ = 79.92°
+LED 4: θ = 64.15°, ρ = 333.41°
+LED 5: θ = 66.59°, ρ = 222.79°
+LED 6: θ = 61.58°, ρ = 25.02°
+LED 7: θ = 56.29°, ρ = 276.86°
+LED 8: θ = 4.17°, ρ = 357.77°
+LED 9: θ = 1.87°, ρ = 104.50°
+
+--------------------------------------------------
+PEB_B OPTIMIZATION RESULTS FOR K = 9
+--------------------------------------------------
+Execution time: 374.23 seconds (6.2 min)
+Best objective (lexicographic cov+acc): 0.000020
+Exit flag: 1
+Coverage (PEB_B<=10.0 cm): 100.0% | among covered: RMS=2.33 cm, median=1.78 cm, mean=1.97 cm, P90=3.61 cm
+
+Optimal LED orientations (PEB_B-optimized):
+  LED 1: theta =  53.88 deg, rho = 171.80 deg -> n_t = [-0.800,  0.115, -0.589]
+  LED 2: theta =  67.66 deg, rho = 126.01 deg -> n_t = [-0.544,  0.748, -0.380]
+  LED 3: theta =  57.62 deg, rho =  79.92 deg -> n_t = [ 0.148,  0.832, -0.535]
+  LED 4: theta =  64.15 deg, rho = 333.41 deg -> n_t = [ 0.805, -0.403, -0.436]
+  LED 5: theta =  66.59 deg, rho = 222.79 deg -> n_t = [-0.673, -0.623, -0.397]
+  LED 6: theta =  61.58 deg, rho =  25.02 deg -> n_t = [ 0.797,  0.372, -0.476]
+  LED 7: theta =  56.29 deg, rho = 276.86 deg -> n_t = [ 0.099, -0.826, -0.555]
+  LED 8: theta =   4.17 deg, rho = 357.77 deg -> n_t = [ 0.073, -0.003, -0.997]
+  LED 9: theta =   1.87 deg, rho = 104.50 deg -> n_t = [-0.008,  0.032, -0.999]
+
+Orientation vector (copy-paste ready):
+orientations_DEBreal_K9 = [53.88,171.80,67.66,126.01,57.62,79.92,64.15,333.41,66.59,222.79,61.58,25.02,56.29,276.86,4.17,357.77,1.87,104.50];
+
+Optimization completed at: 24-Jul-2026 15:27:11
