@@ -8,3 +8,10 @@ Interesante: Una inclinacion de 60° puede dar mayor informaicon porque generar 
 
 Para el proyecto Chesse donde K=5:
 Testbed de 2m x 2m. Ya que la covertura sera menor.
+
+
+
+
+
+Recomendación
+Quédate con K=9 @ QoS=5 cm (96.2%, mediana 1.82 cm) para la narrativa TCOM y con K=5 @ QoS=10 cm (geometría 1+4 anillo a 60°, 99%) como caso limpio/compacto.

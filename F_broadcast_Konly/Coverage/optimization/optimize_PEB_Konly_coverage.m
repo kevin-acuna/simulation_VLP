@@ -181,9 +181,10 @@ for k_idx = 1:length(K_orientations)
     cov_opt = mean(peb_opt <= system_params.PEB_QoS);
     covd    = peb_opt(peb_opt <= system_params.PEB_QoS);
     if isempty(covd), covd = NaN; end
-    fprintf('Coverage (PEB_B<=%.1f cm): %.1f%% | among covered: median=%.2f cm, mean=%.2f cm, P90=%.2f cm\n', ...
+    rms_covd = sqrt(mean(covd.^2));    % RMS among covered = the OPTIMIZED accuracy metric
+    fprintf('Coverage (PEB_B<=%.1f cm): %.1f%% | among covered: RMS=%.2f cm, median=%.2f cm, mean=%.2f cm, P90=%.2f cm\n', ...
         system_params.PEB_QoS*100, 100*cov_opt, ...
-        median(covd)*100, mean(covd)*100, prctile(covd, 90)*100);
+        rms_covd*100, median(covd)*100, mean(covd)*100, prctile(covd, 90)*100);
 
     fprintf('\nOptimal LED orientations (PEB_B-optimized):\n');
     for i = 1:K
@@ -194,7 +195,8 @@ for k_idx = 1:length(K_orientations)
             i, theta_deg, rho_deg, nt(1), nt(2), nt(3));
     end
 
-    save(fullfile(k_results_dir, 'optimization_results.mat'), ...
+    results_filename = fullfile(k_results_dir, sprintf('optimization_results_%s.mat', current_datetime));
+    save(results_filename, ...
         'xOpt', 'fvalOpt', 'exitflag', 'output', 'optimization_time', ...
         'K', 'system_params', 'receiver_positions');
 

@@ -34,10 +34,12 @@ K               = 9;          % number of orientations/measurements: 5 or 9
 theta_half_deg  = 36.7;         % LED half-power angle [deg]
 z_analysis      = 1;        % analysis height for the coverage map [m]
 
-% --- Optimized codebook to use (DEB-optimized for the broadcast proposal) ---
-%   'DEB_45' -> orientations optimized at 45 deg (K = 3..15)
-%   'DEB_30' -> orientations optimized at 30 deg (K = 3..10)
-orientation_preset = 'DEB_45';
+% --- Optimized codebook to use (DEB/PEB-optimized for the broadcast proposal) ---
+%   'DEB_45'       -> DEB-optimized at 45 deg    (K = 3..15)
+%   'DEB_30'       -> DEB-optimized at 30 deg    (K = 3..10)
+%   'PEB_37_QoS05' -> PEB-optimized at 36.7 deg, QoS=5 cm  (K = 5, 9)
+%   'PEB_37_QoS10' -> PEB-optimized at 36.7 deg, QoS=10 cm (K = 5, 9)
+orientation_preset = 'PEB_37_QoS05';
 
 % --- Coverage QoS thresholds (a position is covered if BOTH are met) ---
 PEB_max_cov = 0.05;           % max PEB_B to count as covered [m]
@@ -59,6 +61,10 @@ switch orientation_preset
         presets = all_orientations_DEB;        Kvals = K_values;        % 3:15
     case 'DEB_30'
         presets = all_orientations_DEB_Phi30;  Kvals = K_values_Phi30;  % 3:10
+    case 'PEB_37_QoS05'
+        presets = all_orientations_PEB_QoS05;  Kvals = K_values_PEB;     % [5 9], QoS=5cm
+    case 'PEB_37_QoS10'
+        presets = all_orientations_PEB_QoS10;  Kvals = K_values_PEB;     % [5 9], QoS=10cm
     otherwise
         error('Unknown orientation_preset: %s', orientation_preset);
 end

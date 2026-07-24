@@ -104,6 +104,26 @@ all_orientations_DEB_Phi30 = {orientations_DEB_K3_Phi30,  orientations_DEB_K4_Ph
 K_values_Phi30 = 3:10;
 
 % ========================================================================
+% PEB-optimized Orientations (Phi_half = 36.7 deg)
+%   presets 'PEB_37_QoS05' (strict, PEB_B<=0.05 m) and 'PEB_37_QoS10' (PEB_B<=0.10 m)
+% ------------------------------------------------------------------------
+% Produced by optimization/optimize_PEB_Konly_coverage.m using the REAL params
+% above (SFH4725S Phi_half=36.7, BPX61 PD, FOV=60, N=1000). The GA maximized
+% coverage via a lexicographic (coverage + accuracy) objective. Only K = 5 and
+% K = 9 optimized so far.
+% ------------------------------------------------------------------------
+% QoS = 5 cm  (strict): K5 cov 77.8%, RMS~3.3 cm ; K9 cov 96.2%, RMS~2.2 cm
+orientations_PEB_K5_QoS05 = [55.92,144.35, 2.19,134.05, 53.00,58.76, 53.07,232.99, 51.80,327.22];
+orientations_PEB_K9_QoS05 = [53.05,358.17, 67.27,220.67, 59.22,172.05, 8.94,179.86, 64.36,118.72, 16.94,67.31, 42.73,269.83, 71.51,307.27, 67.63,56.05];
+% QoS = 10 cm (relaxed): K5 cov 99.0% (clean 1+4 ring @ ~60 deg) ; K9 cov 100.0%
+orientations_PEB_K5_QoS10 = [0.17,243.20, 59.71,85.27, 60.24,265.13, 60.66,355.50, 60.34,174.87];
+orientations_PEB_K9_QoS10 = [8.61,181.42, 27.80,91.20, 66.92,129.98, 62.84,254.76, 14.54,292.28, 58.61,191.11, 67.92,64.44, 66.12,317.10, 54.70,10.77];
+
+all_orientations_PEB_QoS05 = {orientations_PEB_K5_QoS05, orientations_PEB_K9_QoS05};
+all_orientations_PEB_QoS10 = {orientations_PEB_K5_QoS10, orientations_PEB_K9_QoS10};
+K_values_PEB = [5, 9];
+
+% ========================================================================
 % Helper: convert an orientation vector to 3xK unit vectors (nadir-referenced)
 % ========================================================================
 orient_to_vectors = @(orient_deg) cell2mat(arrayfun(@(i) ...
