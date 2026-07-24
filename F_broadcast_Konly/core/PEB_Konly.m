@@ -87,14 +87,22 @@ for i = 1:K
 end
 
 %% Calculate PEB
-% Check conditioning
-det_val = det(I_fisher);
-cond_num = cond(I_fisher);
-
-if det_val < 1e-30 || cond_num > 1e14
+% Check conditioning (scale-invariant)
+% --- [SCALE-INVARIANT FIX] ------------------------------------------------
+% Before, an ABSOLUTE determinant threshold was used (det_val < 1e-30). Since
+% det(I) scales as (FIM magnitude)^3, that test was NOT invariant to the overall
+% scaling of I_fisher (it could misfire for very small/large magnitudes). We now
+% rely only on scale-invariant ratios: cond (and an rcond safeguard). A rank-
+% deficient / ill-conditioned FIM -> Inf (position not identifiable).
+% TO REVERT: uncomment the two (OLD) lines and delete the (NEW) block below.
+% det_val = det(I_fisher);                                    % (OLD)
+% if det_val < 1e-30 || cond_num > 1e14                       % (OLD)
+cond_num = cond(I_fisher);                                     % (NEW)
+if ~all(isfinite(I_fisher(:))) || cond_num > 1e14 || rcond(I_fisher) < 1e-14   % (NEW)
     PEB = Inf;
     return;
 end
+% --------------------------------------------------------------------------
 
 try
     PEB = sqrt(trace(inv(I_fisher)));
