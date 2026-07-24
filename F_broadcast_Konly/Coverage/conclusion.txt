@@ -4,6 +4,7 @@ Usar para la base de datos TCOM Experimental:
 K=9
 LED= 36.7
 Limitacion fuerte: el angulo del PD. Si uso un PD: BPX61 entonces sera 60°. Pero si aumento a 85° la cobertura mejora.
+Interesante: Una inclinacion de 60° puede dar mayor informaicon porque generar mejor pendiente que 30° a pesar de que en terminos de iluminacion pueda ser algo peor.
 
 Para el proyecto Chesse donde K=5:
 Testbed de 2m x 2m. Ya que la covertura sera menor.
