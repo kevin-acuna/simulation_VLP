@@ -29,6 +29,10 @@ PEB_QoS             = 0.1;     % coverage QoS: PEB_B <= this counts as covered [
 optimization_metric = 'rms';    % ACCURACY aggregator among covered points
                                 % (tie-breaker): 'mean'|'max'|'rms'|'percentile_90'
 max_elevation_angle = 80;       % LED tilt upper bound [deg]
+min_angle_separation = 15;      % minimum pairwise angular separation between
+                                % LED beams [deg]. Prevents redundant/degenerate
+                                % clusters (two beams pointing the same way).
+                                % Physically meaningful & defensible in review.
 FILTER_INFOV        = true;     % exclude receiver positions outside the PD FOV
                                 % (they are unreachable regardless of LED tilt,
                                 %  so they only add a constant penalty)
@@ -59,6 +63,7 @@ system_params.nr         = n_r(:);
 system_params.debug_mode = false;
 system_params.optimization_metric = optimization_metric;
 system_params.PEB_QoS    = PEB_QoS;
+system_params.min_angle_separation = min_angle_separation;
 
 %% ======================== PARALLEL SETUP ========================
 fprintf('Setting up parallel computing pool...\n');
@@ -119,6 +124,7 @@ for k_idx = 1:length(K_orientations)
     fprintf('LED: Pt=%.3f W, Phi_half=%.1f deg, m=%.2f\n', system_params.Pt, rad2deg(system_params.theta_half), system_params.m);
     fprintf('PD: A=%.2e m^2, FOV=%.0f deg\n', system_params.A_det, rad2deg(system_params.Psi_FOV));
     fprintf('Noise: sigma2=%.2e W^2, N=%d samples\n', system_params.sigma2, system_params.N);
+    fprintf('Constraint: min pairwise beam separation = %.1f deg\n', min_angle_separation);
     fprintf('GA: pop=%d, gen=%d, parallel=%d workers\n', pop_size, max_generations, pool.NumWorkers);
     fprintf('%s\n\n', repmat('=', 1, 60));
 
