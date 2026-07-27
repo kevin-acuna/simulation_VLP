@@ -24,7 +24,7 @@ addpath(coverage_dir);                             % system_params_coverage.m
 addpath(this_dir);                                 % objective + monitor (this folder)
 
 %% ======================== CONFIGURATION ========================
-K_orientations = [9];
+K_orientations = [5,9];
 PEB_QoS             = 0.1;     % coverage QoS: PEB_B <= this counts as covered [m]
 optimization_metric = 'rms';    % ACCURACY aggregator among covered points
                                 % (tie-breaker): 'mean'|'max'|'rms'|'percentile_90'
