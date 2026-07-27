@@ -24,12 +24,12 @@ addpath(coverage_dir);                             % system_params_coverage.m
 addpath(this_dir);                                 % objective + monitor (this folder)
 
 %% ======================== CONFIGURATION ========================
-K_orientations = [5,9];
+K_orientations = [9];
 PEB_QoS             = 0.1;     % coverage QoS: PEB_B <= this counts as covered [m]
 optimization_metric = 'rms';    % ACCURACY aggregator among covered points
                                 % (tie-breaker): 'mean'|'max'|'rms'|'percentile_90'
 max_elevation_angle = 80;       % LED tilt upper bound [deg]
-min_angle_separation = 15;      % minimum pairwise angular separation between
+min_angle_separation = 10;      % minimum pairwise angular separation between
                                 % LED beams [deg]. Prevents redundant/degenerate
                                 % clusters (two beams pointing the same way).
                                 % Physically meaningful & defensible in review.
