@@ -33,6 +33,9 @@ if ~isfield(cfg,'scanKind')    || isempty(cfg.scanKind),   cfg.scanKind   = 'ver
 if ~isfield(cfg,'m')           || isempty(cfg.m),          cfg.m          = 3.13;       end
 if ~isfield(cfg,'C_opt'),                                  cfg.C_opt      = [];         end
 if ~isfield(cfg,'C_mode')      || isempty(cfg.C_mode),     cfg.C_mode     = 'empirical';end
+if ~isfield(cfg,'nadirXYtol')  || isempty(cfg.nadirXYtol), cfg.nadirXYtol = 0.03;       end
+if ~isfield(cfg,'nadirInclTol')|| isempty(cfg.nadirInclTol),cfg.nadirInclTol = 1.0;     end
+if ~isfield(cfg,'nadirScanKind'),                          cfg.nadirScanKind = '';      end
 if ~isfield(cfg,'v_dark')      || isempty(cfg.v_dark),     cfg.v_dark     = 0;          end
 if ~isfield(cfg,'T')           || isempty(cfg.T),          cfg.T          = [0 0 2];    end
 if ~isfield(cfg,'autoRefMax')  || isempty(cfg.autoRefMax), cfg.autoRefMax = true;       end
@@ -136,11 +139,14 @@ if ~isempty(cfg.C_opt)
     C_opt = cfg.C_opt; C_all = [];
     Cmode = 'user-provided';
 elseif strcmpi(cfg.C_mode, 'nadir')
-    [C_opt, cinfo] = df_estimate_C_nadir(cfg.dataFile, T_led, cfg.v_dark);
+    nopts = struct('xyTol', cfg.nadirXYtol, 'inclTol', cfg.nadirInclTol, ...
+                   'v_dark', cfg.v_dark, 'scanKind', cfg.nadirScanKind);
+    [C_opt, cinfo] = df_estimate_C_nadir(cfg.dataFile, m, T_led, nopts);
     C_all = cinfo.C_all;
-    assert(~isnan(C_opt), ['No vertical under-LED (x=0, y=0) nadir rows found. ' ...
-        'Use cfg.C_mode=''empirical'' instead.']);
-    Cmode = sprintf('nadir under-LED vertical (n=%d rows)', cinfo.n_used);
+    assert(~isnan(C_opt), ['No under-LED nadir rows found (xyTol=%.3g m, ' ...
+        'inclTol=%.3g deg). Loosen cfg.nadir* or use cfg.C_mode=''empirical''.'], ...
+        cfg.nadirXYtol, cfg.nadirInclTol);
+    Cmode = sprintf('nadir under-LED (n=%d rows, xyTol=%.3g m)', cinfo.n_used, cfg.nadirXYtol);
 else
     [C_opt, C_all] = df_estimate_C(inst, m);
     Cmode = 'empirical (median from GT)';

@@ -83,13 +83,16 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
   - `'empirical'` — fit from *all* points and orientations using ground truth
     (median, `df_estimate_C.m`); removes the global scale so distance figures
     show the model *scatter*.
-  - `'nadir'` — **sub-dataset-2 analogue** with *fixed* (non-tunable) geometry
-    (`df_estimate_C_nadir.m`): only the **vertical** scan of the receiver
-    **exactly under the LED** (`x == 0` and `y == 0`, any `z`) with the LED at
-    the **nadir** (`nt_incl == 0`). There `Q = cos(psi) = 1`, so it collapses to
-    `C = (v_mean - v_dark)*d^2`. For this session the under-LED point
-    `P8 = (0,0,1.1)` gives **C ≈ 8.69** (v_dark 0) / **8.65** (v_dark 0.05).
-  This calibration is independent of `cfg.K_id` (it reads the nadir row
+  - `'nadir'` — **sub-dataset-2 analogue**: uses *only* receivers directly
+    under the LED (`|x|,|y| <= cfg.nadirXYtol`) with the LED pointing to the
+    floor (`nt_incl <= cfg.nadirInclTol`), where `Q = 1` and
+    `C = (v_mean - v_dark)*d^2 / cos(psi)` (`df_estimate_C_nadir.m`). For this
+    session the single under-LED point `P8 = (0,0,1.1)` gives
+    **C ≈ 8.69** (v_dark 0) / **8.65** (v_dark 0.05), consistent to ~0.3%
+    across its vertical + 3 tilt nadir readings.
+  - `cfg.nadirScanKind` restricts the nadir rows (`''` = any, `'vertical'` =
+    PD-at-zenith only, the strict sub2 geometry).
+  This calibration is independent of `cfg.K_id` (it reads the nadir rows
   directly), so it works even when orientation 10 is excluded from the DF set.
 - **`cfg.v_dark`** — dark voltage to subtract (this run has none).
 - **`cfg.autoRefMax`** — uses the brightest selected orientation as the ratio
