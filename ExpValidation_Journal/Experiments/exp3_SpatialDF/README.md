@@ -105,11 +105,11 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
   reference for numerical stability (does not change the set of `K_id`).
 - **`cfg.addNLS`** — include the **NLS-LM** estimator (`vlp_nls_lm.m`) as a
   third method alongside GLS and WLS (default `true`).
-- **`cfg.nlsUseProfile`** — if `true` (default), NLS uses the measured LED beam
-  `R(θ)` from the axis sweep (`vlp_nls_lm_profile.m`); if `false`, NLS uses the
-  analytic Lambertian `cos^m θ` (`vlp_nls_lm.m`, same `m` as GLS/WLS).
-- **`cfg.mFromProfile`** — if `true`, override `cfg.m` with the Lambertian order
-  `m_fit` fitted from the axis-sweep profile (applies to *all* methods).
+- **`cfg.nlsUseProfile`** — if `true` (default), NLS *direction finding* uses the
+  measured LED beam `R(θ)` from the axis sweep (`vlp_nls_lm_profile.m`); if
+  `false`, NLS uses the analytic Lambertian `cos^m θ` (`vlp_nls_lm.m`). Either
+  way, every stage (GLS, WLS, distance recovery, `C`) uses the single order
+  `m = cfg.m` — the profile never overrides it.
 - **`cfg.profileDir` / `cfg.profileVdark`** — folder holding
   `data_x.csv`/`data_y.csv` (default: the `exp1_Calibration/sub0_axis_sweep`
   session) and its dark voltage (`[]` reads `v_dark_mean` from its metadata).

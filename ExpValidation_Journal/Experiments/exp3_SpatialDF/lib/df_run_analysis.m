@@ -18,10 +18,10 @@ function R = df_run_analysis(cfg)
 %   .outDir       output folder. Default <dataFile dir>/figures_<scanKind>
 %   .fontName/.fontSize   plot styling
 %   .addNLS        include the NLS-LM estimator (vlp_nls_lm). Default true
-%   .nlsUseProfile NLS uses the measured LED profile R(theta) instead of
-%                  cos^m(theta). Default true (needs the sub0 axis sweep)
-%   .mFromProfile  override cfg.m with the Lambertian order fitted from the
-%                  axis-sweep profile. Default false
+%   .nlsUseProfile NLS direction finding uses the measured LED profile R(theta)
+%                  instead of cos^m(theta). Default true (needs the sub0 axis
+%                  sweep). Every other stage (GLS, WLS, distance recovery and C)
+%                  always uses the single Lambertian order m = cfg.m.
 %   .profileDir    folder with data_x.csv/data_y.csv (default: exp1 axis sweep)
 %   .profileVdark  dark voltage for the profile ([] => read from its metadata)
 %
@@ -52,7 +52,6 @@ if ~isfield(cfg,'fontName')    || isempty(cfg.fontName),   cfg.fontName   = 'Tim
 if ~isfield(cfg,'fontSize')    || isempty(cfg.fontSize),   cfg.fontSize   = 13;         end
 if ~isfield(cfg,'addNLS')       || isempty(cfg.addNLS),       cfg.addNLS        = true;  end
 if ~isfield(cfg,'nlsUseProfile')|| isempty(cfg.nlsUseProfile),cfg.nlsUseProfile = true;  end
-if ~isfield(cfg,'mFromProfile') || isempty(cfg.mFromProfile), cfg.mFromProfile  = false; end
 if ~isfield(cfg,'profileDir'),                                cfg.profileDir    = '';    end
 if ~isfield(cfg,'profileVdark'),                              cfg.profileVdark  = [];    end
 assert(isfield(cfg,'dataFile') && isfile(cfg.dataFile), 'cfg.dataFile must point to master.csv');
@@ -149,10 +148,11 @@ assert(nI > 0, 'No complete estimation instances for K_id = %s (scanKind = %s).'
 inst = inst(sidx);
 
 % ---------------------------------------------- LED radiation profile (NLS)
-% The sub0 axis sweep measures R(theta) = v_mean(theta) for the LED beam. NLS
-% can use this measured profile instead of the Lambertian cos^m assumption.
+% The sub0 axis sweep measures R(theta) = v_mean(theta) for the LED beam. When
+% nlsUseProfile is true, ONLY the NLS direction finder uses this measured
+% profile; every other stage keeps the single Lambertian order m = cfg.m.
 prof = [];
-if cfg.addNLS && (cfg.nlsUseProfile || cfg.mFromProfile)
+if cfg.addNLS && cfg.nlsUseProfile
     if isempty(cfg.profileDir)
         cfg.profileDir = fullfile(simRoot, 'ExpValidation_Journal', 'Experiments', ...
             'exp1_Calibration', 'sub0_axis_sweep', '20260722_165901');
@@ -164,9 +164,6 @@ if cfg.addNLS && (cfg.nlsUseProfile || cfg.mFromProfile)
             'Could not load LED profile (%s). NLS falls back to Lambertian cos^m.', ME.message);
         prof = [];
     end
-end
-if ~isempty(prof) && cfg.mFromProfile
-    m = prof.m_fit;   % use the beam order fitted from the axis sweep
 end
 nlsProfile = cfg.addNLS && cfg.nlsUseProfile && ~isempty(prof);
 if cfg.addNLS && ~exist('lsqnonlin', 'file')
@@ -248,7 +245,7 @@ R.methods=mName; R.labels=labels; R.pos_true=posT; R.est=est;
 R.ang=ang; R.pos=posE; R.d=dEst; R.d_true=dTrue;
 R.profile=prof; R.m=m; R.nInstances=nI; R.nSkipped=nSkipped;
 
-if nlsProfile, pstat='used by NLS'; elseif ~isempty(prof), pstat='loaded (m only)'; else, pstat=''; end
+if nlsProfile, pstat='used by NLS (direction only)'; elseif ~isempty(prof), pstat='loaded (unused)'; else, pstat=''; end
 
 fprintf('\n=================== DF validation (%s PD) ===================\n', upper(cfg.scanKind));
 fprintf(' data      : %s\n', cfg.dataFile);
