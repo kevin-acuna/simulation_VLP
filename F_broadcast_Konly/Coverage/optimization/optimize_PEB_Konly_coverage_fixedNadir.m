@@ -41,7 +41,7 @@ PEB_QoS             = 0.1;      % coverage QoS: PEB_B <= this counts as covered 
 optimization_metric = 'rms';    % ACCURACY aggregator among covered points
                                 % (tie-breaker): 'mean'|'max'|'rms'|'percentile_90'
 max_elevation_angle = 80;       % LED tilt upper bound [deg]
-min_angle_separation = 15;      % minimum pairwise angular separation between
+min_angle_separation = 20;      % minimum pairwise angular separation between
                                 % LED beams [deg]. With LED 1 at nadir this also
                                 % forces every other beam to theta >= this value.
 FILTER_INFOV        = true;     % exclude receiver positions outside the PD FOV
