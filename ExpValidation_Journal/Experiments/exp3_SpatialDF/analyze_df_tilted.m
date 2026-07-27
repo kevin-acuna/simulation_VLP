@@ -56,7 +56,7 @@ cfg.T       = [0 0 2];% LED position (transmitter_z = 2 m in metadata)
 % use either the Lambertian cos^m model or the MEASURED LED beam R(theta) from
 % the sub0 axis sweep (exp1_Calibration/sub0_axis_sweep).
 cfg.addNLS        = true;    % include NLS in the comparison
-cfg.nlsUseProfile = true;    % true -> NLS direction finding uses measured R(theta); false -> cos^m. m = cfg.m always.
+cfg.nlsUseProfile = false;    % true -> NLS direction finding uses measured R(theta); false -> cos^m. m = cfg.m always.
 cfg.profileDir    = '';      % '' -> default exp1 sub0_axis_sweep session
 cfg.profileVdark  = 0.05;    % [] -> read v_dark from the profile metadata.txt
 
