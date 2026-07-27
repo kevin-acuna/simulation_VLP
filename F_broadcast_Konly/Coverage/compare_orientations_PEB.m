@@ -1,7 +1,8 @@
 %% compare_orientations_PEB.m
-% Compare TWO orientation sets under the SAME K for the broadcast (K-only) OWP.
+% Compare TWO orientation sets (which may have DIFFERENT K) for the broadcast
+% (K-only) OWP.
 %
-% Fixes the hyperparameter K and evaluates the broadcast Position Error Bound
+% Evaluates the broadcast Position Error Bound
 % PEB_B (via core/PEB_Konly.m) over the full 3D testbed for two user-chosen
 % orientation sets. Produces:
 %     (1) a CDF plot of PEB_B comparing both sets
@@ -27,41 +28,19 @@ system_params_coverage;                            % *** COVERAGE-ONLY parameter
 % =====================================================================
 %                          CONFIGURATION
 % =====================================================================
-% --- Hyperparameter (fixed) ---
-K = 9;                          % number of orientations/measurements
-
-% --- The TWO orientation sets to compare (each must have K entries) ---
+% --- The TWO orientation sets to compare (they may have DIFFERENT K) ---
 %   Pick any vector defined in system_params_coverage.m, or paste your own
-%   [theta1,phi1, theta2,phi2, ...] in degrees. Both must match K above.
-setA.label  = 'candidate A';
-setA.orient = [64.02,68.63, ...
-               18.45,86.77, ...
-               15.68,315.84, ...
-               61.25,189.58, ...
-               13.82,201.65, ...
-               63.93,129.84, ...
-               65.50,309.90, ...
-               61.38,251.31, ...
-               59.16,8.94];
-setB.label  = 'candidate B';
-setB.orient =  ...
-[16,210, ...         
-16,330, ...
-16,90, ...
-60,0, ...
-64,60, ...
-64,120, ...
-60,180, ...
-64,240, ...
-64,300, ...
-];
+%   [theta1,phi1, theta2,phi2, ...] in degrees. The number of orientations
+%   K is derived AUTOMATICALLY per set (K = numel(orient)/2), so the two sets
+%   do NOT need to share the same K (e.g. compare a K=5 vs a K=9 codebook).
+setA.label  = 'K5 FINAL';
+setA.orient = orientation_PEB_K5_FINAL;
+setB.label  = 'K9 FINAL';
+setB.orient = orientation_PEB_K9_FINAL;
 
-
-
-% Other examples at K=5:
-%   setA.orient = orientations_DEB_K5;             setA.label = 'DEB 45 deg';
-%   setB.orient = orientations_DEB_K5_Phi30;       setB.label = 'DEB 30 deg';
-%   setB.orient = orientations_PEB_K5_QoS10_fine;  setB.label = 'PEB QoS10 (fine)';
+% Other examples (K may differ between the two sets):
+%   setA.orient = orientations_PEB_K5_QoS10;  setA.label = 'PEB K5 QoS10';
+%   setB.orient = orientations_PEB_K9_QoS10;  setB.label = 'PEB K9 QoS10';
 
 % --- Plot options ---
 SAVE_FIGS   = true;             % export PDF/PNG/EPS to Coverage/results/
@@ -70,11 +49,16 @@ cdf_xmax_cm = [];               % x-axis upper limit [cm]; [] -> auto (P99 of bo
 % =====================================================================
 
 sets = [setA, setB];
+Kset = zeros(1, 2);
 for s = 1:2
-    assert(mod(numel(sets(s).orient), 2) == 0 && numel(sets(s).orient)/2 == K, ...
-        'Set "%s" has %d orientations, expected K=%d.', ...
-        sets(s).label, numel(sets(s).orient)/2, K);
+    assert(mod(numel(sets(s).orient), 2) == 0, ...
+        'Set "%s" must be a flat list of [theta,phi] pairs (even length).', ...
+        sets(s).label);
+    Kset(s) = numel(sets(s).orient) / 2;            % per-set number of orientations
 end
+ktag = sprintf('K%dvsK%d', Kset(1), Kset(2));       % filename tag for the pair
+leg  = arrayfun(@(s) sprintf('%s (K=%d)', sets(s).label, Kset(s)), 1:2, ...
+                'UniformOutput', false);            % legend labels incl. per-set K
 
 %% 3D Testbed grid (same room/step as the coverage analysis)
 x_range = -L/2:step:L/2;
@@ -83,7 +67,7 @@ z_range = 0:stepH:Hmax;
 [X, Y, Z] = meshgrid(x_range, y_range, z_range);
 positions = [X(:), Y(:), Z(:)]';
 N_pos = size(positions, 2);
-fprintf('Testbed: %d positions | K=%d\n', N_pos, K);
+fprintf('Testbed: %d positions | K_A=%d, K_B=%d\n', N_pos, Kset(1), Kset(2));
 
 %% Evaluate PEB_B over the testbed for each orientation set
 res = struct('label', {}, 'peb', {}, 'v', {}, 'rmse', {}, 'mean', {}, ...
@@ -140,17 +124,17 @@ end
 
 xlabel('$\mathrm{PEB}_\mathrm{B}$ [cm]', 'Interpreter', 'latex', 'FontSize', 8);
 ylabel('CDF', 'Interpreter', 'latex', 'FontSize', 8);
-legend({res(1).label, res(2).label}, 'Location', 'southeast', ...
+legend(leg, 'Location', 'southeast', ...
     'Interpreter', 'none', 'FontSize', 6);
 grid on;
 set(gca, 'FontSize', 7, 'LineWidth', 0.5);
-title(sprintf('PEB$_\\mathrm{B}$ CDF ($K=%d$)', K), 'Interpreter', 'latex', 'FontSize', 8);
+title('PEB$_\mathrm{B}$ CDF', 'Interpreter', 'latex', 'FontSize', 8);
 
 %% Save
 results_dir = fullfile(this_dir, 'results');
 if ~exist(results_dir, 'dir'), mkdir(results_dir); end
 if SAVE_FIGS
-    base = fullfile(results_dir, sprintf('Fig_compare_orientations_K%d', K));
+    base = fullfile(results_dir, ['Fig_compare_orientations_' ktag]);
     exportgraphics(fig, [base '.pdf'], 'ContentType','vector', 'BackgroundColor','white');
     exportgraphics(fig, [base '.png'], 'Resolution',600, 'BackgroundColor','white');
     exportgraphics(fig, [base '.eps'], 'ContentType','vector', 'BackgroundColor','white');
@@ -184,14 +168,14 @@ else
     xlabel('Height $z$ [m]', 'Interpreter', 'latex', 'FontSize', 8);
     ylabel(sprintf('Coverage [\\%%] ($\\mathrm{PEB}_\\mathrm{B}\\leq %g$ cm)', qos_ref_cm), ...
         'Interpreter', 'latex', 'FontSize', 8);
-    legend({res(1).label, res(2).label}, 'Location', 'best', ...
+    legend(leg, 'Location', 'best', ...
         'Interpreter', 'none', 'FontSize', 6);
     grid on;
     set(gca, 'FontSize', 7, 'LineWidth', 0.5);
-    title(sprintf('Coverage vs height ($K=%d$)', K), 'Interpreter', 'latex', 'FontSize', 8);
+    title('Coverage vs height', 'Interpreter', 'latex', 'FontSize', 8);
 
     if SAVE_FIGS
-        baseC = fullfile(results_dir, sprintf('Fig_coverage_vs_height_K%d', K));
+        baseC = fullfile(results_dir, ['Fig_coverage_vs_height_' ktag]);
         exportgraphics(figCov, [baseC '.pdf'], 'ContentType','vector', 'BackgroundColor','white');
         exportgraphics(figCov, [baseC '.png'], 'Resolution',600, 'BackgroundColor','white');
         exportgraphics(figCov, [baseC '.eps'], 'ContentType','vector', 'BackgroundColor','white');
@@ -200,7 +184,7 @@ else
 end
 
 %% Comparison table (RMSE / MEAN / MEDIAN + context)
-fprintf('\n=== PEB_B comparison (K=%d, testbed=%d pts) ===\n', K, N_pos);
+fprintf('\n=== PEB_B comparison (K_A=%d, K_B=%d, testbed=%d pts) ===\n', Kset(1), Kset(2), N_pos);
 fprintf('%-16s | %-16s | %-16s\n', 'Metric', res(1).label, res(2).label);
 fprintf('%s\n', repmat('-', 1, 56));
 fprintf('%-16s | %14.2f   | %14.2f\n', 'RMSE [cm]',        100*res(1).rmse,   100*res(2).rmse);
@@ -217,11 +201,11 @@ fprintf('\nLower RMSE: %s\n', res(best).label);
 figOri = figure('Units','inches', 'Position',[1 1 7.0 3.2], 'Color','w');
 for s = 1:2
     ax = subplot(1, 2, s);
-    plot_orientation_set(ax, sets(s).orient, res(s).label);
+    plot_orientation_set(ax, sets(s).orient, leg{s});
 end
-sgtitle(sprintf('LED orientation geometry (K=%d, top view)', K));
+sgtitle('LED orientation geometry (top view)');
 if SAVE_FIGS
-    baseO = fullfile(results_dir, sprintf('Fig_orientation_sets_K%d', K));
+    baseO = fullfile(results_dir, ['Fig_orientation_sets_' ktag]);
     exportgraphics(figOri, [baseO '.pdf'], 'ContentType','image', 'Resolution',600, 'BackgroundColor','white');  % raster: 3D scene
     exportgraphics(figOri, [baseO '.png'], 'Resolution',600, 'BackgroundColor','white');
     fprintf('Orientation figure saved: %s.(pdf/png)\n', baseO);

@@ -37,12 +37,12 @@ system_params_coverage;                          % *** COVERAGE-ONLY parameters 
 % =====================================================================
 z_analysis      = 0.8;        % plane height [m]
 theta_half_deg  = 36.7;         % LED half-power angle [deg]
-tilt_deg        = 70;         % LED inclination from nadir [deg]
+tilt_deg        = 60;         % LED inclination from nadir [deg]
 azimuth_deg     = 0;          % LED azimuth from +x axis [deg]
 
 step_map        = 0.03;       % floor grid step [m]
 POWER_IN_DBM    = false;       % true -> surface in dBm ; false -> linear microwatt
-SHOW_SNR_PLANE  = true;       % draw the SNR_min-equivalent power plane
+SHOW_SNR_PLANE  = false;       % draw the SNR_min-equivalent power plane
 SNR_min_dB      = 10;         % SNR threshold used for the reference plane [dB]
 SAVE_FIG        = false;      % true -> export PNG/PDF to Coverage/results/
 % =====================================================================

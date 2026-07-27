@@ -30,23 +30,22 @@ system_params_coverage;                          % *** COVERAGE-ONLY parameters 
 %                          CONFIGURATION
 % =====================================================================
 % --- Operating point (hyperparameters) ---
-K               = 5;          % number of orientations/measurements: 5 or 9
-theta_half_deg  = 36.7;         % LED half-power angle [deg]
-z_analysis      = 1;        % analysis height for the coverage map [m]
+theta_half_deg  = 36.7;      % LED half-power angle [deg]
+z_analysis      = 1.0;         % analysis height for the coverage map [m]
 
-% --- Optimized codebook to use (DEB/PEB-optimized for the broadcast proposal) ---
-%   'DEB_45'       -> DEB-optimized at 45 deg    (K = 3..15)
-%   'DEB_30'       -> DEB-optimized at 30 deg    (K = 3..10)
-%   'PEB_37_QoS05' -> PEB-optimized at 36.7 deg, QoS=5 cm  (K = 5, 9)
-%   'PEB_37_QoS10' -> PEB-optimized at 36.7 deg, QoS=10 cm (K = 5, 9)
-orientation_preset = 'PEB_37_QoS10';
+% --- Orientation codebook (PASTE YOUR SET HERE) ---
+% Paste a flat vector of [theta, phi] pairs in degrees (theta = tilt from
+% nadir, phi = azimuth). The number of orientations K is derived AUTOMATICALLY
+% as numel(orientation_set)/2 -- no need to set K by hand. Ready-made examples
+% live in system_params_coverage.m (e.g. orientations_PEB_K5_QoS10).
+orientation_set = orientation_PEB_K5_FINAL;
 
 % --- Coverage QoS thresholds (a position is covered if BOTH are met) ---
 PEB_max_cov = 0.1;           % max PEB_B to count as covered [m]
 SNR_min_dB  = 10;             % min best-link SNR [dB]
 
 % --- Grids ---
-step_map    = 0.1;           % fine floor grid for the coverage map [m]
+step_map    = 0.05;           % fine floor grid for the coverage map [m]
 step_cov    = 0.1;           % grid for the coverage-vs-height sweep [m]
 step_h      = 0.1;           % height step for the coverage-vs-height sweep [m]
 
@@ -56,34 +55,21 @@ SAVE_FIGS            = true; % true -> export PDF/PNG to Coverage/results/
 % =====================================================================
 
 %% Build the codebook and derived quantities
-switch orientation_preset
-    case 'DEB_45'
-        presets = all_orientations_DEB;        Kvals = K_values;        % 3:15
-    case 'DEB_30'
-        presets = all_orientations_DEB_Phi30;  Kvals = K_values_Phi30;  % 3:10
-    case 'PEB_37_QoS05'
-        presets = all_orientations_PEB_QoS05;  Kvals = K_values_PEB;     % [5 9], QoS=5cm
-    case 'PEB_37_QoS10'
-        presets = all_orientations_PEB_QoS10;  Kvals = K_values_PEB;     % [5 9], QoS=10cm
-    otherwise
-        error('Unknown orientation_preset: %s', orientation_preset);
+if mod(numel(orientation_set), 2) ~= 0
+    error(['orientation_set must have an even number of entries: it is a ' ...
+           'flat list of [theta,phi] pairs in degrees.']);
 end
-K_idx = find(Kvals == K, 1);
-if isempty(K_idx)
-    error('K=%d is not available in preset %s (available: %s).', ...
-        K, orientation_preset, mat2str(Kvals));
-end
-nt = orient_to_vectors(presets{K_idx});
+K  = numel(orientation_set) / 2;               % number of orientations (auto)
+nt = orient_to_vectors(orientation_set);
 m  = -log(2) / log(cosd(theta_half_deg));      % Lambertian order for this beam
 
 prm = struct('T', T(:), 'nr', n_r(:), 'Pt', P_t, 'A_det', A_det, ...
     'Psi_FOV', deg2rad(FOV), 'sigma2', sigma2, 'N', N_samples, ...
     'PEB_max_cov', PEB_max_cov, 'SNR_min_dB', SNR_min_dB);
 
-fprintf('Broadcast (K-only) coverage | K=%d | theta_half=%d deg | z=%.2f m\n', ...
+fprintf('Broadcast (K-only) coverage | K=%d | theta_half=%g deg | z=%.2f m\n', ...
     K, theta_half_deg, z_analysis);
-fprintf('  preset=%s | PEB_max=%.0f cm | SNR_min=%d dB\n', ...
-    orientation_preset, PEB_max_cov*100, SNR_min_dB);
+fprintf('  PEB_max=%.0f cm | SNR_min=%d dB\n', PEB_max_cov*100, SNR_min_dB);
 
 %% ===== Figure 1: coverage map (x-y) at z_analysis =====
 xr = -L/2:step_map:L/2;   yr = -W/2:step_map:W/2;
@@ -94,12 +80,12 @@ mask     = reshape(resMap.covered, size(Xg));
 covpc    = 100 * resMap.coverage;
 fprintf('  cov_map coverage @ z=%.2f m : %.1f%%\n', z_analysis, covpc);
 
-cmap2 = [0.93 0.93 0.93; 0.16 0.52 0.74];      % [uncovered ; covered]
+cmap2 = [1 1 1; 0.90 0.94 0.98];               % [uncovered (white) ; covered (faint blue)]
 fig_maps = figure('Units','inches', 'Position',[1 1 3.1 2.9], 'Color','w');
 ax = axes(fig_maps);
 imagesc(ax, xr*100, yr*100, double(mask));
 set(ax, 'YDir','normal'); colormap(ax, cmap2); clim(ax, [0 1]);
-axis(ax, 'equal', 'tight'); hold(ax, 'on');
+axis(ax, 'equal'); hold(ax, 'on');
 
 if SHOW_BEAM_FOOTPRINTS
     bcol = turbo(max(K, 2));
@@ -113,9 +99,6 @@ if SHOW_BEAM_FOOTPRINTS
             contour(ax, xr*100, yr*100, cosphi, [cosd(theta_half_deg) cosd(theta_half_deg)], ...
                 'LineColor', bcol(i,:), 'LineStyle', '--', 'LineWidth', 0.6);
         end
-        tc = (z_analysis - prm.T(3)) / nt(3, i);
-        plot(ax, (prm.T(1)+tc*nt(1,i))*100, (prm.T(2)+tc*nt(2,i))*100, ...
-            '.', 'Color', bcol(i,:), 'MarkerSize', 9);
     end
 end
 
@@ -124,11 +107,12 @@ plot(ax, 0, 0, 'p', 'MarkerSize', 8, 'MarkerFaceColor', [1 0.85 0], ...
 text(ax, -L/2*100+8, W/2*100-14, sprintf('%.0f\\%%', covpc), 'Interpreter','latex', ...
     'FontSize', 9, 'FontWeight','bold', 'BackgroundColor',[1 1 1 0.6]);
 hold(ax, 'off');
+xlim(ax, [-L/2 L/2]*100); ylim(ax, [-W/2 W/2]*100);   % clamp to room (no de-scaling)
 set(ax, 'FontName','Times New Roman', 'FontSize', 8, 'TickLabelInterpreter','latex', ...
     'Box','on', 'LineWidth', 0.5, 'XTick', [-150 0 150], 'YTick', [-150 0 150]);
 xlabel(ax, '$x$ [cm]', 'Interpreter','latex', 'FontSize', 9);
 ylabel(ax, '$y$ [cm]', 'Interpreter','latex', 'FontSize', 9);
-title(ax, sprintf('Broadcast coverage @ $z=%.2f$ m ($K{=}%d$, $\\theta_{1/2}{=}%d^\\circ$)', ...
+title(ax, sprintf('Broadcast coverage @ $z=%.2f$ m ($K{=}%d$, $\\theta_{1/2}{=}%g^\\circ$)', ...
     z_analysis, K, theta_half_deg), 'Interpreter','latex', 'FontSize', 9);
 
 %% ===== Figure 2: coverage vs height =====
@@ -150,14 +134,15 @@ xlabel('Height $z$ [cm]', 'Interpreter','latex', 'FontSize', 9);
 ylabel('Coverage [\%]', 'Interpreter','latex', 'FontSize', 9);
 ylim([0 100]); grid on; box on;
 set(gca, 'FontName','Times New Roman', 'FontSize', 8, 'TickLabelInterpreter','latex');
-title(sprintf('Broadcast coverage vs height ($K{=}%d$, $\\theta_{1/2}{=}%d^\\circ$)', ...
+title(sprintf('Broadcast coverage vs height ($K{=}%d$, $\\theta_{1/2}{=}%g^\\circ$)', ...
     K, theta_half_deg), 'Interpreter','latex', 'FontSize', 9);
 
 %% ===== Export =====
 if SAVE_FIGS
     results_dir = fullfile(this_dir, 'results');
     if ~exist(results_dir, 'dir'), mkdir(results_dir); end
-    tag = sprintf('K%d_th%d_z%02d', K, theta_half_deg, round(z_analysis*100));
+    th_str = strrep(sprintf('%g', theta_half_deg), '.', 'p');   % 36.7 -> 36p7 (clean filename)
+    tag = sprintf('K%d_th%s_z%02d', K, th_str, round(z_analysis*100));
     exportgraphics(fig_maps,   fullfile(results_dir, ['cov_maps_'   tag '.png']), 'Resolution',600, 'BackgroundColor','white');
     exportgraphics(fig_maps,   fullfile(results_dir, ['cov_maps_'   tag '.pdf']), 'ContentType','vector', 'BackgroundColor','white');
     exportgraphics(fig_height, fullfile(results_dir, ['cov_height_' tag '.png']), 'Resolution',600, 'BackgroundColor','white');
