@@ -7,6 +7,8 @@
 %     (1) a CDF plot of PEB_B comparing both sets
 %     (2) a console table comparing RMSE / MEAN / MEDIAN (plus P90 and the
 %         localizable fraction, for context)
+%     (3) a coverage-vs-height plot: fraction of positions per z-slice with
+%         PEB_B <= qos_ref_cm, comparing both sets
 %
 % Parameters come from the COVERAGE-ONLY file (SFH4725S Phi_half=36.7, BPX61
 % PD, FOV=60, N=1000). Editing it affects ONLY this folder.
@@ -31,10 +33,31 @@ K = 9;                          % number of orientations/measurements
 % --- The TWO orientation sets to compare (each must have K entries) ---
 %   Pick any vector defined in system_params_coverage.m, or paste your own
 %   [theta1,phi1, theta2,phi2, ...] in degrees. Both must match K above.
-setA.label  = 'DEB_K9';
-setA.orient = orientations_experiment;
-setB.label  = 'PEB QoS=10 cm';
-setB.orient = orientations_PEB_K9_QoS10;
+setA.label  = 'candidate A';
+setA.orient = [64.02,68.63, ...
+               18.45,86.77, ...
+               15.68,315.84, ...
+               61.25,189.58, ...
+               13.82,201.65, ...
+               63.93,129.84, ...
+               65.50,309.90, ...
+               61.38,251.31, ...
+               59.16,8.94];
+setB.label  = 'candidate B';
+setB.orient =  ...
+[16,210, ...         
+16,330, ...
+16,90, ...
+60,0, ...
+64,60, ...
+64,120, ...
+60,180, ...
+64,240, ...
+64,300, ...
+];
+
+
+
 % Other examples at K=5:
 %   setA.orient = orientations_DEB_K5;             setA.label = 'DEB 45 deg';
 %   setB.orient = orientations_DEB_K5_Phi30;       setB.label = 'DEB 30 deg';
@@ -132,6 +155,48 @@ if SAVE_FIGS
     exportgraphics(fig, [base '.png'], 'Resolution',600, 'BackgroundColor','white');
     exportgraphics(fig, [base '.eps'], 'ContentType','vector', 'BackgroundColor','white');
     fprintf('Figures saved to: %s\n', results_dir);
+end
+
+%% Figure: coverage vs height (fraction with PEB_B <= qos_ref_cm per z-slice)
+if isempty(qos_ref_cm)
+    warning('qos_ref_cm is empty; skipping the coverage-vs-height figure.');
+else
+    qos_ref_m = qos_ref_cm / 100;                   % coverage threshold [m]
+    z_levels  = unique(positions(3, :));            % heights present in the testbed [m]
+    covH = zeros(2, numel(z_levels));               % coverage fraction per set, per height
+    for s = 1:2
+        for iz = 1:numel(z_levels)
+            mask = positions(3, :) == z_levels(iz); % all (x,y) at this height
+            % Inf (non-localizable) PEB counts as NOT covered.
+            covH(s, iz) = mean(res(s).peb(mask) <= qos_ref_m);
+        end
+    end
+
+    figCov = figure('Units','inches', 'Position',[1 1 3.5 2.6], 'Color','w');
+    hold on;
+    for s = 1:2
+        plot(z_levels, 100*covH(s, :), styles{s}, 'LineWidth', 1.2, ...
+            'Color', colors(s,:), 'Marker', 'o', 'MarkerSize', 3, ...
+            'MarkerFaceColor', colors(s,:));
+    end
+    ylim([0 100]);
+    xlim([min(z_levels) max(z_levels)]);
+    xlabel('Height $z$ [m]', 'Interpreter', 'latex', 'FontSize', 8);
+    ylabel(sprintf('Coverage [\\%%] ($\\mathrm{PEB}_\\mathrm{B}\\leq %g$ cm)', qos_ref_cm), ...
+        'Interpreter', 'latex', 'FontSize', 8);
+    legend({res(1).label, res(2).label}, 'Location', 'best', ...
+        'Interpreter', 'none', 'FontSize', 6);
+    grid on;
+    set(gca, 'FontSize', 7, 'LineWidth', 0.5);
+    title(sprintf('Coverage vs height ($K=%d$)', K), 'Interpreter', 'latex', 'FontSize', 8);
+
+    if SAVE_FIGS
+        baseC = fullfile(results_dir, sprintf('Fig_coverage_vs_height_K%d', K));
+        exportgraphics(figCov, [baseC '.pdf'], 'ContentType','vector', 'BackgroundColor','white');
+        exportgraphics(figCov, [baseC '.png'], 'Resolution',600, 'BackgroundColor','white');
+        exportgraphics(figCov, [baseC '.eps'], 'ContentType','vector', 'BackgroundColor','white');
+        fprintf('Coverage-vs-height figure saved: %s.(pdf/png/eps)\n', baseC);
+    end
 end
 
 %% Comparison table (RMSE / MEAN / MEDIAN + context)
