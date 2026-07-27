@@ -67,7 +67,8 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
 | `lib/df_run_analysis.m` | shared engine: grouping, GLS/WLS, distance, figures |
 | `lib/df_load_master.m` | typed CSV reader |
 | `lib/df_angles_to_nt.m` / `df_angles_to_nr.m` | angle → unit vector |
-| `lib/df_estimate_C.m` | empirical radiometric constant from ground truth |
+| `lib/df_estimate_C.m` | empirical C from all points/orientations (ground truth) |
+| `lib/df_estimate_C_nadir.m` | sub2-style C from under-LED + LED-at-nadir rows only |
 
 ### Configuration (top of each script)
 
@@ -75,10 +76,21 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
   This is the "which orientations" selector requested. All listed IDs must be
   present in a scan for that instance to be used.
 - **`cfg.m`** — Lambertian order (default `3.13`, from `exp2_Cone`).
-- **`cfg.C_opt`** — radiometric constant. `[]` estimates it empirically from
-  the dataset ground truth (median), which removes the global scale so the
-  distance figures show the model *scatter*. Set it to the sub-dataset 2
-  calibration value once available.
+- **`cfg.C_opt`** — radiometric constant. A number is used as-is (takes
+  precedence). Set it to `[]` to compute C automatically according to
+  **`cfg.C_mode`**.
+- **`cfg.C_mode`** — how C is obtained when `cfg.C_opt = []`:
+  - `'empirical'` — fit from *all* points and orientations using ground truth
+    (median, `df_estimate_C.m`); removes the global scale so distance figures
+    show the model *scatter*.
+  - `'nadir'` — **sub-dataset-2 analogue** with *fixed* (non-tunable) geometry
+    (`df_estimate_C_nadir.m`): only the **vertical** scan of the receiver
+    **exactly under the LED** (`x == 0` and `y == 0`, any `z`) with the LED at
+    the **nadir** (`nt_incl == 0`). There `Q = cos(psi) = 1`, so it collapses to
+    `C = (v_mean - v_dark)*d^2`. For this session the under-LED point
+    `P8 = (0,0,1.1)` gives **C ≈ 8.69** (v_dark 0) / **8.65** (v_dark 0.05).
+  This calibration is independent of `cfg.K_id` (it reads the nadir row
+  directly), so it works even when orientation 10 is excluded from the DF set.
 - **`cfg.v_dark`** — dark voltage to subtract (this run has none).
 - **`cfg.autoRefMax`** — uses the brightest selected orientation as the ratio
   reference for numerical stability (does not change the set of `K_id`).

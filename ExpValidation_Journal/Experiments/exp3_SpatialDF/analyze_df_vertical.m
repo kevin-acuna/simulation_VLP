@@ -32,7 +32,18 @@ cfg.scanKind = 'vertical';        % PD pointing to the zenith
 cfg.K_id = [1 2 3 4 5 6 7 8 9] ;
 
 cfg.m       = 3.13;   % Lambertian order (Phi_1/2 = 36.7 deg, exp2_Cone fit)
-cfg.C_opt   = 8.4711;     % [] -> empirical C from ground truth; or set the sub2 value (8.4711)
+
+% --- Radiometric constant C ---------------------------------------------
+% cfg.C_opt takes precedence. Set it to [] to compute C automatically via
+% cfg.C_mode:
+%   'empirical' -> all points & orientations, using ground truth (df_estimate_C)
+%   'nadir'     -> ONLY the vertical scan of the receiver right under the LED
+%                  (x=0, y=0; any z) with the LED pointing to the floor. Fixed
+%                  sub-dataset-2 geometry (df_estimate_C_nadir): C = mu*d^2.
+% 8.4711: Empirical , 8.652: nadir
+cfg.C_opt        = [];   % [] to use cfg.C_mode; or the sub2 value (was 8.4711)
+cfg.C_mode       = 'empirical';  % 'empirical' | 'nadir'
+
 cfg.v_dark  = 0.05;      % dark voltage [V] to subtract (0 = none; no V_dark in this run)
 cfg.T       = [0 0 2];% LED position (transmitter_z = 2 m in metadata)
 

@@ -32,6 +32,7 @@ addpath(libDir);
 if ~isfield(cfg,'scanKind')    || isempty(cfg.scanKind),   cfg.scanKind   = 'vertical'; end
 if ~isfield(cfg,'m')           || isempty(cfg.m),          cfg.m          = 3.13;       end
 if ~isfield(cfg,'C_opt'),                                  cfg.C_opt      = [];         end
+if ~isfield(cfg,'C_mode')      || isempty(cfg.C_mode),     cfg.C_mode     = 'empirical';end
 if ~isfield(cfg,'v_dark')      || isempty(cfg.v_dark),     cfg.v_dark     = 0;          end
 if ~isfield(cfg,'T')           || isempty(cfg.T),          cfg.T          = [0 0 2];    end
 if ~isfield(cfg,'autoRefMax')  || isempty(cfg.autoRefMax), cfg.autoRefMax = true;       end
@@ -131,12 +132,18 @@ assert(nI > 0, 'No complete estimation instances for K_id = %s (scanKind = %s).'
 inst = inst(sidx);
 
 % ------------------------------------------------- radiometric constant C
-if isempty(cfg.C_opt)
-    [C_opt, C_all] = df_estimate_C(inst, m);
-    Cmode = 'empirical (median from GT)';
-else
+if ~isempty(cfg.C_opt)
     C_opt = cfg.C_opt; C_all = [];
     Cmode = 'user-provided';
+elseif strcmpi(cfg.C_mode, 'nadir')
+    [C_opt, cinfo] = df_estimate_C_nadir(cfg.dataFile, T_led, cfg.v_dark);
+    C_all = cinfo.C_all;
+    assert(~isnan(C_opt), ['No vertical under-LED (x=0, y=0) nadir rows found. ' ...
+        'Use cfg.C_mode=''empirical'' instead.']);
+    Cmode = sprintf('nadir under-LED vertical (n=%d rows)', cinfo.n_used);
+else
+    [C_opt, C_all] = df_estimate_C(inst, m);
+    Cmode = 'empirical (median from GT)';
 end
 
 % ----------------------------------------------------------- estimation
