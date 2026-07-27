@@ -51,6 +51,16 @@ cfg.nadirScanKind= '';       % '' = any scan; 'vertical' = only PD-at-zenith (su
 cfg.v_dark  = 0.05;      % dark voltage [V] to subtract (0 = none; no V_dark in this run)
 cfg.T       = [0 0 2];% LED position (transmitter_z = 2 m in metadata)
 
+% --- NLS estimator (third method compared against GLS & WLS) ------------
+% vlp_nls_lm solves the same normalized-power problem nonlinearly (LM). It can
+% use either the Lambertian cos^m model or the MEASURED LED beam R(theta) from
+% the sub0 axis sweep (exp1_Calibration/sub0_axis_sweep).
+cfg.addNLS        = true;    % include NLS in the comparison
+cfg.nlsUseProfile = true;    % true -> NLS uses measured R(theta); false -> cos^m
+cfg.mFromProfile  = false;   % true -> also set m from the profile fit (all methods)
+cfg.profileDir    = '';      % '' -> default exp1 sub0_axis_sweep session
+cfg.profileVdark  = [];      % [] -> read v_dark from the profile metadata.txt
+
 cfg.autoRefMax  = true;   % use the brightest orientation as ratio reference
 cfg.saveFigures = false;
 cfg.fontName    = 'Times New Roman';

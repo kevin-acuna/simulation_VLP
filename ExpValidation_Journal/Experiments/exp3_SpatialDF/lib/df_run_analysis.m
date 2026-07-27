@@ -17,8 +17,16 @@ function R = df_run_analysis(cfg)
 %   .saveFigures  save PNG (300 dpi) + PDF. Default true
 %   .outDir       output folder. Default <dataFile dir>/figures_<scanKind>
 %   .fontName/.fontSize   plot styling
+%   .addNLS        include the NLS-LM estimator (vlp_nls_lm). Default true
+%   .nlsUseProfile NLS uses the measured LED profile R(theta) instead of
+%                  cos^m(theta). Default true (needs the sub0 axis sweep)
+%   .mFromProfile  override cfg.m with the Lambertian order fitted from the
+%                  axis-sweep profile. Default false
+%   .profileDir    folder with data_x.csv/data_y.csv (default: exp1 axis sweep)
+%   .profileVdark  dark voltage for the profile ([] => read from its metadata)
 %
-% Returns R with per-instance ground truth, estimates and error arrays.
+% Returns R with per-instance ground truth, estimates and error arrays for
+% every method (GLS, WLS and, if enabled, NLS).
 
 % ------------------------------------------------------------------ paths
 libDir  = fileparts(mfilename('fullpath'));
@@ -42,6 +50,11 @@ if ~isfield(cfg,'autoRefMax')  || isempty(cfg.autoRefMax), cfg.autoRefMax = true
 if ~isfield(cfg,'saveFigures') || isempty(cfg.saveFigures),cfg.saveFigures= true;       end
 if ~isfield(cfg,'fontName')    || isempty(cfg.fontName),   cfg.fontName   = 'Times New Roman'; end
 if ~isfield(cfg,'fontSize')    || isempty(cfg.fontSize),   cfg.fontSize   = 13;         end
+if ~isfield(cfg,'addNLS')       || isempty(cfg.addNLS),       cfg.addNLS        = true;  end
+if ~isfield(cfg,'nlsUseProfile')|| isempty(cfg.nlsUseProfile),cfg.nlsUseProfile = true;  end
+if ~isfield(cfg,'mFromProfile') || isempty(cfg.mFromProfile), cfg.mFromProfile  = false; end
+if ~isfield(cfg,'profileDir'),                                cfg.profileDir    = '';    end
+if ~isfield(cfg,'profileVdark'),                              cfg.profileVdark  = [];    end
 assert(isfield(cfg,'dataFile') && isfile(cfg.dataFile), 'cfg.dataFile must point to master.csv');
 if ~isfield(cfg,'outDir') || isempty(cfg.outDir)
     cfg.outDir = fullfile(fileparts(cfg.dataFile), ['figures_' cfg.scanKind]);
@@ -54,6 +67,7 @@ muFloor = 1e-6;
 cTrue = [0.15 0.15 0.15];
 cGLS  = [0.00 0.45 0.74];
 cWLS  = [0.85 0.33 0.10];
+cNLS  = [0.47 0.67 0.19];
 
 % ----------------------------------------------------------------- load
 Tbl = df_load_master(cfg.dataFile);
@@ -134,6 +148,33 @@ assert(nI > 0, 'No complete estimation instances for K_id = %s (scanKind = %s).'
 [~, sidx] = sortrows([[inst.pidx].', [inst.tnum].']);
 inst = inst(sidx);
 
+% ---------------------------------------------- LED radiation profile (NLS)
+% The sub0 axis sweep measures R(theta) = v_mean(theta) for the LED beam. NLS
+% can use this measured profile instead of the Lambertian cos^m assumption.
+prof = [];
+if cfg.addNLS && (cfg.nlsUseProfile || cfg.mFromProfile)
+    if isempty(cfg.profileDir)
+        cfg.profileDir = fullfile(simRoot, 'ExpValidation_Journal', 'Experiments', ...
+            'exp1_Calibration', 'sub0_axis_sweep', '20260722_165901');
+    end
+    try
+        prof = df_load_profile(cfg.profileDir, cfg.profileVdark);
+    catch ME
+        warning('df_run_analysis:profile', ...
+            'Could not load LED profile (%s). NLS falls back to Lambertian cos^m.', ME.message);
+        prof = [];
+    end
+end
+if ~isempty(prof) && cfg.mFromProfile
+    m = prof.m_fit;   % use the beam order fitted from the axis sweep
+end
+nlsProfile = cfg.addNLS && cfg.nlsUseProfile && ~isempty(prof);
+if cfg.addNLS && ~exist('lsqnonlin', 'file')
+    warning('df_run_analysis:nls', ...
+        'lsqnonlin not found (Optimization Toolbox). Disabling NLS.');
+    cfg.addNLS = false; nlsProfile = false;
+end
+
 % ------------------------------------------------- radiometric constant C
 if ~isempty(cfg.C_opt)
     C_opt = cfg.C_opt; C_all = [];
@@ -153,35 +194,49 @@ else
 end
 
 % ----------------------------------------------------------- estimation
-angGLS=nan(nI,1); angWLS=nan(nI,1);
-posGLS=nan(nI,1); posWLS=nan(nI,1);
-dGLS  =nan(nI,1); dWLS  =nan(nI,1); dTrue=nan(nI,1);
-estGLS=nan(nI,3); estWLS=nan(nI,3); posT=nan(nI,3);
-labels = strings(nI,1);
+% Method table: {name, color, marker}. GLS & WLS always; NLS optional.
+methodDefs = {'GLS', cGLS, '^'; 'WLS', cWLS, 's'};
+if cfg.addNLS
+    if nlsProfile, nlsName = 'NLS (profile)'; else, nlsName = 'NLS (Lamb.)'; end
+    methodDefs = [methodDefs; {nlsName, cNLS, 'd'}];
+end
+mName  = methodDefs(:,1);
+mCol   = methodDefs(:,2);
+mMark  = methodDefs(:,3);
+nM     = size(methodDefs,1);
+mShort = cellfun(@(s) regexprep(s,'\s.*$',''), mName, 'UniformOutput', false);
+
+colvec = @(x) x(:);
+ang  = nan(nI, nM);   posE = nan(nI, nM);   dEst = nan(nI, nM);
+est  = nan(nI, 3, nM);
+dTrue = nan(nI,1);    posT = nan(nI,3);      labels = strings(nI,1);
 
 for j = 1:nI
     s  = inst(j);
     nt = s.nt; mu = s.mu; nr = s.nr;
     sigma2 = max(mean(s.vstd.^2), eps);     % scale cancels in GLS direction
 
-    % --- GLS ---
-    nd_g = vlp_gls(nt, mu, m, sigma2); nd_g = nd_g(:);
-    d_g  = broadcast_distance(nd_g, nt, mu, m, C_opt, nr);
-    % --- WLS ---
-    nd_w = vlp_wls(nt, mu, m);         nd_w = nd_w(:);
-    d_w  = broadcast_distance(nd_w, nt, mu, m, C_opt, nr);
-
-    angGLS(j) = real(acosd(min(1,max(-1, dot(nd_g, s.nd_true)))));
-    angWLS(j) = real(acosd(min(1,max(-1, dot(nd_w, s.nd_true)))));
-
-    if isfinite(d_g)
-        pg = T_led + nd_g*d_g; estGLS(j,:) = pg.'; posGLS(j) = norm(pg - s.pos);
+    nd = cell(nM,1);
+    nd{1} = colvec(vlp_gls(nt, mu, m, sigma2));
+    nd{2} = colvec(vlp_wls(nt, mu, m));
+    if cfg.addNLS
+        if nlsProfile
+            nd{3} = colvec(vlp_nls_lm_profile(nt, mu, prof.Rfun));
+        else
+            nd{3} = colvec(vlp_nls_lm(nt, mu, m));
+        end
     end
-    if isfinite(d_w)
-        pw = T_led + nd_w*d_w; estWLS(j,:) = pw.'; posWLS(j) = norm(pw - s.pos);
+
+    for k = 1:nM
+        v  = nd{k};
+        ang(j,k) = real(acosd(min(1, max(-1, dot(v, s.nd_true)))));
+        dk = broadcast_distance(v, nt, mu, m, C_opt, nr);
+        dEst(j,k) = dk;
+        if isfinite(dk)
+            p = T_led + v*dk; est(j,:,k) = p.'; posE(j,k) = norm(p - s.pos);
+        end
     end
-    dGLS(j)=d_g; dWLS(j)=d_w; dTrue(j)=s.d_true;
-    posT(j,:)=s.pos.'; labels(j)=s.label;
+    dTrue(j) = s.d_true; posT(j,:) = s.pos.'; labels(j) = s.label;
 end
 
 % ------------------------------------------------------------- summary
@@ -189,104 +244,147 @@ rms  = @(v) sqrt(mean(v(isfinite(v)).^2));
 med  = @(v) median(v(isfinite(v)));
 R = struct();
 R.cfg=cfg; R.C_opt=C_opt; R.Cmode=Cmode; R.C_all=C_all; R.K_id=K_id;
-R.labels=labels; R.pos_true=posT; R.est_GLS=estGLS; R.est_WLS=estWLS;
-R.ang_GLS=angGLS; R.ang_WLS=angWLS; R.pos_GLS=posGLS; R.pos_WLS=posWLS;
-R.d_GLS=dGLS; R.d_WLS=dWLS; R.d_true=dTrue; R.nInstances=nI; R.nSkipped=nSkipped;
+R.methods=mName; R.labels=labels; R.pos_true=posT; R.est=est;
+R.ang=ang; R.pos=posE; R.d=dEst; R.d_true=dTrue;
+R.profile=prof; R.m=m; R.nInstances=nI; R.nSkipped=nSkipped;
+
+if nlsProfile, pstat='used by NLS'; elseif ~isempty(prof), pstat='loaded (m only)'; else, pstat=''; end
 
 fprintf('\n=================== DF validation (%s PD) ===================\n', upper(cfg.scanKind));
 fprintf(' data      : %s\n', cfg.dataFile);
 fprintf(' K_id      : %s   (n=%d orientations)\n', mat2str(K_id), numel(K_id));
 fprintf(' m         : %.3f    C_opt : %.4g  [%s]\n', m, C_opt, Cmode);
+if ~isempty(prof)
+    fprintf(' profile   : m_fit=%.3f, half-angle=%.1f deg, v_dark=%.4g V  [%s]\n', ...
+        prof.m_fit, prof.theta_half_deg, prof.vdark, pstat);
+end
+fprintf(' methods   : %s\n', strjoin(mName.', ', '));
 fprintf(' instances : %d used, %d skipped (incomplete)\n', nI, nSkipped);
 fprintf(' -----------------------------------------------------------------\n');
-fprintf(' %-8s | %8s %8s | %8s %8s | %7s %7s\n', 'label','angGLS','angWLS','posGLS','posWLS','dGLS','dWLS');
-fprintf(' %-8s | %8s %8s | %8s %8s | %7s %7s\n', '',   '[deg]','[deg]','[m]','[m]','[m]','[m]');
+hdr = sprintf(' %-7s', 'label');
+for k=1:nM, hdr = [hdr sprintf(' | a%-5s', mShort{k})]; end %#ok<AGROW>
+for k=1:nM, hdr = [hdr sprintf(' | p%-5s', mShort{k})]; end %#ok<AGROW>
+fprintf('%s\n', hdr);
 for j = 1:nI
-    fprintf(' %-8s | %8.2f %8.2f | %8.3f %8.3f | %7.3f %7.3f\n', ...
-        labels(j), angGLS(j), angWLS(j), posGLS(j), posWLS(j), dGLS(j), dWLS(j));
+    row = sprintf(' %-7s', labels(j));
+    for k=1:nM, row = [row sprintf(' | %6.2f', ang(j,k))];  end %#ok<AGROW>
+    for k=1:nM, row = [row sprintf(' | %6.3f', posE(j,k))]; end %#ok<AGROW>
+    fprintf('%s\n', row);
 end
+fprintf(' (a* = angular error [deg], p* = position error [m])\n');
 fprintf(' -----------------------------------------------------------------\n');
-fprintf(' angular  RMSE  [deg] : GLS %.2f   WLS %.2f\n', rms(angGLS), rms(angWLS));
-fprintf(' angular  median[deg] : GLS %.2f   WLS %.2f\n', med(angGLS), med(angWLS));
-fprintf(' position RMSE  [m]   : GLS %.3f   WLS %.3f\n', rms(posGLS), rms(posWLS));
-fprintf(' position median[m]   : GLS %.3f   WLS %.3f\n', med(posGLS), med(posWLS));
+for k=1:nM, fprintf(' angular  RMSE  [deg] %-13s : %.2f\n', mName{k}, rms(ang(:,k)));  end
+for k=1:nM, fprintf(' angular  median[deg] %-13s : %.2f\n', mName{k}, med(ang(:,k)));  end
+for k=1:nM, fprintf(' position RMSE  [m]   %-13s : %.3f\n', mName{k}, rms(posE(:,k))); end
+for k=1:nM, fprintf(' position median[m]   %-13s : %.3f\n', mName{k}, med(posE(:,k))); end
 fprintf('==================================================================\n\n');
 
 % save per-instance results
 if cfg.saveFigures && ~exist(cfg.outDir,'dir'), mkdir(cfg.outDir); end
 if exist(cfg.outDir,'dir')
-    Tres = table(labels, posT(:,1),posT(:,2),posT(:,3), dTrue, ...
-        angGLS, angWLS, posGLS, posWLS, dGLS, dWLS, ...
-        'VariableNames', {'label','x','y','z','d_true', ...
-        'ang_GLS_deg','ang_WLS_deg','pos_GLS_m','pos_WLS_m','d_GLS_m','d_WLS_m'});
+    vn = {'label','x','y','z','d_true'};
+    dataCols = {labels, posT(:,1), posT(:,2), posT(:,3), dTrue};
+    for k=1:nM
+        dataCols{end+1} = ang(:,k);  vn{end+1} = ['ang_' mShort{k} '_deg']; %#ok<AGROW>
+        dataCols{end+1} = posE(:,k); vn{end+1} = ['pos_' mShort{k} '_m'];   %#ok<AGROW>
+        dataCols{end+1} = dEst(:,k); vn{end+1} = ['d_'   mShort{k} '_m'];   %#ok<AGROW>
+    end
+    Tres = table(dataCols{:}, 'VariableNames', vn);
     writetable(Tres, fullfile(cfg.outDir, sprintf('results_%s.csv', cfg.scanKind)));
 end
 
 % ------------------------------------------------------------- figures
-tag = sprintf('%s PD | K_{id}=%s | m=%.2f', cfg.scanKind, mat2str(K_id), m);
+if nlsProfile,     nlsTag = ' | NLS:profile';
+elseif cfg.addNLS, nlsTag = ' | NLS:Lamb';
+else,              nlsTag = ''; end
+tag  = sprintf('%s PD | K_{id}=%s | m=%.2f%s', cfg.scanKind, mat2str(K_id), m, nlsTag);
+cLED = [1 0.85 0];
 
 % ---- Fig 1: top-view (X-Y) localization map ----
-f1 = figure('Color','w','Position',[80 80 760 680]); ax=axes(f1); hold(ax,'on'); box(ax,'on'); grid(ax,'on');
-plot(ax, 0,0,'p','MarkerSize',15,'MarkerFaceColor',[1 0.85 0],'MarkerEdgeColor','k','DisplayName','LED (Tx)');
-for j=1:nI
-    if all(isfinite(estGLS(j,:))), plot(ax,[posT(j,1) estGLS(j,1)],[posT(j,2) estGLS(j,2)],'-','Color',[cGLS 0.5],'HandleVisibility','off'); end
-    if all(isfinite(estWLS(j,:))), plot(ax,[posT(j,1) estWLS(j,1)],[posT(j,2) estWLS(j,2)],'-','Color',[cWLS 0.5],'HandleVisibility','off'); end
+f1 = figure('Color','w','Position',[80 80 820 700]); ax=axes(f1); hold(ax,'on'); box(ax,'on'); grid(ax,'on');
+hLED = plot(ax,0,0,'p','MarkerSize',15,'MarkerFaceColor',cLED,'MarkerEdgeColor','k','DisplayName','LED (Tx)');
+for k=1:nM
+    for j=1:nI
+        if all(isfinite(est(j,:,k)))
+            plot(ax,[posT(j,1) est(j,1,k)],[posT(j,2) est(j,2,k)],'-','Color',[mCol{k} 0.4],'HandleVisibility','off');
+        end
+    end
 end
-hT=plot(ax,posT(:,1),posT(:,2),'o','MarkerSize',8,'MarkerFaceColor',cTrue,'MarkerEdgeColor','k','DisplayName','Ground truth');
-hG=plot(ax,estGLS(:,1),estGLS(:,2),'^','MarkerSize',7,'MarkerFaceColor',cGLS,'MarkerEdgeColor','k','DisplayName','GLS');
-hW=plot(ax,estWLS(:,1),estWLS(:,2),'s','MarkerSize',7,'MarkerFaceColor',cWLS,'MarkerEdgeColor','k','DisplayName','WLS');
+hT = plot(ax,posT(:,1),posT(:,2),'o','MarkerSize',8,'MarkerFaceColor',cTrue,'MarkerEdgeColor','k','DisplayName','Ground truth');
+hM = gobjects(nM,1);
+for k=1:nM
+    hM(k) = plot(ax,est(:,1,k),est(:,2,k),mMark{k},'MarkerSize',7,'MarkerFaceColor',mCol{k},'MarkerEdgeColor','k','DisplayName',mName{k});
+end
 for j=1:nI, text(ax,posT(j,1),posT(j,2),['  ' char(labels(j))],'FontSize',cfg.fontSize-4,'Color',cTrue); end
 axis(ax,'equal'); xlabel(ax,'x [m]'); ylabel(ax,'y [m]');
 title(ax,{'Top-view localization (X-Y)', tag});
-legend(ax,[hT hG hW],'Location','bestoutside');
+legend(ax,[hLED hT hM.'],'Location','bestoutside');
 styleAxis(ax,cfg.fontName,cfg.fontSize);
 
 % ---- Fig 2: 3D localization ----
-f2 = figure('Color','w','Position',[120 120 820 700]); ax=axes(f2); hold(ax,'on'); box(ax,'on'); grid(ax,'on');
-plot3(ax,0,0,cfg.T(3),'p','MarkerSize',15,'MarkerFaceColor',[1 0.85 0],'MarkerEdgeColor','k','DisplayName','LED (Tx)');
-for j=1:nI
-    if all(isfinite(estGLS(j,:))), plot3(ax,[posT(j,1) estGLS(j,1)],[posT(j,2) estGLS(j,2)],[posT(j,3) estGLS(j,3)],'-','Color',[cGLS 0.4],'HandleVisibility','off'); end
-    if all(isfinite(estWLS(j,:))), plot3(ax,[posT(j,1) estWLS(j,1)],[posT(j,2) estWLS(j,2)],[posT(j,3) estWLS(j,3)],'-','Color',[cWLS 0.4],'HandleVisibility','off'); end
+f2 = figure('Color','w','Position',[120 120 860 720]); ax=axes(f2); hold(ax,'on'); box(ax,'on'); grid(ax,'on');
+plot3(ax,0,0,cfg.T(3),'p','MarkerSize',15,'MarkerFaceColor',cLED,'MarkerEdgeColor','k','DisplayName','LED (Tx)');
+for k=1:nM
+    for j=1:nI
+        if all(isfinite(est(j,:,k)))
+            plot3(ax,[posT(j,1) est(j,1,k)],[posT(j,2) est(j,2,k)],[posT(j,3) est(j,3,k)],'-','Color',[mCol{k} 0.35],'HandleVisibility','off');
+        end
+    end
 end
 plot3(ax,posT(:,1),posT(:,2),posT(:,3),'o','MarkerSize',7,'MarkerFaceColor',cTrue,'MarkerEdgeColor','k','DisplayName','Ground truth');
-plot3(ax,estGLS(:,1),estGLS(:,2),estGLS(:,3),'^','MarkerSize',6,'MarkerFaceColor',cGLS,'MarkerEdgeColor','k','DisplayName','GLS');
-plot3(ax,estWLS(:,1),estWLS(:,2),estWLS(:,3),'s','MarkerSize',6,'MarkerFaceColor',cWLS,'MarkerEdgeColor','k','DisplayName','WLS');
+for k=1:nM
+    plot3(ax,est(:,1,k),est(:,2,k),est(:,3,k),mMark{k},'MarkerSize',6,'MarkerFaceColor',mCol{k},'MarkerEdgeColor','k','DisplayName',mName{k});
+end
 xlabel(ax,'x [m]'); ylabel(ax,'y [m]'); zlabel(ax,'z [m]'); view(ax,-35,20);
 title(ax,{'3D localization', tag}); legend(ax,'Location','bestoutside');
 styleAxis(ax,cfg.fontName,cfg.fontSize);
 
 % ---- Fig 3: error bars (angular + position) ----
-f3 = figure('Color','w','Position',[140 140 1180 500]);
+f3 = figure('Color','w','Position',[140 140 1220 520]);
 tl = tiledlayout(f3,1,2,'TileSpacing','compact','Padding','compact');
-axA = nexttile(tl); bar(axA,[angGLS angWLS]); grid(axA,'on');
-yline(axA, med(angGLS),'--','Color',cGLS,'HandleVisibility','off');
-yline(axA, med(angWLS),'--','Color',cWLS,'HandleVisibility','off');
+axA = nexttile(tl); hbA = bar(axA, ang); grid(axA,'on'); hold(axA,'on');
+for k=1:nM, hbA(k).FaceColor = mCol{k}; yline(axA, med(ang(:,k)),'--','Color',mCol{k},'HandleVisibility','off'); end
 set(axA,'XTick',1:nI,'XTickLabel',labels,'XTickLabelRotation',60);
-ylabel(axA,'Angular error [deg]'); legend(axA,{'GLS','WLS'},'Location','best');
-title(axA,'Direction error per instance'); colorOrderBars(axA,cGLS,cWLS); styleAxis(axA,cfg.fontName,cfg.fontSize);
-axB = nexttile(tl); bar(axB,[posGLS posWLS]); grid(axB,'on');
-yline(axB, med(posGLS),'--','Color',cGLS,'HandleVisibility','off');
-yline(axB, med(posWLS),'--','Color',cWLS,'HandleVisibility','off');
+ylabel(axA,'Angular error [deg]'); legend(axA,mName,'Location','best');
+title(axA,'Direction error per instance'); styleAxis(axA,cfg.fontName,cfg.fontSize);
+axB = nexttile(tl); hbB = bar(axB, posE); grid(axB,'on'); hold(axB,'on');
+for k=1:nM, hbB(k).FaceColor = mCol{k}; yline(axB, med(posE(:,k)),'--','Color',mCol{k},'HandleVisibility','off'); end
 set(axB,'XTick',1:nI,'XTickLabel',labels,'XTickLabelRotation',60);
-ylabel(axB,'Position error [m]'); legend(axB,{'GLS','WLS'},'Location','best');
-title(axB,'Position error per instance'); colorOrderBars(axB,cGLS,cWLS); styleAxis(axB,cfg.fontName,cfg.fontSize);
+ylabel(axB,'Position error [m]'); legend(axB,mName,'Location','best');
+title(axB,'Position error per instance'); styleAxis(axB,cfg.fontName,cfg.fontSize);
 title(tl, tag, 'FontName',cfg.fontName,'FontSize',cfg.fontSize+1);
 
 % ---- Fig 4: distance est vs true + error ECDF ----
-f4 = figure('Color','w','Position',[160 160 1180 500]);
+f4 = figure('Color','w','Position',[160 160 1220 520]);
 tl2 = tiledlayout(f4,1,2,'TileSpacing','compact','Padding','compact');
 axC = nexttile(tl2); hold(axC,'on'); grid(axC,'on'); box(axC,'on');
-lo = min([dTrue;dGLS;dWLS],[],'omitnan'); hi = max([dTrue;dGLS;dWLS],[],'omitnan');
+allD = [dTrue; dEst(:)];
+lo = min(allD,[],'omitnan'); hi = max(allD,[],'omitnan');
 plot(axC,[lo hi],[lo hi],'k--','DisplayName','ideal');
-plot(axC,dTrue,dGLS,'^','MarkerFaceColor',cGLS,'MarkerEdgeColor','k','DisplayName','GLS');
-plot(axC,dTrue,dWLS,'s','MarkerFaceColor',cWLS,'MarkerEdgeColor','k','DisplayName','WLS');
+for k=1:nM, plot(axC,dTrue,dEst(:,k),mMark{k},'MarkerFaceColor',mCol{k},'MarkerEdgeColor','k','DisplayName',mName{k}); end
 axis(axC,'equal'); xlabel(axC,'true distance [m]'); ylabel(axC,'estimated distance [m]');
 title(axC,'Distance recovery'); legend(axC,'Location','best'); styleAxis(axC,cfg.fontName,cfg.fontSize);
 axD = nexttile(tl2); hold(axD,'on'); grid(axD,'on'); box(axD,'on');
-ecdfplot(axD, posGLS, cGLS, 'GLS'); ecdfplot(axD, posWLS, cWLS, 'WLS');
+for k=1:nM, ecdfplot(axD, posE(:,k), mCol{k}, mName{k}); end
 xlabel(axD,'position error [m]'); ylabel(axD,'empirical CDF');
 title(axD,'Position-error CDF'); legend(axD,'Location','southeast'); styleAxis(axD,cfg.fontName,cfg.fontSize);
 title(tl2, tag, 'FontName',cfg.fontName,'FontSize',cfg.fontSize+1);
+
+% ---- Fig 5: LED radiation profile (only if a profile was loaded) ----
+f5 = [];
+if ~isempty(prof)
+    f5 = figure('Color','w','Position',[180 180 780 560]); ax=axes(f5); hold(ax,'on'); box(ax,'on'); grid(ax,'on');
+    plot(ax, prof.theta_deg, prof.R, 'o','MarkerSize',4,'MarkerFaceColor',cNLS,'MarkerEdgeColor',cNLS,'DisplayName','measured R(\theta)');
+    thf = linspace(0,90,181);
+    plot(ax, thf, cosd(thf).^prof.m_fit, '-','LineWidth',1.8,'Color',cGLS,'DisplayName',sprintf('cos^m fit, m=%.2f',prof.m_fit));
+    plot(ax, thf, cosd(thf).^m, '--','LineWidth',1.5,'Color',cWLS,'DisplayName',sprintf('cos^m used, m=%.2f',m));
+    yline(ax,0.5,':','Color',[.4 .4 .4],'HandleVisibility','off');
+    xline(ax,prof.theta_half_deg,':','Color',[.4 .4 .4],'HandleVisibility','off');
+    xlabel(ax,'off-axis angle \theta [deg]'); ylabel(ax,'normalized radiance R(\theta)');
+    xlim(ax,[0 90]); ylim(ax,[0 1.05]);
+    title(ax,{'LED radiation profile (sub0 axis sweep)', sprintf('half-angle = %.1f deg', prof.theta_half_deg)});
+    legend(ax,'Location','northeast'); styleAxis(ax,cfg.fontName,cfg.fontSize);
+end
 
 % ------------------------------------------------------------- save
 if cfg.saveFigures
@@ -296,6 +394,7 @@ if cfg.saveFigures
     saveFig(f2, fullfile(cfg.outDir, ['Fig2_map_3D_'       sk]));
     saveFig(f3, fullfile(cfg.outDir, ['Fig3_errors_'       sk]));
     saveFig(f4, fullfile(cfg.outDir, ['Fig4_distance_cdf_' sk]));
+    if ~isempty(f5), saveFig(f5, fullfile(cfg.outDir, ['Fig5_led_profile_' sk])); end
     fprintf('Figures + results saved to: %s\n', cfg.outDir);
 end
 end

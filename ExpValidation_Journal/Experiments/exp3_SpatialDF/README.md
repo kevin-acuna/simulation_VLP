@@ -1,9 +1,13 @@
 # exp3_SpatialDF — Direction Finding validation (sub-dataset 3)
 
-Experimental validation of the **GLS / WLS direction-finding** estimators
-(`fundamentals/core/vlp_gls.m`, `vlp_wls.m`) and the **broadcast distance**
-recovery (`F_broadcast_Konly/core/broadcast_distance.m`) against real
+Experimental validation of the **GLS / WLS / NLS direction-finding** estimators
+(`fundamentals/core/vlp_gls.m`, `vlp_wls.m`, `vlp_nls_lm.m`) and the **broadcast
+distance** recovery (`F_broadcast_Konly/core/broadcast_distance.m`) against real
 measurements from the spatial campaign (`sub3_spatial`).
+
+The **NLS** estimator can additionally use the *measured* LED radiation profile
+`R(θ)` (from the `sub0_axis_sweep` experiment) instead of the analytic
+Lambertian `cos^m θ` model — see section 3.1.
 
 ## 1. Where the data comes from
 
@@ -69,6 +73,8 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
 | `lib/df_angles_to_nt.m` / `df_angles_to_nr.m` | angle → unit vector |
 | `lib/df_estimate_C.m` | empirical C from all points/orientations (ground truth) |
 | `lib/df_estimate_C_nadir.m` | sub2-style C from under-LED + LED-at-nadir rows only |
+| `lib/df_load_profile.m` | builds the measured LED profile `R(θ)` from the axis sweep |
+| `lib/vlp_nls_lm_profile.m` | NLS-LM estimator using the measured `R(θ)` instead of `cos^m θ` |
 
 ### Configuration (top of each script)
 
@@ -97,6 +103,32 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
 - **`cfg.v_dark`** — dark voltage to subtract (this run has none).
 - **`cfg.autoRefMax`** — uses the brightest selected orientation as the ratio
   reference for numerical stability (does not change the set of `K_id`).
+- **`cfg.addNLS`** — include the **NLS-LM** estimator (`vlp_nls_lm.m`) as a
+  third method alongside GLS and WLS (default `true`).
+- **`cfg.nlsUseProfile`** — if `true` (default), NLS uses the measured LED beam
+  `R(θ)` from the axis sweep (`vlp_nls_lm_profile.m`); if `false`, NLS uses the
+  analytic Lambertian `cos^m θ` (`vlp_nls_lm.m`, same `m` as GLS/WLS).
+- **`cfg.mFromProfile`** — if `true`, override `cfg.m` with the Lambertian order
+  `m_fit` fitted from the axis-sweep profile (applies to *all* methods).
+- **`cfg.profileDir` / `cfg.profileVdark`** — folder holding
+  `data_x.csv`/`data_y.csv` (default: the `exp1_Calibration/sub0_axis_sweep`
+  session) and its dark voltage (`[]` reads `v_dark_mean` from its metadata).
+
+### 3.1 LED radiation profile (NLS)
+
+The `sub0_axis_sweep` experiment sweeps the LED from `−90°` to `+90°` along X
+and Y with the PD fixed **directly below** the LED, so the recorded
+`v_mean(θ)` is exactly the beam profile `R(θ)` (θ = off-axis angle,
+`Q = cos θ`). `df_load_profile.m` dark-subtracts, folds to `|θ|`, averages the
+±X/±Y branches, normalizes to `R(0)=1`, fits the Lambertian order `m_fit`
+(log-linear LS on the main lobe), and returns an interpolant `Rfun(θ)`.
+`vlp_nls_lm_profile.m` then solves the same normalized-power NLS problem as
+`vlp_nls_lm.m` but replaces `Q^m` with `Rfun(acos Q)`, i.e. it fits directions
+using the *real* beam shape rather than assuming Lambertian.
+
+For a fair comparison, all three methods share the same distance stage
+(`broadcast_distance` with the same `m` and `C`); they differ only in the
+estimated direction `nd_hat`.
 
 Run in MATLAB:
 
@@ -107,14 +139,17 @@ analyze_df_vertical      % or: analyze_df_tilted
 
 ## 4. Outputs
 
-Console: per-instance table + angular/position RMSE and median for GLS & WLS.
+Console: per-instance table + angular/position RMSE and median for **every**
+method (GLS, WLS and, if enabled, NLS), plus the profile summary (`m_fit`,
+half-angle, `v_dark`).
 
 `data/<session>/figures_<scanKind>/`:
-- `Fig1_map_topview_*` — X-Y map: ground truth vs GLS/WLS estimates.
+- `Fig1_map_topview_*` — X-Y map: ground truth vs GLS/WLS/NLS estimates.
 - `Fig2_map_3D_*` — 3D localization with the LED.
-- `Fig3_errors_*` — per-instance angular and position error bars.
+- `Fig3_errors_*` — per-instance angular and position error bars (one series per method).
 - `Fig4_distance_cdf_*` — estimated vs true distance + position-error CDF.
-- `results_<scanKind>.csv` — per-instance numeric results.
+- `Fig5_led_profile_*` — measured `R(θ)` vs `cos^m θ` (fitted and used), with half-angle (only when a profile is loaded).
+- `results_<scanKind>.csv` — per-instance numeric results (`ang_`/`pos_`/`d_` columns per method).
 
 ## 5. Notes (few-samples caveat)
 
