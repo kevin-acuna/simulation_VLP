@@ -22,6 +22,7 @@ m_t        = -log(2)/log(cosd(theta_half));  % Lambertian order
 % ========================================================================
 % Photodetector : BPX61
 % ========================================================================
+% p = 4.8e-3; q = 5.5e-3; % PD: S6106
 p = 2.65e-3; q = 2.65e-3;                   % PD dimensions [m] 
 A_det = p*q;                                % Sensitive area [m^2]
 R_pd  = 0.62*0.9;                           % Responsivity [A/W] 0.62 (850nm), 0.9 (940nm)
@@ -55,8 +56,8 @@ L = 3; W = 3; Hmax = 1.2;               % Room dimensions [m]
 % coverage looked so different at N=1 vs N=100. With N=1000, SNR_min=10 dB
 % => threshold P_rx = sqrt(sigma2/N*10^(SNR_min/10)) = 0.0173 uW (-47.6 dBm).
 N_samples = 1000;                       % Samples per beam measurement (fixed)
-step  = 0.2;                            % Testbed X,Y step [m]
-stepH = 0.2;                            % Testbed Z step [m]
+step  = 0.1;                            % Testbed X,Y step [m]
+stepH = 0.1;                            % Testbed Z step [m]
 
 % ========================================================================
 % DEB-optimized Orientations (Phi_half = 45 deg) -- preset 'DEB_45'
@@ -115,13 +116,23 @@ K_values_Phi30 = 3:10;
 % QoS = 5 cm  (strict): K5 cov 77.8%, RMS~3.3 cm ; K9 cov 96.2%, RMS~2.2 cm
 orientations_PEB_K5_QoS05 = [55.92,144.35, 2.19,134.05, 53.00,58.76, 53.07,232.99, 51.80,327.22];
 orientations_PEB_K9_QoS05 = [53.05,358.17, 67.27,220.67, 59.22,172.05, 8.94,179.86, 64.36,118.72, 16.94,67.31, 42.73,269.83, 71.51,307.27, 67.63,56.05];
-% QoS = 10 cm (relaxed): K5 cov 99.0% (clean 1+4 ring @ ~60 deg) ; K9 cov 100.0%
+
+% ==============================
+% BEST FOR PHI_1/2=36.7 !!!
+% ==============================
+% QoS = 10 cm (relaxed): K5 cov 99.0% (clean 1+4 ring @ ~60 deg) ; K9: cov 100.0%, RMS 2.33 cm
 orientations_PEB_K5_QoS10 = [0.17,243.20, 59.71,85.27, 60.24,265.13, 60.66,355.50, 60.34,174.87];
-orientations_PEB_K9_QoS10 = [8.61,181.42, 27.80,91.20, 66.92,129.98, 62.84,254.76, 14.54,292.28, 58.61,191.11, 67.92,64.44, 66.12,317.10, 54.70,10.77];
+orientations_PEB_K9_QoS10 = [1.87,104.50, 53.88,171.80, 67.66,126.01, 57.62,79.92, 64.15,333.41, 66.59,222.79, 61.58,25.02, 56.29,276.86, 4.17,357.77];
+% ==============================
+
+orientations_experiment=[0.0,0.0, 34.0,182.0, 37.0,267.0, 37.0,355.0, 42.0,78.0, 53.0,97.0, 57.0,179.0, 58.0,360.0, 58.0,272.0];
+% ==============================
 
 all_orientations_PEB_QoS05 = {orientations_PEB_K5_QoS05, orientations_PEB_K9_QoS05};
 all_orientations_PEB_QoS10 = {orientations_PEB_K5_QoS10, orientations_PEB_K9_QoS10};
 K_values_PEB = [5, 9];
+
+
 
 % ========================================================================
 % Helper: convert an orientation vector to 3xK unit vectors (nadir-referenced)

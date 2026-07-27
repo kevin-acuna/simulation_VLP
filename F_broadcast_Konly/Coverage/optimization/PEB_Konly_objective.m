@@ -41,12 +41,24 @@ else
     QoS = 0.05;   % default: same order as the coverage analysis QoS
 end
 
-%% Check for degenerate configurations (penalty >> normal max ~1)
-MIN_ANGLE_SEPARATION = 5; % degrees
+%% Enforce a minimum pairwise angular separation between LED beams
+% Prevents degenerate/redundant configurations where two beams point in
+% (almost) the same direction. Such clusters waste a degree of freedom and
+% are hard to justify physically (a reviewer would flag them). The penalty
+% (10 + slack) is >> the normal objective max (~1) and is graded so the GA
+% still gets a gradient toward the feasible region.
+% NOTE: the TRUE angle acos(dot) in [0,180] is used (NO abs); using abs would
+% wrongly collapse well-separated opposite-facing beams (e.g. 160 deg) onto a
+% small angle and penalise good configurations.
+if isfield(system_params, 'min_angle_separation')
+    MIN_ANGLE_SEPARATION = system_params.min_angle_separation;   % degrees
+else
+    MIN_ANGLE_SEPARATION = 15;   % default: physically meaningful separation
+end
 for i = 1:K-1
     for j = i+1:K
         dot_product = max(min(dot(nt_orientations(:,i), nt_orientations(:,j)), 1), -1);
-        angle_deg = rad2deg(acos(abs(dot_product)));
+        angle_deg = rad2deg(acos(dot_product));
         if angle_deg < MIN_ANGLE_SEPARATION
             PEB_value = 10 + (MIN_ANGLE_SEPARATION - angle_deg);
             return;

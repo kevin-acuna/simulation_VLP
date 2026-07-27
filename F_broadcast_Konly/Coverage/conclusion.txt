@@ -11,7 +11,12 @@ Testbed de 2m x 2m. Ya que la covertura sera menor.
 
 
 
-
+IMPORTANTE: 
+EL RECEPTOR !!! 
+EL ERROR AUMENTA PRINCIPALMENTE PORQUE EL AREA DEL PD ES PEQUEÑA
+EN COMPARACION AL PD EMPLEADO EN TCOM. UNO DEBE REVISAR ESO!!
+ADEMÁS EL FOV ES MAS CORTO QUE EL DE TCOM
+EN TCOM ASUMI UN S6201 COMO PD PERO USO ACTUALMENTE EL BPX61
 
 Recomendación
 Quédate con K=9 @ QoS=5 cm (96.2%, mediana 1.82 cm) para la narrativa TCOM y con K=5 @ QoS=10 cm (geometría 1+4 anillo a 60°, 99%) como caso limpio/compacto.
