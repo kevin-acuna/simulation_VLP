@@ -239,11 +239,22 @@ end
 % ------------------------------------------------------------- summary
 rms  = @(v) sqrt(mean(v(isfinite(v)).^2));
 med  = @(v) median(v(isfinite(v)));
+avg  = @(v) mean(v(isfinite(v)));
+p90  = @(v) local_pct(v, 90);          % 90th percentile (base MATLAB, no toolbox)
 R = struct();
 R.cfg=cfg; R.C_opt=C_opt; R.Cmode=Cmode; R.C_all=C_all; R.K_id=K_id;
 R.methods=mName; R.labels=labels; R.pos_true=posT; R.est=est;
 R.ang=ang; R.pos=posE; R.d=dEst; R.d_true=dTrue;
 R.profile=prof; R.m=m; R.nInstances=nI; R.nSkipped=nSkipped;
+
+% per-method metrics (RMSE, mean, median, 90th-percentile) for both errors
+dirM = struct('method',{},'rmse',{},'mean',{},'median',{},'cdf90',{});
+posM = struct('method',{},'rmse',{},'mean',{},'median',{},'cdf90',{});
+for k=1:nM
+    dirM(k) = struct('method',mName{k},'rmse',rms(ang(:,k)), 'mean',avg(ang(:,k)), 'median',med(ang(:,k)), 'cdf90',p90(ang(:,k)));
+    posM(k) = struct('method',mName{k},'rmse',rms(posE(:,k)),'mean',avg(posE(:,k)),'median',med(posE(:,k)),'cdf90',p90(posE(:,k)));
+end
+R.metrics = struct('direction',dirM,'position',posM);
 
 if nlsProfile, pstat='used by NLS (direction only)'; elseif ~isempty(prof), pstat='loaded (unused)'; else, pstat=''; end
 
@@ -270,10 +281,17 @@ for j = 1:nI
 end
 fprintf(' (a* = angular error [deg], p* = position error [m])\n');
 fprintf(' -----------------------------------------------------------------\n');
-for k=1:nM, fprintf(' angular  RMSE  [deg] %-13s : %.2f\n', mName{k}, rms(ang(:,k)));  end
-for k=1:nM, fprintf(' angular  median[deg] %-13s : %.2f\n', mName{k}, med(ang(:,k)));  end
-for k=1:nM, fprintf(' position RMSE  [m]   %-13s : %.3f\n', mName{k}, rms(posE(:,k))); end
-for k=1:nM, fprintf(' position median[m]   %-13s : %.3f\n', mName{k}, med(posE(:,k))); end
+fprintf(' DIRECTION error [deg]\n');
+fprintf('   %-14s %8s %8s %8s %8s\n', 'method', 'RMSE', 'Mean', 'Median', 'CDF90');
+for k=1:nM
+    fprintf('   %-14s %8.2f %8.2f %8.2f %8.2f\n', mName{k}, rms(ang(:,k)), avg(ang(:,k)), med(ang(:,k)), p90(ang(:,k)));
+end
+fprintf('\n POSITION error [m]\n');
+fprintf('   %-14s %8s %8s %8s %8s\n', 'method', 'RMSE', 'Mean', 'Median', 'CDF90');
+for k=1:nM
+    fprintf('   %-14s %8.3f %8.3f %8.3f %8.3f\n', mName{k}, rms(posE(:,k)), avg(posE(:,k)), med(posE(:,k)), p90(posE(:,k)));
+end
+fprintf(' (CDF90 = 90th percentile of the error)\n');
 fprintf('==================================================================\n\n');
 
 % save per-instance results
@@ -307,13 +325,14 @@ for k=1:nM
         end
     end
 end
-hT = plot(ax,posT(:,1),posT(:,2),'o','MarkerSize',8,'MarkerFaceColor',cTrue,'MarkerEdgeColor','k','DisplayName','Ground truth');
+hT = plot(ax,posT(:,1),posT(:,2),'o','MarkerSize',5,'MarkerFaceColor',cTrue,'MarkerEdgeColor','k','DisplayName','Ground truth');
 hM = gobjects(nM,1);
 for k=1:nM
-    hM(k) = plot(ax,est(:,1,k),est(:,2,k),mMark{k},'MarkerSize',7,'MarkerFaceColor',mCol{k},'MarkerEdgeColor','k','DisplayName',mName{k});
+    hM(k) = plot(ax,est(:,1,k),est(:,2,k),mMark{k},'MarkerSize',5,'MarkerFaceColor',mCol{k},'MarkerEdgeColor','k','DisplayName',mName{k});
 end
-for j=1:nI, text(ax,posT(j,1),posT(j,2),['  ' char(labels(j))],'FontSize',cfg.fontSize-4,'Color',cTrue); end
+%for j=1:nI, text(ax,posT(j,1),posT(j,2),['  ' char(labels(j))],'FontSize',cfg.fontSize-4,'Color',cTrue); end
 axis(ax,'equal'); xlabel(ax,'x [m]'); ylabel(ax,'y [m]');
+xlim(ax,[-1.4 1.4]); ylim(ax,[-1.4 1.4]);
 title(ax,{'Top-view localization (X-Y)', tag});
 legend(ax,[hLED hT hM.'],'Location','bestoutside');
 styleAxis(ax,cfg.fontName,cfg.fontSize);
@@ -328,11 +347,12 @@ for k=1:nM
         end
     end
 end
-plot3(ax,posT(:,1),posT(:,2),posT(:,3),'o','MarkerSize',7,'MarkerFaceColor',cTrue,'MarkerEdgeColor','k','DisplayName','Ground truth');
+plot3(ax,posT(:,1),posT(:,2),posT(:,3),'o','MarkerSize',5,'MarkerFaceColor',cTrue,'MarkerEdgeColor','k','DisplayName','Ground truth');
 for k=1:nM
-    plot3(ax,est(:,1,k),est(:,2,k),est(:,3,k),mMark{k},'MarkerSize',6,'MarkerFaceColor',mCol{k},'MarkerEdgeColor','k','DisplayName',mName{k});
+    plot3(ax,est(:,1,k),est(:,2,k),est(:,3,k),mMark{k},'MarkerSize',5,'MarkerFaceColor',mCol{k},'MarkerEdgeColor','k','DisplayName',mName{k});
 end
 xlabel(ax,'x [m]'); ylabel(ax,'y [m]'); zlabel(ax,'z [m]'); view(ax,-35,20);
+xlim(ax,[-1.4 1.4]); ylim(ax,[-1.4 1.4]);
 title(ax,{'3D localization', tag}); legend(ax,'Location','bestoutside');
 styleAxis(ax,cfg.fontName,cfg.fontSize);
 
@@ -399,6 +419,18 @@ end
 % =========================== local helpers ===============================
 function styleAxis(ax, fontName, fontSize)
     set(ax,'FontName',fontName,'FontSize',fontSize,'LineWidth',1.0,'Layer','top');
+end
+
+function q = local_pct(v, p)
+% Percentile without the Statistics Toolbox (MATLAB prctile convention).
+    v = sort(v(isfinite(v)));
+    n = numel(v);
+    if n == 0, q = NaN; return; end
+    if n == 1, q = v(1); return; end
+    x = ((1:n) - 0.5) / n * 100;       % plotting positions in percent
+    if p <= x(1),   q = v(1);   return; end
+    if p >= x(end), q = v(end); return; end
+    q = interp1(x, v, p, 'linear');
 end
 
 function colorOrderBars(ax, c1, c2)

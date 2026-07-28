@@ -67,3 +67,45 @@ cfg.fontSize    = 13;
 
 %% ============================ RUN =======================================
 R = df_run_analysis(cfg);
+
+%% ==================== Tilt-angle distributions ==========================
+% Visualize the PD tilt applied across all tilt scans: one histogram for the
+% inclination angle and another for the azimuth. Values are the recorded pose
+% (nr_incl, nr_az), taken once per tilt-scan instance (12 orientations share
+% the same tilt, so duplicates are collapsed).
+Tbl   = df_load_master(cfg.dataFile);
+Ttilt = Tbl(strcmpi(strtrim(Tbl.scan_kind), 'tilt'), :);
+key   = string(Ttilt.point_id) + "|" + string(Ttilt.repeat_id) + "|" + ...
+        string(Ttilt.tilt_cmd_deg) + "|" + string(Ttilt.tilt_cmd_az);
+[~, ia] = unique(key, 'stable');
+tiltIncl = Ttilt.nr_incl(ia);
+tiltAz   = Ttilt.nr_az(ia);
+tiltIncl = tiltIncl(isfinite(tiltIncl));
+tiltAz   = mod(tiltAz(isfinite(tiltAz)), 360);
+
+fTilt = figure('Color','w','Position',[200 200 1120 460]);
+tlT   = tiledlayout(fTilt,1,2,'TileSpacing','compact','Padding','compact');
+
+axI = nexttile(tlT);
+histogram(axI, tiltIncl, 'BinWidth', 1, 'FaceColor', [0.00 0.45 0.74], 'EdgeColor', 'k');
+xlabel(axI,'inclination angle [deg]'); ylabel(axI,'count');
+title(axI, sprintf('PD inclination (n=%d, max=%.1f deg)', numel(tiltIncl), max([tiltIncl; 0])));
+grid(axI,'on'); box(axI,'on');
+set(axI,'FontName',cfg.fontName,'FontSize',cfg.fontSize,'LineWidth',1.0,'Layer','top');
+
+axA = nexttile(tlT);
+histogram(axA, tiltAz, 'BinWidth', 30, 'FaceColor', [0.85 0.33 0.10], 'EdgeColor', 'k');
+xlim(axA,[0 360]); xticks(axA,0:60:360);
+xlabel(axA,'azimuth angle [deg]'); ylabel(axA,'count');
+title(axA, sprintf('PD azimuth (n=%d)', numel(tiltAz)));
+grid(axA,'on'); box(axA,'on');
+set(axA,'FontName',cfg.fontName,'FontSize',cfg.fontSize,'LineWidth',1.0,'Layer','top');
+
+title(tlT, 'Tilt-angle distributions (tilt scans)', ...
+      'FontName',cfg.fontName,'FontSize',cfg.fontSize+1);
+
+if cfg.saveFigures && isfield(R,'cfg') && isfield(R.cfg,'outDir')
+    if ~exist(R.cfg.outDir,'dir'), mkdir(R.cfg.outDir); end
+    exportgraphics(fTilt, fullfile(R.cfg.outDir,'Fig6_tilt_angle_distributions.png'), ...
+        'Resolution', 300, 'BackgroundColor', 'white');
+end
