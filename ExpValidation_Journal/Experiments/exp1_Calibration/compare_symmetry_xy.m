@@ -4,7 +4,7 @@ clear; close all; clc;
 session      = '20260722_165901';   % subcarpeta de datos en sub0_axis_sweep
 angle_offset = 0;                    % alineacion 0 mecanico vs 0 optico [deg]
 normalize    = true;                 % graficar normalizado al maximo
-save_figures = true;
+save_figures = false;
 
 fontName = 'Times New Roman';
 fontSize = 13;

@@ -4,7 +4,8 @@ clear; close all; clc;
 % Orden del patron Lambertiano R(theta) = cos(theta)^m:
 %   []  -> se ajusta automaticamente por minimos cuadrados
 %   num -> fuerza ese valor (p.ej. 3.13)
-m_user = [];
+m_user = 3.13;
+v_dark = 0.05;
 
 angle_offset  = 0;       % correccion 0 mecanico vs 0 optico [deg]
 subtract_dark = false;   % restar v_dark de metadata (ver nota)
@@ -38,7 +39,7 @@ Ty = readtable(file_y);
 [ang_x, ix] = sort(Tx.axis_angle + angle_offset);   v_x = Tx.v_mean(ix);
 [ang_y, iy] = sort(Ty.axis_angle + angle_offset);   v_y = Ty.v_mean(iy);
 
-v_dark = read_dark(fullfile(dataDir, 'metadata.txt'));
+% v_dark = read_dark(fullfile(dataDir, 'metadata.txt'));
 if subtract_dark && ~isnan(v_dark)
     v_x = max(v_x - v_dark, 0);
     v_y = max(v_y - v_dark, 0);
