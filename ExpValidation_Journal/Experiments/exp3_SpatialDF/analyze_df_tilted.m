@@ -24,7 +24,21 @@ addpath(fullfile(thisDir,'lib'));
 
 %% ============================ CONFIG ====================================
 cfg = struct();
-cfg.dataFile = fullfile(thisDir,'data','20260727_152417','master.csv');
+
+% --- Data selection -----------------------------------------------------
+% Session folder(s) under data/ to analyse. Their master.csv files are MERGED
+% and treated as ONE dataset (every random-tilt scan of every listed point is
+% an instance). Use plain folder names (resolved against this script's data/
+% dir) or absolute paths. Comment entries out to exclude them; a single entry
+% reproduces the classic single-session run.
+cfg.dataDirs = { ...
+    '20260727_152417', ...
+    '20260728_110846', ...
+    '20260729_105752', ...
+    '20260730_111944'};
+% Still supported instead of dataDirs: a single file or an explicit list:
+%   cfg.dataFile = fullfile(thisDir,'data','20260727_152417','master.csv');
+
 cfg.scanKind = 'tilt';            % PD deliberately tilted (<= TILT_MAX_DEG)
 
 % Codebook orientation IDs used for the estimation (1..12). Example subsets:
@@ -73,7 +87,7 @@ R = df_run_analysis(cfg);
 % inclination angle and another for the azimuth. Values are the recorded pose
 % (nr_incl, nr_az), taken once per tilt-scan instance (12 orientations share
 % the same tilt, so duplicates are collapsed).
-Tbl   = df_load_master(cfg.dataFile);
+Tbl   = R.data;   % merged table returned by df_run_analysis (all sessions)
 Ttilt = Tbl(strcmpi(strtrim(Tbl.scan_kind), 'tilt'), :);
 key   = string(Ttilt.point_id) + "|" + string(Ttilt.repeat_id) + "|" + ...
         string(Ttilt.tilt_cmd_deg) + "|" + string(Ttilt.tilt_cmd_az);

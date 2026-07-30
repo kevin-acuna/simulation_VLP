@@ -54,9 +54,24 @@ if ~isfield(cfg,'addNLS')       || isempty(cfg.addNLS),       cfg.addNLS        
 if ~isfield(cfg,'nlsUseProfile')|| isempty(cfg.nlsUseProfile),cfg.nlsUseProfile = true;  end
 if ~isfield(cfg,'profileDir'),                                cfg.profileDir    = '';    end
 if ~isfield(cfg,'profileVdark'),                              cfg.profileVdark  = [];    end
-assert(isfield(cfg,'dataFile') && isfile(cfg.dataFile), 'cfg.dataFile must point to master.csv');
+% ---------------------------------------------- resolve data source(s)
+% The dataset may be specified via either field (dataDirs wins if both set):
+%   cfg.dataDirs : session folder name(s) under data/ (or absolute paths),
+%                  each holding a master.csv. Several folders are MERGED and
+%                  analysed as a single campaign.
+%   cfg.dataFile : a single master.csv path, or a cell/string list of paths.
+dataRoot      = fullfile(exp3Dir, 'data');
+cfg.dataFiles = df_resolve_data_files(cfg, dataRoot);
+for i = 1:numel(cfg.dataFiles)
+    assert(isfile(cfg.dataFiles{i}), 'master.csv not found: %s', cfg.dataFiles{i});
+end
+cfg.dataFile  = cfg.dataFiles{1};   % scalar handle kept for backward compatibility
 if ~isfield(cfg,'outDir') || isempty(cfg.outDir)
-    cfg.outDir = fullfile(fileparts(cfg.dataFile), ['figures_' cfg.scanKind]);
+    if numel(cfg.dataFiles) == 1
+        cfg.outDir = fullfile(fileparts(cfg.dataFiles{1}), ['figures_' cfg.scanKind]);
+    else
+        cfg.outDir = fullfile(dataRoot, ['figures_combined_' cfg.scanKind]);
+    end
 end
 
 T_led   = cfg.T(:);
@@ -69,8 +84,10 @@ cWLS  = [0.85 0.33 0.10];
 cNLS  = [0.47 0.67 0.19];
 
 % ----------------------------------------------------------------- load
-Tbl = df_load_master(cfg.dataFile);
-Tbl = Tbl(strcmpi(strtrim(Tbl.scan_kind), cfg.scanKind), :);
+Tall = df_load_master(cfg.dataFiles);        % merged across all sessions
+nSessions    = numel(unique(Tall.session_idx));
+multiSession = nSessions > 1;
+Tbl = Tall(strcmpi(strtrim(Tall.scan_kind), cfg.scanKind), :);
 assert(~isempty(Tbl), 'No rows with scan_kind = "%s".', cfg.scanKind);
 
 % Orientation IDs available in this subset
@@ -90,8 +107,8 @@ key = string(Tbl.point_id) + "|" + string(Tbl.repeat_id) + "|" + ...
 [g, ~] = findgroups(key);
 nG = max(g);
 
-inst = struct('point_id',{},'pidx',{},'tnum',{},'pos',{},'nd_true',{},'d_true',{}, ...
-              'nr',{},'nt',{},'mu',{},'vstd',{},'label',{});
+inst = struct('point_id',{},'pidx',{},'tnum',{},'sidx',{},'pos',{},'nd_true',{},'d_true',{}, ...
+              'nr',{},'nt',{},'mu',{},'vstd',{},'vkid',{},'label',{});
 tiltCount = containers.Map('KeyType','double','ValueType','double');
 nSkipped = 0;
 
@@ -103,7 +120,8 @@ for gi = 1:nG
     if any(cellfun(@isempty, locs)), nSkipped = nSkipped + 1; continue; end
     sel = cell2mat(locs);
 
-    mu = sub.v_mean(sel).' - cfg.v_dark;
+    vkid = sub.v_mean(sel).';        % obtained voltages in K_id order (pre-reorder)
+    mu = vkid - cfg.v_dark;
     if any(~isfinite(mu)), nSkipped = nSkipped + 1; continue; end
     mu   = max(mu, muFloor);
     vstd = sub.v_std(sel).';
@@ -124,28 +142,40 @@ for gi = 1:nG
 
     tok  = regexp(sub.point_id{1}, '_(\d+)$', 'tokens', 'once');
     pidx = str2double(tok{1});
+    sidx = sub.session_idx(1);
+
+    % tilt-scan counter is unique per physical point AND per session so that
+    % merged campaigns never mix tilt numbering across sessions
     if strcmpi(cfg.scanKind, 'tilt')
-        if ~isKey(tiltCount, pidx), tiltCount(pidx) = 0; end
-        tiltCount(pidx) = tiltCount(pidx) + 1;
-        tnum  = tiltCount(pidx);
-        label = sprintf('P%d.t%d', pidx, tnum);
+        tKey = sidx*1e6 + pidx;
+        if ~isKey(tiltCount, tKey), tiltCount(tKey) = 0; end
+        tiltCount(tKey) = tiltCount(tKey) + 1;
+        tnum = tiltCount(tKey);
     else
-        tnum  = 0;
-        label = sprintf('P%d', pidx);
+        tnum = 0;
     end
 
-    inst(end+1) = struct('point_id',sub.point_id{1},'pidx',pidx,'tnum',tnum, ...
+    % session-tagged labels only when several sessions are merged
+    if multiSession
+        if tnum > 0, label = sprintf('S%dP%d.t%d', sidx, pidx, tnum);
+        else,        label = sprintf('S%dP%d',     sidx, pidx); end
+    else
+        if tnum > 0, label = sprintf('P%d.t%d', pidx, tnum);
+        else,        label = sprintf('P%d',     pidx); end
+    end
+
+    inst(end+1) = struct('point_id',sub.point_id{1},'pidx',pidx,'tnum',tnum,'sidx',sidx, ...
         'pos',pos,'nd_true',nd_true,'d_true',d_true,'nr',nr,'nt',nt, ...
-        'mu',mu,'vstd',vstd,'label',label); %#ok<AGROW>
+        'mu',mu,'vstd',vstd,'vkid',vkid,'label',label); %#ok<AGROW>
 end
 
 nI = numel(inst);
 assert(nI > 0, 'No complete estimation instances for K_id = %s (scanKind = %s).', ...
        mat2str(K_id), cfg.scanKind);
 
-% sort by point index, then tilt number (stable, chronological)
-[~, sidx] = sortrows([[inst.pidx].', [inst.tnum].']);
-inst = inst(sidx);
+% sort by session, then point index, then tilt number (chronological)
+[~, ord] = sortrows([[inst.sidx].', [inst.pidx].', [inst.tnum].']);
+inst = inst(ord);
 
 % ---------------------------------------------- LED radiation profile (NLS)
 % The sub0 axis sweep measures R(theta) = v_mean(theta) for the LED beam. When
@@ -179,7 +209,7 @@ if ~isempty(cfg.C_opt)
 elseif strcmpi(cfg.C_mode, 'nadir')
     nopts = struct('xyTol', cfg.nadirXYtol, 'inclTol', cfg.nadirInclTol, ...
                    'v_dark', cfg.v_dark, 'scanKind', cfg.nadirScanKind);
-    [C_opt, cinfo] = df_estimate_C_nadir(cfg.dataFile, m, T_led, nopts);
+    [C_opt, cinfo] = df_estimate_C_nadir(cfg.dataFiles, m, T_led, nopts);
     C_all = cinfo.C_all;
     assert(~isnan(C_opt), ['No under-LED nadir rows found (xyTol=%.3g m, ' ...
         'inclTol=%.3g deg). Loosen cfg.nadir* or use cfg.C_mode=''empirical''.'], ...
@@ -207,6 +237,7 @@ colvec = @(x) x(:);
 ang  = nan(nI, nM);   posE = nan(nI, nM);   dEst = nan(nI, nM);
 est  = nan(nI, 3, nM);
 dTrue = nan(nI,1);    posT = nan(nI,3);      labels = strings(nI,1);
+Vk   = nan(nI, numel(K_id));   % obtained voltages per orientation (K_id order)
 
 for j = 1:nI
     s  = inst(j);
@@ -234,6 +265,7 @@ for j = 1:nI
         end
     end
     dTrue(j) = s.d_true; posT(j,:) = s.pos.'; labels(j) = s.label;
+    Vk(j,:)  = s.vkid;
 end
 
 % ------------------------------------------------------------- summary
@@ -246,6 +278,8 @@ R.cfg=cfg; R.C_opt=C_opt; R.Cmode=Cmode; R.C_all=C_all; R.K_id=K_id;
 R.methods=mName; R.labels=labels; R.pos_true=posT; R.est=est;
 R.ang=ang; R.pos=posE; R.d=dEst; R.d_true=dTrue;
 R.profile=prof; R.m=m; R.nInstances=nI; R.nSkipped=nSkipped;
+R.data=Tall; R.nSessions=nSessions;
+R.V=Vk; R.V_ids=K_id;   % per-instance obtained voltages v_mean [V] in K_id order
 
 % per-method metrics (RMSE, mean, median, 90th-percentile) for both errors
 dirM = struct('method',{},'rmse',{},'mean',{},'median',{},'cdf90',{});
@@ -259,7 +293,14 @@ R.metrics = struct('direction',dirM,'position',posM);
 if nlsProfile, pstat='used by NLS (direction only)'; elseif ~isempty(prof), pstat='loaded (unused)'; else, pstat=''; end
 
 fprintf('\n=================== DF validation (%s PD) ===================\n', upper(cfg.scanKind));
-fprintf(' data      : %s\n', cfg.dataFile);
+if numel(cfg.dataFiles) == 1
+    fprintf(' data      : %s\n', cfg.dataFiles{1});
+else
+    fprintf(' data      : %d sessions merged\n', numel(cfg.dataFiles));
+    for i = 1:numel(cfg.dataFiles)
+        fprintf('             [S%d] %s\n', i, cfg.dataFiles{i});
+    end
+end
 fprintf(' K_id      : %s   (n=%d orientations)\n', mat2str(K_id), numel(K_id));
 fprintf(' m         : %.3f    C_opt : %.4g  [%s]\n', m, C_opt, Cmode);
 if ~isempty(prof)
@@ -280,6 +321,17 @@ for j = 1:nI
     fprintf('%s\n', row);
 end
 fprintf(' (a* = angular error [deg], p* = position error [m])\n');
+fprintf(' -----------------------------------------------------------------\n');
+fprintf(' OBTAINED VOLTAGES v_mean [V] per orientation (columns = orientation_id)\n');
+vhdr = sprintf(' %-7s', 'label');
+for k=1:numel(K_id), vhdr = [vhdr sprintf(' | %-6s', sprintf('K%d',K_id(k)))]; end %#ok<AGROW>
+fprintf('%s\n', vhdr);
+for j = 1:nI
+    row = sprintf(' %-7s', labels(j));
+    for k=1:numel(K_id), row = [row sprintf(' | %6.3f', Vk(j,k))]; end %#ok<AGROW>
+    fprintf('%s\n', row);
+end
+fprintf(' (K<id> = raw v_mean [V] for orientation_id; mu = v_mean - v_dark feeds the estimators)\n');
 fprintf(' -----------------------------------------------------------------\n');
 fprintf(' DIRECTION error [deg]\n');
 fprintf('   %-14s %8s %8s %8s %8s\n', 'method', 'RMSE', 'Mean', 'Median', 'CDF90');
@@ -303,6 +355,9 @@ if exist(cfg.outDir,'dir')
         dataCols{end+1} = ang(:,k);  vn{end+1} = ['ang_' mShort{k} '_deg']; %#ok<AGROW>
         dataCols{end+1} = posE(:,k); vn{end+1} = ['pos_' mShort{k} '_m'];   %#ok<AGROW>
         dataCols{end+1} = dEst(:,k); vn{end+1} = ['d_'   mShort{k} '_m'];   %#ok<AGROW>
+    end
+    for k=1:numel(K_id)
+        dataCols{end+1} = Vk(:,k); vn{end+1} = sprintf('V_k%d_V', K_id(k)); %#ok<AGROW>
     end
     Tres = table(dataCols{:}, 'VariableNames', vn);
     writetable(Tres, fullfile(cfg.outDir, sprintf('results_%s.csv', cfg.scanKind)));
@@ -417,6 +472,33 @@ end
 end
 
 % =========================== local helpers ===============================
+function files = df_resolve_data_files(cfg, dataRoot)
+% Build the ordered list of master.csv paths from cfg.dataDirs / cfg.dataFile.
+    files = {};
+    if isfield(cfg,'dataDirs') && ~isempty(cfg.dataDirs)
+        dirs = cfg.dataDirs;
+        if ischar(dirs), dirs = {dirs}; elseif isstring(dirs), dirs = cellstr(dirs(:).'); end
+        for i = 1:numel(dirs)
+            d = char(dirs{i});
+            if ~isfolder(d)                 % plain name -> resolve under data/
+                d = fullfile(dataRoot, d);
+            end
+            files{end+1} = fullfile(d, 'master.csv'); %#ok<AGROW>
+        end
+    elseif isfield(cfg,'dataFile') && ~isempty(cfg.dataFile)
+        df = cfg.dataFile;
+        if ischar(df)
+            files = {df};
+        elseif isstring(df)
+            files = cellstr(df(:).');
+        elseif iscell(df)
+            files = cellfun(@char, df(:).', 'UniformOutput', false);
+        end
+    end
+    assert(~isempty(files), ['No data source. Set cfg.dataDirs (folder names ' ...
+        'under data/) or cfg.dataFile (master.csv path or list).']);
+end
+
 function styleAxis(ax, fontName, fontSize)
     set(ax,'FontName',fontName,'FontSize',fontSize,'LineWidth',1.0,'Layer','top');
 end

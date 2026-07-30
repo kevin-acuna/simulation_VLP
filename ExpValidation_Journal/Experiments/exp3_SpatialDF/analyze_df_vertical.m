@@ -22,7 +22,22 @@ addpath(fullfile(thisDir,'lib'));
 
 %% ============================ CONFIG ====================================
 cfg = struct();
-cfg.dataFile = fullfile(thisDir,'data','20260727_152417','master.csv');
+
+% --- Data selection -----------------------------------------------------
+% Session folder(s) under data/ to analyse. Their master.csv files are MERGED
+% and treated as ONE dataset (localization over every listed point). Use plain
+% folder names (resolved against this script's data/ dir) or absolute paths.
+% Comment entries out to exclude them; a single entry reproduces the classic
+% single-session run.
+    % '20260727_152417', ...
+    % '20260728_110846', ...
+    % '20260729_105752', ...
+    % '20260730_111944'};
+cfg.dataDirs = { ...
+    '20260730_111944'};
+% Still supported instead of dataDirs: a single file or an explicit list:
+%   cfg.dataFile = fullfile(thisDir,'data','20260727_152417','master.csv');
+
 cfg.scanKind = 'vertical';        % PD pointing to the zenith
 
 % Codebook orientation IDs used for the estimation (1..12). Example subsets:

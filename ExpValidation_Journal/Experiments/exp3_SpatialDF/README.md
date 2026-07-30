@@ -69,7 +69,7 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
 | `analyze_df_vertical.m` | vertical-PD rows (`nr = [0 0 1]`) |
 | `analyze_df_tilted.m` | tilted-PD rows (one instance per random tilt) |
 | `lib/df_run_analysis.m` | shared engine: grouping, GLS/WLS, distance, figures |
-| `lib/df_load_master.m` | typed CSV reader |
+| `lib/df_load_master.m` | typed CSV reader (accepts a list of files, merges them) |
 | `lib/df_angles_to_nt.m` / `df_angles_to_nr.m` | angle → unit vector |
 | `lib/df_estimate_C.m` | empirical C from all points/orientations (ground truth) |
 | `lib/df_estimate_C_nadir.m` | sub2-style C from under-LED + LED-at-nadir rows only |
@@ -78,6 +78,19 @@ The LED (Tx) is fixed at **`T = (0, 0, 2)` m** (`transmitter_z` in `metadata.txt
 
 ### Configuration (top of each script)
 
+- **`cfg.dataDirs`** — session folder(s) under `data/` to analyse. Their
+  `master.csv` files are **merged** and treated as a single campaign, so points
+  spread across several acquisition sessions are localized and plotted together.
+  Use plain folder names (resolved against `data/`) or absolute paths, e.g.
+  ```matlab
+  cfg.dataDirs = {'20260727_152417','20260728_110846','20260729_105752'};
+  ```
+  A single entry reproduces the classic single-session run. Each merged row is
+  tagged with its `session`/`session_idx`; when more than one session is loaded
+  the per-instance labels become `S<sess>P<point>` (and `.t<n>` for tilt scans)
+  so identical point indices from different sessions never collide.
+- **`cfg.dataFile`** — *(alternative to `cfg.dataDirs`)* a single `master.csv`
+  path, or a cell/string array of paths. `cfg.dataDirs` wins if both are set.
 - **`cfg.K_id`** — codebook IDs used for estimation, e.g. `[1 3 4 5 6 9]`.
   This is the "which orientations" selector requested. All listed IDs must be
   present in a scan for that instance to be used.
@@ -143,7 +156,8 @@ Console: per-instance table + angular/position RMSE and median for **every**
 method (GLS, WLS and, if enabled, NLS), plus the profile summary (`m_fit`,
 half-angle, `v_dark`).
 
-`data/<session>/figures_<scanKind>/`:
+`data/<session>/figures_<scanKind>/` (single session) or
+`data/figures_combined_<scanKind>/` (several merged sessions):
 - `Fig1_map_topview_*` — X-Y map: ground truth vs GLS/WLS/NLS estimates.
 - `Fig2_map_3D_*` — 3D localization with the LED.
 - `Fig3_errors_*` — per-instance angular and position error bars (one series per method).
