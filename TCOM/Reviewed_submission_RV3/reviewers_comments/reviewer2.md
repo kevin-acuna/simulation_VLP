@@ -1,0 +1,6 @@
+Comments to the Author
+The revised manuscript has addressed the major logical concern and is now much clearer and more coherent. The remaining issues are related primarily to practical validation and presentation clarity rather than fundamental technical flaws.
+1. The direction-finding stage can operate with arbitrary receiver orientation, whereas the complete 3D localization pipeline still requires cooperative PD reorientation for distance recovery. This should be clarified. The manuscript should still ensure that the Abstract, Table I, and contribution statements do not overstate the receiver-orientation-free nature of the complete 3D positioning system.
+2. There is one practical limitation remaining: the evaluation is still mainly simulation-based, so the absence of experimental validation or a more realistic hardware-implemented study should be more explicitly acknowledged.
+3. In Table I, the notation used for the proposed method, especially the “Arbitrary / Controlled / D-F” description of receiver orientation, is somewhat difficult to parse.
+4. The statements about robustness to random receiver tilts should clearly indicate that this property mainly applies to the direction-finding stage rather than to the complete distance-recovery measurement.
