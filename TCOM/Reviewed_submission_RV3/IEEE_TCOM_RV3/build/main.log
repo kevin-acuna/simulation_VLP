@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  30 MAY 2026 22:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  28 AUG 2026 00:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/IEEE_TCOM_VSubmitted
-(c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/IEEE_TCOM_VSubmitted.tex
+**c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/main
+(c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/main.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (./IEEEtran.cls
@@ -434,45 +434,87 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 LaTeX Info: Redefining \cite on input line 302.
 LaTeX Info: Redefining \nocite on input line 332.
 Package: cite 2015/02/27  v 5.5
-) (c:/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+) (c:/texlive/2026/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+ (c:/texlive/2026/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+ (c:/texlive/2026/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+) (c:/texlive/2026/texmf-dist/tex/generic/soul/soul.sty
+Package: soul 2026-03-06 v3.2 Permit use of UTF-8 characters in soul (HO)
+ (c:/texlive/2026/texmf-dist/tex/generic/soul/soul-ori.sty
+Package: soul-ori 2026-03-06 v3.2 letterspacing/underlining (mf)
+\SOUL@word=\toks32
+\SOUL@lasttoken=\toks33
+\SOUL@syllable=\toks34
+\SOUL@cmds=\toks35
+\SOUL@buffer=\toks36
+\SOUL@token=\toks37
+\SOUL@syllgoal=\dimen278
+\SOUL@syllwidth=\dimen279
+\SOUL@charkern=\dimen280
+\SOUL@hyphkern=\dimen281
+\SOUL@dimen=\dimen282
+\SOUL@dimeni=\dimen283
+\SOUL@minus=\count339
+\SOUL@comma=\count340
+\SOUL@apo=\count341
+\SOUL@grave=\count342
+\SOUL@spaceskip=\skip67
+\SOUL@ttwidth=\dimen284
+\SOUL@uldp=\dimen285
+\SOUL@ulht=\dimen286
+) (c:/texlive/2026/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)) (c:/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count339
-) (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/build/IEEE_TCOM_VSubmitted.aux)
-\openout1 = `IEEE_TCOM_VSubmitted.aux'.
+\l__color_backend_stack_int=\count343
+) (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.aux)
+\openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
 
 -- Lines per column: 58 (exact).
 (c:/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count340
-\scratchdimen=\dimen278
+\scratchcounter=\count344
+\scratchdimen=\dimen287
 \scratchbox=\box64
-\nofMPsegments=\count341
-\nofMParguments=\count342
-\everyMPshowfont=\toks32
-\MPscratchCnt=\count343
-\MPscratchDim=\dimen279
-\MPnumerator=\count344
-\makeMPintoPDFobject=\count345
-\everyMPtoPDFconversion=\toks33
+\nofMPsegments=\count345
+\nofMParguments=\count346
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count347
+\MPscratchDim=\dimen288
+\MPnumerator=\count348
+\makeMPintoPDFobject=\count349
+\everyMPtoPDFconversion=\toks39
 ) (c:/texlive/2026/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -484,350 +526,259 @@ Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: End \AtBeginDocument code.
 \symgns@font=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `gns@font' in version `bold'
-(Font)                  TS1/ptm/m/n --> TS1/ptm/b/n on input line 20.
-Package gensymb Info: Math companion symbols declared on input line 20.
-LaTeX Info: Redefining \degree on input line 20.
-LaTeX Info: Redefining \celsius on input line 20.
-Package gensymb Info: Using text companion symbols for \degree, \celsius and \perthousand on input line 20.
-LaTeX Info: Redefining \ohm on input line 20.
-Package gensymb Info: Using \textohm for \ohm on input line 20.
-Package gensymb Info: Using \textmu for \micro on input line 20.
- (c:/texlive/2026/texmf-dist/tex/latex/graphics/color.sty
-Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
- (c:/texlive/2026/texmf-dist/tex/latex/graphics-cfg/color.cfg
-File: color.cfg 2016/01/02 v1.6 sample color configuration
-)
-Package color Info: Driver file: pdftex.def on input line 149.
- (c:/texlive/2026/texmf-dist/tex/latex/graphics/mathcolor.ltx))
-Package hyperref Info: Link coloring ON on input line 20.
- (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/build/IEEE_TCOM_VSubmitted.out) (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/build/IEEE_TCOM_VSubmitted.out)
+(Font)                  TS1/ptm/m/n --> TS1/ptm/b/n on input line 22.
+Package gensymb Info: Math companion symbols declared on input line 22.
+LaTeX Info: Redefining \degree on input line 22.
+LaTeX Info: Redefining \celsius on input line 22.
+Package gensymb Info: Using text companion symbols for \degree, \celsius and \perthousand on input line 22.
+LaTeX Info: Redefining \ohm on input line 22.
+Package gensymb Info: Using \textohm for \ohm on input line 22.
+Package gensymb Info: Using \textmu for \micro on input line 22.
+Package hyperref Info: Link coloring ON on input line 22.
+ (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.out) (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.out)
 \@outlinefile=\write3
-\openout3 = `IEEE_TCOM_VSubmitted.out'.
+\openout3 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 40.
  (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 40.
  (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 38.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 40.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-) (./Tables/tableI.tex
-Underfull \hbox (badness 10000) in paragraph at lines 30--30
-[]|\OT1/ptm/m/n/7 Extreme Learn-ing Ma-chine /
- []
-
-
-LaTeX Warning: Reference `subsec:nr_independence' on page 1 undefined on input line 32.
-
 ) [1{c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-Underfull \hbox (badness 2521) in paragraph at lines 86--87
-\OT1/ptm/m/n/10 based lin-eariza-tion, we de-velop a sta-tis-ti-cally ef-fi-
- []
+Underfull \vbox (badness 7379) has occurred while \output is active []
 
-[2]
+ [2]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\\' on input line 105.
+(hyperref)                removing `\\' on input line 124.
 
-<Figures/II. System/Figure1.png, id=312, 755.82375pt x 484.81125pt>
+<Figures/II. System/Figure1.png, id=313, 755.82375pt x 484.81125pt>
 File: Figures/II. System/Figure1.png Graphic file (type png)
 <use Figures/II. System/Figure1.png>
-Package pdftex.def Info: Figures/II. System/Figure1.png  used on input line 149.
+Package pdftex.def Info: Figures/II. System/Figure1.png  used on input line 158.
 (pdftex.def)             Requested size: 252.0pt x 161.63786pt.
-[3 <./Figures/II. System/Figure1.png>]
+[3 <./Figures/II. System/Figure1.png>] [4]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 370.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\le' on input line 370.
+(hyperref)                removing `math shift' on input line 343.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 380.
-
-[4]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 389.
+(hyperref)                removing `\le' on input line 343.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ge' on input line 389.
+(hyperref)                removing `math shift' on input line 343.
 
 
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 468--468
- []|$\OT1/cmr/m/n/8 (35\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 4\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 140\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 346.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 346.
+
+
+Underfull \hbox (badness 4132) in paragraph at lines 346--347
+ \OT1/ptm/m/it/10 2) Just-Determined Regime ($\OML/cmm/m/it/10 K \OT1/cmr/m/n/10 = 3$\OT1/ptm/m/it/10 ): [][][] \OT1/ptm/m/n/10 With three
  []
 
 
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 468--468
- []|$\OT1/cmr/m/n/8 (29\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 6\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 262\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
+Underfull \hbox (badness 10000) in paragraph at lines 346--347
+\OT1/ptm/m/n/10 ori-en-ta-tions whose gra-di-ent vec-tors $\OMS/cmsy/m/n/10 f[]\OML/cmm/m/it/10 ; []; []\OMS/cmsy/m/n/10 g$ \OT1/ptm/m/n/10 are
  []
 
 
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 469--469
- []|$\OT1/cmr/m/n/8 (41\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 180\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
+Underfull \hbox (badness 3547) in paragraph at lines 346--347
+\OT1/ptm/m/n/10 lin-early independent---which re-quires non-coplanar LED
  []
 
 
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 469--469
- []|$\OT1/cmr/m/n/8 (38\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 270\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2)$| 
- []
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 349.
 
 
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 470--470
- []|$\OT1/cmr/m/n/8 (50\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 180\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
- []
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\ge' on input line 349.
 
 
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 470--470
- []|$\OT1/cmr/m/n/8 (50\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 4\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 359\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9)$| 
- []
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 349.
 
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 470--470
- []|$\OT1/cmr/m/n/8 (50\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 6\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 270\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
- []|$\OT1/cmr/m/n/8 (17\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 306\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
- []|$\OT1/cmr/m/n/8 (54\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 266\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
- []|$\OT1/cmr/m/n/8 (22\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 140\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 4)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
- []|$\OT1/cmr/m/n/8 (52\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 360\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 471--471
- []|$\OT1/cmr/m/n/8 (55\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 185\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
- []|$\OT1/cmr/m/n/8 (53\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 170\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
- []|$\OT1/cmr/m/n/8 (58\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 355\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
- []|$\OT1/cmr/m/n/8 (35\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 220\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 472--472
- []|$\OT1/cmr/m/n/8 (54\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 278\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 6)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
- []|$\OT1/cmr/m/n/8 (61\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 268\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
- []|$\OT1/cmr/m/n/8 (27\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 317\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
- []|$\OT1/cmr/m/n/8 (53\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 171\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 473--473
- []|$\OT1/cmr/m/n/8 (38\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 0\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 200\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
- []|$\OT1/cmr/m/n/8 (36\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 266\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 8)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
- []|$\OT1/cmr/m/n/8 (33\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 182\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 3)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
- []|$\OT1/cmr/m/n/8 (56\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 178\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
- []|$\OT1/cmr/m/n/8 (57\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 359\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 7)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--474
- []|$\OT1/cmr/m/n/8 (37\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 355\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
- []
-
-
-Overfull \hbox (3.59932pt too wide) in paragraph at lines 474--475
- []|$\OT1/cmr/m/n/8 (58\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 ;  \OT1/cmr/m/n/8 272\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 1)$| 
- []
-
-<Figures/IV. Optimization/vertical_violin_comparison_peb.png, id=396, 697.4055pt x 269.3262pt>
-File: Figures/IV. Optimization/vertical_violin_comparison_peb.png Graphic file (type png)
-<use Figures/IV. Optimization/vertical_violin_comparison_peb.png>
-Package pdftex.def Info: Figures/IV. Optimization/vertical_violin_comparison_peb.png  used on input line 487.
-(pdftex.def)             Requested size: 252.0pt x 97.319pt.
-<Figures/IV. Optimization/PEB_K5_optimal.png, id=397, 1789.68625pt x 1614.03pt>
-File: Figures/IV. Optimization/PEB_K5_optimal.png Graphic file (type png)
-<use Figures/IV. Optimization/PEB_K5_optimal.png>
-Package pdftex.def Info: Figures/IV. Optimization/PEB_K5_optimal.png  used on input line 498.
-(pdftex.def)             Requested size: 201.60077pt x 181.8045pt.
-<Figures/IV. Optimization/PEB_K5_random.png, id=398, 1780.6525pt x 1614.03pt>
-File: Figures/IV. Optimization/PEB_K5_random.png Graphic file (type png)
-<use Figures/IV. Optimization/PEB_K5_random.png>
-Package pdftex.def Info: Figures/IV. Optimization/PEB_K5_random.png  used on input line 503.
-(pdftex.def)             Requested size: 201.60077pt x 182.71574pt.
-[5 <./Figures/IV. Optimization/vertical_violin_comparison_peb.png>]
-Underfull \vbox (badness 3240) has occurred while \output is active []
-
-<Figures/IV. Optimization/PEB_vs_theta_half.png, id=423, 511.9125pt x 286.1892pt>
-File: Figures/IV. Optimization/PEB_vs_theta_half.png Graphic file (type png)
-<use Figures/IV. Optimization/PEB_vs_theta_half.png>
-Package pdftex.def Info: Figures/IV. Optimization/PEB_vs_theta_half.png  used on input line 559.
-(pdftex.def)             Requested size: 252.0pt x 140.88022pt.
-<Figures/IV. Optimization/PEB_vs_SNR.png, id=424, 529.0164pt x 419.8887pt>
-File: Figures/IV. Optimization/PEB_vs_SNR.png Graphic file (type png)
-<use Figures/IV. Optimization/PEB_vs_SNR.png>
-Package pdftex.def Info: Figures/IV. Optimization/PEB_vs_SNR.png  used on input line 567.
-(pdftex.def)             Requested size: 252.0pt x 200.01942pt.
- [6 <./Figures/IV. Optimization/PEB_K5_optimal.png> <./Figures/IV. Optimization/PEB_K5_random.png>]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 603.
+[5]
+<Figures/IV. Optimization/DEB_violin_comparison.pdf, id=418, 432.61626pt x 236.885pt>
+File: Figures/IV. Optimization/DEB_violin_comparison.pdf Graphic file (type pdf)
+<use Figures/IV. Optimization/DEB_violin_comparison.pdf>
+Package pdftex.def Info: Figures/IV. Optimization/DEB_violin_comparison.pdf  used on input line 443.
+(pdftex.def)             Requested size: 252.0pt x 137.98618pt.
+<Figures/IV. Optimization/DEB_heatmap_K5.pdf, id=419, 242.9075pt x 339.2675pt>
+File: Figures/IV. Optimization/DEB_heatmap_K5.pdf Graphic file (type pdf)
+<use Figures/IV. Optimization/DEB_heatmap_K5.pdf>
+Package pdftex.def Info: Figures/IV. Optimization/DEB_heatmap_K5.pdf  used on input line 451.
+(pdftex.def)             Requested size: 252.0pt x 351.96535pt.
+ [6 <./Figures/IV. Optimization/DEB_violin_comparison.pdf>]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 497.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Underfull \hbox (badness 1509) in paragraph at lines 612--620
-\OT1/ptm/m/n/10 with full math-e-mat-i-cal rigour and presents two sta-tis-ti-
+Underfull \hbox (badness 10000) in paragraph at lines 496--498
+\OT1/ptm/m/n/10 To solve [], we repa-ram-e-ter-ize the di-rec-tion
  []
 
 
-Underfull \hbox (badness 1478) in paragraph at lines 612--620
-\OT1/ptm/m/n/10 GLS, which is minimum-variance un-der Gaus-sian noise
+Underfull \hbox (badness 10000) in paragraph at lines 496--498
+\OT1/ptm/m/n/10 in spher-i-cal co-or-di-nates $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^R[]; ^^^[]\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/10 so that $\OT1/cmr/bx/n/10 v \OT1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 2393) in paragraph at lines 630--632
+Underfull \hbox (badness 3058) in paragraph at lines 496--498
+\OT1/cmr/m/n/10 [[] \OML/cmm/m/it/10 ^^R[] [] ^^^[];  [] ^^R[] [] ^^^[];  \OMS/cmsy/m/n/10 ^^@ [] \OML/cmm/m/it/10 ^^R[]\OT1/cmr/m/n/10 ][]$\OT1/ptm/m/n/10 , which sat-is-fies
+ []
+
+
+Underfull \hbox (badness 5345) in paragraph at lines 496--498
+\OT1/pcr/m/n/10 lsqnonlin\OT1/ptm/m/n/10 ), which uses the Gauss--Newton Hes-sian
+ []
+
+[7 <./Figures/IV. Optimization/DEB_heatmap_K5.pdf>]
+<Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf, id=527, 249.93375pt x 182.6825pt>
+File: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf Graphic file (type pdf)
+<use Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf>
+Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf  used on input line 512.
+(pdftex.def)             Requested size: 252.0pt x 184.19844pt.
+<Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf, id=528, 300.12125pt x 223.83624pt>
+File: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf Graphic file (type pdf)
+<use Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf>
+Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf  used on input line 519.
+(pdftex.def)             Requested size: 252.0pt x 187.95285pt.
+
+Underfull \hbox (badness 2393) in paragraph at lines 541--542
  \OT1/ptm/m/it/10 1) Lam-ber-tian Power Ra-tios and Ho-mo-ge-neous Con-
  []
 
-[7 <./Figures/IV. Optimization/PEB_vs_theta_half.png> <./Figures/IV. Optimization/PEB_vs_SNR.png>]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 787.
- [8]
-<Figures/VII.Simulations/Fig_CDF_v2.png, id=531, 1148.79187pt x 913.91437pt>
-File: Figures/VII.Simulations/Fig_CDF_v2.png Graphic file (type png)
-<use Figures/VII.Simulations/Fig_CDF_v2.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_CDF_v2.png  used on input line 900.
-(pdftex.def)             Requested size: 252.0pt x 200.47607pt.
-<Figures/VII.Simulations/Fig_Comparison_3D.png, id=536, 382.3083pt x 268.48305pt>
-File: Figures/VII.Simulations/Fig_Comparison_3D.png Graphic file (type png)
-<use Figures/VII.Simulations/Fig_Comparison_3D.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_Comparison_3D.png  used on input line 932.
-(pdftex.def)             Requested size: 252.0pt x 176.97403pt.
+[8 <./Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf> <./Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf>]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 698.
+ [9]
+<Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf, id=688, 285.065pt x 191.71625pt>
+File: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf Graphic file (type pdf)
+<use Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf>
+Package pdftex.def Info: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf  used on input line 856.
+(pdftex.def)             Requested size: 252.0pt x 169.47725pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \hbox (badness 2310) in paragraph at lines 866--868
+ []\OT1/ptm/m/it/10 GLS: [] \OT1/ptm/m/n/10 From []--[], the full co-vari-ance $\OT1/cmr/bx/n/10 ^^F[] \OMS/cmsy/m/n/10 2
+ []
 
- [9 <./Figures/VII.Simulations/Fig_CDF_v2.png>]
-<Figures/VII.Simulations/Fig_Time.png, id=554, 235.96155pt x 176.8206pt>
+[10]
+<Figures/VII.Simulations/Fig_Time.png, id=707, 235.96155pt x 176.8206pt>
 File: Figures/VII.Simulations/Fig_Time.png Graphic file (type png)
 <use Figures/VII.Simulations/Fig_Time.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_Time.png  used on input line 966.
+Package pdftex.def Info: Figures/VII.Simulations/Fig_Time.png  used on input line 879.
 (pdftex.def)             Requested size: 252.0pt x 188.8454pt.
- [10 <./Figures/VII.Simulations/Fig_Comparison_3D.png (PNG copy)> <./Figures/VII.Simulations/Fig_Time.png (PNG copy)>]
+<Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png, id=715, 285.34605pt x 190.0701pt>
+File: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png Graphic file (type png)
+<use Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png>
+Package pdftex.def Info: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png  used on input line 894.
+(pdftex.def)             Requested size: 252.0pt x 167.85672pt.
+
+Underfull \vbox (badness 1348) has occurred while \output is active []
+
+ [11 <./Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf> <./Figures/VII.Simulations/Fig_Time.png (PNG copy)>]
+<Figures/VII.Simulations/Fig_Comparison_3D.png, id=755, 382.3083pt x 268.48305pt>
+File: Figures/VII.Simulations/Fig_Comparison_3D.png Graphic file (type png)
+<use Figures/VII.Simulations/Fig_Comparison_3D.png>
+Package pdftex.def Info: Figures/VII.Simulations/Fig_Comparison_3D.png  used on input line 929.
+(pdftex.def)             Requested size: 252.0pt x 176.97403pt.
+
+Underfull \hbox (badness 1642) in paragraph at lines 942--943
+\OT1/ptm/m/n/10 the best ac-cu-racy (nearly match-ing the bound) but re-
+ []
+
+<Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png, id=764, 230.3004pt x 191.2746pt>
+File: Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png Graphic file (type png)
+<use Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png>
+Package pdftex.def Info: Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png  used on input line 947.
+(pdftex.def)             Requested size: 226.79846pt x 188.36716pt.
+<Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png, id=765, 231.7458pt x 191.2746pt>
+File: Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png Graphic file (type png)
+<use Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png>
+Package pdftex.def Info: Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png  used on input line 949.
+(pdftex.def)             Requested size: 226.79846pt x 187.19972pt.
+
+Underfull \vbox (badness 7981) has occurred while \output is active []
+
+ [12 <./Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png (PNG copy)> <./Figures/VII.Simulations/Fig_Comparison_3D.png (PNG copy)>]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\hbox' on input line 990.
+(hyperref)                removing `\hbox' on input line 971.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathsurround' on input line 990.
+(hyperref)                removing `\mathsurround' on input line 971.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\z@' on input line 990.
+(hyperref)                removing `\z@' on input line 971.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\unskip' on input line 990.
+(hyperref)                removing `\unskip' on input line 971.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@@italiccorr' on input line 990.
+(hyperref)                removing `\@@italiccorr' on input line 971.
+
+[13 <./Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png (PNG copy)> <./Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png (PNG copy)>]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\hbox' on input line 1007.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\hbox' on input line 1026.
+(hyperref)                removing `\mathsurround' on input line 1007.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathsurround' on input line 1026.
+(hyperref)                removing `\z@' on input line 1007.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\z@' on input line 1026.
+(hyperref)                removing `\unskip' on input line 1007.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\unskip' on input line 1026.
+(hyperref)                removing `\@@italiccorr' on input line 1007.
 
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@@italiccorr' on input line 1026.
-
-(c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/build/IEEE_TCOM_VSubmitted.bbl [11]) [12] (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/build/IEEE_TCOM_VSubmitted.aux)
+(c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.bbl [14]) [15] (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-Package rerunfilecheck Info: File `IEEE_TCOM_VSubmitted.out' has not changed.
-(rerunfilecheck)             Checksum: 6E8D4CAF56585CACE1BA1A337C30B272;7724.
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: A88477DC7CF52C9E829ECA7EDC5DA2DA;9092.
  ) 
 Here is how much of TeX's memory you used:
- 13705 strings out of 467525
- 222680 string characters out of 5423209
- 672546 words of memory out of 5000000
- 42207 multiletter control sequences out of 15000+600000
- 681389 words of font info for 149 fonts, out of 8000000 for 9000
+ 14404 strings out of 467525
+ 233850 string characters out of 5423209
+ 694076 words of memory out of 5000000
+ 42888 multiletter control sequences out of 15000+600000
+ 682728 words of font info for 152 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,16n,79p,1457b,586s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,16n,79p,1835b,589s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission/TCOM_paper/build/IEEE_TCOM_VSubmitted.pdf (12 pages, 3372278 bytes).
+Output written on c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.pdf (15 pages, 2757424 bytes).
 PDF statistics:
- 786 PDF objects out of 1000 (max. 8388607)
- 676 compressed objects within 7 object streams
- 187 named destinations out of 1000 (max. 500000)
- 374 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1007 PDF objects out of 1200 (max. 8388607)
+ 839 compressed objects within 9 object streams
+ 195 named destinations out of 1000 (max. 500000)
+ 400 words of extra memory for PDF output out of 10000 (max. 10000000)
 
