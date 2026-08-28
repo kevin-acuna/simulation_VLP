@@ -34,7 +34,7 @@ cfg = struct();
     % '20260729_105752', ...
     % '20260730_111944'};
 cfg.dataDirs = { ...
-    '20260728_110846'};
+    '20260827_104436'};
 % Still supported instead of dataDirs: a single file or an explicit list:
 %   cfg.dataFile = fullfile(thisDir,'data','20260727_152417','master.csv');
 
