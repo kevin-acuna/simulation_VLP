@@ -14,6 +14,9 @@
 \citation{Trevlakis2023}
 \citation{Haas:16}
 \citation{Wang2024b,Zhu2025}
+\citation{Peng2022}
+\citation{Chen2026}
+\citation{Zhou2026}
 \citation{Rekkas2023,Tran2022}
 \citation{Glass2021}
 \citation{Deng2023}
@@ -34,13 +37,13 @@
 \citation{Plets2019,electronics8111311,ALMADANI2021126654,Zhang2020}
 \citation{Cossu2022}
 \citation{Rekkas2023}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
 \citation{Qin2020,Qin2021,Zia-Ul-Mustafa2023,Zhang2024,Li2024}
 \citation{Liu2022,Wang2024,Shi2025}
 \citation{Ma2024}
 \citation{ShiJin2025}
 \citation{Chen2021,Qin2021,Liu2022,Zia-Ul-Mustafa2023,Chassagne2025,Zhang2024,Wang2024,Shi2025,ShiJin2025}
 \citation{Qin2020,Li2024,Ma2024}
-\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
 \citation{Liu:25}
 \citation{mi13070990,Zeng2023,Jin2023}
 \citation{AlSatai2026}
@@ -59,10 +62,9 @@
 \newlabel{eq:hLOS}{{2}{3}{System Model}{equation.2}{}}
 \newlabel{eq:cosines}{{3}{3}{System Model}{equation.3}{}}
 \newlabel{eq:Pr_i}{{4}{3}{System Model}{equation.4}{}}
-\newlabel{eq:sampleMean}{{5}{3}{System Model}{equation.5}{}}
 \citation{Liu2022,Wang2024,Shi2025}
 \citation{Kay1993}
-\citation{Kay1993}
+\newlabel{eq:sampleMean}{{5}{4}{System Model}{equation.5}{}}
 \newlabel{eq:SNR}{{6}{4}{System Model}{equation.6}{}}
 \newlabel{eq:SNRa}{{6a}{4}{System Model}{equation.6a}{}}
 \newlabel{eq:SNRb}{{6b}{4}{System Model}{equation.6b}{}}
@@ -83,12 +85,13 @@
 \newlabel{subsec:FIM}{{\mbox  {III-B}}{4}{Fisher Information for Direction Estimation}{subsection.3.2}{}}
 \newlabel{eq:nd_spherical}{{14}{4}{Fisher Information for Direction Estimation}{equation.14}{}}
 \newlabel{eq:FIM_DEB}{{15}{4}{Fisher Information for Direction Estimation}{equation.15}{}}
-\newlabel{eq:grad_xi}{{16}{4}{Fisher Information for Direction Estimation}{equation.16}{}}
+\citation{Kay1993}
 \citation{Kay1993}
 \citation{Zhuang2018}
 \citation{Chen2021}
 \citation{Ma2024,Wang2024b}
 \citation{Haupt2004}
+\newlabel{eq:grad_xi}{{16}{5}{Fisher Information for Direction Estimation}{equation.16}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Direction Error Bound}{5}{subsection.3.3}\protected@file@percent }
 \newlabel{subsec:DEB}{{\mbox  {III-C}}{5}{Direction Error Bound}{subsection.3.3}{}}
 \newlabel{eq:C_ang}{{17}{5}{Direction Error Bound}{equation.17}{}}
@@ -107,11 +110,11 @@
 \newlabel{sec:optimization}{{IV}{5}{Optimization of the Orientation Set}{section.4}{}}
 \newlabel{eq:GA_objective}{{22}{5}{Optimization of the Orientation Set}{equation.22}{}}
 \citation{acuna2025}
-\citation{Kay1993}
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Parameters used for GA optimization.}}{6}{table.2}\protected@file@percent }
 \newlabel{tab:ga_params}{{II}{6}{Parameters used for GA optimization}{table.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Distribution of the DEB [$^\circ $] across all receiver locations in the $3\times 3\times 2\,\mathrm  {m^3}$ testbed for $K\in \{3,\ldots  ,9\}$, with $\Phi _{1/2} = 45^{\circ }$. Green: GA-optimized orientation set; orange: 50 independently drawn random orientation sets per~$K$. Box-and-whisker plots summarize the sample distribution; shaded profiles depict the estimated PDF. The GA-optimized sets consistently achieve lower DEB and tighter distributions across all~$K$.}}{6}{figure.2}\protected@file@percent }
 \newlabel{fig:Optimized_vs_Random}{{2}{6}{Distribution of the DEB [$^\circ $] across all receiver locations in the $3\times 3\times 2\,\mathrm {m^3}$ testbed for $K\in \{3,\ldots ,9\}$, with $\Phi _{1/2} = 45^{\circ }$. Green: GA-optimized orientation set; orange: 50 independently drawn random orientation sets per~$K$. Box-and-whisker plots summarize the sample distribution; shaded profiles depict the estimated PDF. The GA-optimized sets consistently achieve lower DEB and tighter distributions across all~$K$}{figure.2}{}}
+\citation{Kay1993}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces DEB-optimized orientations \((\theta _i,\varphi _i)\) in degrees \([^\circ ]\) for various \(K\) in a \(3\times 3\times 2\,\mathrm  {m^3}\) room, with $\Phi _{1/2}=45^\circ $ and the achieved RMS-DEB.}}{7}{table.3}\protected@file@percent }
 \newlabel{tab:optimal_orientations_2col}{{III}{7}{DEB-optimized orientations \((\theta _i,\varphi _i)\) in degrees \([^\circ ]\) for various \(K\) in a \(3\times 3\times 2\,\mathrm {m^3}\) room, with $\Phi _{1/2}=45^\circ $ and the achieved RMS-DEB}{table.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Spatial distribution of the DEB across the $3\times 3\,\mathrm  {m^2}$ floor at $z=0.8$\,m for $K=5$ orientations, and with $\Phi _{1/2} = 45^{\circ }$. (a)~GA-optimized set; (b)~a single random set with tilt--azimuth pairs drawn uniformly from the GA search range. The color scale is shared and clipped at $3^\circ $.}}{7}{figure.3}\protected@file@percent }
@@ -123,13 +126,13 @@
 \newlabel{eq:p_target_noiseless}{{25}{7}{NLS Cost Function and Direction Estimate}{equation.25}{}}
 \newlabel{eq:argmin_NL}{{26}{7}{NLS Cost Function and Direction Estimate}{equation.26}{}}
 \newlabel{eq:NLS_cost}{{27}{7}{NLS Cost Function and Direction Estimate}{equation.27}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Consistency and Optimality at the True Direction}{7}{subsection.5.2}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus the number of orientations~$K$ for the DEB-optimized sets and three LED semi-angles at half power $\Phi _{1/2}\in \{45^\circ ,60^\circ ,75^\circ \}$. Values are computed over all receiver positions in the $3\times 3\times 2~\mathrm  {m}^3$ testbed. Both bounds decrease monotonically with~$K$; the operating point $K=5$ offers a favourable accuracy--latency trade-off for both direction finding and 3D positioning.}}{8}{figure.4}\protected@file@percent }
 \newlabel{fig:PEB_vs_K}{{4}{8}{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus the number of orientations~$K$ for the DEB-optimized sets and three LED semi-angles at half power $\Phi _{1/2}\in \{45^\circ ,60^\circ ,75^\circ \}$. Values are computed over all receiver positions in the $3\times 3\times 2~\mathrm {m}^3$ testbed. Both bounds decrease monotonically with~$K$; the operating point $K=5$ offers a favourable accuracy--latency trade-off for both direction finding and 3D positioning}{figure.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets ($\Phi _{1/2}=45^\circ $). Bold curves: $K=5$; shaded bands: range over $K\in \{3,\ldots  ,9\}$; dotted edges: $K=3$ (upper) and $K=9$ (lower). Both bounds decrease as $1/\sqrt  {\mathrm  {SNR}}$, with the band width reflecting the diminishing incremental gain from additional orientations at high SNR.}}{8}{figure.5}\protected@file@percent }
-\newlabel{fig:PEB_vs_noise}{{5}{8}{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets ($\Phi _{1/2}=45^\circ $). Bold curves: $K=5$; shaded bands: range over $K\in \{3,\ldots ,9\}$; dotted edges: $K=3$ (upper) and $K=9$ (lower). Both bounds decrease as $1/\sqrt {\mathrm {SNR}}$, with the band width reflecting the diminishing incremental gain from additional orientations at high SNR}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Consistency and Optimality at the True Direction}{8}{subsection.5.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Linear Estimators}{8}{section.6}\protected@file@percent }
 \newlabel{sec:Lineal}{{VI}{8}{Linear Estimators}{section.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets ($\Phi _{1/2}=45^\circ $). Bold curves: $K=5$; shaded bands: range over $K\in \{3,\ldots  ,9\}$; dotted edges: $K=3$ (upper) and $K=9$ (lower). Both bounds decrease as $1/\sqrt  {\mathrm  {SNR}}$, with the band width reflecting the diminishing incremental gain from additional orientations at high SNR.}}{8}{figure.5}\protected@file@percent }
+\newlabel{fig:PEB_vs_noise}{{5}{8}{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets ($\Phi _{1/2}=45^\circ $). Bold curves: $K=5$; shaded bands: range over $K\in \{3,\ldots ,9\}$; dotted edges: $K=3$ (upper) and $K=9$ (lower). Both bounds decrease as $1/\sqrt {\mathrm {SNR}}$, with the band width reflecting the diminishing incremental gain from additional orientations at high SNR}{figure.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Direction Estimation via GLS}{8}{subsection.6.1}\protected@file@percent }
 \newlabel{subsec:gls_direction}{{\mbox  {VI-A}}{8}{Direction Estimation via GLS}{subsection.6.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VI-A}1}Lambertian Power Ratios and Homogeneous Constraints}{8}{subsubsection.6.1.1}\protected@file@percent }
@@ -137,10 +140,10 @@
 \newlabel{eq:mu_i_C}{{30}{8}{Lambertian Power Ratios and Homogeneous Constraints}{equation.30}{}}
 \newlabel{eq:homog_gls}{{31}{8}{Lambertian Power Ratios and Homogeneous Constraints}{equation.31}{}}
 \newlabel{eq:definition_a_i}{{32}{8}{Lambertian Power Ratios and Homogeneous Constraints}{equation.32}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VI-A}2}Stochastic Perturbation of the Ratios}{8}{subsubsection.6.1.2}\protected@file@percent }
-\newlabel{eq:beta_lin_gls}{{35}{8}{Stochastic Perturbation of the Ratios}{equation.35}{}}
 \citation{Bishop2006}
 \citation{golub2013matrix}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VI-A}2}Stochastic Perturbation of the Ratios}{9}{subsubsection.6.1.2}\protected@file@percent }
+\newlabel{eq:beta_lin_gls}{{35}{9}{Stochastic Perturbation of the Ratios}{equation.35}{}}
 \newlabel{eq:ratio_error}{{36}{9}{Stochastic Perturbation of the Ratios}{equation.36}{}}
 \newlabel{eq:var_beta_gls}{{37}{9}{Stochastic Perturbation of the Ratios}{equation.37}{}}
 \newlabel{eq:cov_beta_gls}{{38}{9}{Stochastic Perturbation of the Ratios}{equation.38}{}}
@@ -150,26 +153,24 @@
 \newlabel{eq:residual_cov}{{41}{9}{Residuals and Their Covariance}{equation.41}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VI-A}4}GLS Formulation and Closed-Form Solution}{9}{subsubsection.6.1.4}\protected@file@percent }
 \newlabel{eq:gls_criterion_final}{{42}{9}{GLS Formulation and Closed-Form Solution}{equation.42}{}}
-\newlabel{eq:M_GLS_final}{{43}{9}{GLS Formulation and Closed-Form Solution}{equation.43}{}}
-\newlabel{eq:gls_dir_final}{{44}{9}{GLS Formulation and Closed-Form Solution}{equation.44}{}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces 3D Position Estimation from $K$ Orientations}}{9}{algorithm.1}\protected@file@percent }
 \newlabel{alg:position}{{1}{9}{GLS Formulation and Closed-Form Solution}{algorithm.1}{}}
+\newlabel{eq:M_GLS_final}{{43}{9}{GLS Formulation and Closed-Form Solution}{equation.43}{}}
+\newlabel{eq:gls_dir_final}{{44}{9}{GLS Formulation and Closed-Form Solution}{equation.44}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}WLS as a Practical Simplification}{9}{subsection.6.2}\protected@file@percent }
 \newlabel{eq:Sigma_beta_diag}{{45}{9}{WLS as a Practical Simplification}{equation.45}{}}
-\newlabel{eq:WLS_cost}{{46}{9}{WLS as a Practical Simplification}{equation.46}{}}
-\newlabel{eq:M_WLS}{{47}{9}{WLS as a Practical Simplification}{equation.47}{}}
-\newlabel{eq:WLS_solution}{{48}{9}{WLS as a Practical Simplification}{equation.48}{}}
+\newlabel{eq:WLS_cost}{{46}{10}{WLS as a Practical Simplification}{equation.46}{}}
+\newlabel{eq:M_WLS}{{47}{10}{WLS as a Practical Simplification}{equation.47}{}}
+\newlabel{eq:WLS_solution}{{48}{10}{WLS as a Practical Simplification}{equation.48}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Receiver-Orientation Independence}{10}{subsection.6.3}\protected@file@percent }
 \newlabel{subsec:nr_independence}{{\mbox  {VI-C}}{10}{Receiver-Orientation Independence}{subsection.6.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Estimators Comparison}{10}{section.7}\protected@file@percent }
 \newlabel{sec:results}{{VII}{10}{Estimators Comparison}{section.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Direction-Finding Performance}{10}{subsection.7.1}\protected@file@percent }
 \newlabel{subsec:DF_performance}{{\mbox  {VII-A}}{10}{Direction-Finding Performance}{subsection.7.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VII-A}1}Angular Error Cumulative Distribution Function}{10}{subsubsection.7.1.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Direction-finding angular error ($K=5$, $M=1{,}000$ trials).}}{10}{table.4}\protected@file@percent }
 \newlabel{tab:DF_performance}{{IV}{10}{Direction-finding angular error ($K=5$, $M=1{,}000$ trials)}{table.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Direction-finding RMSE under random receiver tilt ($K=5$, half-normal $\sigma =5^\circ $, $\max =30^\circ $).}}{10}{table.5}\protected@file@percent }
-\newlabel{tab:tilt_robustness}{{V}{10}{Direction-finding RMSE under random receiver tilt ($K=5$, half-normal $\sigma =5^\circ $, $\max =30^\circ $)}{table.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VII-A}1}Angular Error Cumulative Distribution Function}{10}{subsubsection.7.1.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VII-A}2}Robustness to Receiver Tilt}{10}{subsubsection.7.1.2}\protected@file@percent }
 \newlabel{subsec:complexity}{{\mbox  {VII-A}3}{10}{Computational Complexity and Latency}{subsubsection.7.1.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VII-A}3}Computational Complexity and Latency}{10}{subsubsection.7.1.3}\protected@file@percent }
@@ -177,22 +178,28 @@
 \citation{Chassagne2025}
 \citation{Chassagne2025}
 \citation{Chassagne2025}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Direction-finding RMSE under random receiver tilt ($K=5$, half-normal $\sigma =5^\circ $, $\max =30^\circ $).}}{11}{table.5}\protected@file@percent }
+\newlabel{tab:tilt_robustness}{{V}{11}{Direction-finding RMSE under random receiver tilt ($K=5$, half-normal $\sigma =5^\circ $, $\max =30^\circ $)}{table.5}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Empirical CDF of the per-position angular RMSE for $K=5$ orientations ($M=1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf  {n}_r=[0,0,1]^{\mathsf  T}$); dashed curves: random receiver tilt ($N_{\mathrm  {tilt}}=100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma =5^{\circ }$, $\theta _{\max }=30^{\circ }$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref {subsec:nr_independence}).}}{11}{figure.6}\protected@file@percent }
 \newlabel{fig:NR_robust_CDF}{{6}{11}{Empirical CDF of the per-position angular RMSE for $K=5$ orientations ($M=1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf {n}_r=[0,0,1]^{\mathsf T}$); dashed curves: random receiver tilt ($N_{\mathrm {tilt}}=100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma =5^{\circ }$, $\theta _{\max }=30^{\circ }$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref {subsec:nr_independence})}{figure.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}3D Positioning Performance}{11}{subsection.7.2}\protected@file@percent }
-\newlabel{subsec:performance}{{\mbox  {VII-B}}{11}{3D Positioning Performance}{subsection.7.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Computation latency of the GLS, WLS, and NLS direction-finding estimators for $K=5$. Markers denote the median and mean over all testbed positions; whiskers span the 90\% interval (p5--p95). The dashed line marks the $0.1$\,ms threshold.}}{11}{figure.7}\protected@file@percent }
 \newlabel{fig:latency}{{7}{11}{Computation latency of the GLS, WLS, and NLS direction-finding estimators for $K=5$. Markers denote the median and mean over all testbed positions; whiskers span the 90\% interval (p5--p95). The dashed line marks the $0.1$\,ms threshold}{figure.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}3D Positioning Performance}{11}{subsection.7.2}\protected@file@percent }
+\newlabel{subsec:performance}{{\mbox  {VII-B}}{11}{3D Positioning Performance}{subsection.7.2}{}}
 \citation{Chassagne2025}
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Empirical CDF of the 3D positioning error for $K\in \{3,5,9\}$ ($M=1{,}000$ Monte Carlo trials, $1{,}792$ testbed positions). Solid lines: $K=5$; dashed lines: $K=9$; dash-dotted: $K=3$ SVD baseline~\cite  {Chassagne2025}. Each estimator uses its respective GA-optimized orientation set.}}{12}{figure.8}\protected@file@percent }
 \newlabel{fig:CDF}{{8}{12}{Empirical CDF of the 3D positioning error for $K\in \{3,5,9\}$ ($M=1{,}000$ Monte Carlo trials, $1{,}792$ testbed positions). Solid lines: $K=5$; dashed lines: $K=9$; dash-dotted: $K=3$ SVD baseline~\cite {Chassagne2025}. Each estimator uses its respective GA-optimized orientation set}{figure.8}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Performance of position-estimation\\ methods in a \(3\times 3\times 2\,\mathrm  {m^3}\) room.}}{12}{table.6}\protected@file@percent }
 \newlabel{tab:estimation_performance}{{VI}{12}{Performance of position-estimation\\ methods in a \(3\times 3\times 2\,\mathrm {m^3}\) room}{table.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Estimator Performance vs.\ SNR}{12}{subsection.7.3}\protected@file@percent }
-\newlabel{subsec:vs_snr}{{\mbox  {VII-C}}{12}{Estimator Performance vs.\ SNR}{subsection.7.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces 3D position estimates produced by GLS ($K=5$) at receiver heights $z\in \{0,\,0.6,\,1.2\}\,\mathrm  {m}$ in the $3\times 3\times 2\,\mathrm  {m^3}$ room. The LED transmitter is at the ceiling ($z=2\,\mathrm  {m}$); segments connect each reference position to the corresponding estimate.}}{12}{figure.9}\protected@file@percent }
 \newlabel{fig:estimation}{{9}{12}{3D position estimates produced by GLS ($K=5$) at receiver heights $z\in \{0,\,0.6,\,1.2\}\,\mathrm {m}$ in the $3\times 3\times 2\,\mathrm {m^3}$ room. The LED transmitter is at the ceiling ($z=2\,\mathrm {m}$); segments connect each reference position to the corresponding estimate}{figure.9}{}}
-\citation{Kay1993}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Estimator Performance vs.\ SNR}{12}{subsection.7.3}\protected@file@percent }
+\newlabel{subsec:vs_snr}{{\mbox  {VII-C}}{12}{Estimator Performance vs.\ SNR}{subsection.7.3}{}}
+\citation{Kahn1997}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-D}}\textcolor {blue}{Limitations of the Present Validation}}{13}{subsection.7.4}\protected@file@percent }
+\newlabel{subsec:limitations}{{\mbox  {VII-D}}{13}{\texorpdfstring {\added {Limitations of the Present Validation}}{Limitations of the Present Validation}}{subsection.7.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion and Future Works}{13}{section.8}\protected@file@percent }
+\newlabel{sec:Conclusion}{{VIII}{13}{Conclusion and Future Works}{section.8}{}}
 \newlabel{fig:rmse_vs_snr_DF}{{10a}{13}{Subfigure 10a}{subfigure.10.1}{}}
 \newlabel{sub@fig:rmse_vs_snr_DF}{{(a)}{a}{Subfigure 10a\relax }{subfigure.10.1}{}}
 \newlabel{fig:rmse_vs_snr_3D}{{10b}{13}{Subfigure 10b}{subfigure.10.2}{}}
@@ -201,10 +208,7 @@
 \newlabel{fig:rmse_vs_snr}{{10}{13}{Realized estimator performance vs.\ SNR for $K=5$ ($M=1{,}000$ Monte Carlo trials, $1,792$ testbed positions). (a)~RMS angular error (direction finding): NLS coincides with the DEB; GLS and WLS remain at constant factors ${\approx }1.3{\times }$ and ${\approx }1.6{\times }$. (b)~RMS 3D positioning error: all estimators track the PEB with the same constant-factor offsets. All curves follow the $1/\sqrt {\mathrm {SNR}}$ slope}{figure.10}{}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{13}{subfigure.10.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{13}{subfigure.10.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion and Future Works}{13}{section.8}\protected@file@percent }
-\newlabel{sec:Conclusion}{{VIII}{13}{Conclusion and Future Works}{section.8}{}}
-\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  A: Proof of Equation \eqref  {eq:beta_lin_gls}}{13}{section*.5}\protected@file@percent }
-\newlabel{app:beta_lin_gls}{{A}{13}{\appendixname \nobreakspace \thesectiondis \\* Proof of Equation \eqref {eq:beta_lin_gls}}{section*.5}{}}
+\citation{Kay1993}
 \bibstyle{IEEEtran}
 \bibdata{References}
 \bibcite{He2016}{1}
@@ -214,54 +218,59 @@
 \bibcite{Italiano2025}{5}
 \bibcite{Zafari2019}{6}
 \bibcite{Lymberopoulos2015}{7}
-\bibcite{Leitch2023}{8}
-\bibcite{Wang2024b}{9}
-\bibcite{Trevlakis2023}{10}
-\bibcite{Haas:16}{11}
-\bibcite{Zhu2025}{12}
-\bibcite{Rekkas2023}{13}
-\bibcite{Tran2022}{14}
-\bibcite{Glass2021}{15}
-\bibcite{Deng2023}{16}
-\bibcite{Qin2020}{17}
-\bibcite{Chen2021}{18}
-\bibcite{Qin2021}{19}
-\bibcite{Liu2022}{20}
-\bibcite{Zia-Ul-Mustafa2023}{21}
-\bibcite{Zhang2024}{22}
-\bibcite{Li2024}{23}
-\bibcite{Wang2024}{24}
-\bibcite{Ma2024}{25}
-\bibcite{Chassagne2025}{26}
-\bibcite{Shi2025}{27}
-\bibcite{ShiJin2025}{28}
-\bibcite{Zhuang2018}{29}
-\bibcite{photonics9100750}{30}
-\bibcite{Plets2019}{31}
+\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  A: Proof of Equation \eqref  {eq:beta_lin_gls}}{14}{section*.5}\protected@file@percent }
+\newlabel{app:beta_lin_gls}{{A}{14}{\appendixname \nobreakspace \thesectiondis \\* Proof of Equation \eqref {eq:beta_lin_gls}}{section*.5}{}}
 \@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  B: Proof of Equation \eqref  {eq:cov_beta_gls}}{14}{section*.6}\protected@file@percent }
 \newlabel{app:cov_beta_gls}{{B}{14}{\appendixname \nobreakspace \thesectiondis \\* Proof of Equation \eqref {eq:cov_beta_gls}}{section*.6}{}}
 \newlabel{eq:tilden_i}{{54}{14}{\appendixname \nobreakspace \thesectiondis \\* Proof of Equation \eqref {eq:cov_beta_gls}}{equation.54}{}}
 \newlabel{eq:var_beta_gls_proof}{{55}{14}{\appendixname \nobreakspace \thesectiondis \\* Proof of Equation \eqref {eq:cov_beta_gls}}{equation.55}{}}
 \newlabel{eq:cov_beta_gls_proof}{{56}{14}{\appendixname \nobreakspace \thesectiondis \\* Proof of Equation \eqref {eq:cov_beta_gls}}{equation.56}{}}
 \@writefile{toc}{\contentsline {section}{References}{14}{section*.7}\protected@file@percent }
-\bibcite{electronics8111311}{32}
-\bibcite{ALMADANI2021126654}{33}
-\bibcite{Zhang2020}{34}
-\bibcite{Cossu2022}{35}
-\bibcite{Liu:25}{36}
-\bibcite{mi13070990}{37}
-\bibcite{Zeng2023}{38}
-\bibcite{Jin2023}{39}
-\bibcite{AlSatai2026}{40}
-\bibcite{Kahn1997}{41}
-\bibcite{Kay1993}{42}
-\bibcite{Haupt2004}{43}
-\bibcite{acuna2025}{44}
-\bibcite{Bishop2006}{45}
-\bibcite{golub2013matrix}{46}
+\bibcite{Leitch2023}{8}
+\bibcite{Wang2024b}{9}
+\bibcite{Trevlakis2023}{10}
+\bibcite{Haas:16}{11}
+\bibcite{Zhu2025}{12}
+\bibcite{Peng2022}{13}
+\bibcite{Chen2026}{14}
+\bibcite{Zhou2026}{15}
+\bibcite{Rekkas2023}{16}
+\bibcite{Tran2022}{17}
+\bibcite{Glass2021}{18}
+\bibcite{Deng2023}{19}
+\bibcite{Qin2020}{20}
+\bibcite{Chen2021}{21}
+\bibcite{Qin2021}{22}
+\bibcite{Liu2022}{23}
+\bibcite{Zia-Ul-Mustafa2023}{24}
+\bibcite{Zhang2024}{25}
+\bibcite{Li2024}{26}
+\bibcite{Wang2024}{27}
+\bibcite{Ma2024}{28}
+\bibcite{Chassagne2025}{29}
+\bibcite{Shi2025}{30}
+\bibcite{ShiJin2025}{31}
+\bibcite{Zhuang2018}{32}
+\bibcite{photonics9100750}{33}
+\bibcite{Plets2019}{34}
+\bibcite{electronics8111311}{35}
+\bibcite{ALMADANI2021126654}{36}
+\bibcite{Zhang2020}{37}
+\bibcite{Cossu2022}{38}
+\bibcite{Liu:25}{39}
+\bibcite{mi13070990}{40}
+\bibcite{Zeng2023}{41}
+\bibcite{Jin2023}{42}
+\bibcite{AlSatai2026}{43}
+\bibcite{Kahn1997}{44}
+\bibcite{Kay1993}{45}
+\bibcite{Haupt2004}{46}
+\bibcite{acuna2025}{47}
+\bibcite{Bishop2006}{48}
+\bibcite{golub2013matrix}{49}
 \@writefile{toc}{\contentsline {section}{Biographies}{15}{IEEEbiography.0}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{Kevin Acuna-Condori}{15}{IEEEbiography.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{Bastien Béchadergue}{15}{IEEEbiography.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Hongyu Guan}{15}{IEEEbiography.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Luc Chassagne}{15}{IEEEbiography.4}\protected@file@percent }
-\gdef \@abspage@last{15}
+\@writefile{toc}{\contentsline {subsection}{Hongyu Guan}{16}{IEEEbiography.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Luc Chassagne}{16}{IEEEbiography.4}\protected@file@percent }
+\gdef \@abspage@last{16}

@@ -1,10 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  28 AUG 2026 00:10
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  3 SEP 2026 22:34
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/main
-(c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/main.tex
+**main.tex
+(./main.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (./IEEEtran.cls
@@ -18,7 +17,8 @@ Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
 \@IEEEtrantmpcountB=\count276
 \@IEEEtrantmpcountC=\count277
 \@IEEEtrantmptoksA=\toks17
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 503.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 5
+03.
 (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -26,7 +26,8 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 -- Using PDF output.
 \@IEEEnormalsizeunitybaselineskip=\dimen151
 -- This is a 10 point document.
-LaTeX Encoding Info:    Redeclaring text command \textunderscore (encoding ?) on input line 940.
+LaTeX Encoding Info:    Redeclaring text command \textunderscore (encoding ?) o
+n input line 940.
 \CLASSINFOnormalsizebaselineskip=\dimen152
 \CLASSINFOnormalsizeunitybaselineskip=\dimen153
 \IEEEnormaljot=\dimen154
@@ -34,34 +35,42 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <5> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <7> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <8> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <11> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <11> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <18> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1086.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <18> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1086.
+
 \IEEEquantizedlength=\dimen155
 \IEEEquantizedlengthdiff=\dimen156
 \IEEEquantizedtextheightdiff=\dimen157
@@ -103,14 +112,17 @@ Package: amsmath 2025/07/09 v2.17z AMS math features
 For additional information on amsmath, use the `?' option.
 (c:/texlive/2026/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
- (c:/texlive/2026/texmf-dist/tex/latex/amsmath/amsgen.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks18
 \ex@=\dimen172
-)) (c:/texlive/2026/texmf-dist/tex/latex/amsmath/amsbsy.sty
+))
+(c:/texlive/2026/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen173
-) (c:/texlive/2026/texmf-dist/tex/latex/amsmath/amsopn.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
 \inf@bad=\count290
@@ -160,16 +172,19 @@ LaTeX Info: Redefining \Relbar on input line 970.
 \mathdisplay@stack=\toks22
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
-) (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-) (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/amssymb.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
-) (c:/texlive/2026/texmf-dist/tex/latex/tools/array.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/tools/array.sty
 Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
 \col@sep=\dimen181
 \ar@mcellbox=\box57
@@ -178,41 +193,54 @@ Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
 \extratabsurround=\skip55
 \backup@length=\skip56
 \ar@cellbox=\box58
-) (c:/texlive/2026/texmf-dist/tex/latex/base/textcomp.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
-) (c:/texlive/2026/texmf-dist/tex/latex/sttools/stfloats.sty
-Package: stfloats 2025/06/18 v3.4 Improve float mechanism and baselineskip settings
+)
+(c:/texlive/2026/texmf-dist/tex/latex/sttools/stfloats.sty
+Package: stfloats 2025/06/18 v3.4 Improve float mechanism and baselineskip sett
+ings
 \@dblbotnum=\count302
 \c@dblbotnumber=\count303
-) (c:/texlive/2026/texmf-dist/tex/latex/url/url.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
-) (c:/texlive/2026/texmf-dist/tex/latex/tools/verbatim.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/tools/verbatim.sty
 Package: verbatim 2024-01-22 v1.5x LaTeX2e package for verbatim enhancements
 \every@verbatim=\toks24
 \verbatim@line=\toks25
 \verbatim@in@stream=\read2
-) (c:/texlive/2026/texmf-dist/tex/latex/graphics/graphicx.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
- (c:/texlive/2026/texmf-dist/tex/latex/graphics/keyval.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks26
-) (c:/texlive/2026/texmf-dist/tex/latex/graphics/graphics.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
- (c:/texlive/2026/texmf-dist/tex/latex/graphics/trig.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
-) (c:/texlive/2026/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+)
+(c:/texlive/2026/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
- (c:/texlive/2026/texmf-dist/tex/latex/graphics-def/pdftex.def
+
+(c:/texlive/2026/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen183
 \Gin@req@width=\dimen184
-) (c:/texlive/2026/texmf-dist/tex/latex/subfig/subfig.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/subfig/subfig.sty
 Package: subfig 2005/06/28 ver: 1.3 subfig package
- (c:/texlive/2026/texmf-dist/tex/latex/caption/caption3.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/caption/caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
 \caption@tempdima=\dimen185
 \captionmargin=\dimen186
@@ -224,7 +252,17 @@ Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
 \caption@hangindent=\dimen192
 Package caption Info: Unknown document class (or package),
 (caption)             standard defaults will be used.
-Package caption Info: \@makecaption = \long macro:#1#2->\ifx \@captype \@IEEEtablestring \footnotesize \bgroup \par \centering \@IEEEtabletopskipstrut {\normalfont \footnotesize #1}\\{\normalfont \footnotesize \scshape #2}\par \addvspace {0.5\baselineskip }\egroup \@IEEEtablecaptionsepspace \else \@IEEEfigurecaptionsepspace \setbox \@tempboxa \hbox {\normalfont \footnotesize {#1.}\nobreakspace \nobreakspace #2}\ifdim \wd \@tempboxa >\hsize \setbox \@tempboxa \hbox {\normalfont \footnotesize {#1.}\nobreakspace \nobreakspace }\parbox [t]{\hsize }{\normalfont \footnotesize \noindent \unhbox \@tempboxa #2}\else \ifCLASSOPTIONconference \hbox to\hsize {\normalfont \footnotesize \hfil \box \@tempboxa \hfil }\else \hbox to\hsize {\normalfont \footnotesize \box \@tempboxa \hfil }\fi \fi \fi  on input line 1175.
+Package caption Info: \@makecaption = \long macro:#1#2->\ifx \@captype \@IEEEta
+blestring \footnotesize \bgroup \par \centering \@IEEEtabletopskipstrut {\norma
+lfont \footnotesize #1}\\{\normalfont \footnotesize \scshape #2}\par \addvspace
+ {0.5\baselineskip }\egroup \@IEEEtablecaptionsepspace \else \@IEEEfigurecaptio
+nsepspace \setbox \@tempboxa \hbox {\normalfont \footnotesize {#1.}\nobreakspac
+e \nobreakspace #2}\ifdim \wd \@tempboxa >\hsize \setbox \@tempboxa \hbox {\nor
+malfont \footnotesize {#1.}\nobreakspace \nobreakspace }\parbox [t]{\hsize }{\n
+ormalfont \footnotesize \noindent \unhbox \@tempboxa #2}\else \ifCLASSOPTIONcon
+ference \hbox to\hsize {\normalfont \footnotesize \hfil \box \@tempboxa \hfil }
+\else \hbox to\hsize {\normalfont \footnotesize \box \@tempboxa \hfil }\fi \fi 
+\fi  on input line 1175.
 )
 \c@KVtest=\count304
 \sf@farskip=\skip57
@@ -239,7 +277,8 @@ Package caption Info: \@makecaption = \long macro:#1#2->\ifx \@captype \@IEEEtab
 \c@lotdepth=\count310
 \sf@top=\skip60
 \sf@bottom=\skip61
-) (c:/texlive/2026/texmf-dist/tex/latex/tools/tabularx.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/tools/tabularx.sty
 Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
 \TX@col@width=\dimen194
 \TX@old@table=\dimen195
@@ -248,9 +287,11 @@ Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
 \TX@delta=\dimen198
 \TX@cols=\count311
 \TX@ftn=\toks27
-) (c:/texlive/2026/texmf-dist/tex/latex/gensymb/gensymb.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/gensymb/gensymb.sty
 Package: gensymb 2022/10/17 v1.0.2 (KJH)
-) (c:/texlive/2026/texmf-dist/tex/latex/enumitem/enumitem.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/enumitem/enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
 \labelindent=\skip62
 \enit@outerparindent=\dimen199
@@ -258,7 +299,8 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@inbox=\box59
 \enit@count@id=\count312
 \enitdp@description=\count313
-) (c:/texlive/2026/texmf-dist/tex/latex/booktabs/booktabs.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \heavyrulewidth=\dimen256
 \lightrulewidth=\dimen257
@@ -277,23 +319,29 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count316
 \@lastruleclass=\count317
 \@thisrulewidth=\dimen268
-) (c:/texlive/2026/texmf-dist/tex/latex/algorithms/algorithm.sty
-Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating environment
- (c:/texlive/2026/texmf-dist/tex/latex/float/float.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/algorithms/algorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+
+(c:/texlive/2026/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count318
 \float@exts=\toks29
 \float@box=\box60
 \@float@everytoks=\toks30
 \@floatcapt=\box61
-) (c:/texlive/2026/texmf-dist/tex/latex/base/ifthen.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 )
 \@float@every@algorithm=\toks31
 \c@algorithm=\count319
-) (c:/texlive/2026/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
 Package: algpseudocode 
- (c:/texlive/2026/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
 Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
 
 Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
@@ -333,56 +381,76 @@ LaTeX template Info: Declaring instance 'cmss' of type xfrac on line 392.
 
 LaTeX template Info: Declaring instance 'cmtt' of type xfrac on line 392.
 
-) (c:/texlive/2026/texmf-dist/tex/latex/hyperref/hyperref.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2026-01-29 v7.01p Hypertext links for LaTeX
- (c:/texlive/2026/texmf-dist/tex/generic/iftex/iftex.sty
+
+(c:/texlive/2026/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
-) (c:/texlive/2026/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
-) (c:/texlive/2026/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+)
+(c:/texlive/2026/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-) (c:/texlive/2026/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+)
+(c:/texlive/2026/texmf-dist/tex/generic/pdfescape/pdfescape.sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
- (c:/texlive/2026/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+
+(c:/texlive/2026/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
-) (c:/texlive/2026/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
-Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
- (c:/texlive/2026/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+)
+(c:/texlive/2026/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(c:/texlive/2026/texmf-dist/tex/generic/infwarerr/infwarerr.sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-)) (c:/texlive/2026/texmf-dist/tex/latex/hycolor/hycolor.sty
+))
+(c:/texlive/2026/texmf-dist/tex/latex/hycolor/hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (c:/texlive/2026/texmf-dist/tex/latex/hyperref/nameref.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
- (c:/texlive/2026/texmf-dist/tex/latex/refcount/refcount.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
-) (c:/texlive/2026/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+)
+(c:/texlive/2026/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
- (c:/texlive/2026/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
 \c@section@level=\count327
-) (c:/texlive/2026/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count328
-) (c:/texlive/2026/texmf-dist/tex/generic/stringenc/stringenc.sty
-Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+(c:/texlive/2026/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
 )
 \@linkdim=\dimen274
 \Hy@linkcounter=\count329
 \Hy@pagecounter=\count330
- (c:/texlive/2026/texmf-dist/tex/latex/hyperref/pd1enc.def
+
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2026-01-29 v7.01p Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
-) (c:/texlive/2026/texmf-dist/tex/generic/intcalc/intcalc.sty
+)
+(c:/texlive/2026/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
 \Hy@SavedSpaceFactor=\count331
- (c:/texlive/2026/texmf-dist/tex/latex/hyperref/puenc.def
+
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/puenc.def
 File: puenc.def 2026-01-29 v7.01p Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
@@ -398,10 +466,13 @@ Package hyperref Info: Bookmarks ON on input line 4468.
 \c@Hy@tempcnt=\count332
 LaTeX Info: Redefining \url on input line 4807.
 \XeTeXLinkMargin=\dimen275
- (c:/texlive/2026/texmf-dist/tex/generic/bitset/bitset.sty
+
+(c:/texlive/2026/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
- (c:/texlive/2026/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
-Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+
+(c:/texlive/2026/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
 ))
 \Fld@menulength=\count333
 \Field@Width=\dimen276
@@ -418,29 +489,37 @@ Package hyperref Info: PDF/A mode OFF on input line 6114.
 \c@Hfootnote=\count336
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
- (c:/texlive/2026/texmf-dist/tex/latex/hyperref/hpdftex.def
+
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2026-01-29 v7.01p Hyperref driver for pdfTeX
 \Fld@listcount=\count337
 \c@bookmark@seq@number=\count338
- (c:/texlive/2026/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+
+(c:/texlive/2026/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
- (c:/texlive/2026/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+
+(c:/texlive/2026/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
-Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+84.
 )
 \Hy@SectionHShift=\skip66
-) (c:/texlive/2026/texmf-dist/tex/latex/cite/cite.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/cite/cite.sty
 LaTeX Info: Redefining \cite on input line 302.
 LaTeX Info: Redefining \nocite on input line 332.
 Package: cite 2015/02/27  v 5.5
-) (c:/texlive/2026/texmf-dist/tex/latex/xcolor/xcolor.sty
+)
+(c:/texlive/2026/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
- (c:/texlive/2026/texmf-dist/tex/latex/graphics-cfg/color.cfg
+
+(c:/texlive/2026/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 274.
- (c:/texlive/2026/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+
+(c:/texlive/2026/texmf-dist/tex/latex/graphics/mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
 Package xcolor Info: Model `RGB' extended on input line 1365.
@@ -450,9 +529,11 @@ Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
-) (c:/texlive/2026/texmf-dist/tex/generic/soul/soul.sty
+)
+(c:/texlive/2026/texmf-dist/tex/generic/soul/soul.sty
 Package: soul 2026-03-06 v3.2 Permit use of UTF-8 characters in soul (HO)
- (c:/texlive/2026/texmf-dist/tex/generic/soul/soul-ori.sty
+
+(c:/texlive/2026/texmf-dist/tex/generic/soul/soul-ori.sty
 Package: soul-ori 2026-03-06 v3.2 letterspacing/underlining (mf)
 \SOUL@word=\toks32
 \SOUL@lasttoken=\toks33
@@ -474,32 +555,35 @@ Package: soul-ori 2026-03-06 v3.2 letterspacing/underlining (mf)
 \SOUL@ttwidth=\dimen284
 \SOUL@uldp=\dimen285
 \SOUL@ulht=\dimen286
-) (c:/texlive/2026/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+)
+(c:/texlive/2026/texmf-dist/tex/generic/etexcmds/etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
-)) (c:/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+))
+(c:/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count343
-) (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.aux)
+)
+(build/main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
 
 -- Lines per column: 58 (exact).
 (c:/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -517,67 +601,73 @@ LaTeX Font Info:    ... okay on input line 22.
 \everyMPtoPDFconversion=\toks39
 ) (c:/texlive/2026/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
-Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
- (c:/texlive/2026/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(c:/texlive/2026/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
 ))
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: End \AtBeginDocument code.
 \symgns@font=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `gns@font' in version `bold'
-(Font)                  TS1/ptm/m/n --> TS1/ptm/b/n on input line 22.
-Package gensymb Info: Math companion symbols declared on input line 22.
-LaTeX Info: Redefining \degree on input line 22.
-LaTeX Info: Redefining \celsius on input line 22.
-Package gensymb Info: Using text companion symbols for \degree, \celsius and \perthousand on input line 22.
-LaTeX Info: Redefining \ohm on input line 22.
-Package gensymb Info: Using \textohm for \ohm on input line 22.
-Package gensymb Info: Using \textmu for \micro on input line 22.
-Package hyperref Info: Link coloring ON on input line 22.
- (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.out) (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.out)
+(Font)                  TS1/ptm/m/n --> TS1/ptm/b/n on input line 25.
+Package gensymb Info: Math companion symbols declared on input line 25.
+LaTeX Info: Redefining \degree on input line 25.
+LaTeX Info: Redefining \celsius on input line 25.
+Package gensymb Info: Using text companion symbols for \degree, \celsius and \p
+erthousand on input line 25.
+LaTeX Info: Redefining \ohm on input line 25.
+Package gensymb Info: Using \textohm for \ohm on input line 25.
+Package gensymb Info: Using \textmu for \micro on input line 25.
+Package hyperref Info: Link coloring ON on input line 25.
+
+(build/main.out) (build/main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 40.
- (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
+LaTeX Font Info:    Trying to load font information for U+msa on input line 43.
+
+
+(c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 40.
- (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
+LaTeX Font Info:    Trying to load font information for U+msb on input line 43.
+
+
+(c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 40.
- (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 4
+3.
+
+(c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-) [1{c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}
+) [1{c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2
+026/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
-]
-Underfull \vbox (badness 7379) has occurred while \output is active []
-
- [2]
+] [2]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\\' on input line 124.
+(hyperref)                removing `\\' on input line 127.
 
-<Figures/II. System/Figure1.png, id=313, 755.82375pt x 484.81125pt>
+<Figures/II. System/Figure1.png, id=323, 755.82375pt x 484.81125pt>
 File: Figures/II. System/Figure1.png Graphic file (type png)
 <use Figures/II. System/Figure1.png>
-Package pdftex.def Info: Figures/II. System/Figure1.png  used on input line 158.
+Package pdftex.def Info: Figures/II. System/Figure1.png  used on input line 161
+.
 (pdftex.def)             Requested size: 252.0pt x 161.63786pt.
 [3 <./Figures/II. System/Figure1.png>] [4]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 343.
+(hyperref)                removing `math shift' on input line 346.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\le' on input line 343.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 343.
+(hyperref)                removing `\le' on input line 346.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -585,200 +675,275 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 346.
+(hyperref)                removing `math shift' on input line 349.
 
 
-Underfull \hbox (badness 4132) in paragraph at lines 346--347
- \OT1/ptm/m/it/10 2) Just-Determined Regime ($\OML/cmm/m/it/10 K \OT1/cmr/m/n/10 = 3$\OT1/ptm/m/it/10 ): [][][] \OT1/ptm/m/n/10 With three
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 349.
+
+
+Underfull \hbox (badness 4132) in paragraph at lines 349--350
+ \OT1/ptm/m/it/10 2) Just-Determined Regime ($\OML/cmm/m/it/10 K \OT1/cmr/m/n/1
+0 = 3$\OT1/ptm/m/it/10 ): [][][] \OT1/ptm/m/n/10 With three
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 346--347
-\OT1/ptm/m/n/10 ori-en-ta-tions whose gra-di-ent vec-tors $\OMS/cmsy/m/n/10 f[]\OML/cmm/m/it/10 ; []; []\OMS/cmsy/m/n/10 g$ \OT1/ptm/m/n/10 are
+Underfull \hbox (badness 10000) in paragraph at lines 349--350
+\OT1/ptm/m/n/10 ori-en-ta-tions whose gra-di-ent vec-tors $\OMS/cmsy/m/n/10 f[]
+\OML/cmm/m/it/10 ; []; []\OMS/cmsy/m/n/10 g$ \OT1/ptm/m/n/10 are
  []
 
 
-Underfull \hbox (badness 3547) in paragraph at lines 346--347
+Underfull \hbox (badness 3547) in paragraph at lines 349--350
 \OT1/ptm/m/n/10 lin-early independent---which re-quires non-coplanar LED
  []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 349.
+(hyperref)                removing `math shift' on input line 352.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ge' on input line 349.
+(hyperref)                removing `\ge' on input line 352.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 349.
+(hyperref)                removing `math shift' on input line 352.
 
 [5]
-<Figures/IV. Optimization/DEB_violin_comparison.pdf, id=418, 432.61626pt x 236.885pt>
-File: Figures/IV. Optimization/DEB_violin_comparison.pdf Graphic file (type pdf)
+<Figures/IV. Optimization/DEB_violin_comparison.pdf, id=428, 432.61626pt x 236.
+885pt>
+File: Figures/IV. Optimization/DEB_violin_comparison.pdf Graphic file (type pdf
+)
 <use Figures/IV. Optimization/DEB_violin_comparison.pdf>
-Package pdftex.def Info: Figures/IV. Optimization/DEB_violin_comparison.pdf  used on input line 443.
+Package pdftex.def Info: Figures/IV. Optimization/DEB_violin_comparison.pdf  us
+ed on input line 448.
 (pdftex.def)             Requested size: 252.0pt x 137.98618pt.
-<Figures/IV. Optimization/DEB_heatmap_K5.pdf, id=419, 242.9075pt x 339.2675pt>
+<Figures/IV. Optimization/DEB_heatmap_K5.pdf, id=429, 242.9075pt x 339.2675pt>
 File: Figures/IV. Optimization/DEB_heatmap_K5.pdf Graphic file (type pdf)
 <use Figures/IV. Optimization/DEB_heatmap_K5.pdf>
-Package pdftex.def Info: Figures/IV. Optimization/DEB_heatmap_K5.pdf  used on input line 451.
+Package pdftex.def Info: Figures/IV. Optimization/DEB_heatmap_K5.pdf  used on i
+nput line 456.
 (pdftex.def)             Requested size: 252.0pt x 351.96535pt.
  [6 <./Figures/IV. Optimization/DEB_violin_comparison.pdf>]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 497.
- (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 5
+02.
+
+(c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 496--498
+Underfull \hbox (badness 10000) in paragraph at lines 501--503
 \OT1/ptm/m/n/10 To solve [], we repa-ram-e-ter-ize the di-rec-tion
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 496--498
-\OT1/ptm/m/n/10 in spher-i-cal co-or-di-nates $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^R[]; ^^^[]\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/10 so that $\OT1/cmr/bx/n/10 v \OT1/cmr/m/n/10 =
+Underfull \hbox (badness 10000) in paragraph at lines 501--503
+\OT1/ptm/m/n/10 in spher-i-cal co-or-di-nates $\OT1/cmr/m/n/10 (\OML/cmm/m/it/1
+0 ^^R[]; ^^^[]\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/10 so that $\OT1/cmr/bx/n/10 v \O
+T1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 3058) in paragraph at lines 496--498
-\OT1/cmr/m/n/10 [[] \OML/cmm/m/it/10 ^^R[] [] ^^^[];  [] ^^R[] [] ^^^[];  \OMS/cmsy/m/n/10 ^^@ [] \OML/cmm/m/it/10 ^^R[]\OT1/cmr/m/n/10 ][]$\OT1/ptm/m/n/10 , which sat-is-fies
+Underfull \hbox (badness 3058) in paragraph at lines 501--503
+\OT1/cmr/m/n/10 [[] \OML/cmm/m/it/10 ^^R[] [] ^^^[];  [] ^^R[] [] ^^^[];  \OMS/
+cmsy/m/n/10 ^^@ [] \OML/cmm/m/it/10 ^^R[]\OT1/cmr/m/n/10 ][]$\OT1/ptm/m/n/10 , 
+which sat-is-fies
  []
 
 
-Underfull \hbox (badness 5345) in paragraph at lines 496--498
-\OT1/pcr/m/n/10 lsqnonlin\OT1/ptm/m/n/10 ), which uses the Gauss--Newton Hes-sian
+Underfull \hbox (badness 5345) in paragraph at lines 501--503
+\OT1/pcr/m/n/10 lsqnonlin\OT1/ptm/m/n/10 ), which uses the Gauss--Newton Hes-si
+an
  []
 
 [7 <./Figures/IV. Optimization/DEB_heatmap_K5.pdf>]
-<Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf, id=527, 249.93375pt x 182.6825pt>
-File: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf Graphic file (type pdf)
+<Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf, id=537, 249.93375pt x 182.
+6825pt>
+File: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf Graphic file (type pdf
+)
 <use Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf>
-Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf  used on input line 512.
+Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf  us
+ed on input line 517.
 (pdftex.def)             Requested size: 252.0pt x 184.19844pt.
-<Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf, id=528, 300.12125pt x 223.83624pt>
-File: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf Graphic file (type pdf)
+<Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf, id=538, 300.12125pt x 
+223.83624pt>
+File: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf Graphic file (type
+ pdf)
 <use Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf>
-Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf  used on input line 519.
+Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf
+  used on input line 524.
 (pdftex.def)             Requested size: 252.0pt x 187.95285pt.
 
-Underfull \hbox (badness 2393) in paragraph at lines 541--542
+Underfull \hbox (badness 2393) in paragraph at lines 546--547
  \OT1/ptm/m/it/10 1) Lam-ber-tian Power Ra-tios and Ho-mo-ge-neous Con-
  []
 
-[8 <./Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf> <./Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf>]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 698.
+[8 <./Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf> <./Figures/IV. Optimi
+zation/Bound_vs_SNR_envelope_rms.pdf>]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 703.
  [9]
-<Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf, id=688, 285.065pt x 191.71625pt>
-File: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf Graphic file (type pdf)
+<Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf, id=699
+, 285.065pt x 191.71625pt>
+File: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf Gr
+aphic file (type pdf)
 <use Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf>
-Package pdftex.def Info: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf  used on input line 856.
+Package pdftex.def Info: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt10
+0_sig5_max30.pdf  used on input line 861.
 (pdftex.def)             Requested size: 252.0pt x 169.47725pt.
 
-Underfull \hbox (badness 2310) in paragraph at lines 866--868
- []\OT1/ptm/m/it/10 GLS: [] \OT1/ptm/m/n/10 From []--[], the full co-vari-ance $\OT1/cmr/bx/n/10 ^^F[] \OMS/cmsy/m/n/10 2
+Underfull \hbox (badness 2310) in paragraph at lines 871--873
+ []\OT1/ptm/m/it/10 GLS: [] \OT1/ptm/m/n/10 From []--[], the full co-vari-ance 
+$\OT1/cmr/bx/n/10 ^^F[] \OMS/cmsy/m/n/10 2
  []
 
 [10]
-<Figures/VII.Simulations/Fig_Time.png, id=707, 235.96155pt x 176.8206pt>
+<Figures/VII.Simulations/Fig_Time.png, id=719, 235.96155pt x 176.8206pt>
 File: Figures/VII.Simulations/Fig_Time.png Graphic file (type png)
 <use Figures/VII.Simulations/Fig_Time.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_Time.png  used on input line 879.
+Package pdftex.def Info: Figures/VII.Simulations/Fig_Time.png  used on input li
+ne 884.
 (pdftex.def)             Requested size: 252.0pt x 188.8454pt.
-<Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png, id=715, 285.34605pt x 190.0701pt>
-File: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png Graphic file (type png)
+<Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png, id=727, 285.34605pt 
+x 190.0701pt>
+File: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png Graphic file (ty
+pe png)
 <use Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png  used on input line 894.
+Package pdftex.def Info: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.p
+ng  used on input line 899.
 (pdftex.def)             Requested size: 252.0pt x 167.85672pt.
-
-Underfull \vbox (badness 1348) has occurred while \output is active []
-
- [11 <./Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf> <./Figures/VII.Simulations/Fig_Time.png (PNG copy)>]
-<Figures/VII.Simulations/Fig_Comparison_3D.png, id=755, 382.3083pt x 268.48305pt>
+ [11 <./Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf>
+ <./Figures/VII.Simulations/Fig_Time.png (PNG copy)>]
+<Figures/VII.Simulations/Fig_Comparison_3D.png, id=769, 382.3083pt x 268.48305p
+t>
 File: Figures/VII.Simulations/Fig_Comparison_3D.png Graphic file (type png)
 <use Figures/VII.Simulations/Fig_Comparison_3D.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_Comparison_3D.png  used on input line 929.
+Package pdftex.def Info: Figures/VII.Simulations/Fig_Comparison_3D.png  used on
+ input line 935.
 (pdftex.def)             Requested size: 252.0pt x 176.97403pt.
-
-Underfull \hbox (badness 1642) in paragraph at lines 942--943
+ [12 <./Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png (PNG copy)> <.
+/Figures/VII.Simulations/Fig_Comparison_3D.png (PNG copy)>]
+Underfull \hbox (badness 1642) in paragraph at lines 948--949
 \OT1/ptm/m/n/10 the best ac-cu-racy (nearly match-ing the bound) but re-
  []
 
-<Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png, id=764, 230.3004pt x 191.2746pt>
+<Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png, id=786, 230.3004pt x 191.27
+46pt>
 File: Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png Graphic file (type png)
+
 <use Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png  used on input line 947.
+Package pdftex.def Info: Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png  use
+d on input line 953.
 (pdftex.def)             Requested size: 226.79846pt x 188.36716pt.
-<Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png, id=765, 231.7458pt x 191.2746pt>
+<Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png, id=787, 231.7458pt x 191.27
+46pt>
 File: Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png Graphic file (type png)
+
 <use Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png>
-Package pdftex.def Info: Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png  used on input line 949.
+Package pdftex.def Info: Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png  use
+d on input line 955.
 (pdftex.def)             Requested size: 226.79846pt x 187.19972pt.
 
-Underfull \vbox (badness 7981) has occurred while \output is active []
+Underfull \hbox (badness 2689) in paragraph at lines 966--967
+[][]\OT1/ptm/m/n/10 The LOS chan-nel model also de-lim-its the receiver-
+ []
 
- [12 <./Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png (PNG copy)> <./Figures/VII.Simulations/Fig_Comparison_3D.png (PNG copy)>]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\hbox' on input line 971.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathsurround' on input line 971.
-
+[13 <./Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png (PNG copy)> <./Figures
+/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png (PNG copy)>]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\z@' on input line 971.
+(hyperref)                removing `\hbox' on input line 987.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\unskip' on input line 971.
+(hyperref)                removing `\mathsurround' on input line 987.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@@italiccorr' on input line 971.
-
-[13 <./Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png (PNG copy)> <./Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png (PNG copy)>]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\hbox' on input line 1007.
+(hyperref)                removing `\z@' on input line 987.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathsurround' on input line 1007.
+(hyperref)                removing `\unskip' on input line 987.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\z@' on input line 1007.
+(hyperref)                removing `\@@italiccorr' on input line 987.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\unskip' on input line 1007.
+(hyperref)                removing `\hbox' on input line 1023.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@@italiccorr' on input line 1007.
+(hyperref)                removing `\mathsurround' on input line 1023.
 
-(c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.bbl [14]) [15] (c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.aux)
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\z@' on input line 1023.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\unskip' on input line 1023.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\@@italiccorr' on input line 1023.
+
+(build/main.bbl [14]) [15] [16
+
+] (build/main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: A88477DC7CF52C9E829ECA7EDC5DA2DA;9092.
+(rerunfilecheck)             Checksum: 03D1F40ADEB094AE481FCBF58FDF880C;9347.
  ) 
 Here is how much of TeX's memory you used:
- 14404 strings out of 467525
- 233850 string characters out of 5423209
- 694076 words of memory out of 5000000
- 42888 multiletter control sequences out of 15000+600000
- 682728 words of font info for 152 fonts, out of 8000000 for 9000
+ 14414 strings out of 467525
+ 232575 string characters out of 5423209
+ 695315 words of memory out of 5000000
+ 42895 multiletter control sequences out of 15000+600000
+ 681592 words of font info for 151 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,16n,79p,1835b,589s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on c:/Users/Owner/Documents/UVSQ/simulation_VLP/TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/build/main.pdf (15 pages, 2757424 bytes).
+ 75i,19n,79p,1751b,588s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
+live/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><c:/texlive/2026/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2026/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmbx9.pfb><c:/texlive/2026/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public
+/amsfonts/cmextra/cmex9.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mmi5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><
+c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive
+/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/texlive/2026/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2026/texmf-dist/fonts/type1
+/public/amsfonts/cmextra/cmmib5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pub
+lic/amsfonts/cmextra/cmmib7.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb>
+<c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive
+/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><c:/texlive/2026/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmss8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmsy5.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cms
+y6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:
+/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2
+026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2026/texmf-
+dist/fonts/type1/public/amsfonts/symbols/msam10.pfb><c:/texlive/2026/texmf-dist
+/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fon
+ts/type1/public/amsfonts/symbols/msbm7.pfb><c:/texlive/2026/texmf-dist/fonts/ty
+pe1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/ut
+mb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texl
+ive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dis
+t/fonts/type1/urw/times/utmri8a.pfb>
+Output written on build/main.pdf (16 pages, 2762693 bytes).
 PDF statistics:
- 1007 PDF objects out of 1200 (max. 8388607)
- 839 compressed objects within 9 object streams
- 195 named destinations out of 1000 (max. 500000)
- 400 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1038 PDF objects out of 1200 (max. 8388607)
+ 869 compressed objects within 9 object streams
+ 200 named destinations out of 1000 (max. 500000)
+ 408 words of extra memory for PDF output out of 10000 (max. 10000000)
 
