@@ -1,0 +1,536 @@
+Contents lists available at ScienceDirect
+Optik
+journal homepage: www.elsevier.com/locate/ijleo
+Original research article
+Indoor visible light high precision three-dimensional positioning
+algorithm based on single LED lamp
+Ling Qin, Ben Niu, Baoshan Li, Yongxing Du *
+School of Information Engineering, Inner Mongolia University of Science and Technology, Inner Mongolia, Baotou, 014010, China
+ARTICLE INFO
+Keywords:
+Visible light indoor positioning(VLP)
+Receiving optical power
+Azimuth angle
+Positioning error
+ABSTRACT
+With the rapid development of information technology, there is a growing demand for people in
+indoor location services.This paper proposes a novel high-precision indoor three-dimensional
+positioning algorithm for single light emitting diode (LED). By using three tilted photodetectors
+(PD)and one horizontal PD as receivers.Calculating the ratio of received optical power of the
+three tilted PDs to the horizontal PD respectively. According to the relationship of position be-
+tween the PDs and the tilt angle, azimuth angle, placement angle of the tilted PD and other
+parameters, establish a mathematical relationship between the received optical power ratio and
+the receiver's three-dimensional coordinates, calculate the three-dimensional coordinates of the
+receiver at any position. The simulation results show that in the positioning area of
+1 × 1 × 1.5 m3, when the inclination angle α is 25°, the azimuth angle di ﬀerence θ is 90°, the
+placement angle ω1=0°, ω2=90°, ω3=180°, the distance r between the horizontal PD center and
+the tilted PD center is 1 cm, the positioning accuracy is better, the point with the positioning
+error within 3 cm accounts for 84 % of the total test points, and the average positioning error is
+2.52 cm. Compared with the traditional indoor positioning technology, the cost of the positioning
+technology used in this paper is greatly reduced, the positioning accuracy is signi ﬁcantly im-
+proved,and can get three-dimensional coordinates.
+1. Introduction
+Recently, Global Positioning System (GPS) has been widely used in car navigation, mapping and other ﬁelds.When it comes to
+indoor positioning, the indoor environment is more complicated, the signal from the satellite is blocked by obstacles, the positioning
+error by GPS in the room will become very big [ 1]. With the development of science and technology, researchers have proposed many
+indoor positioning technologies based on wireless electromagnetic waves, such as infrared positioning, wireless local area network
+(WLAN), radio frequency identi ﬁcation (RFID), Bluetooth, ultra-wideband (UWB), etc. [ 2]. However, these positioning technologies
+both have obvious disadvantages: Although infrared positioning technology and UWB positioning technology have higher positioning
+accuracy, but additional equipment is required, and the cost is high. The price of the Bluetooth device is relatively expensive, and for
+the complex environment, the stability of the Bluetooth system is poor, and the interference by the noise signal is large. RFID
+technology has a short working distance, and the positioning error is large, the average positioning error is as high as 1 m. The WIFI
+transceiver can only cover an area within a radius of 90 m, and is easily interfered by other signals, the average positioning error is as
+high as 2∼ 3m [3]. Using visible light communication (VLC) for indoor positioning is a new way to solve indoor positioning problems
+[4]. The frequency range of visible light is much wider than that of RF, and there is no electromagnetic interference, which is suitable
+https://doi.org/10.1016/j.ijleo.2019.163786
+Received 29 August 2019; Accepted 13 November 2019
+⁎ Corresponding author.
+E-mail address: dyxql@imust.edu.cn (Y. Du).
+Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+0030-4026/ © 2019 Elsevier GmbH. All rights reserved.
+T
+
+for hospitals, mines and other places. The visibility of visible light relative to RF signals is better, more convenient and fast, and the
+positioning accuracy is also high, which has become a hot spot of research on optical communication researchers at this stage [ 5].
+Traditional indoor visible light localization methods are mainly based on Time of arrival (TOA), Time Di ﬀerence of arrival
+(TDOA), Angle of arrival (AOA), received signal strength indication (RSSRI) method, sensor and imaging method [6 ]. Among them,
+although the TOA method is simple in principle, it requires strict synchronization between the transmitting end and the receiving end
+clock, and requires high hardware. Similarly, the TDOA and AOA methods have higher hardware requirements [ 7]. Image sensor
+imaging involves image processing and has a long positioning time [ 8].
+The visible light positioning based on LED lights can also be classi ﬁed according to the number of light sources, one is based on
+multiple LED light sources for position determination, the other is to perform indoor positioning according to a single LED [ 9].
+Nowadays, domestic and foreign research on multi-lamp positioning and single-lamp positioning has been done [ 10]. For multi-lamp
+positioning technology. In 2016, Yin, F. X. et al. proposed an indoor visible light reverse positioning system. The experimental results
+show that the positioning error of the system is less than 0.2 m [ 11]. In 2018, Li, N et al. proposed an indoor positioning system based
+on visible light communication technology. The simulation results show that the centimeter-level positioning accuracy can be ob-
+tained at 5 heights in the 5 × 5 × 4 m 3 space. [12]. In 2018, Wang, Q et al. proposed an indoor visible light localization system based
+on gesture recognition, which achieved decimeter-level positioning accuracy. [ 13]. In 2019, Chuang, Y. et al. proposed a localization
+algorithm combining repetition unit and machine learning: The second-order regression ML algorithm and the polynomial three-edge
+ML algorithm were discussed respectively, and the centimeter-level positioning accuracy was obtained [ 14]. For single-lamp posi-
+tioning technology, in 2017, Zhang, R et al. proposed a visible light positioning system based on a single LED lamp, which achieved
+centimeter-level positioning accuracy in the range of 3 × 3m 2,and solved the problem of sparse layout of indoor LED lights and the
+positioning accuracy caused by insu ﬃcient receiver ﬁeld of view. [ 15]. In 2018, Yu, X. H. et al. proposed a visible light positioning
+system using a single LED lamp and a new type of receiver. The receiver consists of a horizontal photodetector (PD) and two tilted
+PDs. The experimental results show that this system can avoid inter-cell interference caused by di ﬀerent light sources, and it ’s
+suitable for scenes with limited number of LEDs [ 16]. In 2019, Ji, Y. Q. et al. proposed a single LED lamp indoor positioning system
+based on CMOS image sensor. This system can achieve centimeter-level positioning accuracy regardless of the horizontal or oblique
+position of the mobile phone [ 17]. In summary, the indoor positioning of a single LED lamp has the following advantages compared
+to multi-lamp positioning:
+1) Solving the problem that the positioning accuracy of some indoor LED lights is sparse and the accuracy of the receiver is in-
+suﬃcient.
+2) Solving the problem of large positioning error caused by inter-symbol interference between lamps and lamps in multi-lamp
+positioning [ 18].
+3) The positioning speed is fast and the algorithm is relatively simple.
+The single LED lamp positioning algorithm proposed in this paper can not only achieve high-precision three-dimensional posi-
+tioning, but also signi ﬁcantly improve the positioning accuracy and greatly reduce the equipment cost compared with the traditional
+wireless electromagnetic wave indoor positioning technology. Compared with the traditional multi-lamp positioning technology, the
+proposed algorithm can e ﬀectively solve the problem of large positioning error caused by the interference between symbols of
+multiple light sources, and does not need to distinguish the optical signals emitted by multiple light sources, which reduces the
+complexity of the equipment and makes the positioning time faster.
+2. Principle of location algorithms
+The indoor three-dimensional positioning schematic is shown in Fig. 1 (a). Assuming that the LED obeys the Lambert radiation
+model, the channel gain [ 19] under the direct line-of-sight link can be expressed as:
+Fig. 1. (a) 3D visible light indoor positioning model (b) Receiver model schematic.
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+2
+
+=
+⎧
+⎨
+⎩
++ ≤≤
+>
+H
+m
+πd Aφ T ψ g ψ ψ ψ ψ
+ψψ
+(1 )
+2 cos ( ) ( ) ( )cos( ) 0
+0
+m s c
+c
+2
+(1)
+In Eq. (1), A is the e ﬀective receiving area of the receiver, d is the distance between the receiver and the LED light source, ψ() is
+the incident angle of the receiver, ϕ is the emission angle of the LED, Tψ( )s is the gain of optical ﬁlter, gψ() is the gain of optical
+concentrator, ψcis the ﬁeld of view angle of the receiver and m is the Lambert order of the light source,m can be derived from the
+following formula:
+=m ln
+lncosϕ
+2
+1/2 (2)
+In Eq.(2),ϕ1/2 is the half power angle of the LED light source, that is, the radiation power of the LED light source at this angle is 1/
+2 of the central power [ 20].
+Fig. 1(b) shows the receiver model, which consists of a horizontal PD (denoted as PD 0) and three tilted PDs (denoted as PD i,i=1 ,
+2, 3). In the present positioning system, according to the Eq. (1), if the transmission power of the LED is known to be P t, the received
+power of each PD can be expressed as:
+=∙ =P PH (i 0,1, 2,3)ri t (3)
+The positional relationship between PD 0 and each tilted PD is as follows:
+=+
+=+
+=+
+X X rcosαcos ω
+YYr c o s α s i n ω
+ZZr s i n α
+()
+()
+()
+ri r i
+ri r i
+ri r (4)
+Where (Xr,Y r,Z r) and (Xri,Y ri,Z ri) are the coordinates of the horizontal PD and the oblique PD, respectively, r is the distance between
+the center and the horizontal PD center, α is the tilt angle of the tilted PD. In the receiver herein, the tilt angles α of the three tilted
+PDs are equal, and the horizontal PD center and the tilted PD center distance r is also equal. ω is the angle between the line between
+the tilted PD center and the horizontal PD center and the positive direction of the x-axis, which can be understood as the tilt angle of
+the tilted PD.
+In this paper, the distance between horizontal and inclined PDs is very close, so the transmission distance from LED to horizontal
+PDs is approximately equal to that from inclined PDs.Therefore, at any point in the three-dimensional space, the emission angle of the
+LED is always meet. Let ψ0 andψi be the incident angles of horizontal and inclined PD respectively. The relationship between incident
+angles is as follows:
+== −
+= −+ −+ −
+−+ −+ −
+ψϕ hZ r
+d
+ψ XX α β YY α β ZZ c o s α
+XX YY ZZ
+cos( ) cos( )
+cos( ) ( )sin( )cos( ) ( )sin( )sin( ) ( ) ( )
+() ( ) ()
+i
+ri i ri i ri
+ri ri ri
+0
+000
+0 2 0 2 0 2 (5)
+In Eq. (5), βi is the azimuth angle of the inclined PD, it is expressed as the angle between the projection of the normal vector of the
+inclined PD receiving surface to the xoy plane and the positive direction of the x-axis. The range of βi is 0°∼360°. (X 0,Y 0,Z 0) is the
+coordinates of the LED light source.in this paper, α,βi, ωi,r and the coordinates of the LED light source are all known.
+When the incident angle of each PD and the positional relationship of each PD are determined, three-dimensional positioning can
+be performed. In the process of three-dimensional positioning, the coordinates of the receiver at any position are set to (X r,Y r,Z r).
+Substituting Eq. (5) into Eq. (1), it can be calculated that the received optical power of the horizontal PD and the oblique PD can be
+expressed as:
+= − +
++P kh Z
+d
+()
+r
+r m
+m0
+1
+3 (6)
+= − −+ −+ −+P kh Z
+d XX α β YY α β ZZ α() [( )sin( )cos( ) ( )sin( )sin( ) ( )cos( )]ri
+r m
+m ri i ri i ri3 000 (7)
+In Eq. (6) and Eq. (7), is a constant, Because in the positioning process, we use a single LED light, and the same PD is used.
+According to the received optical power of each PD, using Eq. (6) and Eq. (7), the ratio of the tilted PD received optical power to the
+horizontal PD received optical power can be determined as:
+= − −+ −+ −RSSR hZ XX α β YY α β ZZ α1
+() [( )sin( )cos( ) ( )sin( )sin( ) ( )cos( )]i
+r
+ri i ri i ri000
+(8)
+In Eq. (8), ==PPRSSR / ( i 1,2, 3)ri ri0 , it is expressed as the ratio of the received optical power of each oblique PD to the horizontal
+PD received optical power. Substituting Eq. (4) into Eq. (8), the following relationship can be obtained:
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+3
+
+= − −+ +−+
++−+
+RSSR hZ XX r c o s αβ αβY Y r c o s αω αβ
+ZZ r s i n α α
+1
+() [( ( ( )cos( )))sin( )cos( ) ( ( ( )sin( )))sin( )sin( )
+( ( ( )))cos( )]
+i
+r
+r ii ri i
+r
+00
+0 (9)
+In Eq. (9), let:
+=
+=
+=− + − + −
+Aα c o s β
+Bα β
+T X rcos α ω A Y rcos α ω B Z rsin α α
+sin( ) ( )
+sin( )sin( )
+[ ( () c o s () ) ] [ () s i n ( ) ] ( () ) c o s ()
+i i
+i i
+ii i i i 00 0 (10)
+We can get Eq. (11)：
+−= + + −T hRSSR X A Y B Z α RSSR(cos( ) )ii r i r i r i (11)
+It can be seen from Eq. (11), the three-dimensional coordinates of the horizontal PD are only related to the value of the received
+optical power ratio RSSR i. Since the three-dimensional coordinates of the LED lamp are known, the positional relationship between
+the respective PDs and the angle parameter of the tilt PD are known, so according to the optical power ratio of the three tilted PDs to
+the horizontal PD and the angle parameters of the three tilted PDs, The three-dimensional coordinates of the horizontal PD are
+obtained by solving the ternary equations by Eq. (11). The speci ﬁc solution process is as follows:
+let：
+=−
+=−
+=−
+=−
+=−
+=−
+M RSSR
+M α RSSR
+M α RSSR
+N T hRSSR
+N T hRSSR
+N T hRSSR
+cos(α)
+cos( )
+cos( )
+11
+22
+33
+11 1
+22 2
+33 3 (12)
+Substituting Eq. (12) into Eq. (11), the following equations can be obtained:
+⎧
+⎨
+⎩
+++ =
+++ =
+++ =
+AX BY MZ N
+AX BY MZ N
+AX BY MZ N
+rr
+rr r
+rr r
+1r 1 1 1
+2222
+3333 (13)
+let：
+= −
+= −
+= −
+= −
+= −
+= −
+P MA MA
+M
+P MB MB
+M
+P MN MN
+M
+K AM AM
+M
+K BM BM
+M
+K MN MN
+M
+1
+21 12
+1
+2
+21 12
+1
+3
+21 12
+1
+1
+31 13
+1
+2
+31 13
+1
+3
+13 31
+1 (14)
+Bringing Eq. (14) into Eq. (13), the three-dimensional coordinates of the horizontal PD can be solved as:
+⎧
+⎨
+⎪
+⎪
+⎩
+⎪
+⎪
+= −
+−
+= −
+−
+= −−
+X KP KP
+PK PK
+Y PK KP
+PK KP
+Z NA XB Y
+M
+r
+r
+r
+rr
+23 32
+12 21
+31 31
+21 21
+11 1
+1 (15)
+According to the Eq. (15), when the ratio of the received optical powers of the three tilted PDs to the horizontal PD is known, the
+three-dimensional coordinates of horizontal PD can be calculated at an arbitrary position according to the relationship of position
+between the respective PDs and the angle parameter of the tilted PD. According to the receiver model that is shown in Fig. 1(b), the
+three-dimensional coordinates of the horizontal PD are the three-dimensional coordinates of the receiver. By substituting the Eq. (15)
+into the Eq. (4), the three-dimensional coordinates of the three oblique PDs at arbitrary positions can be obtained. Let the actual
+coordinates of the receiver are(X real,Yreal,Zreal),the positioning coordinates are (X r,Yr,Zr), the positioning errors are P e. The positioning
+error of the receiver in each test point in the three-dimensional space can be expressed as:
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+4
+
+=− + − + −P XX YY ZZ() ( ) ()e r real r real r real 22 2 (16)
+3. Simulation of positioning system
+In order to evaluate the performance of the positioning system, an experimental system is constructed in this paper. As is shown in
+Fig. 2, the length, width and height of the initial positioning area are set to 1 m, 1 m, and 1.5 m respectively, and the coordinates of
+the LED light source are (0.5, 0.5, 1.5). The interval between adjacent test heights is 0.2 m. on each test height, 7 × 7 test points are
+set. The initial value of the distance r between the horizontal PD center and the inclined PD center is set to 1 cm, the initial value of
+the azimuth di ﬀerence θ of the adjacent two oblique PDs is set to 90°, the placement angles ω1, ω2, and ω3 of the three tilted PDs are
+set to 0°, 90°, and 180°respectively. This paper discusses the factors about what a ﬀecting the positioning error: including the tilt angle
+α of the tilt PD, the azimuth angle di ﬀerence θ of the adjacent two tilted PDs, the placement angle ωi of the three tilted PDs (i = 1, 2,
+3), and the distance r between the center of horizontal PD tilted PD. So these inﬂ uencing factors will be discussed separately below:
+Firstly, when θ、r、ωi remain unchanged, only the inclination angle α of inclined PD is changed. The simulation results show that
+when the inclination angle is greater than 30 degrees and the receiver is measured at 1.2 m height, the receiver can not locate at some
+edge test points. This is because when the inclined angle of inclined PD is greater than 30 degrees, the incident angle of inclined PD at
+some test edge points is larger than the ﬁeld of view of inclined PD. According to formula (1), the optical power received by inclined
+PD at some test edge points is zero. So in the course of positioning, the inclination angle of inclined PD should be less than 30 degrees.
+In order to describe more clearly of the variation of positioning error with inclination angle a, Fig. 3 shows the distribution of
+positioning error of receiver at 0.4 m altitude when inclination angle a varies at 10, 15, 20 and 25 degrees.
+It can be seen from Fig. 3 that when the test height of the receiver is constant, as the tilt angle α increases, the positioning error of
+the edge test point gradually decreases. Table 1 shows the positioning error when the tilt angle α is changed at 10°, 15°, 20°, 25°and
+when the test height of the receiver is 0.4 m.
+According to Table 1, when other factors remain unchanged and the receiver measures at the same altitude, the bigger inclination
+angle of inclined PD is, the smaller average positioning error is.
+When α is constant, the positioning errors of the receiver are also di ﬀerent at di ﬀerent test altitudes. Fig. 4 shows the distribution
+of positioning errors of the receiver at 0.2 m, 0.4 m, 0.6 m and 0.8 m altitudes when α equals to15°.
+It can be seen from Fig. 4, when the tilt angle of the tilted PD is constant, the positioning error of the edge test points increases
+slightly with the increase of the test height of the receiver. The average positioning errors of the receiver at 0.2 m, 0.4 m, 0.6 m and
+0.8 m altitudes are shown in Table 2 when a is 15°.
+It can be seen from Table 2, when the tilt angle is constant, the average positioning error increases slightly with the increase of the
+test height of the receiver. Analysis of Tables 1 and 2 leads to conclusions.：when other factors remain unchanged, the bigger the a is,
+the smaller the average positioning error is. When the tilt angle alpha is ﬁxed, the average positioning error increases slightly with the
+increase of the receiver ’s test height.
+The in ﬂuence of azimuth angle di ﬀerence θ between adjacent inclined PDs on positioning error is also studied. The distance r
+Fig. 2. experimental system model.
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+5
+
+between horizontal and inclined PDs is unchanged. The placing angle of inclined PDs is set at ω1 = 0°, ω2 = 90°, ω3 = 180°. The
+relationship between the average positioning error and the azimuth angle di ﬀerence is shown in Fig. 5 when the inclination angle is
+10°, 15°, 20° and 25°, respectively.
+It can be seen from Fig. 5, when the inclination angle of inclined PD is constant, with the increase of θ, the average positioning
+error decreases ﬁrst, then becomes stable and ﬁnally increases. When θ < 90°, the positioning error decreases gradually with the
+increase of θ. when 90° < θ < 135°, the positioning error tends to be stable with the change of θ. When θ > 135°, the positioning
+error suddenly increases. It can be seen that θ has a great in ﬂuence on the positioning error.
+Changing the placement angle ω of inclined PDs. Set ω1 = 0°, ω2 = 120°, ω3 = 240°, When the inclination angle is 15°, The
+variation curves of average positioning error with azimuth di ﬀerence θ are compared with those with azimuth di ﬀerence θ when
+ω1 = 0°, ω2 = 90°, ω3 = 180°, and inclination angle a is 15°. The comparison of the variation curves of average positioning error with
+azimuth di ﬀerence θ is shown in Fig. 6 .
+It can be seen from Fig. 6 that when α is constant, when ω1 = 0°, ω2 = 90°, ω3 = 180°, the positioning e ﬀect is better than
+ω1 = 0°, ω2 = 120°, and ω3 = 240°. When studying the in ﬂuence of other in ﬂuencing factors on the positioning error, the placement
+angle of the tilt PD is always set to ω1 = 0°, ω2 = 90°, ω3 = 180°.
+When the center distance r between the horizontal PD and the tilt PD is changed, the positioning error is also a ﬀected. When r is
+1 cm, 5 cm and 10 cm respectively, the average positioning error is shown in Table 3.
+It can be seen from Table 3 that with other in ﬂuencing factors unchanged, the larger the distance r between the horizontal PD
+center and the inclined PD center is, the larger the positioning error is. According to the above analysis, we know that the α of the tilt
+PD, the azimuth angle di ﬀerence θ of the adjacent two tilt PDs, the placement angle ω of the tilt PD, and the distance r between the
+center of the horizontal PD and the center of the tilt PD will all have impact on positioning errors. According to the above analysis of
+Fig. 3. Position error distribution of the receiver at a height of 0.4 m when the tilt angle α is changed at 10°, 15°, 20°, and 25°.
+(a) Positioning error distribution at α = 10° (b) Positioning error distribution at α = 15°. (c) Positioning error distribution at α = 20° (d) Positioning
+error distribution at α = 25°.
+Table 1
+The positioning errors of inclination angle α at 10°, 15°, 20°, 25° and test height is 0.4 m.
+Inclination angle α(°) Maximum positioning error (cm) Minimum positioning error (cm) Mean positioning error (cm)
+10 8.31 0.51 5.56
+15 5.65 0.77 3.67
+20 4.31 1.02 3.06
+25 3.52 1.26 2.31
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+6
+
+the in ﬂuencing factors of the positioning error, when α = 25° and the azimuth angle di ﬀerence θ of the adjacent two tilting PDs is
+constant at 90°, the placement angles of the three tilting PDs are respectively ω1 = 0°, ω2 = 90°, ω3 = 180°, the distance r between
+the center of the horizontal PD and the center of the tilted PD is 1 cm, the positioning error is the smallest. Next, this paper will
+analyze the positioning situation when α = 25°, the azimuth angle di ﬀerence θ = 90°, r = 1 cm, ω1 = 0°, ω2 = 90°, ω3 = 180°
+When α = 25°, θ = 90°, r = 1 cm, ω1 = 0°, ω2 = 90°, ω3 = 180°, the positioning points of the receiver at the test altitudes of
+0.2 m, 0.4 m, 0.6 m and 0.8 m are compared with the actual position coordinates is shown in Fig. 7 below.
+Fig. 4. Distribution of positioning errors when the inclination angle is 15°and the receiver is measured at altitudes of 0.2 m, 0.4 m, 0.6 m and 0.8 m.
+(a) Positioning error distribution at 0.2 m altitude (b) Positioning error distribution at 0.4 m altitude. (c) Positioning error distribution at 0.6 m
+altitude (d) Positioning error distribution at 0.8 m altitude.
+Table 2
+a is 15°, average positioning errors of receivers at altitudes of 0 m, 0.4 m, 0.8 m and 1.2 m.
+Height of receiver (m) 0.2 0.4 0.6 0.8
+Average positioning error (cm) 3.29 3.67 4.13 4.62
+Fig. 5. The variation curve of average positioning error with azimuth di ﬀerence θ when ω1 = 0°, ω2 = 90°, ω3 = 180°.
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+7
+
+It can be seen from the above ﬁgure that in the case of α = 25°, θ = 90°, r = 1 cm, ω1 = 0°, ω2 = 90°, ω3 = 180°, the positioning
+error is small, on each test height the upper positioning coordinates are not much di ﬀerent from the actual coordinates. It can be seen
+by observing the distance between the black box and the red ﬁve-pointed star. As the height of the receiver test increases, the
+positioning error increases slightly. When α = 25°,θ = 90°, r = 1 cm, ω1 = 0°, ω2 = 90°, ω3 = 180°, comparison of the proposed
+algorithm error location histogram and the literature [ 16] positioning error histograms is show in Fig. 8 below:
+Fig. 6. α = 15°, the average positioning error varies with the azimuth angle θ when the placement angle changes.
+Fig. 7. Comparison of positioning coordinates and actual coordinates of receiver at di ﬀerent altitudes.
+(a) Contrast chart at receiver height of 0.2 m (b) Contrast chart at receiver height of 0.4 m. (c) Contrast chart at receiver height of 0.6 m (d) Contrast
+chart at receiver height of 0.8 m.
+Table 3
+The variation of average positioning error with the distance r.
+Receiver center distance (cm) 1 5 10
+Average positioning error(cm) 2.52 13.10 27.53
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+8
+
+It can be seen from Fig. 8 that for the positioning algorithm proposed in [ 16], the positioning error is mainly concentrated at
+3.5 cm, and the point with the positioning error within 3 cm accounts for 63 % of the total test points, and the algorithm positioning
+error proposed in this paper is mainly concentrated on 2.25 cm. Points with a positioning error within 3 cm accounted for 84 % of the
+total test point. It can be seen that compared with the positioning algorithm in [ 16], the positioning algorithm proposed in this paper
+can not only achieve high-precision three-dimensional positioning indoors, but also better positioning e ﬀect.
+When α = 25°, θ = 90°, r = 1 cm, ω1 = 0°, ω2 = 90°, ω3 = 180°, the cumulative probability distribution of the positioning error
+is shown in Fig. 9 below:
+From the error cumulative distribution map, we can see that the maximum positioning error is 4.49 cm and the minimum value is
+1.24 cm. The simulation results show that the point with the smallest positioning error is directly below the LED, that is, at the center
+point of each test height plane.
+4. Conclusion
+This paper proposes a novel indoor three-dimensional positioning algorithm for single LED lamps, using a single LED lamp as the
+transmitter, three tilt PDs and one horizontal PD as the receiver to receive the light intensity signal, and each tilted PD receiving
+optical power and horizontal PD receiving. Compared with the power light, the received optical power ratio is substituted into the
+positioning algorithm, and the three-dimensional coordinates of the receiver are calculated to complete the three-dimensional po-
+sitioning.
+In this paper, the main factors a ﬀecting the positioning error are studied, including the tilt angle α of the tilt receiver, the azimuth
+angle di ﬀerent θ of the tilt receiver, the distance r between the center of the horizontal PD and the tilt PD center, and the placing
+angle ω of the tilt PD. The simulation results show that when the other inﬂ uencing factors are constant, when the tilt angle α is within
+a certain range of variation, the positioning error decreases as the tilt angle α increases. When α is constant, the receiver is tested. As
+the height increases, the positioning error increases slightly. When only changing the azimuth di ﬀerence θ of the tilt receiver, when
+θ < 90°, the positioning error decreases gradually with the increase of θ. When 90° < θ < 135°, the positioning error tends to be
+stable with the change of θ. When θ > 135°, the positioning error suddenly increases. When only the distance r between the hor-
+izontal PD center and the inclined PD center is changed, the positioning error increases remarkably as r increases. After analysis, the
+Fig. 8. comparison of the proposed algorithm error location histogram and the literature [ 16] positioning error histograms.
+(a) Location histogram of document [ 16] (b) The location histogram of the algorithm in this paper.
+Fig. 9. cumulative error distribution map.
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+9
+
+factors a ﬀecting the positioning error are mainly the tilt PD tilt angle α, the azimuth angle di ﬀerence θ of the tilt PD, and the
+horizontal PD center and the tilt PD center distance r. By analyzing the in ﬂuencing factors of the positioning error, when the tilt angle
+α = 25°, the azimuth angle di ﬀerence θ = 90°, r = 1 cm, ω1 = 0°, ω2 = 90°, ω3 = 180°, the positioning error is the smallest. The
+minimum error is 1.24 cm, the maximum error is 4.49 cm, the point with positioning error within 3 cm accounts for 84 % of the total
+test point, and the average positioning error is 2.52 cm. In this paper, the error distribution histogram and the cumulative probability
+distribution map are also used to analyze the positioning conditions when the tilt angle α = 25°, the azimuth angle di ﬀerence
+θ = 90°, r = 1 cm, compared with the positioning algorithm in [ 16]. The positioning algorithm can not only achieve high-precision
+three-dimensional positioning indoors, but also better positioning e ﬀect.
+The single LED lamp three-dimensional positioning algorithm proposed in this paper has low positioning error. The positioning
+algorithm is simple and novel compared with the traditional indoor positioning algorithm. It can e ﬀectively solve the problem of poor
+positioning accuracy caused by interference between multiple light source symbols in multi-light source positioning, and it does not
+need to be more The optical signals emitted by the light sources are distinguished, which reduces the complexity of the device and the
+positioning time is shorter.
+Acknowledgements
+This work was supported by the Higher School Youth Science and Technology Talents Program of Inner Mongolia Autonomous
+Region [grant number NJYT-19-A15] and the National Nature Science Foundation of China, [grant number 61661044,61961033].
+References
+[1] N.U. Hassan, A. Naeem, M.A. Pasha, Indoor positioning using visible LED lights, ACM Comput. Surv. 48 (2) (2015) 1 – 32.
+[2] C.Y. Xie, W.P. Guan, Y.X. Wu, L.T. Fang, Y. Cai, The LED-ID Detection and Recognition Method Based on Visible Light Positioning Using Proximity Method, IEEE
+Photonics J. 10 (2) (2018) 1 – 16, https://doi.org/10.1109/JPHOT.2018.2809731.
+[3] Y. Wang, H.D. Zhao, Improved smartphone-based indoor pedestrian dead reckoning assisted by visible light positioning, IEEE Sens. J. 19 (8) (2019) 2902 – 2908,
+https://doi.org/10.1109/JSEN.2018.2888493.
+[4] H. Du, J. Bai, W. Cheng, H.M. Du, PAPR reduction based on tone reservation scheme for DCO-OFDM indoor visible light communications, Opt. Express 25 (20)
+(2017) 24630– 24638, https://doi.org/10.1364/OE.25.024630.
+[5] Z.C. Yang, Z.Y. Wang, J.S. Zhan, C.Y. Huang, Q. Zhang, Polarization-based visible light positioning, IEEE Trans. Mob. Comput. 18 (3) (2019) 715 – 727, https://
+doi.org/10.1109/TMC.2018.2838150.
+[6] B. Xie, S.M. Gong, G. Tan, LiPro. Light-based indoor positioning with rotating handheld devices, Wirel. Netw. 24 (1) (2018) 49 – 59, https://doi.org/10.1007/
+s11276-016-1312-1.
+[7] Z. Zheng, L. Liu, W.W. Hu, Accuracy of ranging based on DMT visible light communication for indoor positioning, IEEE Photonics Technol. Lett. 29 (8) (2017)
+679– 682, https://doi.org/10.1109/LPT.2017.2677424.
+[8] W.Q. Zhang, L.F. Feng, P. Che, Research on visible light indoor positioning technique using two light sources and specular re ﬂection cancellation, Iet Commun.
+13 (7SI) (2019) 842 – 847, https://doi.org/10.1049/iet-com.2018.5525.
+[9] J.R. Bai, Y. Li, Y. Yi, W. Cheng, H.M. Du, PAPR reduction based on tone reservation scheme for DCO-OFDM indoor visible light communications, Opt. Express 25
+(20) (2017) 24630 – 24638, https://doi.org/10.1364/OE.25.024630.
+[10] M.G. Moon, S.I. Choi, J. Park, J.Y. Kim, Indoor positioning system using LED lights and a dual image sensor, J. Opt. Soc. Korea 19 (6) (2015) 586 – 591, https://
+doi.org/10.3807/JOSK.2015.19.6.586.
+[11] F.X. Yin, J.Q. Zhao, J.Y. Shi, N. Chi, Reversed three-dimensional visible light indoor positioning utilizing annular receivers with multi-photodiodes, Sensors 16
+(2016), https://doi.org/10.3390/s16081254 1608-1254.
+[12] N. Li, Y.J. Qiao, T.T. Zhang, Y.M. Lu, Dead-zone-free three-dimensional indoor positioning method based on visible light communication with dimensionality
+reduction algorithm, Opt. Eng. 57 (3) (2018), https://doi.org/10.1117/1.OE.57.3.036114.
+[13] Q. Wang, H.Y. Luo, A.D. Men, F. Zhao, X.L. Gao, J. Wei, Y.X. Zhang, Y. Huang, A high-accuracy visible light indoor positioning system based on attitude
+identiﬁcation and propagation model, Int. J. Distrib. Sens. Netw. 14 (2) (2018), https://doi.org/10.1177/1550147718758263.
+[14] Y. Chuang, Z. Li, C. Hsu, Y. Liu, C.W. Chow, Visible light communication and positioning using positioning cells and machine learning algorithms, Opt. Express
+27 (11) (2019) 16377 – 16383, https://doi.org/10.1364/OE.27.016377.
+[15] R. Zhang, W.D. Zhong, K.M. Qian, S. Zhang, A single LED positioning system based on circle projection, IEEE Photonics J. 9 (4) (2017) 1 – 9, https://doi.org/10.
+1109/JPHOT.2017.2722474.
+[16] X.H. Yu, J.P. Wang, H.M. Lu, Single LED-Based indoor positioning system using multiple photodetectors, IEEE Photonics J. 10 (6) (2018), https://doi.org/10.
+1109/JPHOT.2018.2848947.
+[17] Y.Q. Ji, C.X. Xiao, J. Gao, A single LED lamp positioning system based on CMOS camera and visible light communication, Opt. Commun. 443 (2019) 48 – 54,
+https://doi.org/10.1016/j.optcom.2019.03.002.
+[18]
+X. Liu, A. Yang, Y. Wang, L.H. Feng, Combination of light-emitting diode positioning identi ﬁcation and time-division multiplexing scheme for indoor location-
+based service, Chinese Opt. Lett. 13 (12) (2015) 12 – 17, https://doi.org/10.3788/COL201513.120601.
+[19] O.R. Popoola, S. Sinanovic, Design and analysis of collision reduction algorithms for LED-Based indoor positioning with simulation and experimental validation,
+IEEE Access 6 (2018) 10754 – 10770, https://doi.org/10.1109/ACCESS.2018.2801626.
+[20] H.Q. Tran, C. Ha, Improved visible light-based indoor positioning system using machine learning classi ﬁcation and regression, Appl. Sciences-Basel 9 (6) (2019),
+https://doi.org/10.3390/app9061048.
+L. Qin, et al. Optik - International Journal for Light and Electron Optics 207 (2020) 163786
+10

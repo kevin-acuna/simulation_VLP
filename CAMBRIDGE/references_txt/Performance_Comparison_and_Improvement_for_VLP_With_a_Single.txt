@@ -1,0 +1,575 @@
+IEEE PHOTONICS TECHNOLOGY LETTERS, VOL. 38, NO. 2, 15 JANUARY 2026 129
+Performance Comparison and Improvement for
+VLP With a Single LED and a Single Rotatable PD
+Hanyang Shi
+ , Caiyi Wang
+ , and Yan Zhao
+Abstract—We investigate two indoor visible light positioning
+(VLP) systems consisting of a single light-emitting diode (LED)
+and a single rotatable photodetector (PD) based on the received
+signal strength. In order to select the better one from the two VLP
+systems in a single LED and a single PD scenarios, we need to
+compare the positioning performance of two VLP systems under
+any noise conditions. Therefore, considering signal-dependent
+shot noise (SDSN), we derive the Cram ´er-Rao lower bound
+(CRLB) on the positioning error of the two VLP systems. Based
+on the better VLP system, we propose the adaptive-tilt-angle-
+adjustment (A TAA) localization algorithm by combining the
+least-square (LS) localization algorithm. Simulation results show
+that compared to LS localization algorithm, A TAA localization
+algorithm clearly has higher positioning accuracy.
+Index Terms —Visible light positioning (VLP), photodetector
+(PD), the Cram ´er-Rao lower bound (CRLB), least-square (LS).
+I. I NTRODUCTION
+I
+N RECENT years, the demand for indoor high-precision
+positioning technology has been continuously increasing.
+Due to the satellite signal attenuation caused by walls and
+multipath propagation, Global Positioning System (GPS) has
+low indoor positioning accuracy [1]. Compared to GPS and
+other indoor positioning technologies, visible light positioning
+(VLP) based on light-emitting diode (LED) is considered as a
+promising indoor positioning technique due to the remarkable
+advantages of high positioning accuracy, low implementation
+cost and high security [2].
+In VLP systems, thermal noise and shot noise are two
+main sources of noise. Thermal noise results from electron
+excitation within the photodetector (PD), and is therefore
+independent of the signal and follows a Gaussian distri-
+bution. Shot noise occurs due to photon interactions with
+the PD, and is therefore related to signal strength. Thus,
+it is termed signal-dependent shot noise (SDSN). Although
+SDSN is Poisson-distributed, it is often modeled as Gaussian
+distribution due the large number of photons [3], [4], [5].
+Received 21 August 2025; revised 25 September 2025; accepted 15 Octo-
+ber 2025. Date of publication 17 October 2025; date of current version
+13 November 2025. This work was supported in part by the National Natural
+Science Foundation of China under Grant 62201180; and in part by Hainan
+Provincial Natural Science Foundation of China under Grant 622RC620, Grant
+622MS041, and Grant 625RC711. (Corresponding author: Yan Zhao.)
+The authors are with the Department of Information and Commu-
+nication Engineering, Hainan University, Haikou 570228, China, and
+also with Hainan Engineering Research Center of Marine Electromag-
+netic Spectrum, Haikou 570228, China (e-mail: shy@hainanu.edu.cn;
+wangcaiyi hainan u@163.com; yanzhao@hainanu.edu.cn).
+Color versions of one or more ﬁgures in this letter are available at
+https://doi.org/10.1109/LPT.2025.3623084.
+Digital Object Identiﬁer 10.1109 /LPT.2025.3623084
+According to the required number of lamps, VLP tech-
+nology can be further divided into multilamps positioning
+schemes and single-lamp positioning schemes. The single-
+lamp positioning schemes is an indispensable part of indoor
+VLP research [6]. The authors in [7] describe an indoor VLP
+system of the single-tilted-rotatable-photodetector (STRP)-
+based receiver in single-LED scenario, and propose an
+improved gray wolf optimization (IGWO)-based localization
+algorithm with the assistance of the least-square (LS) method.
+Meanwhile, in [8], the authors design an indoor VLP system
+of the single-horizontal-rotatable-photodetector (SHRP)-based
+receiver in single-LED scenario, and propose an indoor VLP
+algorithm based on machine learning (ML) methods. Addition-
+ally, in [9], the authors propose a LS localization algorithm
+based on the SHRP model in [8], which has higher positioning
+accuracy and fewer rotation times compared to the positioning
+algorithm in [8].
+The main contributions of our work can be outlined as
+follows: 1) In order to compare the positioning performance
+of two VLP systems with a single LED and a single rotatable
+PD in [7] and [9] under any noise conditions, we derive the
+Cram´er-Rao lower bound (CRLB) on the positioning error of
+the two VLP systems considering SDSN. It is worth noting
+that although there are related deductions of CRLB for two
+VLP systems in [7] and [9], they are di ﬀerent from the
+CRLB we derived in this letter. The CRLB in [7] and [9] is
+derived under speciﬁc ﬁxed values of shot noise and thermal
+noise, which is insu ﬃcient for comparing the positioning
+performance of the two systems. The CRLB we derived covers
+all variations of shot noise and thermal noise, enabling a
+comprehensive comparison of the positioning performance.
+This is the ﬁrst letter comparing the positioning performance
+of the two VLP systems, and provides a good reference for
+us to select the better one from the two VLP systems in
+a single LED and a single PD scenarios. 2) By combining
+the LS localization algorithm, we propose the adaptive-tilt-
+angle-adjustment (ATAA) localization algorithm based on the
+better VLP system. Simulation results show that compared to
+LS localization algorithm in [7], ATAA localization algorithm
+exhibits signiﬁcantly lower maximum, minimum, and average
+positioning errors, demonstrating a marked improvement in
+positioning accuracy.
+II. C OMPARATIVE ANALYSIS
+A. System Model
+We consider two di ﬀerent indoor VLP systems: STRP
+model in [7] and SHRP model in [9]. In this letter, we
+1041-1135 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and
+similar technologies. Personal use is permitted, but republication /redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: CAMBRIDGE UNIV. Downloaded on September 03,2026 at 11:14:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+130 IEEE PHOTONICS TECHNOLOGY LETTERS, VOL. 38, NO. 2, 15 JANUARY 2026
+Fig. 1. STRP model.
+only redescribe STRP model, and SHRP model is completely
+consistent with [9]. STRP model is illustrated in Fig. 1. The
+vertical distance from the PD to the ceiling is h, andα denotes
+the tilt angle of the PD. ⃗νi is the normal vector of the plane
+where PD is located at ith rotation. The rotation direction of
+the PD is shown in Fig. 1.
+In the STRP model, the tilt angle of PD is 20 degrees, and
+PD needs to be rotated 4 times. The ﬁrst time we need to
+rotate the PD to the position that ⃗νi is parallel to the X-axis,
+and the last three times rotate PD 90 degrees each time. In
+the SHRP model, the rod length is 20cm, and PD also needs
+to be rotated 4 times. The ﬁrst time we need to rotate the PD
+to the position that the rod is parallel to the X-axis, and the
+last three times rotate PD 90 degrees each time.
+We mark the three dimensional position of the LED as
+(Xt, Yt, Zt), the real position as ( X, Y, Z), and the estimated
+position as ( x, y, Z). Therefore, we have:
+⃗u = 1
+d (Xt− X, Yt− Y, Zt− Z) (1)
+− →vi =
+2
+4
+cosωi sinωi 0
+−sinωi cosωi 0
+0 0 1
+3
+5
+2
+4
+sinα
+0
+cosα
+3
+5
+= [cosωi sinα,−sinωi sinα, cosα] (2)
+ωi = π(i− 1)
+2 (3)
+where i=1,2,3,4 represents the number of rotations.
+Considering that thermal noise and SDSN a ﬀect the optical
+signal s sent from the LED, the received signal can be written
+as [3]:
+r = ℏs +
+√
+ℏs nds + n (4)
+where ℏ is the channel gain, n represents the signal-
+independent thermal noise, n∼ N(0,σ 2
+n), and
+√
+ℏs nds denotes
+the SDSN, nds ∼ N(0,σ 2
+ds). We can deﬁne a new term
+ξ2 = σ2
+ds
+σ2n
+, and call it the shot noise scaling factor, which is
+used to indicate the strength of the SDSN compared with the
+signal-independent thermal noise. The term ξ2, which can be
+determined by the receiver parameters, takes practical values
+ranging between 1 and 10.
+B. CRLB Considering SDSN
+Letλ=(X, Y). Based on (4), the probability density function
+(PDF) of r is:
+f (r|λ) = 1p
+2πσ2n(1 +ξ2ℏs)
+e
+− (r−ℏs)2
+2σ2n(1+ξ2ℏs) (5)
+In the STRP model and SHRP model, the signal received by
+4 diﬀerent rotations are independent of each other. Therefore,
+we have the joint PDF F(ri|λ) as:
+F(ri|λ) =
+4Y
+i=1
+1q
+2πσ2
+ni(1 +ξ2ℏi si)
+e
+− (ri−ℏi si)2
+2σ2
+ni(1+ξ2 ℏi si) (6)
+Taking the natural logarithm of (6), we obtain:
+ln[F(ri|λ)] =−1
+2
+4X
+i=1
+ln(2πσ2
+ni)− 1
+2
+4X
+i=1
+ln(1 +ξ2ℏi si)
+− 1
+2σ2
+ni
+4X
+i=1
+(ri− ℏi si)2
+1 +ξ2ℏi si
+(7)
+The Fisher information matrix (FIM) [10] is given by:
+F =
+2
+4− E
+n
+∂2ln[F(ri|λ)]
+∂X∂X
+o
+− E
+n
+∂2ln[F(ri|λ)]
+∂X∂Y
+o
+− E
+n
+∂2ln[F(ri|λ)]
+∂Y∂X
+o
+− E
+n
+∂2ln[F(ri|λ)]
+∂Y∂Y
+o
+3
+5 (8)
+Note that E{ri}=ℏi si, and E{(ri− ℏi si)2} = σ2
+ni(1 +ξ2ℏi si).
+Observing (7), we have:
+− E
+∂2 ln[F(ri|λ)]
+∂X2
+
+= ξ2
+2
+4X
+i=1
+(−ξ2R2M2 + RJ)
++ 1
+2σ2
+ni
+4X
+i=1
+(2M2R + 2ξ4σ2
+ni M2R2−ξ2σ2
+niRJ) (9)
+− E
+∂2 ln[F(ri|λ)]
+∂X∂Y
+
+= ξ2
+2
+4X
+i=1
+(−ξ2R2N M + RK)
++ 1
+2σ2
+ni
+4X
+i=1
+(2N MR + 2ξ4σ2
+niN MR2−ξ2σ2
+niRK) (10)
+E
+∂2 ln[F(ri|λ)]
+∂Y∂X
+
+= ξ2
+2
+4X
+i=1
+(−ξ2R2MN + RP)
++ 1
+2σ2
+ni
+4X
+i=1
+(2MNR + 2ξ4σ2
+ni MNR 2−ξ2σ2
+niRP) (11)
+− E
+∂2 ln[F(ri|λ)]
+∂Y2
+
+= ξ2
+2
+4X
+i=1
+(−ξ2R2N2 + RQ)
++ 1
+2σ2
+ni
+4X
+i=1
+(2N2R + 2ξ4σ2
+niN2R2−ξ2σ2
+niRQ) (12)
+where M = ∂(ℏi si)
+∂X , N = ∂(ℏi si)
+∂Y , J = ∂2(ℏi si)
+∂X2 , K = ∂2(ℏi si)
+∂X∂Y ,
+P = ∂2(ℏi si)
+∂Y∂X , Q = ∂2(ℏi si)
+∂Y2 and R = 1
+1+ξ2ℏi si
+. The value of ℏi si
+is consistent with the value of Ir in equation (3) of [9].
+In the SHRP model, ∂(hi si)
+∂X and ∂(hi si)
+∂Y are consistent with
+equation (19) and equation (20) in [9].
+Authorized licensed use limited to: CAMBRIDGE UNIV. Downloaded on September 03,2026 at 11:14:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: PERFORMANCE COMPARISON AND IMPROVEMENT FOR VLP WITH A SINGLE LED 131
+In the STRP model, we have:
+∂(ℏi si)
+∂X =ηd−m−5(X− Xt)
+h
+cosωi sinα(Xt− X)− sinωi
+sinα(Yt− Y) + cosα h
+i
+−ηhmd−m−3 cosωi sinα (13)
+∂(ℏi si)
+∂Y =ηd−m−5(Y− Yt)
+h
+cosωi sinα(Xt− X)− sinωi
+sinα(Yt− Y) + cosα h
+i
++ηhmd−m−3 sinωi sinα (14)
+where d =
+p
+(X− Xt)2 + (Y− Yt)2 + h2,
+η = RpdPled
+(m+1)Apd
+2π T(ψ)g(ψ)hm(−m − 3). The deﬁnitions
+of other parameters are consistent with [9].
+∂2(ℏi si)
+∂X2 , ∂2(ℏi si)
+∂X∂Y , ∂2(ℏi si)
+∂Y∂X and ∂2(ℏi si)
+∂Y2 can be calculated based on
+∂(ℏi si)
+∂X and ∂(ℏi si)
+∂Y .
+Since localization can be considered as an unbiased estima-
+tion problem, we can derive the lower bound of the expected
+estimation error E[( X− x)2 + (Y− y)2]:
+E[(X− x)2 + (Y− y)2]≥ trace(F−1) = CRLB (15)
+III. ATAA L OCALIZATION ALGORITHM
+In the second paragraph of Section IV, we have demon-
+strated that STRP model has better localization performance
+than the SHRP model. In this section, we propose the ATAA
+localization algorithm based on the STRP model.
+In Fig.7 of [7], we can know that as the tilt angle α becomes
+larger, the value of CRLB will become smaller, which means
+the positioning accuracy will be higher. This is because as the
+tilt angleα increases, there is a greater di ﬀerence in the power
+values of the optical signals collected through 4 rotations.
+However, due to the limitation of PD maximum ﬁeld of view
+angle, the tilt angle α cannot be inﬁnitely increased, which
+means that there is an optimal tilt angle αo at each positioning
+point. Therefore, in our improved STRP model, the tilt angle
+α can adaptively change.
+In the ATAA localization algorithm, ﬁrst, we give the tilt
+angle α an initial value of 20 degrees. Then, we use the
+LS localization algorithm in [7] for positioning. Since [7]
+has already described the LS localization algorithm in detail,
+we do not make any derivation here, but directly provide the
+relevant equations.
+A =
+2
+4
+I2 sinα I1 sinα
+(I3 + I1) sinα 0
+I4 sinα −I1 sinα
+3
+5 (16)
+B =
+2
+4
+(I2− I1) cosα h + I2 sinα Xt + I1 sinα Yt
+(I3− I1) cosα h + (I1 + I3) sinα Xt
+(I4− I1) cosα h + I4 sinα Xt− I1 sinα Yt
+3
+5 (17)
+B = A
+x
+y
+
+(18)
+where Ii represents the actual current value received at the ith
+rotation. The deﬁnition of Ii is consistent with equation (5) in
+[9].
+Therefore, the estimated position of the receiver can be
+obtained by (19):
+x
+y
+
+=
+ AT A−1
+AT B (19)
+Next, we need to ﬁnd the optimal tilt angle αo at the real
+position.
+Based on (1), (2), we have:
+cosψi =⃗u⃗vi = 1
+d cosωi sinα(Xt− X)
+− 1
+d sinωi sinα(Yt− Y) + 1
+d cosαh (20)
+Assuming Ψ represents the maximum ﬁeld of view angle of
+PD,αi represents the maximum tilt angle that can be achieved
+at the ith rotation, αi∈
+ 
+0, π
+2
+
+, we have:
+ 1
+d cosωi(Xt−X)− 1
+d sinωi(Yt−Y)
+
+sinαi + h
+d cosαi = cos Ψ
+(21)
+let C =
+ 1
+d cosωi(Xt− X)− 1
+d sinωi(Yt− Y)
+
+, G = h
+d and L =
+cos Ψ.
+Based on (21), we have:
+αi = arcsin L√
+C2 + G2
+− arctan
+G
+C
+
+(22)
+Assuming αe is an estimated value close to αo. By substi-
+tuting ( x, y) into equation (21), we have:
+αe = min{α1,α 2,α 3,α 4} (23)
+The value ofαe may be larger or smaller than αo. We adjust
+the tilt angle from 20 degrees to αe and rotate the PD in
+sequence. If at least one rotation fails to receive the signal,
+it indicates that αe is larger than αo. Otherwise, αe is smaller
+than αo. If αe is larger than αo, we decrease the tilt angle by
+one degree each time until the signal can be received after
+4 rotations. At this moment, it is the optimal tilt angle αo.
+If αe is smaller than αo, we increase the tilt angle by one
+degree each time until at least one rotation cannot receive the
+signal. At this moment, reducing the tilt angle by one degree
+is the optimal tilt angle αo. After obtaining αo, we use the LS
+localization algorithm for positioning again, which can achieve
+higher positioning accuracy.
+IV. S IMULATION RESULTS
+Computer simulation is conducted on the MATLAB plat-
+form. Our point selection rule in the plane is as follows: the
+range of X and Y is from 0.2 to 4.8, with a step size of
+0.2, and there are a total of 576 uniformly distributed points.
+Simulation parameters are consistent with [9].
+Fig.2 discusses the variation of Ratio-CRLB(the CRLB of
+SHRP model divided by the CRLB of STRP model) when the
+value ofξ2 is 1, 2,... , 10 and h = 3m. From the ﬁgure, we can
+ﬁnd that when the LED power is the same, the CRLB of the
+SHRP model is approximately 4.3 times that of the CRLB of
+the STRP model. This indicates that, regardless of variations in
+thermal noise and shot noise, the positioning performance of
+the STRP model is signiﬁcantly better than that of the SHRP
+model. Both models require 4 rotations, and the greater the
+diﬀerence between the power values of the optical signals
+obtained through 4 rotations, the better the positioning e ﬀect.
+In the SHRP model, the rod length leads to di ﬀerent optical
+channel gain obtained from 4 rotations. In the STRP model,
+the tilt angle leads to di ﬀerent optical channel gain obtained
+Authorized licensed use limited to: CAMBRIDGE UNIV. Downloaded on September 03,2026 at 11:14:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+132 IEEE PHOTONICS TECHNOLOGY LETTERS, VOL. 38, NO. 2, 15 JANUARY 2026
+Algorithm 1 The Proposed ATAA Localization Algorithm
+1: Set the initial value of α to 20, and rotate PD 4 times to
+get I1, I2, I3, I4;
+2: Substitute I1, I2, I3, I4 into equation(19) to get ( x, y);
+3: Substitute ( x, y) into equation(23) to get αe;
+4: If αe>αo
+5: Decrease αe by one degree each time until reaching αo;
+6: Else
+7: Increase αe by one degree each time until reaching αo;
+8: End
+9: Rotate PD 4 times again to obtain new I1, I2, I3, I4,
+substitute αo, I1, I2, I3, I4 into equation(19) to get the
+optimal ( x, y);
+Fig. 2. The variation of Ratio-CRLB when the value of ξ2 is 1, 2, ... , 10.
+Fig. 3. Comparison of CDF of the positioning errors under two algorithms.
+from 4 rotations. The impact of changing the tilt angle is much
+greater than that of changing the rod length, which is why
+STRP model is much better than the SHRP model.
+We deﬁne the error function as: derror =p
+(X− x)2 + (Y− y)2. Since ATAA localization algorithm
+is an improvement based on LS localization algorithm,
+we only compared it with LS localization algorithm. Fig.3
+compares the CDF of the positioning errors under two
+localization algorithms when h = 3m and Pled = 5W. In the
+LS localization algorithm, the maximum positioning error
+is 0.1154m, the minimum positioning error is 0.0234m,
+and the average positioning error is 0.0503m. In the ATAA
+localization algorithm, the maximum positioning error is
+0.0680m, the minimum positioning error is 0.0082m, and the
+average positioning error is 0.0250m, all of which are much
+smaller than the positioning errors of the LS localization
+algorithm. This indicates that the positioning accuracy of
+ATAA localization algorithm is much higher than that of LS
+localization algorithm in [7].
+V. C ONCLUSION
+In this letter, we compare the positioning performance of
+two indoor VLP systems consisting of a single LED and a
+single rotatable PD based on the received signal strength in
+[7] and [9]. We compare two VLP systems under any noise
+conditions by deriving the CRLB on the positioning error
+of the two VLP systems considering SDSN. The simulation
+results show that the STRP model has better positioning
+performance. By combining the LS localization algorithm, we
+propose the ATAA localization algorithm based on the STRP
+model. The simulation results show that ATAA localization
+algorithm clearly has higher positioning accuracy compared
+to LS localization algorithm in [7]. Future research includes
+studying the impact of environmental noises on the system
+and explore how to implement the adaptive adjustment STRP
+receiver in hardware.
+REFERENCES
+[1] X. Yang, Y . Zhuang, M. Shi, Q. Meng, J. Xiong, and Y . Cao, “DeepVLP:
+A graph neural network-based denoising and signals optimization
+framework for visible light positioning,” IEEE Trans. Mobile Comput. ,
+vol. 24, no. 6, pp. 5106–5123, Jun. 2025.
+[2] Z. Zhu, Y . Yang, M. Chen, C. Guo, J. Cheng, and S. Cui, “A survey
+on indoor visible light positioning systems: Fundamentals, applica-
+tions, and challenges,” IEEE Commun. Surveys Tuts. , vol. 27, no. 3,
+pp. 1656–1686, 3rd Quart., Jun. 2025.
+[3] M. Yaseen, A. E. Canbilen, and S. Ikki, “Channel estimation in visible
+light communication systems: The e ﬀect of input signal-dependent
+noise,” IEEE Trans. V eh. Technol. , vol. 72, no. 11, pp. 14330–14340,
+Nov. 2023.
+[4] Y . Cang et al., “Optimal resource management for NOMA-
+based visible light communication systems with shot noise,”
+IEEE Trans. Green Commun. Netw. , vol. 6, no. 4, pp. 2015–2031,
+Dec. 2022.
+[5] S. H. ElFar, M. Yaseen, and S. Ikki, “Insights into visible light position-
+ing: Range tracking and Bayesian Cram ´er-Rao lower bound analysis,”
+IEEE Commun. Lett. , vol. 28, no. 9, pp. 2056–2060, Sep. 2024.
+[6] S. Ma et al., “Centimeter-level 3-D mobile online visible light position-
+ing system with single LED lamp,” IEEE Internet Things J. , vol. 11,
+no. 1, pp. 418–429, Jan. 2024.
+[7] Z. Wang, Z. Liang, R. Liu, X. Li, and H. Li, “Design and performance
+analysis for indoor visible light positioning with single LED and single-
+tilted-rotatable PD,” IEEE Trans. Instrum. Meas. , vol. 73, pp. 1–14,
+2024.
+[8] R. Liu, Z. Liang, K. Yang, and W. Li, “Machine learning based visible
+light indoor positioning with single-LED and single rotatable photo
+detector,” IEEE Photon. J. , vol. 14, no. 3, pp. 1–11, Jun. 2022.
+[9] H. Shi, C. Wang, and Y . Zhao, “Visible light positioning using a single
+LED and a single rotatable photodetector,” IEEE Photon. Technol. Lett. ,
+vol. 37, no. 18, pp. 1033–1036, Sep. 2025.
+[10] S. Ma et al., “Optimal power allocation for integrated visible light
+positioning and communication system with a single LED-lamp,” IEEE
+Trans. Commun., vol. 70, no. 10, pp. 6734–6747, Oct. 2022.
+Authorized licensed use limited to: CAMBRIDGE UNIV. Downloaded on September 03,2026 at 11:14:18 UTC from IEEE Xplore.  Restrictions apply. 

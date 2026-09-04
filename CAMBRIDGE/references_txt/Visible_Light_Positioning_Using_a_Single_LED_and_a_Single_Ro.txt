@@ -1,0 +1,533 @@
+IEEE PHOTONICS TECHNOLOGY LETTERS, VOL. 37, NO. 18, 15 SEPTEMBER 2025 1033
+Visible Light Positioning Using a Single LED and
+a Single Rotatable Photodetector
+Hanyang Shi
+ , Caiyi Wang
+ , and Yan Zhao
+Abstract—We investigate an indoor VLP system consisting of
+a single LED and a single rotatable photodetector (PD) based on
+the received signal strength (Liu et al., 2022). Based on the VLP
+system, we propose a least-square (LS) positioning algorithm. In
+order to analyse the inﬂuence of rod length and each rotation
+angle on the positioning accuracy, the Cram ´er-Rao lower bound
+(CRLB) on the positioning error of the VLP system is derived. We
+take advantage of the derived CRLB to choose the appropriate
+rod length and each rotation angle. In our VLP system, we
+only need to rotate the PD 4 times to achieve centimeter-level
+positioning accuracy. Simulation and practical experiment results
+show that in terms of positioning accuracy and receiver rotation
+times, our VLP system is signiﬁcantly superior to the VLP system
+(Liu et al., 2022). Moreover, there is no positioning blind spots
+in our VLP system.
+Index Terms —Visible light positioning (VLP), photodetector
+(PD), Cram ´er-Rao lower bound (CRLB), least-square (LS).
+I. I NTRODUCTION
+W
+ITH the development of society and economy, people’s
+demand for indoor positioning is constantly increasing.
+Due to the obstruction of signal transmission, the indoor
+positioning accuracy of Global Positioning System (GPS) will
+signiﬁcantly decrease [2]. Other indoor positioning technolo-
+gies, such as wireless ﬁdelity (Wi-Fi), Bluetooth Low Energy
+(BLE), RF identiﬁcation device (RFID), Ultra-Wideband
+(UWB), Zigbee and Ultrasonic, have higher costs and are
+prone to reduced positioning accuracy due to multipath e ﬀects
+[3]. Compared with these positioning technologies, visible
+light positioning (VLP) is a promising indoor positioning
+technology. In addition to providing centimetre-order accurate
+positioning at a relatively low cost, VLP technology also has
+advantages such as good conﬁdentiality, anti-electromagnetic,
+interference, green environmental protection, and lighting [4].
+According to the required number of lamps, VLP tech-
+nology can be further divided into multilamps positioning
+schemes and single-lamp positioning schemes. When we are
+located in long corridors or tunnels, there is often only one
+Received 14 February 2025; revised 9 June 2025; accepted 9 June 2025.
+Date of publication 12 June 2025; date of current version 23 June 2025.
+This work was supported in part by the National Natural Science Foundation
+of China under Grant 62201180; and in part by Hainan Provincial Natural
+Science Foundation of China under Grant 622RC620, Grant 622MS041, and
+Grant 625RC711. (Corresponding author: Yan Zhao.)
+The authors are with the Department of Information and Communica-
+tion Engineering, Hainan University, Haikou 570228, China, and also with
+Hainan Engineering Research Center of Marine Electromagnetic Spectrum,
+Haikou 570228, China (e-mail: shy@hainanu.edu.cn; wangcaiyi hainan u@
+163.com; yanzhao@hainanu.edu.cn).
+Color versions of one or more ﬁgures in this letter are available at
+https://doi.org/10.1109/LPT.2025.3578979.
+Digital Object Identiﬁer 10.1109 /LPT.2025.3578979
+lamp installed in a large area, which leads us to adopt a single-
+lamp positioning schemes [5]. Moreover, when multilamps
+positioning schemes are adopted, multiple access techniques
+must be used to avoid the mutual interference among light
+emitting diodes (LEDs), such as Orthogonal Frequency Divi-
+sion Multiplexing (OFDM) [6]. In addition, some lamps being
+obstructed may prevent the use of the multilamps positioning
+schemes [7]. Therefore, the single-lamp positioning schemes
+is an indispensable part of indoor VLP research.
+The authors in [8] proposed a novel visual odometry (VO)
+assisted VLP algorithm (VO-VLP), which can achieve accu-
+rate positioning using only a single luminaire at the transmitter
+and a single camera at the receiver. Meanwhile, in [5], the
+authors proposed centimeter-level 3-D mobile online VLP
+schemes for the UE with the multiple PDs. Additionally, in
+[1], the authors innovatively design a rotatable single PD
+receiving end, which has lower costs compared to cameras,
+but also avoids the decrease in positioning accuracy caused
+by the close distance between the multiple PDs. However,
+under the algorithm in [1], it needs to rotate the PD more
+than a hundred times to have a relatively available positioning
+accuracy, which is a complicated work, and the VLP system
+in [1] has positioning blind spots.
+The main contributions of our work can be outlined as
+follows: 1) In order to analyse the inﬂuence of rod length
+and each rotation angle on the positioning accuracy of the
+VLP system, we derive the CRLB on the positioning error
+of the VLP system, which is applicable regardless of changes
+in rod length and each rotation angle. Based on the derived
+CRLB, we design the rod length and each rotation angle of
+the rotatable single PD receiving end. Compared to the VLP
+receiver in [1], our receiver can greatly reduce the number of
+rotations, which impove the practicality of the VLP system.
+2) Based on the VLP system, we propose a least-square
+(LS) positioning algorithm, which can achieve centimeter-
+level positioning accuracy by rotating the PD 4 times. The
+simulations and practical experiment are designed. The results
+show that, in the considered indoor scenario, compared to the
+VLP system in [1], which requires rotating the PD 360 times,
+the maximum, minimum, and average positioning errors of our
+VLP system are signiﬁcantly reduced. In addition, LS does not
+have positioning blind spots.
+II. S YSTEM MODEL
+The indoor VLP system we are considering is illustrated
+in Fig. 1. Receiving end is consistent with [1]. The vertical
+distance from the PD to the ceiling is h, and the rod length
+is l. The rotation direction of the rod is shown in Fig. 1.
+1041-1135 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and
+similar technologies. Personal use is permitted, but republication /redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:13:40 UTC from IEEE Xplore.  Restrictions apply. 
+
+1034 IEEE PHOTONICS TECHNOLOGY LETTERS, VOL. 37, NO. 18, 15 SEPTEMBER 2025
+Fig. 1. Indoor VLP system with a single LED and a single rotatable PD.
+We mark the three dimensional position of the LED as
+(Xt, Yt, Zt), the real position as ( X0, Y0, Z0), and the PD as
+(Xi, Yi, Z0). Assuming that the PD rotates from the position
+parallel to the positive half axis of the X-axis. We have
+Xi = X0 + l cosθi, Yi = Y0− l sinθi,θ i = 2π(i−1)
+N , i = 1,2,...N.
+Among them, N represents the number of rotations of PD, and
+we denote the position of PD at this time as the position after
+the ﬁrst rotation, that is, the position of PD when N = 1.
+Assuming that the visible light signal propagation of LED
+follows the Lambert radiation model, the optical channel gain
+for LOS transmission between LED base station and PD
+receiver is [9]:
+H(0)
+=
+8
+<
+:
+(m + 1)Apd
+2πd2 cosm(φ) cos(ψ) T(ψ) g(ψ), 0≤ψ≤ Ψ
+0, ψ> Ψ
+(1)
+where m =− log 2
+log(cos(φ1/2)), is the order of the Lambert radia-
+tion model; d is the straight-line distance between the LED
+base station and the PD receiver; Apd is the e ﬀective pho-
+toelectric sensing area of the PD; φ represents the angle
+between the normal direction of the LED and the direction
+of the visible light signal emission; φ1/2 represents the half
+power angle of LED; ψ denotes the angle between the nor-
+mal direction of the PD and the incident direction of the
+visible light signal; Ψ is the maximum incident angle of
+the PD; T(ψ) is the optical ﬁlter gain; g(ψ) = n2
+sin2 Ψ, is
+the optical concentrator gain; n is the refractive index. It
+should be noted that φ and ψ are equal when PD is placed
+horizontally.
+After channel propagation, the visible light signal reception
+power of the PD receiver is:
+P = Pled· H(0) (2)
+where Pled represents the power of the LED.
+In fact, PD will convert the received visible light signal into
+a more easily processed current signal through photoelectric
+conversion, and the conversion relationship can be expressed
+as:
+Ir=Rpd·P (3)
+where Rpd denotes the PD responsiveness.
+In the VLP system, the total noise consists of shot noise and
+thermal noise, which are statistically independent and usually
+treated as additive Gaussian white noise [10]:
+σ2
+n =σ2
+shot +σ2
+thermal (4)
+where σ2
+shot, σ2
+thermal can be calculated by [10].
+The actual detected current signal at the receiving end is:
+Ii = Iri + ni (5)
+where ni denotes the noise, ni∼ N(0,σ 2
+ni).
+III. P OSITIONING METHOD
+Observing (1), (2), (3), (5), we have:
+Ii
+= RpdPled(m + 1)ApdT(ψ)g(ψ)hm+1
+2π
+
+(X0 + l cosθi− Xt)2 + (Y0− l sinθi− Yt)2 +h2 m+3
+2
++ ni (6)
+Assuming ( x, y, Z0) represents the estimated position. So,
+we have:
+Ii = RpdPled(m + 1)ApdT(ψ)g(ψ)hm+1
+2π
+
+(x + l cosθi− Xt)2 + (y− l sinθi− Yt)2 + h2 m+3
+2
+(7)
+Based on (7), we have:
+(x + l cosθi− Xt)2 + (y− l sinθi− Yt)2
+=
+ 2πIi
+RpdPled(m + 1)ApdT(ψ)g(ψ)hm+1
+ −2
+m+3
+− h2 (8)
+let ρi =
+h
+2πIi
+RpdPled(m+1)ApdT(ψ)g(ψ)hm+1
+i −2
+m+3
+− h2.
+When PD rotates N times, it will receive N diﬀerent current
+values, N linear formulas can be obtained:
+(x + l cosθ1− Xt)2 + (y−l sinθ1− Yt)2 =ρ1
+...
+(x + l cosθN− Xt)2 + (y−l sinθN− Yt)2 =ρN (9)
+Through the LS method [11], we have:
+B =
+2
+666666664
+ρ1−ρ2 + (Xt− l cosθ2)2− (Xt− l cosθ1)2
++(l sinθ2 + Yt)2− (l sinθ1 + Yt)2
+ρ1−ρ3 + (Xt− l cosθ3)2− (Xt− l cosθ1)2
++(l sinθ3 + Yt)2− (l sinθ1 + Yt)2
+...
+ρ1−ρN + (Xt− l cosθN)2− (Xt− l cosθ1)2
++(l sinθN + Yt)2− (l sinθ1 + Yt)2
+3
+777777775
+(10)
+A =
+2
+664
+2(l cosθ1− l cosθ2) 2( l sinθ2− l sinθ1)
+2(l cosθ1− l cosθ3) 2( l sinθ3− l sinθ1)
+... ...
+2(l cosθ1− l cosθN) 2(l sinθN− l sinθ1)
+3
+775 (11)
+B = A
+x
+y
+
+(12)
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:13:40 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: VLP USING A SINGLE LED AND A SINGLE ROTATABLE PHOTODETECTOR 1035
+Therefore, the estimated position of the receiver can be
+obtained by (13):
+x
+y
+
+=
+ AT A−1
+AT B (13)
+We hope to achieve higher positioning accuracy by mini-
+mizing the number of rotations, that is, the smaller the value
+of N, the better, while determining a reasonable rod length l.
+Next, We will derive the CRLB on the positioning error of the
+VLP system to solve the problem.
+Let µ = (X0, Y0). Based on (5), the probability density
+function (PDF) of Ii is:
+f (Ii|µ) = 1q
+2πσ2
+ni
+exp
+
+−(Ii− Iri)2
+2σ2
+ni
+
+(14)
+The current values detected by N diﬀerent rotations are
+independent of each other. Therefore, we have the joint PDF
+F(Ii|µ) as:
+F(Ii|µ) =
+NY
+i=1
+1q
+2πσ2
+ni
+exp
+
+−(Ii− Iri)2
+2σ2
+ni
+
+(15)
+Taking the logarithm of (15), we obtain:
+In[F(Ii|µ)] =−
+NX
+i=1
+ln(
+√
+2πσni)−
+NX
+i=1
+(Ii− Iri)2
+2σ2
+ni
+(16)
+The Fisher information matrix (FIM) [12] is given by:
+F =
+2
+64
+−E
+n
+∂2 ln[F(Ii|µ)]
+∂x∂x
+o
+−E
+n
+∂2 ln[F(Ii|µ)]
+∂x∂y
+o
+−E
+n
+∂2 ln[F(Ii|µ)]
+∂y∂x
+o
+−E
+n
+∂2 ln[F(Ii|µ)]
+∂y∂y
+o
+3
+75 (17)
+Observing (16), (17), we have:
+F =
+2
+4
+PN
+i=1
+1
+σ2
+ni
+∂Iri
+∂x
+2 PN
+i=1
+1
+σ2
+ni
+∂Iri
+∂x
+∂Iri
+∂y
+PN
+i=1
+1
+σ2
+ni
+∂Iri
+∂x
+∂Iri
+∂y
+PN
+i=1
+1
+σ2
+ni
+h
+∂Iri
+∂y
+i2
+3
+5 (18)
+Based on (6), we have:
+∂Iri
+∂x = RpdPled
+(m + 1)Apd
+2π T(ψ)g(ψ)hm+1
+
+− m + 3
+2
+
+× [(X0 + l cosθi− Xt)2
++ (Y0− l sinθi− Yt)2 + h2]− m+5
+2
+× 2(X0 + l cosθi− Xt) (19)
+∂Iri
+∂y = RpdPled
+(m + 1)Apd
+2π T(ψ)g(ψ)hm+1
+
+− m + 3
+2
+
+× [(X0 + l cosθi− Xt)2
++ (Y0− l sinθi− Yt)2 + h2]− m+5
+2
+× 2(Y0− l sinθi− Yt) (20)
+Since localization can be considered as an unbiased estima-
+tion problem, we can derive the lower bound of the expected
+estimation error E[(X0− x)2 + (Y0− y)2]:
+E[(X0− x)2 + (Y0− y)2]≥ trace(F−1) = CRLB (21)
+When the rod length l and rotation angle θi are determined,
+the value of CRLB is uniquely determined. From equation
+Fig. 2. Average CRLB at di ﬀerent rod length and each rotation angle.
+(21), it can be seen that the smaller the value of CRLB, the
+higher the positioning accuracy. We set appropriate rod length
+and each rotation angle by comparing the CRLB values at the
+same position under di ﬀerent conditions.
+We deﬁne the error function as:
+derror =
+p
+(X0− x)2 + (Y0− y)2 (22)
+IV. S IMULATION AND EXPERIMENTAL RESULTS
+A computer simulation was conducted on the MATLAB
+platform in an indoor scene measuring 5 m × 5 m × 4 m. The
+coordinates of the LED are (2 .5, 2.5, 4). Pled = 20W, φ1/2 =
+60◦, n = 1.5, Ψ = 80◦, T(ψ) = 1, Rpd = 0.54A/W, Apd = 1cm2.
+The remaining parameter values are consistent with [10]. Our
+point selection rule in the plane is as follows: the range of X
+and Y is from 0.2 to 4.8, with a step size of 0.2, and there are
+a total of 576 uniformly distributed points, all of which are
+within the ﬁeld of view of the PD.
+Fig. 2 discusses the inﬂuence of rod length and each rotation
+angle on the average CRLB (mean of CRLB at 576 points)
+when h = 3m, σ2
+n = 4.2291 × 10−15 A2 (mean of σ2
+n at
+576 points). Considering practical applications, the rod length
+range we are discussing is from 5cm to 25cm, with each
+rotation angle of 120 degrees, 90 degrees, 72 degrees, and
+60 degrees, respectively. The simulation results indicate that
+an increase in rod length and a decrease in each rotation angle
+will lead to an improvement in positioning accuracy. This is
+because as the length of the rod increases, there is a greater
+diﬀerence in the power values of the optical signals collected at
+diﬀerent angles; As each rotation angle decreases, the number
+of rotations increases, and the more information is collected.
+Based on the simulation results, we set the rod length to 20cm
+and rotate it 90 degrees each time.
+Fig. 3(a) shows the distribution of positioning errors through
+LS when h = 3m. The maximum positioning error is 0.0843m,
+the minimum positioning error is 0.0080m, and the average
+positioning error is 0.0252m. The positioning errors in the
+four corners are signiﬁcantly higher than those in the central
+area. This is because the LED is installed at the center of the
+roof, and the closer the positioning point is to the center, the
+higher the received light power and the better the positioning
+accuracy. Fig. 3(b) shows the distribution of positioning errors
+through the direct positioning algorithm in [1] when h = 3m
+and rotates 360 times by 1 degree each time. The maximum
+positioning error is 0.2014m, the minimum positioning error
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:13:40 UTC from IEEE Xplore.  Restrictions apply. 
+
+1036 IEEE PHOTONICS TECHNOLOGY LETTERS, VOL. 37, NO. 18, 15 SEPTEMBER 2025
+Fig. 3. Distribution of positioning errors.
+Fig. 4. Experimental setup.
+is 0.0244m, and the average positioning error is 0.0863m, all
+of which are much larger than the positioning errors shown
+in Fig. 3(a). The white area in the middle represents the
+blind spot for positioning. When simulating two algorithms,
+the length of the rod and the initial rotation position are the
+same. Fig. 3 indicates that our algorithm achieves much higher
+positioning accuracy after 4 rotations than the algorithm in
+[1] after 360 rotations. In the algorithm in [1], the author
+needs to accurately ﬁnd the closest and farthest positions of
+the PD from the LED, that is, the positions with the highest
+and lowest light power, and records the corresponding rotation
+angles of the two positions. However, due to the inﬂuence of
+noise and each rotation angle, it is di ﬃcult to accurately ﬁnd
+these two positions, which makes the positioning accuracy of
+the algorithm itself low. When the positioning point is located
+directly below the LED, due to the noise interference, the
+measured current at the receiving end may be lower than the
+real value. If the reduction is too much, it will cause di to be
+less than h, and the algorithm in [1] cannot be used.
+Fig. 4 and Fig. 5 show the experimental setup and results,
+respectively. In the experiment, h = 0.59m, Pled = 5W,
+φ1/2 = 60◦, Rpd = 0.39A/W, Apd = 150mm2. The experiment
+was conducted in an enclosed room. We use a signal generator
+to generate a sine signal with a frequency of 500 kHz. The
+frequency of sine signal is set to be 500 kHz for good
+separation with the near-DC component including DC bias
+and ambient light. Positioning operations were performed on
+36 test points within the designated area. By repeating the
+same experiment for the 36 test points in the positioning
+area, the estimated position coordinates and positioning errors
+corresponding to the 36 test points were obtained. A (41.06,
+49.11) is the point with the smallest error. B (13.12, 14.29) is
+the point with the largest error. The average positioning error
+is 4.9613cm.
+Fig. 5. Experimental results.
+V. C ONCLUSION
+In this letter, we investigate an indoor VLP system con-
+sisting of a single LED and a single rotatable PD based on
+the received signal strength. We develop a LS positioning
+algorithm and derive the CRLB on the positioning error for the
+VLP system. Based on the VLP system, we only need to rotate
+the PD 4 times to achieve centimeter-level positioning accu-
+racy. Simulation and experimental results show that compared
+to the VLP system in [1], our VLP system is simpler, with
+higher positioning accuracy and no positioning blind spots.
+Future works include studying the inﬂuence of the ambient
+light on the VLP system.
+REFERENCES
+[1] R. Liu, Z. Liang, K. Yang, and W. Li, “Machine learning based visible
+light indoor positioning with single-LED and single rotatable photo
+detector,” IEEE Photon. J. , vol. 14, no. 3, pp. 1–11, Jun. 2022.
+[2] J. Chen, D. Zeng, C. Yang, and W. Guan, “High accuracy, 6-DoF
+simultaneous localization and calibration using visible light positioning,”
+J. Lightw. Technol. , vol. 40, no. 21, pp. 7039–7047, Nov. 1,
+2022.
+[3] P. S. Farahsari, A. Farahzadi, J. Rezazadeh, and A. Bagheri, “A survey
+on indoor positioning systems for IoT-based applications,”IEEE Internet
+Things J., vol. 9, no. 10, pp. 7680–7699, May 2022.
+[4] S. Bastiaens, M. Alijani, W. Joseph, and D. Plets, “Visible light posi-
+tioning as a next-generation indoor positioning technology: A tutorial,”
+IEEE Commun. Surveys Tuts., vol. 26, no. 4, pp. 2867–2913, 4th Quart.,
+2024.
+[5] S. Ma et al., “Centimeter-level 3D mobile online visible light positioning
+system with single LED-lamp,” IEEE Internet Things J. , vol. 11, no. 1,
+pp. 418–429, Jan. 2023.
+[6] H. Yang et al., “An advanced integrated visible light communica-
+tion and localization system,” IEEE Trans. Commun. , vol. 71, no. 12,
+pp. 7149–7162, Dec. 2023.
+[7] J. Chen, Y . Zhang, S. He, and X. Lu, “High-accuracy visible light
+positioning algorithm using single LED lamp with a beacon,” IEEE
+Access, vol. 12, pp. 102337–102344, 2024.
+[8] Z. Zhu, Y . Yang, M. Chen, C. Guo, J. Hao, and S. Cui, “Visible light
+positioning with visual odometry: A single luminaire based position-
+ing algorithm,” IEEE Trans. Commun. , vol. 72, no. 8, pp. 4978–4991,
+Aug. 2024.
+[9] S. Ma et al., “Waveform design and optimization for integrated visible
+light positioning and communication,” IEEE Trans. Commun. , vol. 71,
+no. 9, pp. 5392–5407, Sep. 2023.
+[10] Z. Wang, Z. Liang, X. Li, and H. Li, “Indoor visible light positioning
+based on improved particle swarm optimization method with min-max
+algorithm,” IEEE Access , vol. 10, pp. 130068–130077, 2022.
+[11] K. Cengiz, “Comprehensive analysis on least-squares lateration for
+indoor positioning systems,” IEEE Internet Things J. , vol. 8, no. 4,
+pp. 2842–2856, Feb. 2021.
+[12] X. Liu, D. Zou, N. Huang, and Y . Wang, “An e ﬃcient iterative least
+square method for indoor visible light positioning under shot noise,”
+IEEE Photon. J. , vol. 15, no. 1, pp. 1–10, Feb. 2023.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:13:40 UTC from IEEE Xplore.  Restrictions apply. 

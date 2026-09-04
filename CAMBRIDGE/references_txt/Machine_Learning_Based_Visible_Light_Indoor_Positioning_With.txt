@@ -1,0 +1,927 @@
+IEEE PHOTONICS JOURNAL, VOL. 14, NO. 3, JUNE 2022 7322511
+Machine Learning Based Visible Light Indoor
+Positioning With Single-LED and Single
+Rotatable Photo Detector
+Ren Liu, Zhonghua Liang , Senior Member , IEEE, Kuo Y ang ,a n dW e iL i , Member , IEEE
+Abstract—In recent years, visible light positioning (VLP) systems
+have attracted considerable attention because they do not require
+additional infrastructures. However, most existing researches on
+the VLP ignore the impact of wall diffuse reﬂection, which can lead
+to the dramatical decrease of the position accuracy performance
+near the indoor walls and corners. In this paper, we design an
+indoor VLP system with one single light-emitting diode (LED)
+and a rotatable photodetector (PD), and then propose an indoor
+VLP algorithm based on machine learning (ML) methods with
+concern for the indoor reﬂection of the optical propagation. The
+proposed positioning process is implemented via two stages: area
+classiﬁcation and positioning. During the area classiﬁcation stage,
+by using the random forest (RF) algorithm, the entire room is
+divided into one interior area and four wall or corner zones. In
+the interior area, the rotatable PD is directly used to determine
+the target location. In the four wall or corner zones, a hybrid po-
+sitioning algorithm based on the extreme learning machine (ELM)
+and the density-based spatial clustering of applications with noise
+(DBSCAN) is developed to improve localization accuracy near the
+indoor walls and corners. Simulation results show that by using the
+proposed indoor VLP system with the rotatable PD and the hybrid
+algorithm, the maximum and averaged positioning errors of wall
+or corner zones drop from 137.96 cm and 15.63 cm, to 38.34 cm
+and 1.43 cm, respectively, and the averaged positioning error of the
+whole room decreases from 11.97 cm to 1.74 cm.
+Index Terms—Density-based spatial clustering of applications
+with noise (DBSCAN), extreme learning machine (ELM), Internet
+of things (IoT), random forest (RF), rotatable PD, single LED,
+visible light positioning (VLP).
+I. I NTRODUCTION
+I
+N RECENT years, with the blooming of Internet of Things
+(IoT) technologies [1], there have been gradually increased
+requirements for the various services based on the location in-
+formation. In outdoor environments, GPS or Beidou navigation
+equipment can achieve accurate positioning [2]. However, the
+indoor GPS signal could be weak or even be blocked due to
+Manuscript received January 9, 2022; revised February 22, 2022; accepted
+March 25, 2022. Date of publication March 30, 2022; date of current version
+April 18, 2022. This work was supported in part by the Natural Science Basic
+Research Project in Shaanxi Province of China under Grant 2020JM-242, in part
+by the National Natural Science Foundation of China under Grant 61871314,
+and in part by the Fundamental Research Funds for the Central Universities,
+CHD under Grant 300102249303. (Corresponding author: Zhonghua Liang.)
+The authors are with the Department of Communication Engineering,
+School of Information Engineering, Chang’an University, Xi’an, Shaanxi
+710064, China (e-mail: 2019124004@chd.edu.cn; lzhxjd@hotmail.com;
+17865519557@163.com; wli.chd@chd.edu.cn).
+Digital Object Identiﬁer 10.1109/JPHOT.2022.3163415
+the loss of satellite signals by obstructions from buildings and
+it leads to low positioning accuracy [3]. Therefore, the more
+reliable positioning systems are needed for indoor environments
+[4]. Traditional indoor positioning techniques, such as WLAN,
+UWB, and Bluetooth [5], [6], require additional infrastructures
+[7]. Meanwhile, they are easy to cause electromagnetic signal
+interference [8], and thus they are not suitable for the applica-
+tions which are sensitive to electromagnetic signal interference.
+Recently, the visible light communication (VLC) has become
+one of the essential techniques for the oncoming 6G wireless
+communications [9]. Therefore, the visible light positioning
+(VLP) based on the VLC has become a promising technology
+in the ﬁeld of the indoor positioning thanks to its inherent
+advantages, such as no requirements to deploy additional in-
+frastructures, low cost, and long service life [10], [11].
+Most of the existing VLP systems are based on multiple
+light-emitting diodes (LEDs) and they exploit TDMA [12],
+FDMA [13] or CDMA [14] technologies to avoid the mutual
+interference among LEDs. In addition, these positioning systems
+with multi-LED usually have high hardware complexity and
+high cost. In contrast, the use of VLP system with single-LED
+can avoid mutual interference among LED lights, the inﬂuence
+of the multi-LED layout on positioning accuracy, and the waste
+of LED light resources. Therefore, the VLP technology with
+single-LED is more practical and it is more energy-efﬁcient
+especially for a small room [2].
+In recent years, the various VLC/VLP systems based on the
+received signal strength (RSS) have been developed, in which
+machine learning (ML) algorithms are widely employed, such
+as the artiﬁcial neural network (ANN) [15], the convolutional
+neural network (CNN) [16], the density-based spatial cluster-
+ing of applications with noise (DBSCAN) [17], the ridge re-
+gression (RR) [18], and the extreme learning machine (ELM)
+[19]. These VLC/VLP systems have relatively better positioning
+performance. However, most of them require a large number
+of iterations for training the network, which lead to the higher
+computational complexity.
+In the indoor VLP technologies, the optical receivers are
+generally comprised of photo detectors (PD) and image sensors.
+For the single-LED positioning technologies, the receivers
+equipped with multiple PDs are designed in [20], [21], and
+the image sensors with high resolution are exploited to ob-
+tain position parameters in [5], [22], [23]. However, recent
+achievements in high-precision angle sensors have paved the
+This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+
+7322511 IEEE PHOTONICS JOURNAL, VOL. 14, NO. 3, JUNE 2022
+way for the development of the single-PD positioning systems.
+In this paper, we investigate the VLP system with single-LED
+and single-PD [24], [25] where a rotatable PD measures the
+relative angles with respect to the LED projection point as well
+as the maximum or minimum RSS values. In practice, such a
+VLP system can be a smart phone equipped with a compass
+or a robot equipped with a motor rotating at a constant speed.
+The horizontal distance between the platform and the LED
+projection point is obtained by the measured RSS value. Our
+major contributions are summarized as follows:
+1) Firstly, the random forest (RF) classiﬁcation algorithm is
+introduced to the VLP system so as to divide the measured
+room into two parts: one interior area and four wall or
+corner zones. For the interior area, the location of target
+node (TN) can be directly determined ONL Y based on the
+relative angle and the horizontal distance measured by the
+rotatable PD.
+2) For the four wall or corner zones, a hybrid positioning
+algorithm based on the ELM and DBSCAN methods is
+proposed, in which the trained ELM is ﬁrstly employed
+to each wall or corner zone to obtain an estimation of the
+target coordinates. Meanwhile, the rotatable platform will
+be moved in a small area to re-estimate the coordinates
+for some singular points and the DBSCAN algorithm is
+used to ﬁnd the largest cluster of TN estimated coordinates
+and weight the largest cluster to improve the positioning
+accuracy.
+It is worth noting that although the same ELM algorithm is
+investigated for the VLP systems in both [19] and our work, there
+are still two signiﬁcant differences between them as follows:
+Firstly, in [19], the original ELM algorithm and ﬁngerprinting
+are both employed in entire measured room to obtain an estima-
+tion of the TN’s location. However, in our work, the proposed
+hybrid ELM-DBSCAN algorithm is ONL Y used for four wall
+or corner zones to improve the positioning accuracy, and for the
+interior area, ONL Y the use of the rotatable positioning model
+with single rotatable PD is sufﬁcient to determine the TN’s
+location. By this means, when the RF classiﬁcation algorithm
+is used to roughly estimate that the TN’s location belongs to
+the interior area, it will make sense to reduce the computational
+complexity without signiﬁcant loss in localization accuracy.
+Secondly, in the ELM algorithm used in [19], the number of
+input parameters, namely the received power values, depends
+on the number of LEDs, which is strictly limited by hardware
+complexity and cost. In our work, since the power value received
+from any angle can be captured by the rotatable PD, the number
+of inputs can be ﬂexibly selected according to the accuracy
+requirements.
+The rest of this paper is organized as follows. In Section II we
+present the background including system model, noise model
+and the machine learning algorithms used in this paper. Then
+we describe the rotatable VLP positioning model and the pro-
+posed hybrid positioning algorithm in Section III. Furthermore,
+simulation results are given in Section IV to demonstrate the ef-
+fectiveness of the proposed VLP algorithm. Finally, conclusions
+are summarized in Section V.
+Fig. 1. Indoor VLP system with single-LED and single rotatable PD.
+II. B ACKGROUND
+A. System Model
+We consider an indoor scenario with single-LED illumination.
+Fig. 1 illustrates the indoor VLP system with single-LED and
+single rotatable PD. The modulated optical signal is transmitted
+by the LED light installed at the center of the roof, and the rotat-
+able platform (with blue highlighting) detects and demodulates
+the received optical signal. The rotatable platform includes a
+cylindrical body centered on the position of TN, and a rotating
+arm equipped with an angle sensor and the PD. When viewed
+from above, the horizontal arm rotates clockwise.
+When the visible light signal is transmitted indoors, it is
+easy to be reﬂected by indoor facilities or walls, and thus
+there appears multiple reﬂection signals which can decrease
+the position accuracy. In this paper, we assume that the ﬁrst
+order non-line-of-sight (NLOS) component dominates all NLOS
+reﬂection components, which is one of typical cases for indoor
+VLC or VLP channel modeling reported in [26]. 1
+We assume that the propagation of visible light in space
+follows the Lambert radiation model, in which the order of
+Lambert emission m and the channel DC gain H(0) can be
+given as follows [29]:
+m = −ln2
+ln(cosφ1/2), (1)
+H(0) =
+{ (m+1)A
+2πd2 F1(φ2,ψ 2)0 ≤ ψ2 ≤ ψc
+0 ψ2 >ψ c, (2)
+where F1(φ2,ψ 2)=c o sm(φ2)Ts(ψ2)g(ψ2)cos(ψ2), φ1/2 is
+the half power angle of the LED, A represents the active area
+1Such an assumption does not represent all typical indoor VLC or VLP
+scenarios because there should be other typical cases for indoor VLC or VLP
+channel modeling, such as those presented in [27] and [28].
+
+LIU et al.: MACHINE LEARNING BASED VISIBLE LIGHT INDOOR POSITIONING WITH SINGLE-LED AND SINGLE ROTATABLE PHOTO DETECTOR 7322511
+of the PD at the receiver, d is the distance between the LED
+and the PD, φ2 and ψ2 denote the angle of irradiance and the
+angle of incidence between the LED and the PD, respectively
+(When the PD is placed horizontally, φ2 and ψ2 are equal). ψc
+represents the ﬁeld-of-view of the receiver. Ts(ψ) is the gain
+of an optical ﬁlter, g(ψ) is the gain of an optical concentrator,
+which is expressed as [30]:
+g(ψ)= n2
+sin2 ψc
+, (3)
+where n is the refractive index. For convenience of expression,
+we only consider the reﬂection of walls and therefore the DC
+gain of a primary reﬂection from a reﬂective surface of area dA
+is given by [31]:
+Hre(0) =
+{ (m+1)A
+2π2d2
+1d2
+2
+ρcosm(φ1)F2(α,β,ψ 1)0 ≤ ψ1 ≤ ψc
+0 ψ1 >ψ c,
+(4)
+where F2(α,β,ψ 1)= dA cos(α)cos(β)Ts(ψ1)g(ψ1)cos(ψ1),
+d1 represents the distance from the LED to the reﬂection point,
+d2 is the distance between the reﬂection point and the PD, ρ
+is the reﬂection factor, dA denotes the reﬂection area, φ1 and
+α respectively indicate the irradiance angle and incident angle
+of the reﬂection point, respectively. β andψ1 are the irradiance
+angle and incident angle of the PD, respectively.
+The optical power received by the PD can be calculated as:
+Popt = Pt ×
+⎡
+⎣H(0)+
+4∑
+j=1
+mj∑
+i=1
+Hij
+re(0)
+⎤
+⎦, (5)
+wherePt is the optical emission power,j andmj are the identi-
+ﬁcation(ID) number of walls and the total number of reﬂectors
+with area dA on the j-th wall, respectively. Hij
+re(0) represents
+the DC gain of the primary reﬂection from the i-th reﬂecting
+surface of the j-th wall.
+B. Noise Model
+In the VLP system, the noise usually can be divided into
+two parts: thermal noise and shot noise. Thermal noise mainly
+includes feed-back impedance noise and ﬁeld effect pipe noise.
+Shot noise is mainly related to background current originated
+from background light or sunlight. The electrical power received
+by the PD includes the electrical power converted from optical
+power and the noise power, and thus it can be deﬁned as [25]:
+Pel =( Rp ×Popt)2 +δ2
+noise, (6)
+where Rp denotes the PD responsiveness. δ2
+noise is the sum of
+the variances of shot noise and thermal noise, and it can be
+expressed as:
+δ2
+noise = δ2
+shot +δ2
+thermal. (7)
+The variance of shot noise δ2
+shot can be obtained from [32]:
+δ2
+shot =2 qRpPoptB +2qIbgI2B, (8)
+where Ibg is dark current generated by background light, q
+denotes electronic charge, I2 indicates noise bandwidth factor,
+B represents equivalent noise bandwidth.
+The variance of thermal noise δ2
+thermal is given by [32]:
+δ2
+thermal = 8πkTk
+G CpdAI2B2 + 16π2kTkΓ
+gm
+C2
+pdA2I3B3,
+(9)
+where Tk is absolute temperature, k denotes Boltzmann’s con-
+stant,Cpd represents the ﬁxed capacitance of the photo detector
+per unit area, G is open-loop voltage gain, gm denotes the FET
+transconductance, Γ is FET noise factor, I3 is noise bandwidth
+impact factor.
+C. Algorithms Investigated in This Paper
+1) RF Classiﬁcation Algorithm: The RF classiﬁcation algo-
+rithm does not require too many parameters, and thus it can be
+used in different ﬁelds. Because this algorithm randomly selects
+data and features, it has good anti-noise performance without
+over-ﬁtting.
+The RF algorithm is a ML method based on integrated
+learning, in which multiple decision trees are used for each
+forest as training samples. Moreover, the new sample will be
+given a classiﬁcation value. Then, the ﬁnal classiﬁcation result
+is obtained based on the principle that the minority obeys the
+majority. The voting decision process is given as [33], [34]:
+H(x)= argmax
+Y
+k∑
+i=1
+I(hi(x)= Y), (10)
+where H(x) represents a combined classiﬁcation model, hi is
+single decision tree, Y is the output variable and I(·) denotes
+indicator function. The implementation steps of the RF classiﬁ-
+cation algorithm are provided in Appendix A.
+2) ELM Algorithm: The ELM algorithm is a feed-forward
+neural network algorithm based on a single hidden layer, which
+has the advantages of fast learning speed and good generalization
+performance. Compared with the ELM, the traditional feed-
+forward neural network has a slow training speed and is easy
+to appear as a local minimum. Moreover, the ELM algorithm
+randomly generates the connection weights of the input layer to
+the hidden layer and the threshold of the hidden layer neurons.
+When using it, only the number of hidden layer neurons and
+the type of activation function need to be set to ﬁnd the unique
+optimal solution. It can be used for classiﬁcation and ﬁtting of
+data [19], [34].
+Suppose the given feedforward neural network has L hid-
+den neurons and N training samples (xi, yj), where xi =
+[xi1,xi2,...,x in]T ∈ Rn and yi =[ yi1,yi2,...,y im]T ∈ Rm,
+n andm are the numbers of input layer and output neurons.
+Mathematical model of the ELM algorithm can be described
+as [35]:
+fL(xj)=
+L∑
+i=1
+βig(ωixj + bi)= yj,j =1 ,2,..,N, (11)
+
+7322511 IEEE PHOTONICS JOURNAL, VOL. 14, NO. 3, JUNE 2022
+whereωi =[ωi1,ωi2,...,ω in]T , is the input weight from the in-
+put layer to the i-th hidden node, and βi =[βi1,βi2,...,β im]T ,
+represents the output weight from the i-th hidden node to the
+output layer and bi denotes the bias of thei-th hidden node.g(·)
+refers to the activation function. (11) can be expressed in matrix
+form:
+Hβ = Y, (12)
+where
+H=
+⎡
+⎢⎢⎢⎢⎣
+g(ω1x1 +b1) g(ω2x1 +b2) ··· g(ωLx1 +bL)
+g(ω1x2 +b1) g(ω2x2 +b2) ··· g(ωLx2 +bL)
+... ... . . . ...
+g(ω1xN +b1) g(ω2xN +b2) ··· g(ωLxN +bL)
+⎤
+⎥⎥⎥⎥⎦
+β =[ βT
+1 ,βT
+2 ,..., βT
+L]T , Y =[ yT
+1 , yT
+2 ,..., yT
+L]T , H repre-
+sents the output matrix of the hidden layer neuron, Y is the
+expected output vector. Using the least square method, the ELM
+model is trained to ﬁnd an estimated β minimizing the error,
+which can be calculated as:
+ˆβ = H+Y, (13)
+where H+ represents the generalized inverse of the matrix H.
+The implementation process of the ELM algorithm is presented
+in Appendix B.
+3) DBSCAN Algorithm: The DBSCAN algorithm is a
+density-based clustering algorithm. This clustering algorithm
+generally assumes that the category can be determined by the
+tightness of the sample distribution. Samples of the same cate-
+gory are closely connected to each other. In other words, there
+must be samples of the same type not far from any sample of
+that category.
+Compared with the traditional K-means algorithm, the DB-
+SCAN does not need to specify the number of categories. It
+can ﬁnd clusters of any shape, and discover abnormal points
+while clustering, and is not sensitive to abnormal points in
+the data set. DBSCAN just needs to jointly adjust the two
+parameters: the distance thresholdε and the threshold of number
+of neighborhood sampleMinPts , which have signiﬁcant effect
+on the clustering performance [17]. The entire procedure of the
+DBSCAN algorithm is given in Appendix C.
+III. VLP S YSTEM
+A. Rotatable Positioning Model
+In the designed rotatable positioning platform with single-PD,
+it is assumed that the height of the positioning platform is con-
+stant. The positioning platform needs to obtain two parameters
+from the received signal by the PD: one is the horizontal distance
+from the PD to the LED projection point, and the other is the
+relative angle between the PD and the LED projection point with
+respect to the zero-degree line [24]. The principle of rotatable
+positioning model is shown in Fig. 2. In Fig. 2, Dh refers to
+the horizontal distance between the PD and the LED projection
+point (the yellow pentagram), and it can be deﬁned as:
+Dh =
+√
+d2 −(H −h)2, (14)
+Fig. 2. Principle of the rotatable positioning model.
+where d denotes the distance between the PD and the LED and
+it can be computed by the RSS values, H is the height of the
+room, and h refers to the height of rotatable platform as shown
+in Fig. 1.
+The PD rotates clockwise along the zero-degree line with
+a constant angular velocity ω, and T is deﬁned as the signal
+sampling interval of the PD. The power values of the electrical
+signal sampled by the PD in one rotation cycle can be described
+as:
+P =[ P(0) P(ωT){... }P(ωn1T)], (15)
+wheren1 +1 represents the number of the samples in one cycle.
+When the PD rotates around the TN, the received optical
+power ﬂuctuates with the varying distance from the LED to the
+PD. When the PD is facing the LED, the received power reaches
+the maximum with the relative angle θ = θ1. Conversely,
+when the PD is facing away from the LED, the received power
+is the minimum with the relative angle θ = θ2.F r o mF i g .2 ,w e
+see that the absolute angle difference |θ2 −θ1| = π in theory.2
+Therefore,θ1 andθ2 can be obtained by
+θ1 = arg max
+θ=iTω
+(P) (16)
+and
+θ2 = arg min
+θ=jTω
+(P), (17)
+respectively.
+Using the obtained θ1 and θ2 values, the four coordinates of
+the TN can be obtained as:
+x1 = x0 +(Dh +l)sin θ1, (18)
+y1 = y0 +(Dh +l)cos θ1, (19)
+2However, the measured value of the absolute angle difference may not be π
+in practice.
+
+LIU et al.: MACHINE LEARNING BASED VISIBLE LIGHT INDOOR POSITIONING WITH SINGLE-LED AND SINGLE ROTATABLE PHOTO DETECTOR 7322511
+Fig. 3. Area classiﬁcation with the hybrid positioning algorithm.
+x2 = x0 −(Dh −l)sin θ2, (20)
+y2 = y0 −(Dh −l)cos θ2, (21)
+where (x1,y 1) and (x2,y 2) represent the estimated position
+coordinates of the TN, respectively. (x0,y 0) denotes the co-
+ordinates of the LED projection point, and l refers to the length
+of the rotating arm. Therefore, the estimated position of the TN
+can be expressed as:
+ˆx =( x1 +x2)/2, (22)
+ˆy =( y1 +y2)/2. (23)
+The positioning error can be recorded as:
+E =
+√
+(ˆx−xture)2 +(ˆy −yture)2, (24)
+where(xture,yture) denotes the true location coordinates of the
+TN.
+B. Proposed Hybrid Positioning Algorithm
+Based on the above discussions, we see that even if the
+rotatable positioning model is used, the positioning error near
+the walls or corners will be still large since the impact of the
+wall diffuse reﬂection on the location accuracy should not be
+neglected. In order to tackle this problem, the measured room can
+be divided into two areas: interior area and wall or corner area.
+If the TN belongs to the interior area, the rotatable positioning
+model can be directly used. If the TN is located in the wall
+or corner area, the more efﬁcient positioning algorithm can be
+developed to improve the positioning accuracy.
+Moreover, in order to obtain high positioning accuracy, the
+wall or corner area can be further divided into four zones, each
+of which contains a corner of the room. Accordingly, as shown
+in Fig. 3, the entire room can be divided into ﬁve zones: four
+wall or corner zones (#1−#4), and the interior area (#5).I n
+Algorithm 1: Hybrid Positioning Algorithm.
+Inputs: InitialL1, [ωi, bi,βi],f o ri =1 ,2,3,4, N , ε,
+MinPts ,f(·), R = ∅, and c.
+1: Received power
+P1=[P0,P 60,P 120,P 180,P 240,P 300]T ;
+2: Obtain the estimated index by performing RF
+classiﬁcation;
+3: Ifindex = 5, calculate X with rotatable positioning
+model. Otherwise, calculate X by ELM using P1 in
+index subarea.
+4: If X is in the area of Subarea ( index), store X into R,
+go to step 1, repeat L1 times. Otherwise, move the
+position of the rotatable platform, go to step 1, repeat L1
+times;
+5: If the number of elements of R is greater than or equal
+to c, perform clustering using DBSCAN;
+a) If the result of step 5 is all noise, the clustering fails,
+X =[ −1−1]T , jump back to step 1, R = ∅.
+b) Otherwise, select the cluster that contains the largest
+number of coordinates to estimate the weighted
+coordinates;
+6: If the number of elements of R is less than c,
+X =[ −2−2]T ;
+Outputs: Position of TN X.
+this paper, the RF classiﬁcation algorithm is used to divide the
+whole room into ﬁve area or zones using the received power
+values from different angles and then roughly estimate which
+area or zone the TN belongs to.
+If the TN is estimated to be located in the interior area, the
+rotatable positioning model can be directly used to determine its
+coordinates. If the TN is estimated to be located in any of the four
+wall or corner zones, a hybrid algorithm based on the ELM and
+the DBSCAN is developed to estimate the coordinates of the TN
+position. The main idea of the hybrid algorithm can be explained
+as follows. The ELM algorithm is effective for determining most
+positions in the zone, except for a few singular points whose
+estimated positions drift across the boundary of the zone. When
+one or more singular points are detected, these singular points
+will be replaced by their adjacent perturbation points at random
+and this means re-moving the rotatable device to receive power in
+a small area. Theoretically, the coordinate points of the rotatable
+platform near the TN should be gathered together after being
+positioned by ELM. The DBSCAN algorithm can be used to
+ﬁnd the coordinate points that are clustered together and ﬁnd the
+largest number of clusters weighted to determine the location of
+TN.
+Assuming that the largest cluster detected by the DBSCAN
+clustering algorithm contains M coordinates, they can be ex-
+pressed as C =[ (x1,y 1),(x2,y 2),..., (xM,yM)]T . The cen-
+troid (¯x,¯y) of the coordinate set C can be given by:
+(¯x,¯y)=
+(
+1
+M
+M∑
+i=1
+xi, 1
+M
+M∑
+i=1
+yi
+)
+. (25)
+
+7322511 IEEE PHOTONICS JOURNAL, VOL. 14, NO. 3, JUNE 2022
+Fig. 4. Block diagram of the three machine learning algorithms used in this
+paper.
+Fig. 5. Block diagram of the proposed hybrid positioning algorithm.
+The Euclidean distance D from the points in the set to the
+centroid can be calculated as:
+Di =
+√
+(xi − ¯x)2 +(yi − ¯y)2,i =1 ,2,..,M. (26)
+The weight of each coordinate can be expressed as K =
+[k1,k 2,..,k M], where ki fori =1 ,2,...,M is given as:
+ki = e−Di
+∑M
+i=1 e−Di
+. (27)
+The ﬁnal estimated coordinates X can be expressed as:
+X = KC. (28)
+The block diagram of the proposed hybrid positioning al-
+gorithm and the input and input of the three machine learning
+algorithms used in this paper are shown in Fig. 5 and Fig. 4,
+respectively. In addition, the symbols used in the proposed
+hybrid positioning algorithm and the corresponding descriptions
+are provided in Table I. Finally, Algorithm 1 provides the im-
+plementation process of the hybrid ML positioning algorithm,
+in whichX =[ −1−1]T andX =[ −2−2]T do not represent
+any actual position, where the former is used as a meaning of the
+TABLE I
+PARAMETER DESCRIPTION
+TABLE II
+SIMULA TIONPARAMETER
+clustering failed, and the latter is used as an indicator of error
+area-classiﬁcation.
+IV . SIMULA TIONRESULTS
+In order to evaluate the positioning performance of the pro-
+posed VLP system with single-LED and single rotatable PD
+based on the proposed rotatable positioning model and hybrid
+positioning algorithm, the computer simulations are carried
+out in a 4 m×4m×3.1m indoor scenario using MA TLAB
+platform. As shown in Fig. 1, the position coordinates of the
+LED light is set as (2,2,3.1), the height of the rotatable device
+h =0 .1 m, the length of the rotating arm l = 0.05 ∼ 0.20 m,
+the emission power of the LED Pt = 100 W, the PD area
+A = 10 cm2, the half power angle φ1/2 =6 0◦, the PD’s angle
+of view ψc =6 0◦, and the PD responsiveness Rp =0 .54 A/W.
+Because l =0 .05 ∼ 0.20 m, the rotatable device cannot reach
+the area within0.05 ∼ 0.20 m away from the wall, and thus this
+area is not considered in the simulation. Similar to the parameter
+settings presented in [26], [32], [36], some important parameters
+related to the system model and the noise model are provided in
+Table II.3
+In order to train the RF and ELM algorithms, the training
+data is collected at 6 cm spaces in the different positions of
+3It is noted that in this paper, we consider an indoor VLC system integrating
+lighting, communication and positioning functions, which has the potential to
+be a promising solution for future indoor VLC scenarios. In such a system,
+the date rate can reach several hundreds of megabits per second or higher, and
+thus the equivalent noise bandwidth can also reach hundreds of megahertz or
+more. Similarly, the equivalent noise bandwidth presented in [32] is as high as
+800 MHz. Therefore, in Table II we set B = 400 MHz denoting a moderate
+equivalent noise bandwidth for the investigated VLC system.
+
+LIU et al.: MACHINE LEARNING BASED VISIBLE LIGHT INDOOR POSITIONING WITH SINGLE-LED AND SINGLE ROTATABLE PHOTO DETECTOR 7322511
+Fig. 6. Distribution of electrical power in the measured room.
+Fig. 7. Fitting results of polynomials with different order.
+the room, and thus there are totally 4225 sets of data. Each
+training data set includes 6 electric power values received at
+integer multiples of 60-degree compared to 0◦ line respectively,
+2 coordinate values of the TN, and the information about the
+target-afﬁliated zone. Moreover, the 6 electric power values are
+collected as a set of tested data at 5 cm spaces in the room, and
+thus there are are 5929 sets of tested data in total. Based on
+the collected electric power values, the ELM values in different
+regions are trained separately in different wall or corner zones.
+In addition, the activation function of ELM is set to sigmoidal
+function and the number of hidden layer neurons is set to 200.
+Fig. 6 shows the distribution of the received electrical power
+values in the PD. We see that the closer the position of the PD is to
+the center of the room, the greater the electrical power received
+by the PD. The maximum, minimum and average of the electrical
+power values are equal to −13.8698 dBm, −22.3297 dBm and
+−17.1502, respectively.
+In order to demonstrate the relationship of the received electric
+power and the slope distance between PD and LED, we collected
+data every 4 cm along the diagonal of the room (from one corner
+to the projection point of the LED) and obtained totally 50 sets of
+data. Based on the obtained 50 sets of data, the ﬁtting results of
+polynomials with different orders are shown in Fig. 7, we see that
+Fig. 8. Inﬂuence of the length of rotating arm on averaged positioning error
+of the rotatable positioning model.
+Fig. 9. Positioning error distribution of rotatable positioning model (LOS).
+the degree of ﬁtting increases with the order of the polynomial.
+When the order of the polynomial is 4, the degree of ﬁtting can
+be satisﬁed. Therefore, in the following simulations, the highest
+order of the ﬁtting curve is set as four.
+Fig. 8 presents the averaged positioning error of the rota-
+tional positioning model under the consideration of the different
+lengths of the rotating arml. We see that the averaged positioning
+error in the measured room is minimized when l = 10 cm.
+Moreover, when the length of the rotating arm l< 10 cm, the
+shorter the rotating arm is, the higher the positioning error is
+(due to the limited space, the results for the case l< 5c m
+is not presented in Fig. 8). This is mainly because a shorter
+rotating arm usually results in a smaller variation range of the
+power received by the PD, and thus the estimation error of
+the relative angle values (16) and (17) increases, and so does the
+positioning error. Therefore, if the measured area is too small
+for the proposed positioning system with a rotating arm 5 cm or
+more, other positioning devices need to be considered. In this
+sense, the proposed VLP system is more suitable for positioning
+in a medium-sized area, such as a small warehouse, or a nursing
+room. In the following simulations, we always let l = 10 cm.
+
+7322511 IEEE PHOTONICS JOURNAL, VOL. 14, NO. 3, JUNE 2022
+Fig. 10. Positioning error distribution with and without the hybrid positioning algorithm. (a) Without the hybrid positioning algorithm. (b) With t he hybrid
+positioning algorithm.
+Using the ﬁtting data shown in Fig. 7, the distributions of
+positioning error in the measured room are presented in Fig. 9
+for the case of line-of-sight (LOS) and in Fig. 10(a) for the NLOS
+case, respectively. From Fig. 9, we see that the positioning error
+of most locations in the measured room is below 10 cm in the
+LOS case.4 By comparing Figs. 9 and 10(a), we see that there is
+an obvious gap in positioning error between the LOS and NLOS
+cases, and thus the effect of reﬂected path can be observed.
+From Fig. 10(a), we also see that the closer the position of the
+PD is to the walls or the corners, the higher the positioning error
+is. Particularly, when the position is less than 1m away from the
+walls or the corners, the error becomes extremely large. Based
+on the simulation results, we found that the positioning error
+drops at the minimum 9.76 cm at the center of the room, and it
+reaches the maximum 137.96 cm near the corners. The averaged
+positioning error of the entire room is about 11.97 cm. Moreover,
+for 90% and 50% of the positions, the positioning error is less
+than 27 cm and 5 cm, respectively. Therefore, the width and the
+length of each wall or corner zones can be taken as 1 m and 3
+meters, respectively (As shown in Fig. 3,a =1 m andb =3 m).
+Fig. 10(b) presents the positioning error distribution of the
+proposed hybrid positioning algorithm. Compared to the results
+shown in Fig. 10(a), we see that by using the proposed hybrid
+positioning algorithm, the positioning error of the entire room
+drops dramatically. Particularly, within the wall or corner
+zones, the maximum error drops from 137.96 cm to 38.34 cm,
+and the averaged error decreases from 15.63 cm to 1.43 cm.
+Correspondingly, the averaged positioning error of the whole
+room decreases to 1.74 cm.
+Fig. 11 provides the classiﬁcation accuracy of the RF al-
+gorithm by considering the different numbers of the decision
+tree. We see that the accuracy increases with the number of the
+decision trees. Especially, after the number of the decision trees
+is no less than 99, the accuracy converges to about 95.5%.
+4The positioning error near the central area is relatively high because when
+the position of the TN is close to the position of the LED projection point, the
+difference in power received by the PD for one rotation is very small, which will
+lead to a large error in the relative angle.
+Fig. 11. Relationship between the accuracy of the RF classiﬁcation algorithm
+and the number of decision trees.
+Fig. 12 illustrates an example of clustering results using the
+DBSCAN algorithm. The sampled location[0.6,0.1] belongs to
+the wall or corner zone #1, and it is detected as a singular point
+since the estimated location drifts across the boundary of the
+zone. Therefore, by using the DBSCAN algorithm, the seven
+estimated coordinates of TN (deﬁned as noise in this paper) that
+deviate from the true coordinates of TN will be removed, and
+the largest cluster which including the eight red cross points can
+be used to estimate the target location.
+Fig. 13 provides the cumulative error function of the four wall
+or corner zones by using the rotatable positioning model with
+and without the proposed hybrid positioning algorithm. We see
+that by using the hybrid positioning algorithm, the positioning
+error is less than 3 cm in 90% of the wall or corner zones.
+Finally, we compare the performance of the proposed
+hybrid ML positioning algorithm and the other ML algorithms
+in the Table III, in which the number of required LEDs and the
+average positioning error are compared for six investigated ML
+algorithms. We see that the DBSCAN algorithm [17] has the best
+
+LIU et al.: MACHINE LEARNING BASED VISIBLE LIGHT INDOOR POSITIONING WITH SINGLE-LED AND SINGLE ROTATABLE PHOTO DETECTOR 7322511
+TABLE III
+ACCURACY COMPARISON BETWEEN OUR PROPOSED ALGORITHM AND OTHER MACHINE LEARNING ALGORITHMS
+TABLE IV
+PERFORMANCE COMPARISON BETWEEN OUR WORK AND OTHER EXISTING CAMERA-BASED VLP SYSTEMS WITH SINGLE LED
+Fig. 12. An example of clustering results using the DBSCAN algorithm
+(ε = 0.08 m, MinPts = 6).
+Fig. 13. Cumulative error function of the wall or corner zones using the
+rotatable positioning model with and without the proposed hybrid positioning
+algorithm.
+positioning performance, but it requires 25 LEDs. Our proposed
+hybrid ML algorithm only needs the minimum number of LEDs.
+Moreover, compared to the ANN [15] and ELM [19] algorithms,
+it possesses much better positioning performance. Therefore,
+our proposed hybrid ML algorithm achieves a good trade-off
+between positioning accuracy and implementation cost, and
+it can be used as an alternative to high precision positioning
+algorithms for cost-sensitive applications.
+Table IV shows the comparison between our work and other
+camera-based schemes with single LED in terms of time con-
+sumption, average accuracy, LED-coverage and dimension. It
+can be seen that the accuracy of our proposed system is the best.
+However, the beneﬁt in accuracy comes at the expense of time
+consumption. Although the proposed positioning system can
+be accelerated in practice via optimized hardware design, it is
+more suitable for those indoor applications that are not sensitive
+to positioning delay. For example, when an elderly person with
+limited mobility seeks help in a nursing home, the proposed po-
+sitioning system can be used to locate or track his/her movement
+trajectory at regular intervals. Moreover, a robot equipped with
+this positioning system can also be used in a small warehouse to
+detect changes in temperature or humidity at desired locations.
+Moreover, a robot equipped with this positioning system can also
+be used in a small warehouse to detect changes in temperature
+or humidity at desired locations.
+Simulation results show that our proposed scheme works well
+in small rooms. However, if our proposed scheme is used in
+a very large room, there should be two concerns need to be
+addressed. Firstly, due to the acquisition of massive training
+data for machine learning, a very large room could pose a
+relatively high processing latency which is not conducive to the
+implementation of a real-time positioning system. Moreover,
+in a very large room equipped with single LED, the lighting
+power may be insufﬁcient to provide both effective lighting and
+accurate positioning.
+V. C ONCLUSION
+In this paper, a ML algorithm based VLP system with single-
+LED and single PD is proposed for indoor localization scenarios.
+In the VLP system, a rotatable positioning model is used to deter-
+mine the target node’s location in the interior area. Particularly, a
+hybrid ML-based positioning algorithm is proposed to improve
+the positioning accuracy near the walls or corners. Simulation
+results show that by using the rotatable positioning model in con-
+junction with the hybrid positioning algorithm, the positioning
+error of the entire room decreases signiﬁcantly. Therefore, the
+proposed VLP algorithm is a promising solution for the indoor
+high-precision localization applications with low cost.
+
+7322511 IEEE PHOTONICS JOURNAL, VOL. 14, NO. 3, JUNE 2022
+Algorithm 2: ELM Algorithm.
+Inputs: Training sample set (xi, yi),i =1 ,...,N ,
+number of hidden neurons L and activation function
+g(·).
+1: Randomly generate ωi and bi,i =1 ,...,L ;
+2: Calculate H using (12);
+3: Calculate ˆβ using (13);
+Outputs: Output the estimated weight ˆβ.
+Algorithm 3: DBSCAN Algorithm.
+Inputs: Sample set
+D =[ (x1,y 1),(x2,y 2),..., (xm,ym)], neighborhood
+parameter(ε,MinPts ), deﬁnition the distance.
+1: Initialize the core object collection Ω= ⊘, number of
+clustersk =0 , unvisited sample collection Γ= D, and
+cluster partition c = ⊘;
+2: Perform steps (a) and (b) for j =1 ,2,...,m , to ﬁnd
+all core objects;
+a)F i n dt h eε-neighborhood subsample set Nε(xj,yj) of
+the sample (xj,yj) by calculating the distance of
+deﬁnition.
+b) If the number of subsample sets is greater than or
+equal to MinPts , add the samples (xj,yj) to the core
+object sample sets: Ω=Ω ∪(xj,yj).
+3: IfΩ= ⊘, the algorithm ends, otherwise go to step 4;
+4: Randomly select a core object o in Ω, initialize the
+current cluster core object queue Ωcur = {o}, category
+numberk = k +1 , current cluster sample set
+Ck = {o}, unvisited sample collection Γ=Γ −{o};
+5: IfΩcur = ⊘, generate cluster Ck, update the core
+object collection Ω=Ω −Ck,g ot os t e p3 ;
+6: Take out a core object o′inΩcur , ﬁnd the
+ε-neighborhood subsample set Nε(o′),l e t
+Δ= Nε(o′)∩Γ, update Ck = Ck ∪Δ, Γ=Γ −Δ,
+Ωcur =Ω cur ∪(Δ∩Ω)−o′,g ot os t e p5 ;
+Outputs: Cluster partition c = {C1,C 2,...,C k}.
+APPENDIX A
+IMPLEMENTA TIONST E P SO FT H ERF CLASSIFICA TION
+ALGORITHM
+The implementation steps of the RF classiﬁcation algorithm
+are summarized as follows [33]:
+Step 1: Randomly select p training samples from the original
+training set with replacement and generate q training sets after
+q selections;
+Step 2: The q training sets selected in the ﬁrst step above are
+used to train q decision tree models;
+Step 3: Theseq decision trees can construct a random forest;
+Step 4: The new test sequence is voted by q decision trees to
+produce the ﬁnal classiﬁcation result.
+APPENDIX B
+IMPLEMENTA TIONPROCESS OF THE ELM ALGORITHM
+The implementation steps of training the ELM algorithm are
+as shown in Algorithm 2.
+APPENDIX C
+PROCEDURE OF THE DBSCAN ALGORITHM
+The procedure of the DBSCAN algorithm is presented in
+Algorithm 3.
+REFERENCES
+[1] H. Y ang, W.-D. Zhong, C. Chen, A. Alphones, and P . Du, “QoS-driven
+optimized design-based integrated visible light communication and posi-
+tioning for indoor IoT networks,” IEEE Internet Things J. , vol. 7, no. 1,
+pp. 269–283, Jan. 2020.
+[2] H. Cheng, C. Xiao, Y . Ji, J. Ni, and T. Wang, “A single LED visible light
+positioning system based on geometric features and CMOS camera,”IEEE
+Photon. Technol. Lett., vol. 32, no. 17, pp. 1097–1100, Sep. 2020.
+[3] Y .-C. Wu et al., “Using linear interpolation to reduce the training samples
+for regression based visible light positioning system,” IEEE Photon. J. ,
+vol. 12, no. 2, Apr. 2020, Art. no. 7901305.
+[4] A. H. A. Bakar, T. Glass, H. Y . Tee, F. Alam, and M. Legg, “Accurate
+visible light positioning using multiple-photodiode receiver and machine
+learning,” IEEE Trans. Instrum. Meas., vol. 70, pp. 1–12, 2021.
+[5] Y . Liu, F. Wang, J. Ding, and N. Chi, “A single LED multi-reception
+indoor visible light position system based on power estimation-angle
+algorithm,” inProc. Int. Symp. Intell. Signal Process. Commun. Syst., 2018,
+pp. 363–367.
+[6] H. Li et al., “A fast and high-accuracy real-time visible light positioning
+system based on single LED lamp with a beacon,”IEEE Photon. J., vol. 12,
+no. 6, Dec. 2020, Art. no. 7906512.
+[7] S. Ma, Q. Liu, and P . C.-Y . Sheu, “Foglight: Visible light-enabled indoor
+localization system for low-power IoT devices,” IEEE Internet Things J. ,
+vol. 5, no. 1, pp. 175–185, Feb. 2018.
+[8] Y . Hou, Y . Xue, C. Chen, and S. Xiao, “A RSS/AOA based indoor
+positioning system with a single LED lamp,” in Proc. Int. Conf. Wireless
+Commun. Signal Process., 2015, pp. 1–4.
+[9] M. Katz and I. Ahmed, “Opportunities and challenges for visible light
+communications in 6G,” in Proc. 2nd 6G Wireless Summit, 2020, pp. 1–5.
+[10] X. Guo, F. Hu, N. R. Elikplim, and L. Li, “Indoor localization using visible
+light via two-layer fusion network,”IEEE Access, vol. 7, pp. 16421–16430,
+2019.
+[11] Y . S. Eroglu, F. Erden, and I. Guvenc, “Adaptive Kalman tracking for
+indoor visible light positioning,” inProc. IEEE Mil. Commun. Conf., 2019,
+pp. 331–336.
+[12] S.-W. Ho, A. A. Saed, L. Lai, and C. W. Sung, “Coding and bounds for
+channel estimation in visible light communications and positioning,”IEEE
+J. Sel. Areas Commun., vol. 36, no. 1, pp. 34–44, Jan. 2018.
+[13] H. Zheng, Z. Xu, C. Y u, and M. Gurusamy, “Asychronous visible light
+positioning system using FDMA and ID techniques,” inProc. Conf. Lasers
+Electro-Opt. Paciﬁc Rim, 2017, pp. 1–4.
+[14] Y .-A. Chen, Y .-T. Chang, Y .-C. Tseng, and W.-T. Chen, “A framework
+for simultaneous message broadcasting using CDMA-based visible light
+communications,” IEEE Sensors J. , vol. 15, no. 12, pp. 6819–6827,
+Dec. 2015.
+[15] S. Ni, F. Wang, S. Han, J. Pang, and S. Y ou, “Two methods of accurate
+indoor positioning based on visible light communication system and
+artiﬁcial neural network,” in Proc. 18th Int. Conf. Opt. Commun. Netw. ,
+2019, pp. 1–3.
+[16] B. Zhou and R. Wichman, “Visible light-based robust positioning under
+detector orientation uncertainty: A gabor convolutional network-based ap-
+proach extracting stable texture features,” inProc. IEEE 30th Int. Workshop
+Mach. Learn. Signal Process., 2020, pp. 1–6.
+[17] A. Gradim, P . Fonseca, L. N. Alves, and R. E. Mohamed, “On the usage
+of machine learning techniques to improve position accuracy in visible
+light positioning systems,” in Proc. 11th Int. Symp. Commun. Syst. Netw.
+Digital Signal Process., 2018, pp. 1–6.
+[18] C.-Y . Hong et al., “Angle-of-arrival (AOA) visible light positioning (VLP)
+system using solar cells with third-order regression and ridge regression
+algorithms,”IEEE Photon. J., vol. 12, no. 3, Jun. 2020, Art. no. 7902605.
+[19] Y . Chen, W. Guan, J. Li, and H. Song, “Indoor real-time 3-D visible light
+positioning system using ﬁngerprinting and extreme learning machine,”
+IEEE Access, vol. 8, pp. 13875–13886, 2020.
+[20] S.-H. Y ang, E.-M. Jung, and S.-K. Han, “Indoor location estimation based
+on LED visible light communication using multiple optical receivers,”
+IEEE Commun. Lett., vol. 17, no. 9, pp. 1834–1837, Sep. 2013.
+
+LIU et al.: MACHINE LEARNING BASED VISIBLE LIGHT INDOOR POSITIONING WITH SINGLE-LED AND SINGLE ROTATABLE PHOTO DETECTOR 7322511
+[21] S.-H. Y ang, H.-S. Kim, Y .-H. Son, and S.-K. Han, “Three-dimensional
+visible light indoor localization using AOA and RSS with multiple optical
+receivers,”J. Lightw. Technol., vol. 32, no. 14, pp. 2480–2485, 2014.
+[22] R. Zhang, W.-D. Zhong, Q. Kemao, and S. Zhang, “A single LED posi-
+tioning system based on circle projection,” IEEE Photon. J., vol. 9, no. 4,
+Aug. 2017, Art. no. 7905209.
+[23] L. Huang, S. Wen, Z. Y an, H. Song, S. Su, and W. Guan, “Single LED
+positioning scheme based on angle sensors in robotics,”Appl. Opt., vol. 60,
+no. 21, pp. 6275–6287, 2021.
+[24] L. Li, P . Hu, C. Peng, J. Shen, Zhao, and Feng, “Epsilon: A visible light
+based positioning system,” in Proc. 11th USENIX Symp. Netw. Syst. Des.
+Implementation, 2014, pp. 331–343.
+[25] Y . Zhuang et al. , “A survey of positioning systems using visible LED
+lights,” IEEE Commun. Surv. Tuts. , vol. 20, no. 3, pp. 1963–1988,
+Jul.-Sep. 2018.
+[26] T. Komine and M. Nakagawa, “Fundamental analysis for visible-light
+communication system using LED lights,”IEEE Trans. Consum. Electron.,
+vol. 50, no. 1, pp. 100–107, Feb. 2004.
+[27] K. Lee, H. Park, and J. R. Barry, “Indoor channel characteristics for visible
+light communications,” IEEE Commun. Lett., vol. 15, no. 2, pp. 217–219,
+Feb. 2011.
+[28] H. Schulze, “Frequency-domain simulation of the indoor wireless op-
+tical communication channel,” IEEE Trans. Commun. , vol. 64, no. 6,
+pp. 2551–2562, Jun. 2016.
+[29] W. Xu, J. Wang, H. Shen, H. Zhang, and X. Y ou, “Indoor positioning
+for multiphotodiode device using visible-light communications,” IEEE
+Photon. J., vol. 8, no. 1, Feb. 2016, Art. no. 7900511.
+[30] Y . Cai, W. Guan, Y . Wu, C. Xie, Y . Chen, and L. Fang, “Indoor high
+precision three-dimensional positioning system based on visible light
+communication using particle swarm optimization,” IEEE Photon. J. ,
+vol. 9, no. 6, Dec. 2017, Art. no. 7908120.
+[31] S. Feng, X. Li, R. Zhang, M. Jiang, and L. Hanzo, “Hybrid positioning
+aided amorphous-cell assisted user-centric visible light downlink tech-
+niques,” IEEE Access, vol. 4, pp. 2705–2713, 2016.
+[32] X. Liu, D. Zou, N. Huang, and S. Zhang, “A comprehensive accuracy
+analysis of visible light positioning under shot noise,” in Proc. IEEE/CIC
+Int. Conf. Commun. China , 2020, pp. 167–172.
+[33] N. A. Maung Maung, B. Y . Lwi, and S. Thida, “An enhanced RSS
+ﬁngerprinting-based wireless indoor positioning using random forest clas-
+siﬁer,” in Proc. Int. Conf. Adv. Inf. Technol., 2020, pp. 59–63.
+[34] X. Guo, S. Shao, N. Ansari, and A. Khreishah, “Indoor localization using
+visible light via fusion of multiple classiﬁers,” IEEE Photon. J. ,v o l .9 ,
+no. 6, Dec. 2017, Art. no. 7803716.
+[35] L. Lian, S. Xia, S. Zhang, Q. Wu, and C. Jing, “Improved indoor positioning
+algorithm using KPCA and ELM,” in Proc. 11th Int. Conf. Wireless
+Commun. Signal Process., 2019, pp. 1–5.
+[36] A. F. Khalifeh, N. AlFasfous, R. Theodory, S. Giha, and K. A. Darabkh,
+“On the effect of light emitting diodes positions on the performance of an
+indoor visible light communication system,” in Proc. IEEE Conf. Russian
+Young Researchers Elect. Electron. Eng., 2019, pp. 10–14.

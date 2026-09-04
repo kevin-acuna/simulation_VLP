@@ -1,0 +1,1210 @@
+418 IEEE INTERNET OF THINGS JOURNAL, VOL. 11, NO. 1, 1 JANUARY 2024
+Centimeter-Level 3-D Mobile Online Visible Light
+Positioning System With Single LED Lamp
+Shuai Ma , Member, IEEE,B i n gL i , Guanjie Zhang ,H a n gL i ,C h e nQ i u , Chuang Yu,
+Shiyin Li , and Chao Shen , Member, IEEE
+Abstract—In this article, we consider a practical indoor 3-D
+mobile online visible light positioning (VLP) system, where the
+orientation of the user equipment (UE) is arbitrary. Based
+on the received signal strength (RSS) of multiple photodetec-
+tors (PDs), we formulate the 3-D VLP problem as a nonlinear
+least squares (NLSs) optimization problem, and then propose a
+sequential quadratic programming (SQP) positioning algorithm
+to efﬁciently calculate UE’s location. To obtain more accurate
+positioning solutions, we further leverage the advantages of deep
+learning and develop a stochastic gradient descent (SGD)-based
+VLP algorithm, and achieve an average positioning error of
+1.77 cm, which signiﬁcantly outperforms existing RSS VLP local-
+ization methods. Moreover, we design a 3-D mobile online VLP
+system prototype by using a portable RaspberryPi 4 Model B as
+the positioning signal processor and data memory, and establish
+the ﬁrst publicly available 3-D VLP measured data set, including
+both RSS and orientation. The proposed positioning schemes are
+implemented and evaluated via the designed prototype system,
+which can achieve centimeter-level positioning accuracy (below
+1 cm in certain condition).
+Index Terms—Arbitrary orientation, received signal strength
+(RSS), visible light positioning (VLP).
+I. I NTRODUCTION
+T
+HE INDOOR positioning technology has attracted sig-
+niﬁcant attentions due to its key role in numerous
+Manuscript received 27 December 2022; revised 1 June 2023; accepted
+2 June 2023. Date of publication 12 June 2023; date of current version
+25 December 2023. The work of Shuai Ma was supported in part by the
+National Key Research and Development Program of China under Grant
+2019YFA0706604, and in part by the Natural Science Foundation (NSF) of
+China under Grant 61976169 and Grant 62293483. The work of Chen Qiu
+was supported in part by the National Natural Science Foundation of China
+under Grant 62101293; in part by the China Postdoctoral Science Foundation
+under Grant 2021M701806; and in part by the Major Key Project of PCL. The
+work of Shiyin Li was supported by the National Natural Science Foundation
+of China under Grant 61771474. (Corresponding author: Shiyin Li.)
+Shuai Ma is with Peng Cheng Laboratory, Shenzhen 518055, China,
+and also with the School of Information and Control Engineering, China
+University of Mining and Technology, Xuzhou 221116, China (e-mail:
+mash01@pcl.ac.cn).
+Bing Li, Guanjie Zhang, and Shiyin Li are with the School of Information
+and Control Engineering, China University of Mining and Technology,
+Xuzhou 221116, China (e-mail: lb_1015@cumt.edu.cn; zhangguanjie@
+cumt.edu.cn; lishiyin@cumt.edu.cn).
+Hang Li and Chao Shen are with the Department of Industrialization Center,
+Shenzhen Research Institute of Big Data, Shenzhen 518172, Guangdong,
+China (e-mail: hangdavidli@163.com; chaoshen@sribd.cn).
+Chen Qiu is with Peng Cheng Laboratory, Shenzhen 518000, China (e-mail:
+qiuch@pcl.ac.cn).
+Chuang Yu is with the Cognitive Robotics Laboratory, Department of
+Computer Science, University of Manchester, M13 9PL Manchester, U.K.
+(e-mail: chuang.yu@ucl.ac.uk).
+Digital Object Identiﬁer 10.1109/JIOT.2023.3285556
+location-aware services, including, but not limited to, indoor
+navigation, asset tracking, human activity recognition, and
+intelligent logistics system. By utilizing the widely deployed
+light emitting diode (LED), visible light positioning (VLP)
+can simultaneously provide high-accuracy localization and
+illumination services. Compared with other existing indoor
+positioning technologies, such as wireless ﬁdelity (WiFi)
+positioning [1], radio frequency identiﬁcation (RFID) [2],
+magnetic information [3], bluetooth [4], and ultrawide-
+band (UWB) [5], VLP exhibits the advantages of high-
+positioning accuracy, license-free spectrum, energy efﬁcient,
+low-multipath effects, high security and no electromagnetic
+interference, etc. Furthermore, VLP can be widely applied in
+electromagnetic sensitive areas, where RF radiation is poten-
+tially hazardous or even forbidden, e.g., hospitals, nuclear
+power plants, and mines.
+In VLP systems, various techniques can be leveraged
+for position estimation, such as image sensing [6], [7],
+received signal strength (RSS) [8], time of arrival (TOA) [9],
+[10], time difference of arrival (TDOA) [11] and angle of
+arrival (AOA) [12]. Speciﬁcally, the image sensing positioning
+method requires complicated image sensor hardware (cameras)
+as the receiver. AOA, TOA and TDOA-based indoor position-
+ing methods require complex signal processing [13], and while
+RSS is the most commonly used VLP method due to its easy
+implementation and low-cost characteristics.
+According to the required number of lamps, RSS-based
+VLP technology can be further classiﬁed into multilamps
+positioning schemes [14], [15] and single-lamp positioning
+schemes [16], where the lamp is utilized as the anchor node
+for positioning. However, the multilamps positioning schemes
+in general require at least three anchors for effective local-
+ization, which is hard to implement in many practical VLC
+applications area. For example, in a long corridor or tunnel,
+the lamps are deployed along a line with large intervals. In
+these scenarios, multiple lamps may not be visible to the
+user equipments (UEs) at the same time. To overcome the
+practical application limitations, the single-lamp VLP schemes
+were proposed [8], [12], [14], [16], [17]. Speciﬁcally, the tri-
+angulation positioning methods were developed for 2-D [14]
+and 3-D [8] VLP, respectively. Using AOA and RSS, a 3-D
+indoor positioning system was proposed in [12] with the ﬁxed
+photodetector (PD) orientation. In [16], a 2-D positioning algo-
+rithm was presented based on a long short term memory-fully
+connected network (LSTM-FCN). Fixing the PD orientation,
+a weighted k-nearest neighbor (KNN) algorithm was applied
+2327-4662 c© 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+MA et al.: CENTIMETER-LEVEL 3-D MOBILE ONLINE VISIBLE LIGHT POSITIONING SYSTEM 419
+TABLE I
+COMPARISON WITH EXISTING POSITIONING WORKS
+in [17] for 2-D ﬁngerprinting localization. The features and the
+performance of the above works are summarized in Table I.
+Note that, the existing VLP works only consider 3-D (or 2-D)
+positioning with upward (or ﬁxed) PD orientation. In practice,
+the PDs’ orientation of mobile users may not be ﬁxed and can
+be arbitrary.
+In this article, for a 3-D VLP system, we develop a least
+squares (LSs) positioning scheme and a stochastic gradient
+descent (SGD) positioning scheme for arbitrary UE orien-
+tation, as well as the vertical up UE orientation (like most
+existing works did). More speciﬁcally, the main contributions
+of this work are summarized as follows.
+1) Based on the RSS at the multi-PDs, we ﬁrst formulate
+3-D VLP problem with arbitrary UE orientation as a
+nonlinear LS (NLS) optimization problem by exploiting
+the Lambertian channel model, which is nonconvex and
+difﬁcult to ﬁnd the optimal solutions. To overcome this
+difﬁculty, we propose a sequential quadratic program-
+ming (SQP) positioning algorithm to iteratively solve the
+NLS problem, where the iteration step sizes are updated
+according to Wolfe–Powell rule. The proposed SQP
+scheme can achieve the positioning error of 16.8 cm for
+the vertical up orientation, and 26.36 cm for the arbitrary
+orientation.
+2) Since the 3-D VLP problem is a nonlinear and noncon-
+vex problem, the above proposed SQP algorithms may
+fall into poor local optimal positioning solutions. To fur-
+ther improve the positioning accuracy, we explore the
+advantages of deep learning to solve the nonlinear and
+nonconvex 3-D VLP problem. More speciﬁc, we design
+SGD-based VLP schemes for the arbitrary and vertical
+up PDs orientation, respectively. The SGD-based VLP
+schemes can achieve 0.7 cm for the vertical up PDs ori-
+entation, and 1.77 cm for the arbitrary PDs orientation,
+which can signiﬁcantly outperform existing RSS VLP
+localization methods (referring to Table I).
+3) We further design and implement a 3-D online single-
+lamp-multi-PDs positioning system prototype. By using
+a portable RaspberryPi 4 Model B as the positioning
+signal processor and data memory, the light inten-
+sity of multiple PDs and inertial measurement unit
+(IMU) orientation data are collected simultaneously.
+Then, we build an RSS and orientation measurements
+database, which is available at https://pan.baidu.com/s/
+1GCvxSaKpnqjd1XqSRsfbfg?pwd=nbjy. To the best of
+our knowledge, this is the ﬁrst publicly available RSS
+and orientation measured database of 3-D VLP systems,
+which is free for researchers to perform VLP testing and
+analysis.
+Moreover, we compare the proposed positioning schemes
+with exiting works in detail from the perspectives of position-
+ing area, number of lamps, positioning dimensions, positioning
+accuracy, veriﬁcation methods, processing methods, receiver
+orientation and SNR, which are listed in Table I. In Table I,
+“Tri.” means triangulation positioning methods, “DL” means
+deep learning positioning methods, “Sim.” means simula-
+tion results, “Exp.” means experimental results. Speciﬁcally,
+comparing with the existing VLP schemes, the proposed
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+420 IEEE INTERNET OF THINGS JOURNAL, VOL. 11, NO. 1, 1 JANUARY 2024
+Fig. 1. 3-D VLP system model.
+VLP schemes are the ﬁrst to achieve 3-D positioning with
+arbitrary receiver orientation. Moreover, comparing with the
+trilateration-based VLP schemes, positioning areas of the
+proposed LS schemes are the largest, and the SNRs of the
+input signals are the lowest. Comparing with the DL-based
+VLP schemes, the positioning areas of the proposed SGD
+schemes are the largest, and the SNRs of the input signals
+of the proposed SGD schemes are the lowest.
+The remainder of this article is organized as follows.
+In Section II, we introduce the 3-D VLP system model. In
+Section III, we develop 3-D LS-based positioning scheme. In
+Section IV, we propose the SGD-based positioning scheme.
+In Section V, we present the 3-D VLP system prototype design
+and implementation. Section VI evaluates the performance of
+the proposed positioning algorithms, and ﬁnally this article is
+concluded in Section VII.
+II. S YSTEM MODEL
+Consider a 3-D single-lamp-multi-PDs positioning system,
+as shown in Fig. 1, where the lamp with a single LED in the
+ceiling serves a mobile UE that has a K PDs and an IMU.
+Let uL = [ϑ1,ϑ 2,ϑ 3]T and ui
+/Delta1= [ui,1, ui,2, ui,3]T denote the
+position of the lamp and the ith PD, respectively, where i ∈
+{1, 2,..., K}. Assume that the PDs are placed rigidly on the
+UE, i.e., all PDs rotate along with the UE. Without loss of
+generality, assume that the position of the ﬁrst PD represent
+the position of the UE. As such, the orientation and the rotation
+angle of the ﬁrst PD are the same as those of UE. Moreover,
+the orientation of the lamp is vertical downward, i.e., nL =
+[0, 0,−1]T.
+Based on Euler’s rotation theorem[29], any UE’s orientation
+in R3 space can be uniquely decomposed by three elemental
+rotations. Fig. 2(a) shows the initial vertical up orientation of
+UE, and three kinds of rotation are given in Fig. 2(b)–(d),
+respectively. Speciﬁcally, α, β, and γ , respectively, denote
+rotation angle around the z-axis, x-axis, and y-axis, which
+Fig. 2. User receiver orientation diagram. (a) Horizontal. (b) Yaw α.
+(c) Roll γ . (d) Pitch β.
+are called yaw, pitch and roll, respectively. The corresponding
+rotation matrices Rα, Rβ, and Rγ are, respectively, given as
+Rα =
+⎡
+⎣
+cos α − sinα 0
+sinα cos α 0
+00 1
+⎤
+⎦ (1a)
+Rβ =
+⎡
+⎣
+10 0
+0 cos β − sinβ
+0s i n β cos β
+⎤
+⎦ (1b)
+Rγ =
+⎡
+⎣
+cos γ 0s i n γ
+01 0
+− sin γ 0 cos γ
+⎤
+⎦. (1c)
+The concatenated rotation matrix can be written as R =
+RαRβ Rγ , which is explicitly given as
+R =
+⎡
+⎣
+cos γ sin α sin β + cos α sinγ
+sinα sinγ − cos α cos γ sinβ
+cos β cos γ
+⎤
+⎦. (2)
+Therefore, the orientation of the ith PD can be expressed as
+ni = Rn0,i, where n0,i ∈ R3×1 denote the initial orientation
+of the ith PD. Furthermore, after the rotation, the position of
+the ith PD is given as
+ui = u1 + ai (3)
+where ai = Ra0,i denotes the position bias of the ith PD, u1
+is the position of the ﬁrst PD, and a0,i ∈ R3×1 denotes the
+position bias relative to the ﬁrst PD in the initial position.
+Let hi(t) denote the VLC channel between BS and the ith
+PD at time t, which includes both the line-of-sight (LOS)
+link and the diffused reﬂection link. Mathematically, the VLC
+channel gain hi(t) is given as [30], [31]
+hi(t) = hL,iδ(t) + hd,i(t − /Delta1Ti) (4)
+where hL,i and hd,i(t − /Delta1Ti) denote the gains of the LOS chan-
+nel and diffused reﬂection channel, respectively, δ(t) is the
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+MA et al.: CENTIMETER-LEVEL 3-D MOBILE ONLINE VISIBLE LIGHT POSITIONING SYSTEM 421
+Dirac function, and /Delta1Ti denotes the time delay of the non-LOS
+(NLOS) path. Furthermore, according to Lambertian channel
+model, the LOS channel gain hL,i is given by [32]
+hL,i = (m + 1)APD,i
+2πd2
+i
+gf cosm(φi) cos(ψi)rect
+( ψi
+/Psi1c
+)
+(5)
+where m =− ln 2/ ln(cos /Phi11/2) denotes the Lambertian emis-
+sion order, /Phi11/2 is the semi-angle at half power. APD,i
+represents the receiving area of the ith PD, gf is the gain of the
+optical concentrator, di denotes the distance between BS and
+the ith PD, φi represents the angle between the emitted light
+and the normal vector of the LED. ψi is the angle between
+the emitted light and the normal vector of the ith PD, and /Psi1c
+stands for ﬁeld of view (FOV) of PD. Moreover, rect (ψi//Psi1c)
+is given by
+rect
+( ψi
+/Psi1c
+)
+=
+{ 1, 0 ≤ ψi ≤ /Psi1c
+0, otherwise (6)
+where i ∈ K.
+By taking the position ui = u1 + ai and the angle into
+consideration, we have
+hL,i = γi
+(
+ϑ3 − θ3,i
+)m(uL − u1 − ai)Tni
+‖uL − u1 − ai‖m+3‖ni‖
+(7)
+where γi
+/Delta1= ([(m + 1)APD,igf ]/2π), and di =
+‖uL − (u1 + ai)‖.
+Furthermore, let Hi(f) denote the frequency domain channel
+gain of the ith PD hi(t), which is given by
+Hi(f) = hL,i + cd,i (8)
+where cd,i is the power efﬁciency for the diffuse signal. In
+addition, cd,i is given by
+cd,i = ρAPD,iej2πf/Delta1Ti
+(1 − ρ)Aroom
+(
+1 + j f
+f0
+) (9)
+where Aroom represents the surface area of room, f0 stands for
+the cutoff frequency, and ρ is the average reﬂectivity of the
+room.
+In the VLP system, the transmitted signal of the LED x(t)
+is given as
+x(t) =
+√
+Ps(t) + IDC (10)
+where P denotes the power gain of the power ampliﬁer of
+the LED driver, s(t) denotes the united power signal, i.e.,
+E{s2(t)}= 1, and IDC stands for the DC bias. Thus, the
+received signal of the ith PD yi(t) is given as
+yi(t) = hi(t) ∗ x(t) + zi(t) (11)
+where zi(t) ∼ N(0,σ i2) denotes the additive white Gaussian
+noise (AWGN). Therefore, the received power of the i-PD is
+given as
+Py,i = 1
+T
+∫ T
+0
+(
+hL,i + cd,i
+)2x(t)2dt + σ 2
+i (12a)
+=
+(
+h2
+L,i + c2
+d,i + 2hL,i cd,i
+)
+Ps + σ 2
+i (12b)
+where T represents the symbol period of the transmitted signal.
+III. N ONLINEAR LEAST SQUARES POSITIONING SCHEMES
+In this section, we investigate the NLS positioning scheme
+by taking the arbitrary PDs orientation into consideration,
+where the orientation information is obtained from the IMU
+at the UE.
+Since the received power of the PD is a function of UE’s
+location, the location can be jointly calculated based on the
+received power of multi-PDs. Speciﬁcally, the received power
+of PDs {Py,i}K
+i=1 in (12b) can be reformulated as
+hL,i =
+√
+Py,i − σ 2
+i
+Ps
+− cd,i. (13)
+Combining (7) and (13),w eh a v e
+√
+Py,i − σ 2
+i
+Ps
+− cd,i = γi
+(
+ϑ3 − θ3,i
+)m(uL − u1 − ai)Tni
+‖uL − u1 − ai‖m+3‖ni‖ . (14)
+Since there are K PDs at UE, the UE’s position u1 can be
+obtained by solving following:
+⎧
+⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎩
+√
+Py,1−σ 2
+1
+Ps − cd,1 =
+γ1
+(
+ϑ3 −θ3,1
+) m
+(uL−u1)Tn1
+‖uL−u1‖m+3‖n1‖
+...√
+Py,K−σ 2
+K
+Ps − cd,K =
+γK
+(
+ϑ3 −θ3,k
+) m
+(uL−u1−aK)TnK
+‖uL−u1−aK‖m+3‖nK‖ .
+(15)
+Note that, there are (K + 3) variables in (15), i.e., {cd,i}K
+i=1
+and u1, which is an under-determined equation with inﬁnite
+solutions. Since the values of NLOS terms {cd,i}K
+i=1 are signif-
+icantly lower than that of LOS term hL,i, we approximate the
+values of {cd,i}K
+i=1 to be the same, i.e., cd,i = cd ∀i. Thus, (15)
+can be re-expressed as
+⎧
+⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎩
+√
+Py,1−σ 2
+1
+Ps − cd =
+γ1
+(
+ϑ3 −θ3,1
+) m
+(uL−u1)Tn1
+‖uL−u1‖m+3‖n1‖
+...√
+Py,K−σ 2
+K
+Ps − cd =
+γK
+(
+ϑ3 −θ3,k
+) m
+(uL−u1−aK)TnK
+‖uL−u1−aK‖m+3‖nK‖ .
+(16)
+For convenience, we introduce the following variables:
+ri(u1) /Delta1=
+√
+Py,i − σ 2
+i
+Ps
+− cd (17)
+− γi
+(
+ϑ3 − θ3,i
+)m(uL − u1 − ai)Tni
+‖uL − u1 − ai‖m+3‖ni‖
+r(u1) /Delta1= [r1(u1), r2(u1),..., rK(u1)]T (18)
+f(u1) /Delta1= 1
+2‖r(u1)‖2. (19)
+Then, (16) can be equivalently formulated as a NLS
+optimization problem given by
+minu1
+f(u1) = 1
+2‖r(u1)‖2 (20)
+which is nonconvex and difﬁcult to ﬁnd the optimal solutions.
+To overcome this difﬁculty, we exploit the SQP algorithm [33]
+to iteratively solve the NLS problem. Speciﬁcally, the (i+1)th
+iteration point u[i+1]
+1 is updated as
+u[i+1]
+1 = u[i]
+1 + d[i] (21)
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+422 IEEE INTERNET OF THINGS JOURNAL, VOL. 11, NO. 1, 1 JANUARY 2024
+Algorithm 1 SQP Positioning Algorithm
+1: Initialize u[0]
+1 , step-size α0 = 1 and the convergence
+tolerance 0 <μ < 1;
+2: repeat
+3: Calculate r(u[i]
+1 ) and the Hessian matrix H
+(
+u[i]
+1
+)
+;
+4: Update the descending direction η[i] in (22);
+5: Calculate the step-size αi by Wolfe-Powell rule in(24);
+6: Update u[i+1]
+1 = u[i]
+1 + αiη[i];
+7: i ← i + 1;
+8: until
+‖‖‖u[i−1]
+1 −u[i]
+1
+‖‖‖‖‖‖u[i]
+1
+‖‖‖
+≤ μ;
+9: Output the location solution u[i+1]
+1 .
+where d[i] = αiη[i] represents the descending direction vector
+corresponding to the ith iteration, αi denotes the stepsize, and
+η[i] ∈ R3×1 denotes the descending direction. The optimal
+descending direction η[i] satisﬁes the following:
+H
+(
+u[i]
+1
+)
+η[i] =− ∇f
+(
+u[i]
+1
+)
+(22)
+where ∇f(u[i]
+1 ) and H(u[i]
+1 ) denote the gradient and the Hessian
+matrix of f(u[i]
+1 ), respectively. Furthermore, H(u[i]
+1 ) is given as
+H
+(
+u[i]
+1
+)
+=
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎢⎣
+∂2f
+(
+u[i]
+1
+)
+∂u2
+1
+∂2f
+(
+u[i]
+1
+)
+∂u1∂u2
+···
+∂2f
+(
+u[i]
+1
+)
+∂u1∂uk
+∂2f
+(
+u[i]
+1
+)
+∂u2∂u1
+∂2f
+(
+u[i]
+1
+)
+∂u2
+2
+···
+∂2f
+(
+u[i]
+1
+)
+∂u2∂uk
+...
+... ... ...
+∂2f
+(
+u[i]
+1
+)
+∂uk∂u1
+∂2f
+(
+u[i]
+1
+)
+∂uk∂u2
+···
+∂2f
+(
+u[i]
+1
+)
+∂u2
+k
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎥⎦
+. (23)
+To choose a proper step size with a sufﬁcient decrease, the
+step size αi is calculated according to the Wolfe–Powell rule,
+i.e.,
+f
+(
+u[i]
+1 + αiη[i]
+)
+≤ f
+(
+u[i]
+1
+)
++ ραi∇f
+(
+u[i]
+1
+) T
+η[i] (24a)
+∇f
+(
+u[i]
+1 + αiη[i]
+) T
+η[i] ≥ ξ∇f
+(
+u[i]
+1
+) T
+η[i],ξ ∈ (ρ, 1) (24b)
+where ρ ∈ (0, 0.5) and ξ ∈ (ρ, 1) are given parameters. In
+summary, the proposed SQP positioning algorithm is presented
+in Algorithm 1.
+For some practical VLP applications, the orientation of PDs
+may keep vertical up, such as robot cars, cargo tags, which
+is a special case of arbitrary PDs orientation. In this special
+case, ni = e3 = [0, 0, 1]T ∀ i = 1,..., K, and the (15) can
+be further simpliﬁed as
+hL,i = γi
+(
+ϑ3 − θ3,i
+)m(uL − u1 − ai)Te3
+‖uL − u1 − ai‖m+3 . (25)
+Furthermore, the objective function of the NLS
+problem (20) can be rewrote as
+ri(u1) =
+√
+Py,i − σ 2
+i
+Ps
+− cd
+− γi
+(
+ϑ3 − θ3,i
+)m(uL − u1 − ai)Te3
+‖uL − u1 − ai‖m+3 . (26)
+Fig. 3. Proposed SGD positioning network.
+Therefore, the proposed SQP positioning Algorithm 1 can
+also be applied. The performance of Algorithm 1 will be
+further evaluated in Section VI.
+IV . DEEP LEARNING POSITIONING SCHEMES
+According to (14), the received power {Py,i}K
+i=1 are non-
+linear and nonconvex functions of the localization u1.
+Therefore, there are many local optimal localization solu-
+tions for the 3-D VLP problem (16). The proposed SQP
+algorithm may fall into a local optimal solution during the
+iterative process, which may lead to high-positioning errors.
+Given the above issues, we turn to apply the data-driven
+method. Particularly, deep learning has ﬂexible and powerful
+processing capabilities for complex nonlinear and noncon-
+vex optimization problem. Here, we propose a SGD-based
+deep learning positioning network to solve the 3-D VLP
+problem.
+Speciﬁcally, as shown in Fig. 3, the proposed 3D-VLP
+SGD network includes Kv layers, i.e., {vi}Kv
+i=1, one input layer
+v0 ∈ RK+3, Kv hidden layers {vi ∈ RLi }Kv−2
+i=1 , and one output
+layer vKv ∈ R3. Moreover, let Wi = [w[i]
+1 ,..., w[i]
+Li ] ∈ RLi+1×Li
+denote the weight matrix between the ith layer and the
+(i + 1)th layer, where w[i]
+k = [w[i]
+k,1,..., w[i]
+k,Li+1 ]T ∈ RLi+1
+denote the weight vector between the ith layer and the nodes
+of the (i + 1)th layer for the kth node.
+The SGD positioning network is trained by multiple small
+batch samples. Assume there are Nb sampled data vectors
+{b1,..., bNb } for each batch, where bi = [Py,1,..., Py,K, nT
+1 ]T
+denote the ith sample vector of the received power of
+K PDs and the orientation of the ﬁrst PD. Moreover,
+let u(i)
+1 denote the corresponding position of the ith sam-
+ple vector bi. For the SGD-based 3D-VLP network, we
+ﬁrst assign the sampled data vectors to the input layer
+node in sequence, i.e., v0 = bi, where i = 1,..., Nb.
+Then, the values of the nodes in the ith layer is updated
+using rectiﬁed linear unit (ReLU) activate function, which is
+given as
+vk = max(0, Wk−1vk−1), k = 1,..., Nb (27)
+where max (x, y) ={ max(xi,yi)} denote the activation func-
+tion.
+Then, the output layer predicts the 3-D position vector of the
+ﬁrst PD, i.e., vKv
+/Delta1= [ˆu1,ˆu2,ˆu3]. For the ith sample vector bi,
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+MA et al.: CENTIMETER-LEVEL 3-D MOBILE ONLINE VISIBLE LIGHT POSITIONING SYSTEM 423
+Algorithm 2 SGD Positioning Algorithm
+Input: Set the learning rate α, the stop condition parameter
+δ = 1.0×10−10, number of sample batches Nb, and i = 0;
+1: while J
+(
+{Wk}Kv−1
+k=0
+)
+≥ δ do
+2: while i ≤ Nb do
+3: Select a batch of samples from the dataset and
+calculate the value of L(i)
+(
+vKv , u(i)
+1 ,{Wk}Kv−1
+k=0
+)
+;
+4: i = i + 1;
+5: end while
+6: Calculate J({Wk}Kv−1
+k=0 ) in (29);
+7: Update {Wl}Kv−1
+l=0 according to (30);
+8: end while
+Output: v Kv .
+let L(i) denote the loss function between the predicted position
+vector vkv and the exact position vector (label) u(i)
+1 , i.e.,
+L(i)
+(
+vKv, u(i)
+1 ,{Wk}Kv−1
+k=0
+)
+=‖vKv − u(i)
+1 ‖2. (28)
+Therefore, for each batch, the mean loss of the Nb sampled
+vectors is a function of the weight matrix, i.e.,
+J
+(
+{Wk}Kv−1
+k=0
+)
+= 1
+Nb
+Nb∑
+i=1
+L(i)
+(
+vKh , u(i)
+1 ,{Wk}Kv−1
+k=0
+)
+. (29)
+Then, based on the back propagation, the weight matrix W
+is updated by
+Wl ← Wl − α
+∂J
+(
+{Wk}Kv−1
+k=0
+)
+∂Wl
+, l = 0,..., Kv − 1 (30)
+where α denotes the step size. In summary, the proposed SGD
+positioning algorithm is listed in Algorithm 2.
+When the orientation of PDs is vertical up, the proposed
+SGD network can be simpliﬁed to a lightweight SGD network
+without IMU input, which requires less numbers of lay-
+ers and less calculation time. Speciﬁcally, a small batch of
+SGD network is designed for processing, and each batch
+{b1,..., bNb } includes Nb sampled data vectors, where bi =
+[Py,1,..., Py,K]T denotes the received power of the ith sample
+vector of K PDs. Compared with the previous arbitrary case,
+the inputs of the network is reduced to received power of K
+PDs, i.e., {Py,i}K
+i=1, and the number of hidden layers is also
+signiﬁcantly reduced. In this way, based on the K PDs input
+data vectors, we may obtain the position of the UE-based the
+simpliﬁed Algorithm 2, whose details are omitted for brevity.
+V. 3 - D V L P PROTOTYPE DESIGN AND IMPLEMENTATION
+In this section, we introduce the hardware platform design
+of 3-D online VLP system, which can be used to implement
+the proposed positioning schemes. In the 3-D VLP system
+prototype, the transmitter includes a commercial single LED
+luminaire and the LED drive control circuit that can adjust the
+brightness of the light. Note that, for the illumination consid-
+eration, multiple LEDs can be integrated in the luminaire as
+a single anchor node for positioning.
+Fig. 4. Proposed 3-D VLP prototype.
+At the VLP receiver side, there are four PDs (K = 4) to
+convert optical signals into electrical signals, and an IMU to
+measure the real-time orientation of the receiver. The receiver
+is connected to a portable RaspberryPi 4 Model B processor
+for data collection and online positioning algorithms process-
+ing, and one display is to present the real-time positioning
+results.
+In practice, the received signals may be inﬂuenced by the
+background light and interference. Thus, we further intro-
+duce a background noise ﬁltering (BNF) algorithm, which
+can automatically detect and eliminate the background light
+to reduce the impact of background noise. The BNF algo-
+rithm can signiﬁcantly improve the robustness of the proposed
+VLP schemes. The system structure and the prototype are
+s h o w ni nF i g .4. Our proposed 3-D online VLP system proto-
+type can achieve high-accuracy positioning in a bright daylight
+environment.
+Training Set Collection: First, the light intensity data col-
+lected by PD and the angle data measured by IMU are
+synchronized through the our designed software program.
+Then, in a 3-D space of (300 × 300 × 220) cm3, each interval
+of 20 cm in the horizontal and vertical directions is a data
+sampling position point, with a total of 2250 data sampling
+position point. Each point collects 20 different angles and
+corresponding light intensities, and there are 45000 sampled
+training data.
+Based on the received light intensity and orientation
+information, the online positioning schemes are implemented
+in Python language and executed on the RaspberryPi 4
+Model B processor. The detailed parameters of the prototype
+are provided in Table II. Note that, the data sampling, data
+training, data preprocessing, and the proposed online position-
+ing schemes are all implemented in the proposed positioning
+prototype system, and the evaluation will be presented in the
+next section.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+424 IEEE INTERNET OF THINGS JOURNAL, VOL. 11, NO. 1, 1 JANUARY 2024
+TABLE II
+HARDW ARE PARAMETERS OF 3-D O NLINE VLP S YSTEM PROTOTYPE
+Fig. 5. 2-D iso-illuminance ﬁtting curve of LED with 2700 lux.
+VI. E XPERIMENTAL VERIFICATION AND THEORETICAL
+RESULTS
+In this section, we evaluate the proposed 3-D online VLP
+schemes via our VLP prototype system. As shown in Fig. 4,
+our prototype is tested in the laboratory near the window with
+in the (1.5 × 1.5 × 1.5) m2 test area. The maximum vertical
+distance from the LED to PDs is 2 m.
+A. LS Positioning Schemes
+To verify the accuracy of lambert model, we ﬁrst test the
+iso-illuminance spherical surface of the LED. Fig. 5 shows the
+2-D equal illumination ﬁtting curve of LED with 2700 lux. It
+can be seen from Fig. 5 that the test points with the same
+illuminance can be approximately ﬁtted into a circle, which
+veriﬁes the accuracy of the LED spherical lambert radiation
+model.
+Fig. 6. Positioning errors CDF of the LS VLP schemes.
+Let LS-VU denote the LS scheme with vertical up UE ori-
+entation, and LS-AO denote the LS scheme with arbitrary UE
+orientation. Fig. 6 compares the positioning errors CDF of LS-
+VU and LS-AO schemes. One can observe that the positioning
+error of LS-VU scheme is less than that of LS-AO scheme.
+We conclude that the vertical up orientation can contribute to
+the positioning accuracy. More speciﬁcally, the average posi-
+tioning errors of LS-VU and LS-AO schemes are 16.8 and
+26.3 cm, respectively.
+B. SGD Positioning Schemes
+In this section, SGD-AO denotes the SGD scheme with arbi-
+trary UE orientation. Since the performance of deep learning
+does not increase monotonically with the number of network
+layers, we ﬁrst determine the optimal number of layers of the
+SGD-AO VLP network.
+Fig. 7(a) shows the positioning errors versus the number
+of layers of the SGD-AO network. It can be seen that the
+positioning error ﬁrst decreases and then increases as the num-
+ber of network layers gets large. We may observe that the
+optimal number of network layers corresponding to the low-
+est positioning error is 14. Fig. 7(b) shows the positioning
+errors versus the number of layers of the SGD-VU (SGD with
+vertical up UE orientation) network. It can be seen that the
+positioning errors ﬁrst decreases and then maintains a short
+ﬂuctuation with the increase of network layers, and has the
+best positioning accuracy when the number of network layers
+is 8.
+Fig. 8(a) and (b) depict the positioning errors of SGD-VU
+network and SGD-AO network versus the number of itera-
+tions. It can be seen that the positioning error ﬁrst declines
+rapidly, and then tends to be constant as the number of iter-
+ations increases. After 600 iterations, the network positioning
+error converges.
+Fig. 9 compares positioning errors CDF of SGD-VU and
+SGD-AO schemes. It can be seen that the positioning error
+of SGD-VU network is less than that of SGD-AO network.
+The average positioning errors of LS-VU and LS-AO schemes
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+MA et al.: CENTIMETER-LEVEL 3-D MOBILE ONLINE VISIBLE LIGHT POSITIONING SYSTEM 425
+(a)
+(b)
+Fig. 7. (a) Positioning errors versus the number of layers of the SGD-AO
+network. (b) Positioning errors versus the number of layers of the SGD-VU
+network.
+are 0 .7 and 1 .77 cm, respectively. Compared with Fig. 6,
+the average positioning errors of SGD-VU and SGD-AO
+are signiﬁcantly lower than those of LS-VU and LS-AO
+schemes.
+Fig. 10 compares positioning errors of SGD-AO and LS-AO
+schemes which includes 50 random test points. It is observed
+that, both the mean and variance of the positioning errors of
+SGD-AO are signiﬁcantly lower than those of LS-AO schemes.
+Fig. 11 illustrates the 3-D positioning results of SGD-AO
+scheme. In Fig. 11, the red dots denote the exact location coor-
+dinates and the blue dots denote corresponding positioning
+results, which veriﬁes the positioning accuracy of the SGD-AO
+VLP scheme.
+Table III compares the computational time, positioning
+error, number of layers, input dimension, number of nodes,
+and required training data set size of LS-VU, LS-AO, SGD-
+VU, and SGD-AO 3-D VLP schemes. From Table III, we can
+ﬁnd that the positioning time consuming of LS-VU, LS-AO,
+SGD-VU and SGD-AO 3-D VLP schemes are, respectively,
+680, 1200, 0.32, and 0.45 ms, where the positioning time
+consumption of SGD-VU 3-D VLP scheme is the shortest.
+The positioning time of SGD-VU and SGD-AO VLPschemes
+(a)
+(b)
+Fig. 8. (a) Positioning error of SGD-VU network versus number of iterations.
+(b) Positioning error of SGD-AO network versus number of iterations.
+Fig. 9. Positioning errors CDF of SGD-VU and SGD-AO schemes.
+are signiﬁcantly lower than those of LS-VU and LS-AO VLP
+schemes. The reason is that LS-VU and LS-AO VLP schemes
+employ the SQP Algorithm to iteratively solve the positioning
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+426 IEEE INTERNET OF THINGS JOURNAL, VOL. 11, NO. 1, 1 JANUARY 2024
+TABLE III
+PERFORMANCE COMPARISON AMONG THE PROPOSED SCHEMES
+Fig. 10. Positioning performance comparison between LS-AO and SGD-AO
+schemes.
+Fig. 11. Illustration of 3-D positioning performance of SGD-AO Scheme.
+result, while SGD-VU and SGD-AO VLP schemes calcu-
+late the position through the pretrained networks. Table III
+also shows that the average positioning errors of the four
+schemes. The average positioning errors of SGD-VU and
+SGD-AO VLP schemes are signiﬁcantly lower than those
+of LS-VU and LS-AO VLP schemes, which is consistent
+with our above intuition that the SQP algorithm may fall
+into some local optimum results. Comparing with the SQP
+Fig. 12. Positioning error eave of the proposed SGD-AO network versus
+positioning area diameter darea.
+algorithm, deep learning-based SGD-VU and SGD-AO 3-D
+VLP schemes algorithms can handle complex nonlinear and
+nonconvex optimization problems.
+Fig. 12 shows the positioning error eave of the proposed
+SGD-AO network versus positioning area diameter darea.I t
+can be seen that the positioning error is less than 2 cm for
+darea ≤ 3 m. However, for darea > 3 m, the positioning error
+increases rapidly. The reason is that it exceeds the effective
+coverage of the single LED VLP system, and some PDs cannot
+receive light.
+In the proposed VLP hardware platform, the range of the
+IMU angle error eIMU is eIMU ∈ [−0.1◦, 0.1◦]. To illustrate the
+effect of IMU angle error eIMU on the proposed VLP schemes,
+we test the CDFs of the positioning accuracy with different
+eIMU, as shown in Fig. 13.
+Fig. 13 shows positioning accuracy CDF of different IMU
+angle error eIMU. It can be seen that the positioning accuracy
+CDFs of eIMU ∈ [−0.1◦, 0.1◦] and eIMU ∈ [−10◦, 10◦]a r e
+close, which shows that the proposed VLP schemes are robust
+to IMU angle errors, especially for error eIMU ∈ [−10◦, 10◦].
+Moreover, for the large IMU angle error eIMU ∈ [−20◦, 20◦],
+the positioning performance degrades.
+In addition, in order to illustrate the effect of the BNF algo-
+rithm, we compare the positioning performance of applying
+the BNF algorithm and without applying the BNF algorithm.
+The background noise of the positioning system includes both
+thermal noise and ambient light noise. Fig. 14 shows the CDF
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+MA et al.: CENTIMETER-LEVEL 3-D MOBILE ONLINE VISIBLE LIGHT POSITIONING SYSTEM 427
+Fig. 13. Positioning accuracy CDF of different IMU angle error eIMU.
+Fig. 14. CDF of the positioning error eSGD of applying BNF algorithm and
+without applying BNF algorithm.
+of the positioning error eSGD of applying BNF algorithm
+and without applying BNF algorithm. It can be seen that by
+applying the BNF algorithm, the positioning error eSGD can
+be signiﬁcantly reduced, and the average positioning error is
+reduced from 8.84 to 1.77 cm.
+VII. C ONCLUSION
+In this article, we proposed centimeter-level 3-D mobile
+online VLP schemes for the UE with the multiple PDs and one
+IMU. We ﬁrst formulated the positioning problem as an NLS
+problem by considering arbitrary UE orientation, and obtained
+the UE location via the SQP positioning schemes. Then, in
+order to improve the accuracy, we turn to a deep learning
+method and developed SGD positioning networks. Moreover,
+we designed a 3-D single-lamp-multi-PDs positioning system
+prototype, where RaspberryPi 4 Model B is used as the
+positioning signal processor and data memory. Based on the
+designed VLP system prototype, we examined two positioning
+schemes for the arbitrary UE orientation scenarios, and the
+corresponding positioning accuracy can reach 26 .36 and 1 .77
+cm for LS-AO and SGD-AO schemes, respectively. Moreover,
+for the vertically up UE orientation scenarios, the developed
+LS-VU and SGD-VU positioning schemes can achieve 16 .8-
+and 0.7-cm positioning accuracy, respectively. Under the same
+conditions, the positioning error of the proposed position-
+ing schemes is signiﬁcantly lower than that of the existing
+methods. In addition, we provided the ﬁrst publicly avail-
+able RSS and orientation measured database of 3-D VLP
+systems.
+REFERENCES
+[1] Y . Zhuang, Y . Li, L. Qi, H. Lan, J. Yang, and N. El-Sheimy, “A two-
+ﬁlter integration of MEMS sensors and WiFi ﬁngerprinting for indoor
+positioning,” IEEE Sensors J., vol. 16, no. 13, pp. 5125–5126, Jul. 2016.
+[2] C. Qi, F. Amato, M. Alhassoun, and G. D. Durgin, “A phase-based rang-
+ing method for long-range RFID positioning with quantum tunneling
+tags,” IEEE J. Radio Freq. Identif. , vol. 5, pp. 163–173, 2021.
+[3] R. Kusche, S. O. Schmidt, and H. Hellbrück, “Indoor positioning via
+artiﬁcial magnetic ﬁelds,” IEEE Trans. Instrum. Meas., vol. 70, pp. 1–9,
+2021.
+[4] H. Yao, H. Shu, X. Liang, H. Yan, and H. Sun, “Integrity monitoring
+for Bluetooth low energy beacons RSSI based indoor positioning,” IEEE
+Access, vol. 8, pp. 215173–215191, 2020.
+[5] X. Shan and Z. Shen, “Miniaturized UHF/UWB tag antenna for indoor
+positioning systems,” IEEE Antennas Wireless Propag. Lett. , vol. 18,
+pp. 2453–2457, 2019.
+[6] J. Hao, J. Chen, and R. Wang, “Visible light positioning using a single
+LED luminaire,” IEEE Photon. J. , vol. 11, no. 5, pp. 1–13, Oct. 2019.
+[7] H. Li et al., “A fast and high-accuracy real-time visible light positioning
+system based on single LED lamp with a beacon,” IEEE Photon. J. ,
+vol. 12, no. 6, pp. 1–12, Dec. 2020.
+[8] X. Yu, J. Wang, and H. Lu, “Single LED-based indoor positioning
+system using multiple photodetectors,” IEEE Photon. J. , vol. 10, no. 6,
+pp. 1–8, Dec. 2018.
+[9] T. Akiyama, M. Sugimoto, and H. Hashizume, “Time-of-arrival-based
+smartphone localization using visible light communication,” in Proc. Int.
+Conf. Indoor Position. Indoor Navig. (IPIN) , Nov. 2017, pp. 1–7.
+[10] C. Amini, A. Taherpour, T. Khattab, and S. Gazor, “Theoretical accu-
+racy analysis of indoor visible light communication positioning system
+based on time-of-arrival,” in Proc. IEEE Can. Conf. Elect. Comput. Eng.
+(CCECE), May 2016, pp. 1–5.
+[11] S.-Y . Jung, S. Hann, and C.-S. Park, “TDOA-based optical wireless
+indoor localization using LED ceiling lamps,” IEEE Trans. Consum.
+Electron., vol. 57, no. 4, pp. 1592–1597, Nov. 2011.
+[12] S.-H. Yang, H.-S. Kim, Y .-H. Son, and S.-K. Han, “Three-dimensional
+visible light indoor localization using AOA and RSS with multiple opti-
+cal receivers,”J. Lightw. Technol., vol. 32, no. 14, pp. 2480–2485, Jul. 1,
+2014.
+[13] S. M. Sheikh, H. M. Asif, K. Raahemifar, and F. Al-Turjman, “Time
+difference of arrival based indoor positioning system using visible light
+communication,” IEEE Access, vol. 9, pp. 52113–52124, 2021.
+[14] W. Xu, J. Wang, H. Shen, H. Zhang, and X. You, “Indoor positioning
+for multiphotodiode device using visible-light communications,” IEEE
+Photon. J., vol. 8, no. 1, pp. 1–11, Feb. 2016.
+[15] I. M. Abou-Shehada, A. F. AlMuallim, A. K. AlFaqeh, A. H. Muqaibel,
+K.-H. Park, and M.-S. Alouini, “Accurate indoor visible light positioning
+using a modiﬁed pathloss model with sparse ﬁngerprints,” J. Lightw.
+Technol., vol. 39, no. 20, pp. 6487–6497, Oct. 15, 2021.
+[16] H. Chen et al., “High accuracy indoor visible light positioning using a
+long short term memory-fully connected network based algorithm,” Opt.
+Exp., vol. 29, no. 25, pp. 41109–41120, Nov. 2021.
+[17] A. H. A. Bakar, T. Glass, H. Y . Tee, F. Alam, and M. Legg, “Accurate
+visible light positioning using multiple-photodiode receiver and machine
+learning,” IEEE Trans. Instrum. Meas. , vol. 70, pp. 1–12, 2021.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+428 IEEE INTERNET OF THINGS JOURNAL, VOL. 11, NO. 1, 1 JANUARY 2024
+[18] B. Lin, X. Tang, Z. Ghassemlooy, C. Lin, and Y . Li, “Experimental
+demonstration of an indoor VLC positioning system based on OFDMA,”
+IEEE Photon. J. , vol. 9, no. 2, pp. 1–9, Apr. 2017.
+[19] T. Sato, S. Shimada, H. Murakami, H. Watanabe, H. Hashizume, and
+M. Sugimoto, “ALiSA: A visible-light positioning system using the
+ambient light sensor assembly in a smartphone,” IEEE Sensors J. ,
+vol. 22, no. 6, pp. 4989–5000, Mar. 2022.
+[20] N. Huang, C. Gong, J. Luo, and Z. Xu, “Design and demonstration of
+robust visible light positioning based on received signal strength,” J.
+Lightw. Technol., vol. 38, no. 20, pp. 5695–5707, Oct. 15, 2020.
+[21] Z. Wei, Q. Xue, X. Sun, and S. Zhao, “Indoor visible light positioning
+based on adaptive ﬁltering,” in Proc. IEEE Int. Conf. Inf. Commun.
+Softw. Eng. (ICICSE), Apr. 2021, pp. 294–298.
+[22] X. Sun et al., “RSS-based visible light positioning using nonlinear
+optimization,” IEEE Internet Things J., vol. 9, no. 15, pp. 14137–14150,
+Aug. 2022.
+[23] P. Du et al., “Experimental demonstration of 3D visible light positioning
+using received signal strength with low-complexity trilateration assisted
+by deep learning technique,” IEEE Access , vol. 7, pp. 93986–93997,
+2019.
+[24] C.-W. Hsu, S. Liu, F. Lu, C.-W. Chow, C.-H. Yeh, and G.-K. Chang,
+“Accurate indoor visible light positioning system utilizing machine
+learning technique with height tolerance,” in Proc. OFC , Jun. 2018,
+pp. 1–3.
+[25] D.-C. Lin et al., “3-D indoor visible light positioning (VLP) system
+based on linear regression or kernel ridge regression algorithms,” in
+Proc. GC Wkshps , Mar. 2020, pp. 1–6.
+[26] P. Du, S. Zhang, A. Alphones, and C. Chen, “Faster deployment for
+indoor visible light positioning using Xgboost algorithms in indus-
+trial Internet-of-Things,” in Proc. IECON 47th Annu. Conf. IEEE Ind.
+Electron. Soc., Nov. 2021, pp. 1–7.
+[27] A.-C. Anastou, K. K. Delibasis, A.-A. A. Boulogeorgos,
+H. G. Sandalidis, A. Vavoulas, and S. K. Tasoulis, “A low com-
+plexity indoor visible light positioning method,” IEEE Access ,v o l .9 ,
+pp. 57658–57673, 2021.
+[28] A. H. Saboundji, S. Meziane, M. Dahmani, A. Meche, and M. Keche,
+“Accurate visible light positioning system using neural network,” in
+Proc. 7th Int. Conf. Image Signal Process. Appl. (ISPA) , Jun. 2022,
+pp. 1–5.
+[29] J. B. Kuipers, Quaternions and Rotation Sequences: A Primer With
+Applications to Orbits, Aerospace and Virtual Reality. vol. 66. Princeton,
+NJ, USA: Princeton Univ. Press, 1999.
+[30] S. Feng, R. Zhang, W. Xu, and L. Hanzo, “Multiple access design for
+ultra-dense VLC networks: Orthogonal vs non-orthogonal,” IEEE Trans.
+Commun., vol. 67, no. 3, pp. 2218–2232, Mar. 2019.
+[31] R. Zhang, Y . Cui, H. Claussen, H. Haas, and L. Hanzo, “Anticipatory
+association for indoor visible light communications: Light, follow
+me!” IEEE Trans. Wireless Commun. , vol. 17, no. 4, pp. 2499–2510,
+Apr. 2018.
+[32] M. D. Soltani, Z. Zeng, I. Tavakkolnia, H. Haas, and M. Safari, “Random
+receiver orientation effect on channel gain in LiFi systems,” in Proc.
+IEEE WCNC, Apr. 2019, pp. 1–6.
+[33] H. Liu, J. Hu, Y . Li, and Z. Wen, Optimization: Modeling, Algorithm
+and Theory. Beijing, China: High. Educ. Press, 2020.
+Shuai Ma (Member, IEEE) received the B.S. and
+Ph.D. degrees in communication and information
+systems from Xidian University, Xi’an, China, in
+2009 and 2016, respectively.
+From 2014 to 2015, he was a Visiting Scholar
+with the Department of Electrical and Computer
+Engineering, Texas A&M University, College
+Station, TX, USA. From 2016 to 2019, he has
+been an Associate Professor with the School
+of Information and Control Engineering, China
+University of Mining and Technology, Xuzhou,
+China. From 2019 to 2022, he worked as a Postdoctoral Fellow with Telecom
+Paris, Paris, France. Since 2023, he has been an Associate Researcher
+with Peng Cheng Laboratory, Shenzhen, China. His research interests
+include semantic communications, visible light communications, and network
+information theory.
+Bing Li received the B.E. degree from Henan
+Polytechnic University, Jiaozuo, Henan, China, in
+2020, and the master’s degree from the China
+University of Mining and Technology, Xuzhou,
+China, in 2023.
+His research interests are mainly in visible light
+communication and visible light positioning.
+Guanjie Zhang is currently pursuing the master’s
+degree with the China University of Mining and
+Technology, Xuzhou, China.
+His research interests currently focus on visible
+light communication and semantic communication.
+Hang Li received the B.E. and M.S. degrees
+from Beihang University, Beijing, China, in 2008
+and 2011, respectively, and the Ph.D. degree from
+Texas A&M University, College Station, TX, USA,
+in 2016.
+He was a Postdoctoral Research Associate with
+Texas A&M University from September 2016 to
+August 2017 and the University of California at
+Davis, Davis, CA, USA, from September 2017 to
+March 2018. After being a Visiting Research Scholar
+from April 2018 to June 2019 with Shenzhen
+Research Institute of Big Data, Shenzhen, China, he has been a Research
+Scientist since June 2019. His current research interests include wireless
+networks, Internet of Things, stochastic optimization, and applications of
+machine learning.
+Chen Qiu received the B.E. degree from Beijing
+University of Posts and Telecommunications,
+Beijing, China, and Queen Mary University of
+London, London, U.K., in 2013, and the Ph.D.
+degree from Beijing University of Posts and
+Telecommunications in 2020.
+He was a Visiting Scholar with the Department
+of Electrical and Computer Engineering, University
+of California at Davis, Davis, CA, USA, from
+2016 to 2017, and the Department of Electrical and
+Computer Engineering, Texas A&M University,
+College Station, TX, USA, from 2015 to 2016. He is currently a Postdoctoral
+Researcher with Peng Cheng Laboratory, Shenzhen, China. His research
+interests include UA V-assisted wireless network, integrated sensing, and
+communication and machine learning in wireless systems.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+MA et al.: CENTIMETER-LEVEL 3-D MOBILE ONLINE VISIBLE LIGHT POSITIONING SYSTEM 429
+Chuang Yu received the B.E. degree from the Civil
+Aviation University of China, Tianjin, China, in
+2014, the master’s degree from Beihang University,
+Beijing, China, in 2017, and the Ph.D. degree
+from Institut Polytechnique de Paris, Paris, France,
+in 2021.
+He was a Research Associate from 2021 to 2023
+with Cognitive Robotics Laboratory, Department
+of Computer Science, University of Manchester,
+Manchester, U.K. He is currently a Research Fellow
+with UCL Interaction Centre, University College
+London, London, U.K. His interests are cognitive-social robotics, human–
+robot interaction, affective AI, and generative AI.
+Shiyin Li received the Ph.D. degree in information
+and communication engineering from the China
+University of Mining and Technology, Xuzhou,
+China, in 2010.
+Since 2010, he has been a Professor with the
+School of Information and Control Engineering,
+China University of Mining and Technology, where
+he is the Head of the Department of Information
+Engineering. His research interests include wireless
+communication and network congestion control.
+Chao Shen (Member, IEEE) received the B.S.
+degree in communication engineering and the Ph.D.
+degree in signal and information processing from
+Beijing Jiaotong University (BJTU), Beijing, China,
+in 2003 and 2012, respectively.
+He was a Visiting Scholar with the University of
+Maryland, College Park, MD, USA. From 2013 to
+2022, he is an Associate Professor with the State Key
+Laboratory of Rail Trafﬁc Control and Safety, BJTU.
+He is currently a Senior Research Scientist with
+Shenzhen Research Institute of Big Data, Shenzen,
+China. His research interests include in large-scale networks optimization and
+signal processing for wireless communications.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:17:59 UTC from IEEE Xplore.  Restrictions apply. 

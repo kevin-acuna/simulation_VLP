@@ -1,0 +1,1518 @@
+IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024 5502414
+Design and Performance Analysis for Indoor
+Visible Light Positioning With Single LED and
+Single-Tilted-Rotatable PD
+Zhenyu Wang
+ , Zhonghua Liang
+ , Senior Member, IEEE, Ren Liu
+ , Xunuo Li
+ , and Hui Li
+Abstract— In recent years, single-LED-based visible light posi-
+tioning (VLP) systems have been developed because of their
+low complexity, simple configuration, and feasibility for indoor
+application scenarios. In this article, first, we describe the
+system model of the single-tilted-rotatable-photodetector (STRP)-
+based receiver in single-LED scenario considering the first-order
+reflection signal. Then, we derive the Cramer–Rao lower bound
+(CRLB) of the positioning error for the received signal strength
+(RSS)-based positioning system using the discussed model and
+select proper inclination and rotation angles according to the
+derived CRLB. In addition, we analyze the least-square (LS)
+positioning method and propose an improved gray wolf optimiza-
+tion (IGWO)-based localization algorithm with the assistance
+of the LS method. Finally, the proposed LS-IGWO positioning
+algorithm has been evaluated in terms of accuracy and latency via
+software simulations and field tests. Simulation and experiment
+results show that using the RSS-based positioning model, the
+proposed LS-IGWO algorithm can achieve centimeter-level posi-
+tioning accuracy and performs best compared with the original
+LS, the original GWO, single IGWO, pure LS-GWO, and the
+existing fingerprint method.
+Index Terms— Cramer–Rao lower bound (CRLB), gray wolf
+optimization (GWO), least square (LS), received signal strength
+(RSS), single LED, visible light positioning (VLP).
+I. I NTRODUCTION
+N
+O
+W ADAYS, due to the demand for indoor location-
+based services, indoor positioning systems (IPSs) have
+gradually become a research hotspot and attracted plenty
+of enterprises and institutions to develop commercial prod-
+ucts [1]. IPSs aim at real-time and precise tracking of the
+position of users or objects in many complicated indoor envi-
+ronments, but the global positioning system (GPS) is difficult
+to achieve that purpose due to its limitations [2]. Therefore,
+IPSs based on indoor wireless signals, such as Wi-Fi [3],
+[4], Bluetooth [5], radio frequency identification (RFID) [6],
+ultrawideband (UWB) [7], and visible light communication
+(VLC) [8], [9], have been well developed in recent years.
+Among them, VLC-based IPSs have been paid much attention
+Manuscript received 23 October 2023; revised 23 January 2024;
+accepted 27 January 2024. Date of publication 2 April 2024; date of current
+version 8 April 2024. This work was supported in part by the Natural Science
+Basic Research Project in Shaanxi Province of China under Grant 2024JC-
+YBMS-456. The Associate Editor coordinating the review process was
+Dr. Zhenghua Chen. (Corresponding author: Zhonghua Liang.)
+The authors are with the Department of Communication Engineering,
+School of Information Engineering, Chang’an University, Xi’an 710064,
+China (e-mail: weber7124@gmail.com; lzhxjd@hotmail.com).
+Digital Object Identifier 10.1109/TIM.2024.3383461
+because of their high transmission rate, energy conservation,
+weak electromagnetic interference, long lifespan, and low
+cost [2].
+VLC-based positioning systems usually use one or more
+LED lamps as the transmitter to help the users get their
+position. Most existing visible light positioning (VLP) sys-
+tems use multiple LEDs to achieve high-accuracy positioning
+because of its strong stability, wide lighting range, and simple
+receiver structure. However, for a small room, using one LED
+is sufficient to achieve lighting, so it is a more cost-efficient
+solution to deploy single LED. On the one hand, for single-
+LED-based VLP systems, compared with the multi-LEDs, the
+hardware signal processing delay at the receiver is much lower,
+because it does not need to use multiple access protocols to
+distinguish signals from different LEDs, and that improves
+the real-time positioning performance. In addition, single-LED
+systems can avoid the design of LED’s layout, the interference
+between LEDs, and the waste of light resources, making it
+more convenient for the VLP implementation [10]. On the
+other hand, the designs of high-precision positioning algorithm
+and appropriate receiver are still challenging for single-LED
+scenarios. Therefore, in practice, it is necessary to decide to
+use one or multiple LEDs according to the actual size of
+the measured room and performance requirements, and VLP
+systems with single LED can be considered as a cost-efficient
+IPS solution for a small room.
+In VLP systems, received signal strength (RSS) detected by
+photodetectors (PDs) is more widely used, because they do not
+need additional synchronization maintenance or high-precision
+image acquisition devices. Therefore, RSS-PD-based VLP
+systems can be considered a low-cost solution to the indoor
+positioning problem [11]. In [12], the impact of the multipath
+reflection signal on positioning performance was analyzed
+for RSS-PD-based indoor VLP systems. Moreover, in [13]
+and [14], the performance limits of LED-based positioning
+and orientation systems were studied in non-line-of-sight
+(NLOS) environments. Fingerprint and least-square (LS)-
+based VLP algorithms considering multipath reflection were
+studied in [15] and [16], respectively. However, these studies
+are all implemented in multi-LED scenarios. For single-LED
+scenes, there are few related studies, so it is necessary to
+analyze the performance of the VLP system in this case.
+At the receiver, PDs or image sensors (ISs) are commonly
+taken as the device for sensing optical signals [17]. In the
+1557-9662 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+5502414 IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024
+presence of single-LED-based VLP system, a receiver with
+multi-PDs, ISs, or single-rotatable PD is mainly utilized to
+estimate the position of the target node (TN). In [18], multiple
+PDs were used in single-LED-based IPS. The receiver is
+composed of a horizontal PD and two tilted PDs. In [19],
+the CMOS-made IS was used to estimate the TN’s position
+by finding the camera pose, and they designed a positioning
+algorithm for an arbitrarily tilted smartphone. Liu et al. [10]
+designed a receiver with a rotatable PD in single-LED scenario
+and then proposed a VLP algorithm based on machine learning
+(ML) methods concerning the first-order reflection of the
+optical power. In [20], a receiver equipped with a single-
+tilted-rotatable PD (STRP) was implemented, and accordingly,
+the fingerprint positioning using K -nearest-neighbor (KNN)
+method was designed. The experiment was implemented in a
+600× 600× 1135 mm3 indoor environment, and the average
+positioning error of 25 TNs is less than 25 mm.
+However, some challenges need to be addressed in the exist-
+ing studies for single-LED scenarios. For example, in [10], the
+receiver carrying PD is equipped with a long rotation arm,
+and thus, it is not suitable for system integration, and the
+fingerprint-based positioning algorithm proposed in [10] has
+slightly higher complexity. Small-size receivers are designed
+in [18] and [20], but they did not consider the effect of
+reflected signals. Therefore, the performance of positioning
+algorithms presented in [18] and [20] is limited in indoor
+NLOS environments. Furthermore, there are few studies about
+single-LED single-PD (SLSP)-based IPS, and the performance
+of fingerprint-based localization algorithms usually deterio-
+rates when considering the LED orientation. To address the
+above problems, we further analyze the STRP-based receiver
+designed in [20] for the SLSP scenario and, accordingly,
+propose an improved gray wolf optimization (IGWO) posi-
+tioning algorithm with the assistance of the LS method
+(LS-IGWO). The performance of the proposed LS-IGWO
+positioning algorithm is verified via software simulations and
+field tests. Our major contributions are summarized as follows.
+1) We derive the Cramer–Rao lower bound (CRLB) of the
+positioning error using the STRP proposed in [20] con-
+sidering the first-order reflection signal for single-LED
+scenario and analyze how to select proper inclination
+and rotation angles.
+2) The original LS positioning method based on SRTP is
+derived in single-LED scenario, and then, we design an
+initial population generation strategy based on the result
+of the LS method.
+3) The GWO algorithm is implemented in single-LED
+scenario to estimate the position of the TN using the
+fingerprint database generated by the STRP-based VLC
+channel model.
+4) We introduce three improvement mechanisms, namely,
+nonlinear convergence factor, weighted update strat-
+egy, and mutation of the head wolf into the proposed
+LS-IGWO algorithm to address the local optimum prob-
+lems.
+5) We evaluate the performances of the original LS [21],
+the original GWO [22], single IGWO, pure LS-GWO,
+the fingerprint method [20], and the proposed LS-IGWO
+Fig. 1. VLC system diagram.
+positioning algorithms in terms of positioning accuracy
+and latency.
+The rest of this article is organized as follows. Section II
+introduces the VLC channel modeling using Lambert radiation
+source, STRP-based receiver, and CRLB of the positioning
+error in the implemented positioning system. Section III
+derives the original LS method and describes the proposed
+LS-IGWO positioning algorithm. Section IV analyzes the
+performance of the proposed LS-IGWO positioning algorithm
+using software simulation. Section V presents the field test
+of our proposed method. Finally, our works are concluded in
+Section VI.
+II. S YSTEM MODEL
+A. VLC Model
+The diagram of the common VLC system is shown in Fig. 1.
+For the transmitter, electrical signal is converted into optical
+signal through LED drive circuit, and the amplitude of the
+optical power signal x(t) denotes the optical power values
+rather than the electrical-level values. The relationship between
+x(t) and the received electrical signal ye(t) is described as
+follows [23]:
+ye(t)= R· x(t)⊗ h(t)+ n(t) (1)
+where R is the PD responsivity and n(t) denotes the additive
+white Gaussian noise (AWGN) with a double-sided power
+spectral density (PSD) of N0/2. h(t) is the optical wireless
+channel impulse response (CIR), including the line-of-sight
+(LOS) and NLOS components, and can be denoted as fol-
+lows [23]:
+h(t)= hlos(t)+ hnlos(t) (2)
+where hnlos(t) is composed of multiple reflection CIRs as
+follows:
+hnlos(t)= hnlos1(t)+ hnlos2(t)+···+ hnlosl(t)+··· (3)
+where hnlosl(t) denotes the lth-order reflection CIR.
+The spherical LED-based VLC transmission system is usu-
+ally described as the Lambert radiation model. In this case,
+LOS and the first-order reflection components account for
+a large proportion in the receiver, while the second and
+higher order NLOS components are negligible [10]. Therefore,
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+W ANG et al.: DESIGN AND PERFORMANCE ANALYSIS FOR INDOOR VISIBLE LIGHT POSITIONING 5502414
+Fig. 2. Single-LED-based VLC channel model.
+the simplified radiation model is shown in Fig. 2, and the
+corresponding CIR can be obtained by [24]
+hlos(t)= A(m+ 1)
+2πd2 G(φ,ψ)δ
+(
+t− d
+c
+)
+(4)
+hnlos1(t)=
+4∑
+q=1
+h(q)
+nlos1(t) (5)
+h(q)
+nlos1(t)=
+Rq∑
+j=1
+A(m+ 1)ρ j Ar
+2πd2
+1 jd2
+2 j
+Gr( j)δ
+(
+t− d1 j+ d2 j
+c
+)
+(6)
+where A, m, d, φ, ψ, and c represent the PD effective area,
+Lambert order, distance from PD to LED, irradiance angle,
+incidence angle, and ray velocity, respectively.δ(t) is the Delta
+function. Ar is the area of reflection region, and Rq is the
+number of reflection element on the qth wall. ρ j, and d1 j and
+d2 j are reflection coefficient and distances related to the jth
+reflection element. G(φ,ψ) and Gr( j) are defined as follows:
+G(φ,ψ)= Ts(ψ)g(ψ) cosm(φ) cos(ψ) (7)
+Gr( j)= Ts
+(
+ψ2 j
+)
+g
+(
+ψ2 j
+)
+cosm(
+φ1 j
+)
+× cos
+(
+ψ1 j
+)
+cos
+(
+φ2 j
+)
+cos
+(
+ψ2 j
+)
+(8)
+where Ts(ψ) and g(ψ) are optical filter gain and PD concen-
+trator gain, respectively. φ1 j, ψ1 j, φ2 j, and ψ2 j are reflection
+angles related to the jth reflection element. g(ψ) and m can
+be obtained as follows [24]:
+g(ψ)= n2
+sin2(ψc) (9)
+and
+m= − ln 2
+ln cosφ1/2
+(10)
+respectively.ψc, n, and φ1/2 are the PD field of view (FoV)
+angle, the refractive index of the lens, and the half-power angle
+of the LED. The formulas related to ψ andψ2 j are valid only
+when the PD incidence angle is within the FoV angle.
+B. RSS Model
+At the receiver, we usually process the electrical amplitude
+signals ye(t), and the power of ye(t) can be calculated as
+follows [23]:
+Pre= lim
+Te→∞
+1
+Te
+∫Te/2
+−Te/2
+y2
+e(t)dt (11)
+where Te is the period of ye(t). According to (4)–(6), the
+electrical power Pre considering the first-order reflection can
+be modeled as follows [25]:
+Pre=(R Pr)2+σ 2
+st (12)
+where σ 2
+st is the noise power composed of thermal and shot
+noise, and it can be calculated as follows [25]:
+σ 2
+st=σ 2
+t +σ 2
+s (13)
+σ 2
+t = 8πkbT f
+Ge
+ηc Ae I2 B2
+n+ 16π 2kbT f0
+gm
+η2
+c A2
+e I3 B3
+n (14)
+σ 2
+s= 2qe R Pr Bn+ 2qe Ibg I2 Bn (15)
+where kb, T f , Ge, ηc, qe, Ibg, I2 and I3, Bn, gm, and 0 are
+Boltzmann’s constant, Fahrenheit temperature, open-loop volt-
+age gain, fixed capacitance per unit area of the PD, unit charge,
+background current, noise bandwidth factors, equivalent noise
+bandwidth, transconductance of FET, and channel noise factor,
+respectively. Shot noise includes the influence of ambient light,
+while thermal noise mainly reflects the influence of electronic
+devices.
+Pt is the total transmitted power of the optical power signal
+x(t) and Pr represents the received optical power, and they
+can be obtained as follows [23]:
+Pt=
+∫+∞
+−∞
+x(t)dt (16)
+Pr= Pt
+[
+Hlos(0)+ Hnlos1(0)
+]
+= Pt
+
+A(m+ 1)
+2πd2 G(φ,ψ)+
+4∑
+q=1
+Rq∑
+j=1
+A(m+ 1)ρ j Ar
+2πd2
+1 jd2
+2 j
+Gr( j)
+
+.
+(17)
+Equation (17) is a common RSS model for most VLP systems,
+and it can be used to establish ranging model [4], [8], finger-
+print database [10], [26], or parameter estimation model [27],
+[28] to obtain the TN’s position. Therefore, the signal-to-noise
+ratio (SNR) can be denoted as follows [23]:
+SNR= 10 lg Pre
+σ 2
+st
+. (18)
+When PD and LED are placed horizontally and LED
+is located at the center of the ceiling (2.5, 2.5, 3),
+Fig. 3(a) and (b) shows the distributions of the LOS and
+the first-order NLOS optical power in a 5 × 5 × 3 m 3
+room. We calculated the received power at 97 × 97 TNs via
+simulations, in which some important simulation parameters
+of the VLP system are shown in Table I. (The subsequent VLP
+simulations are all based on the parameters listed in Table I.)
+As a rule of thumb, the first-order reflection components
+account for about 19.23% of the total optical power and are
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+5502414 IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024
+Fig. 3. Distribution of the received power when PD is placed horizontally. (a) LOS path. (b) First-order reflection path.
+TABLE I
+SIMULATION PARAMETERS OF THE VLP S YSTEM
+mainly distributed in the edge area of the simulated room.
+In this case, the performance of the RSS-based VLP systems
+may deteriorate if neglecting the reflection signal.
+C. Single Rotation Receiver Model
+The STRP model used in [20] is shown in Fig. 4. This model
+uses a receiver that can rotate along its central axis whose
+direction vector is [0, 0, 1]T when the receiver’s bottom base
+is placed horizontally, and the PD is tilted on the surface. For
+this STRP-based receiver in the single-LED scenario shown
+in Fig. 2, employing the geometric relationships in Fig. 4, the
+cosine values of φ, ψ, φ1 j, ψ1 j, φ2 j, and ψ2 j in (7) and (8)
+can be obtained as follows:
+cosφ=−⃗u2·⃗u L (19)
+cosψ=⃗u2·⃗u(i)
+1 (20)
+cosφ1 j=⃗u3 j·⃗u L (21)
+cosψ1 j=−⃗u3 j·⃗eq (22)
+cosφ2 j=−⃗u4 j·⃗eq (23)
+cosψ2 j=⃗u4 j·⃗u(i)
+1 (24)
+where⃗eq is the normal vector of the qth wall and ⃗u L is the
+orientation of the LED, which is [0, 0,−1]T when the LED is
+placed horizontally.⃗u2,⃗u3 j, and⃗u4 j are unit direction vectors
+Fig. 4. Illustration of the STRP-based receiver.
+related to the LOS and jth reflection element, and they can
+be obtained by
+⃗u2=
+(xt− x, yt− y, zt− z)T
+d (25)
+⃗u3 j=
+(x1 j− xt, y1 j− yt, z1 j− zt
+)T
+d1 j
+(26)
+⃗u4 j=
+(x1 j− x, y1 j− y, z1 j− z)T
+d2 j
+(27)
+where(x, y, z),(xt, yt, zt), and(x1 j, y1 j, z1 j) are the 3-D posi-
+tions of the TN, LED, and jth reflection element, respectively.
+⃗u(i)
+1 is the unit orientation vector of PD at ith rotation angle.
+When the tilt angle is θ and the ith rotation angle is ωi,
+according to the Euler rotation matrix, ⃗u(i)
+1 can be calculated
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+W ANG et al.: DESIGN AND PERFORMANCE ANALYSIS FOR INDOOR VISIBLE LIGHT POSITIONING 5502414
+Fig. 5. Simulated power profile of the transmitted optical signal and
+waveforms of the received electric signal when N= 4.
+as follows:
+⃗u(i)
+1 =
+
+
+cosωi− sinωi 0
+sinωi cosωi 0
+0 0 1
+
+
+
+
+cosθ 0 sinθ
+0 1 0
+− sinθ 0 cosθ
+
+
+
+
+0
+0
+1
+
+. (28)
+Assuming that we need to receive N different optical powers
+at the TN, each rotation angle can be obtained by dividing 360◦
+into N equal parts
+ωi= (i− 1)360◦
+N . (29)
+Substituting (19)–(24) into (17), the received power of the ith
+rotation angle can be simplified as follows:
+P(i)
+r = Pt
+
+λ⃗u(i)
+1 ·⃗u2
+dm+2 +
+4∑
+q=1
+Rq∑
+j=1
+λq j
+(
+⃗u(i)
+1 ·⃗u4 j
+)(
+⃗u4 j·⃗eq
+)
+d2
+2 j
+
+
+(30)
+whereλ andλq j are independent of the receiver’s 2-D position
+(x, y), and they can be obtained by
+λ= A(m+ 1)
+2π Ts(ψ)g(ψ)(zt− z)m (31)
+λq j= Aρ j Ar(m+ 1)
+2πdm+2
+1 j
+Ts
+(
+ψ2 j
+)
+g
+(
+ψ2 j
+)(
+z1 j− zt
+)m
+⃗u3 j·⃗eq.
+(32)
+Fig. 5 shows the power profile of the transmitted signal
+and the waveforms of the received signal when using the
+abovementioned rotatable receiver located at (2, 3, 1) (see
+Fig. 6). This model is simulated when SNR= 30 dB,θ= 20◦,
+and N = 4. We use the VLC physical layer modulation
+method specified in IEEE 802.15.7 [29]. The message code
+is[0, 1, 0, 1, 0, 1, 0, 1], which is modulated by variable pulse
+position modulation (VPPM), and the duty cycle of the square
+wave is 60%. The sampling frequency is 10 GHz, and the
+width of one symbol is 1 µs. Because the receiver is located
+Fig. 6. Diagram of the transmitter–receiver model and PD orientation.
+at the diagonal line (diagonal equation: y=− x+ 5) of the
+room in 2-D plane, the received signal amplitudes for rotation
+angles 0◦ and 270◦ are approximately equal, and the same
+applies to 90◦ and 180◦. The PD is facing toward the LED for
+rotation angles 0◦ and 270◦, and thus, the signal amplitudes
+are larger compared with the case of 90 ◦ and 180◦.
+For the implementation of an actual VLP system, the STRP
+model shown in Fig. 4 is placed on a rotatable platform with
+precise angle scale so as to achieve RSS values detection
+for different rotation angles. The rotatable platform can be
+controlled electromechanically, remotely, or manually. In the
+field experiment, we use a manual rotatable platform to
+achieve this function. The specific experimental facilities will
+be introduced in Section V.
+D. CRLB of the Localization Error Using STRP
+According to the STRP-based VLP system, the actual
+received power of the ith rotation angle can be expressed as
+the following random variables:
+Pri= P(i)
+r + X (33)
+where X ∼ N(0,σ 2), and the probability density function
+(pdf) of the received power can be obtained as follows [13]:
+f P(Pri)= 1√
+2πσ
+e−
+[
+Pri−P(i)
+r
+]2
+2σ 2 . (34)
+The received power values of N different rotation angles are
+independent of each other, and thus, a likelihood function can
+be obtained by multiplying their PDFs. The likelihood function
+and its logarithm can be calculated as follows [13]:
+L(x, y)=
+N∏
+i=1
+1√
+2πσ
+e−
+[
+Pri−P(i)
+r
+]2
+2σ 2 (35)
+ln
+[
+L(x, y)
+]
+=− N ln
+(√
+2πσ
+)
+−
+∑N
+i=1
+[
+Pri− P(i)
+r
+]2
+2σ 2 . (36)
+According to the maximum likelihood principle, we can
+obtain the receiver’s position by solving the maximum value
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+5502414 IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024
+of L(x, y) [13]
+(xest, yest)= arg max
+(x,y)
+L(x, y) (37)
+where(xest, yest) is the estimated position of the TN. A more
+detailed description about localization method will be intro-
+duced in Section III. From (36), the second-order partial
+derivatives of the logarithmic likelihood function can be
+obtained as follows:
+∂2 ln(L)
+∂x 2 = 1
+σ 2
+N∑
+i=1
+(
+∂2 P(i)
+r
+∂x 2
+[
+Pri− P(i)
+r
+]
+−
+[∂ P(i)
+r
+∂x
+]2)
+(38)
+∂2 ln(L)
+∂y2 = 1
+σ 2
+N∑
+i=1
+(
+∂2 P(i)
+r
+∂y2
+[
+Pri− P(i)
+r
+]
+−
+[∂ P(i)
+r
+∂y
+]2)
+(39)
+∂2 ln(L)
+∂x∂y = 1
+σ 2
+N∑
+i=1
+(∂2 P(i)
+r
+∂x∂y
+[
+Pri− P(i)
+r
+]
+−∂ P(i)
+r
+∂x
+∂ P(i)
+r
+∂y
+)
+.
+(40)
+Fisher information matrix (FIM) is a quantitative represen-
+tation for the amount of information about online samples, and
+it can be obtained as follows [13]:
+I=
+
+−E
+{
+∂2 ln(L)
+∂x2
+}
+−E
+{
+∂2 ln(L)
+∂x∂y
+}
+−E
+{
+∂2 ln(L)
+∂x∂y
+}
+−E
+{
+∂2 ln(L)
+∂y2
+}
+
+
+= 1
+σ 2
+N∑
+i=1
+
+
+[
+∂ P(i)
+r
+∂x
+]2 ∂ P(i)
+r
+∂x
+∂ P(i)
+r
+∂y
+∂ P(i)
+r
+∂x
+∂ P(i)
+r
+∂y
+[
+∂ P(i)
+r
+∂y
+]2
+
+. (41)
+Since localization can be considered as an unbiased estimation
+problem, the expectation of the squared positioning error can
+be bounded as follows [13]:
+E
+{
+∥(x, y)−(xest, yest)∥2
+2
+}
+≥ trace
+(
+I−1)
+= CRLB. (42)
+∂ P(i)
+r /∂x and ∂ P(i)
+r /∂y can be calculated by (30). Observ-
+ing (42), we see that the CRLB decreases with the increase
+of samples’ information.
+Fig. 7 shows the curves of the averaged CRLB and PD
+incidence angle ψ when the PD inclination angle θ varies
+from 5◦ to 35◦. The number of rotation angles N is 4, and
+the averaged CRLB is obtained from 576 different positions
+uniformly distributed in the room. It can be seen that as θ
+increases, CRLB drops, and at the same time, the positioning
+accuracy is also improved gradually. This is because when
+the tilt angle θ increases, the difference between the received
+power from each rotation angle becomes larger, and that
+provides more quantity of information about online samples.
+Therefore, the CRLB gradually declines with the increase of
+FIM.
+However, observing the blue curve in Fig. 7, the incidence
+angle ψ also increases when θ becomes larger, so it is
+necessary to set the value of ψ within the PD FoV angle ψc.
+When the receiver is located at (4.8, 4.8, 1) and the rotation
+angle is 45◦ (the receiver is at the farthest position and faces
+away from the LED representing the worst situation in the
+localization), ψ is within ψc as θ varies from 5◦ to 20◦, and
+that will ensure the PD to precisely detect optical signals in
+the whole positioning area.
+Fig. 7. CRLB of the localization error and PD incidence angle for different
+θ values.
+Fig. 8. CRLB of the localization error for different rotation angles with
+differentσ values.
+Fig. 8 shows the averaged CRLB with different N and σ
+values when θ = 20◦. We see that as N increases, CRLB
+gradually drops and becomes very close when N≥ 5. This is
+because a large N value leads to more RSS samples, but the
+difference between two RSS values becomes smaller, resulting
+in the saturation of the samples’ information. Therefore, five
+rotation angles may be a good choice. However, we also
+need to consider the convenience of practical implementation.
+When N= 4, there are four rotation angles, namely, 0 ◦, 90◦,
+180◦, and 270 ◦, and that means we only need to align the
+rotation reference line with the coordinate axis. Considering
+both positioning accuracy and practical implementation, we set
+θ= 20◦ for N= 4.
+III. L OCALIZATION ALGORITHM
+A. Original LS Method
+Observing (30), the following relationship can be obtained:
+P(i)
+r
+P(k)
+r
+≈⃗u(i)
+1 ·⃗u2
+⃗u(k)
+1 ·⃗u2
+(43)
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+W ANG et al.: DESIGN AND PERFORMANCE ANALYSIS FOR INDOOR VISIBLE LIGHT POSITIONING 5502414
+where i, k= 1, 2,..., N and i̸= k. Therefore, when N power
+values are received, M linear formulas can be obtained as
+follows:
+A
+(x
+y
+)
+= b (44)
+A=
+
+
+a11 a12
+... ...
+aM1 aM2
+
+, b=
+
+
+b1
+...
+bM
+
+ (45)
+{
+a·1= P(i)
+r sinθ cosωk− P(k)
+r sinθ cosωi
+a·2= P(i)
+r sinθ sinωk− P(k)
+r sinθ sinωi
+(46)
+b·=
+(
+P(i)
+r sinθ cosωk− P(k)
+r sinθ cosωi
+)
+xt
++
+(
+P(i)
+r sinθ sinωk− P(k)
+r sinθ sinωi
+)
+yt
++
+(
+P(i)
+r − P(k)
+r
+)
+(zt− z) cosθ (47)
+where M= C2
+N= N(N− 1)/2. The estimated position of the
+TN can be obtained by solving the LS solution of (44) [21]
+(xels
+yels
+)
+=
+(
+AT A
+)−1
+AT b. (48)
+To obtain the linear equations about (x, y), the LS-based
+localization algorithm neglects the reflected optical signal.
+Therefore, the positioning accuracy of the original LS method
+is limited.
+B. GWO-Based Positioning
+To improve the positioning accuracy, we use the
+swarm-based optimization algorithm. According to (37), solv-
+ing the maximum of (35) is equivalent to finding the minimum
+of∑N
+i=1|Pri−P(i)
+r |. Therefore, we define the objective function
+as follows:
+f
+(
+w(c), P
+)
+=∥P (c)− P∥1 (49)
+where P=[ Pr1, Pr2,..., Pr N] is the N-dimensional actual
+received optical power vector at the TN and P(c) =
+[P(1)
+r , P(2)
+r ,..., P(N)
+r ](x,y)=w(c) is the theoretical RSS values of
+the cth population’s position w(c) obtained by (30). Therefore,
+the estimated position of the TN can be obtained by solving
+the minimum value of (49) using the GWO algorithm.
+At the tth iteration, the position of the cth wolf individual
+is updated as follows [22]:
+
+
+
+Dα=|2 r2× wα− w(c)(t)|
+Dβ=|2 r2× wβ− w(c)(t)|
+Dδ=|2 r2× wδ− w(c)(t)|
+(50)
+
+
+
+w1= wα−(2ar1− a)× Dα
+w2= wβ−(2ar1− a)× Dβ
+w3= wδ−(2ar1− a)× Dδ
+(51)
+a= 2− 2t
+T (52)
+w(c)(t+ 1)= w1+ w2+ w3
+3 (53)
+where wα, wβ, and wδ are the positions of the wolves with the
+best, the second best, and the third best fitness at each iteration.
+r1 and r2 are two independent random variables uniformly
+TABLE II
+GENERATED ARTIFICIAL DATABASE
+distributed in the interval [0, 1]. T is the total number of
+iterations. At the end of the iteration, the estimated position
+of the TN can be obtained by
+(xest, yest)= arg min
+w
+f(w, P). (54)
+C. Proposed LS-IGWO Positioning Method
+For the GWO algorithm used in the abovementioned VLP
+system, three problems need to be addressed: fitness calcu-
+lation, initial population generation, and local optimum. The
+solutions to these problems are stated as follows.
+1) Artificial RSS Database: For (49), the calculation of
+P(c) is inconvenient, because a large amount of reflected
+optical power in (30) will increase the complexity of the
+GWO iteration. Therefore, in the offline phase, we use (30)
+to generate an artificial database shown in Table II. When
+we need to calculate an individual’s fitness, we can use its
+position to obtain the theoretical values of the N received
+powers prestored in the database.
+In fact, when the RSS parameter estimation model is simple
+enough, there is no need to establish a database, such as
+Table II. We only use the database to accelerate the simulation
+of the GWO algorithm instead of proposing a fingerprint-based
+positioning method. In our field test shown in Section V,
+we will use a newly measured RSS model for localization
+in small areas.
+2) Initial Population Generation Strategy Based on LS: To
+improve the convergence accuracy, the estimated position of
+the TN by LS method is used to generate the initial population
+in this article. As shown in Fig. 9, the four vertices of the
+generated area (V1, V4), (V2, V4), (V1, V3), and (V2, V3) can
+be obtained as follows:
+ˆω= arg min
+ω
+[Pr1, Pr2, Pr3, Pr4] (55)
+
+
+
+(V1, V2, V3, V4)=(xels− D, L, yels− D, W),ˆω= 0◦, 90◦
+(V1, V2, V3, V4)=(0, xels+ D, yels− D, W),ˆω= 90◦, 180◦
+(V1, V2, V3, V4)=(0, xels+ D, 0, yels+ D),ˆω= 180◦, 270◦
+(V1, V2, V3, V4)=(xels− D, L, 0, yels+ D),ˆω= 270◦, 0◦
+(56)
+where D can be determined by the positioning error of the LS
+algorithm. By using (55) and (56), an area enclosing the TN
+can be generated. Therefore, generating the initial population
+of the GWO algorithm in this region can effectively narrow the
+search of the population and improve the positioning accuracy.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+5502414 IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024
+Fig. 9. Illustration of the population generating area.
+3) Improved GWO: We design three methods to avoid the
+local optimum of the original GWO algorithm: nonlinear
+convergence factor, weighted updating strategy, and mutation
+of the head wolf. We use the following equations to optimize
+the balance parameter a and the updating process of wolves
+a= 4
+1+(t/T)2− 2 (57)
+w(c)(t+ 1)= Fα× w1+ Fβ× w2+ Fδ× w3
+Fα+ Fβ+ Fδ
+(58)
+where Fα, Fβ, and Fδ are the fitness values of wα, wβ, and wδ.
+Equation (57) ensures that at the beginning of the iteration, the
+wolves search for prey with a larger step while with a smaller
+step at the end of the iteration. In (58), a weighted average
+instead of the original arithmetic average is used to capture
+prey more accurately. Furthermore, to avoid the α wolf falling
+into the local optimum, we adopt the following operations to
+adjust the position of the α wolf
+w′
+α= wα+ r×∥wα− wβ∥1 (59)
+if f
+(
+w′
+α, P
+)
+< f(wα, P)
+wα= w′
+α
+else wα= wα (60)
+where r is a random variable uniformly distributed in the
+interval[−1, 1].
+IV. S IMULATION RESULTS
+In this section, we evaluate the performance of the proposed
+LS-IGWO positioning algorithm in terms of accuracy and
+latency when LED is placed horizontally and tilted on the
+ceiling, respectively. During the simulations, the averaged
+positioning error (APE) is obtained from 576 different posi-
+tions uniformly distributed in the simulated room illustrated
+in Fig. 2, and for all the positioning algorithms related to
+GWO, the number of wolves and iterations is set to 25 and
+10, respectively. The VLC signals shown in Fig. 5 are used in
+the simulations, and all the parameters about VLP are listed
+in Table I.
+Fig. 10. Positioning error distribution of the original LS method using the
+STRP-based receiver.
+Fig. 11. Probability of enclosing the TN using the generated area for different
+SNR values.
+A. Case in Which LED Is Vertically Downward
+Fig. 10 shows the positioning performance of the original
+LS [21] positioning algorithm for each investigated TN in the
+whole room when SNR = 20 dB. It can be seen that due to
+the influence of reflected optical power near the edge area, the
+positioning accuracy becomes worse. The average positioning
+error in the edge and center area of the room is 0.80 and
+0.16 m, respectively, and the maximum positioning error is
+1.76 m (we consider that the area in which the horizontal
+and vertical coordinates range from 1 to 4 m is the central
+area, while the rest is the edge area). Therefore, neglecting the
+NLOS components is unreasonable, and thus, the performance
+of the original LS method is unsatisfactory when it is used
+directly.
+Fig. 11 shows the probability that the area generated by (55)
+and (56) can enclose the TN at each investigated position for
+different SNR values when D= 2 m. We see that due to
+the dependence on the performance of the LS method and the
+noise of the received optical power, the generated area may
+not contain TN for low SNR values. However, when SNR >
+14 dB, the region can enclose TN with a probability of nearly
+100%, so the improvement for the original GWO in terms of
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+W ANG et al.: DESIGN AND PERFORMANCE ANALYSIS FOR INDOOR VISIBLE LIGHT POSITIONING 5502414
+Fig. 12. Positioning error distribution of the proposed LS-IGWO positioning
+algorithm.
+Fig. 13. CDF of the positioning error for the six investigated positioning
+algorithms.
+positioning accuracy would make more sense for higher SNR
+values.
+Fig. 12 shows the overall positioning performance of the
+proposed LS-IGWO localization algorithm under the same
+conditions as Fig. 10. We see that compared with Fig. 10,
+the overall positioning error has significantly decreased by
+using the proposed LS-IGWO algorithm. According to our
+observation, the positioning error in the edge and center
+areas of the room has decreased by 92.13% and 73.42%,
+respectively, and the maximum positioning error drops to
+0.758 m.
+Fig. 13 shows the positioning error’s cumulative distribution
+function (cdf) of the original LS [21], original GWO [22],
+GWO with the initialization strategy shown in (55) and (56)
+(pure LS-GWO), GWO using the improvement mechanism
+given by (57)–(60) (single IGWO), the proposed LS-IGWO,
+and the fingerprint method in [20] for SNR= 20 dB. We see
+that the positioning error of the proposed LS-IGWO algorithm
+is closest to the theoretical CRLB boundary, and about 92.19%
+of the positioning error values are within 0.1131 m for the
+Fig. 14. APE of the six investigated positioning algorithms for different
+SNR values.
+proposed LS-IGWO algorithm. Compared with the original
+GWO algorithm, the positioning accuracy has improved by
+about 59.36% using the proposed LS-IGWO algorithm.
+Fig. 14 shows the comparison of the six investigated algo-
+rithms in terms of the APE under different SNR values. We see
+that the proposed LS-IGWO positioning algorithm has better
+positioning accuracy than other algorithms at all the investi-
+gated SNR values. Because the original LS and the fingerprint
+localization algorithms in [20] do not consider the influence
+of the reflected optical signal, their positioning performance
+is unsatisfactory. In addition, we can also see that the single
+IGWO and pure LS-GWO perform better than the original
+GWO [22]. Therefore, the initial population generating strat-
+egy (55) and (56) and the improvement mechanisms (57)–(60)
+are effective for the proposed LS-IGWO algorithm.
+Fig. 15 shows the time consumption of the six investi-
+gated algorithms. We see that compared with the original
+LS [21] and GWO [22] algorithms, the proposed LS-IGWO
+algorithm can enhance positioning accuracy at a limited cost
+of time complexity. For the proposed LS-IGWO algorithm,
+the combination of the original LS and GWO methods in
+conjunction with the improved strategies increases the time
+complexity. Therefore, the proposed LS-IGWO algorithm can
+be considered for the scenarios that are insensitive to time
+delay. Because the original LS [21], original GWO [22],
+single IGWO, pure LS-GWO, and the proposed LS-IGWO
+algorithms do not require online fingerprint database matching,
+the positioning latency is much lower than the fingerprint
+method in [20] using KNN.
+Fig. 16 provides the APE and positioning latency of the pro-
+posed LS-IGWO algorithm with different numbers of wolves
+when SNR= 20 dB. We see that when the number of pop-
+ulations is more than 25, the improvement in the positioning
+error becomes smaller and smaller, so we use 25 populations
+in our simulations. As the number of populations increases,
+the positioning accuracy becomes better, but the positioning
+delay also becomes larger. Therefore, we can adjust the pop-
+ulation size according to the actual positioning requirements
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+5502414 IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024
+Fig. 15. Time consumption of the six investigated positioning algorithms.
+Fig. 16. APE and time consumption of the proposed LS-IGWO positioning
+algorithms with different population sizes.
+Fig. 17. Illustration of the LED orientation.
+to achieve a trade-off between the computational complexity
+and the positioning accuracy.
+B. Case Considering the LED Orientation
+In practical scenarios, the orientation of LEDs may change
+because of environmental changes, and that can affect posi-
+tioning performance. Therefore, we need to study the influence
+of LED orientation on positioning accuracy. LED orientation
+usually refers to the maximum radiation direction of the
+optical power. In the previous section, we assumed that the
+orientation of the LED is perpendicular to the ceiling, i.e.,
+⃗u L=[0, 0,−1]. As shown in Fig. 17, the orientation of the
+LED can be represented by elevation angle φ′ and azimuth
+angleφ′′, and thus, ⃗u L can be calculated as follows:
+⃗u L=
+
+
+cosφ′′− sinφ′′ 0
+sinφ′′ cosφ′′ 0
+0 0 1
+
+
+
+
+cosφ′ 0− sinφ′
+0 1 0
+sinφ′ 0 cos φ′
+
+
+
+
+0
+0
+−1
+
+. (61)
+Therefore, by updating the cosine values of the irradiance
+angles φ and φ1 j according to (19) and (21), we can obtain
+the following STRP-based RSS model:
+P(i)
+r = Pt
+
+λ′
+(
+−⃗u2·⃗u L
+)m(
+⃗u(i)
+1 ·⃗u2
+)
+d2
++
+4∑
+q=1
+Rq∑
+j=1
+λ′
+q j
+(
+⃗u(i)
+1 ·⃗u4 j
+)(
+⃗u4 j·⃗eq
+)
+d2
+2 j
+
+ (62)
+where λ′ and λ′
+q j are independent of the receiver’s position
+(x, y, z) and can be obtained by
+λ′= A(m+ 1)
+2π Ts(ψ)g(ψ) (63)
+and
+λ′
+q j= Aρ j Ar(m+ 1)
+2πd2
+1 j
+Ts
+(
+ψ1 j
+)
+g
+(
+ψ1 j
+)(
+⃗u3 j·⃗u L
+)m(
+⃗u3 j·⃗eq
+)
+.
+(64)
+Therefore, after updating the RSS model P(i)
+r according
+to (62), the TN’s position can be estimated in the presence
+of different values of LED orientation by employing the
+positioning algorithm introduced by Section III.
+Fig. 18 shows the distribution of the received optical power
+in the whole room when φ′ = 15◦ and φ′′ = 90◦. From
+Fig. 18, we see that compared with the results presented in
+Fig. 3, the peak of the LOS optical power pattern is shifted
+toward the orientation of the LED, and because the maximum
+radiation direction of the LED is toward the third wall (q= 3),
+the first-order NLOS optical power received near this wall
+increases. In other words, most of the received power will be
+distributed near the main beam of the LED.
+Fig. 19 shows the overall positioning error distribution of
+the proposed LS-IGWO positioning algorithm for different φ′′
+values when φ′= 15◦ and SNR= 20 dB. We see that under
+different LED orientations, the maximum and mean values
+of the positioning error vary from 0.75 to 0.90 m and from
+0.05 to 0.07 m, respectively, and they are very close to that
+shown in Fig. 12. Therefore, based on the updated RSS model
+in (62), the proposed LS-IGWO positioning algorithm has
+good robustness to the LED orientation.
+Fig. 20 shows the cdf of the positioning error about the six
+investigated positioning algorithms when φ′= 15◦,φ′′= 90◦,
+and SNR= 20 dB. It can be seen that the proposed LS-IGWO
+algorithm also has the highest positioning accuracy, and the
+curve of the cdf is close to the result in Fig. 13. Because
+the fingerprint positioning presented in [20] did not consider
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+W ANG et al.: DESIGN AND PERFORMANCE ANALYSIS FOR INDOOR VISIBLE LIGHT POSITIONING 5502414
+Fig. 18. Distribution of the received power when PD is placed horizontally
+forφ′= 15◦ andφ′′= 90◦. (a) LOS path. (b) First-order reflection path.
+Fig. 19. Positioning error distribution of the proposed LS-IGWO positioning
+algorithm when φ′= 15◦ and SNR= 20 dB for different φ′′ values.
+the LED orientation, its positioning accuracy becomes worse
+compared with Fig. 13.
+In conclusion, constructing an RSS-based parameter estima-
+tion model with a known LED orientation can achieve almost
+the same positioning accuracy as the case that the LED is
+vertically downward, as long as the PD can detect the optical
+powers at each rotation angle. Therefore, it is necessary to
+Fig. 20. CDF of the positioning error for the six investigated positioning
+algorithms (considering the LED orientation).
+optimize the layout of indoor facilities to ensure that at each
+TN, there is always an LOS link between LED and PD as
+much as possible. When the LED orientation is unknown,
+in order to achieve sufficiently high positioning accuracy,
+beamforming techniques can be used in VLC system to detect
+the maximum radiation direction of the LED, and that is also
+a challenging issue for our future.
+V. F IELD EXPERIMENTS
+In this section, we present some field tests to verify the
+effectiveness of the proposed LS-IGWO positioning algorithm.
+As shown in Fig. 21, the previous simulated room is pro-
+portionally scaled down to a measured area of 50 × 50×
+30 cm 3. A single-LED lamp (3 W with a chip produced
+by Bridgelux) is installed on the center of the ceiling, and
+the baseband signal generated by Arduino is modulated to
+the optical wave through the LED drive circuit. In actual
+measurement, we placed one side of the experiment platform
+against the wall, thus considering the reflection optical power
+from this wall.
+At the receiver, the PD (Model S6968) is placed on the
+center of the slope of the slanted cut cylinder (the slanted angle
+is 20◦, and the bottom diameter is 2 cm), and they are fixed
+on a rotatable platform. We use a manually operated rotation
+platform REG25 with a scale value of 2 ◦, and the height of
+the assembled receiver is 1.864 cm. In practical applications,
+we can use electromechanically controlled rotation platforms,
+such as model Thorlabs CRM1P, to obtain the rotation angle
+ωi more precisely.
+As shown in Fig. 22, for practical applications, we can fix
+the assembled receiver on the center of the tracked object.
+Assuming that the angle between the directions of the object’s
+principal axis and the x-axis is ω′, in the initial state, the
+orientation of PD is consistent with the direction of the object’s
+principal axis, i.e., ωi = ω′. When the positioning process
+begins, the receiver first rotates ω′ clockwise detecting the
+RSS values from 0 ◦ and then rotates 90 ◦, 180◦, and 270 ◦
+counterclockwise to obtain the RSS values of the rest three
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+5502414 IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024
+Fig. 21. Layout of the indoor SLSP-based VLP environment.
+Fig. 22. Diagram of the STRP-based object tracking for practical applica-
+tions.
+rotation angles. Therefore, the orientation of the tracked object
+relative to the measured room needs to be known in advance,
+and that is a limitation of the STRP-based positioning system
+in terms of practical implementation.
+In this practical scenario, only the distance d and rotation
+angleωi are related to the received power. Based on our field
+measurements and using curve fitting method, the following
+RSS model can be obtained:
+P(i)
+r = C2
+⃗u(i)
+1 ·⃗u2
+dC1
+(65)
+where C1= 1 and C2= 1.8012. Because (65) is obtained from
+an actual environment, C1 and C2 are parameters related to
+light source, optical devices, reflection optical power, ambient
+light, and noise. For different distance and rotation angle
+values, the measured RSS samples, fitted RSS model (65),
+and Lambert radiation model are shown in Fig. 23. We tested
+12 RSS values for different rotation angles 0◦–360◦ at a given
+position (15, 15) cm and 15 different positions with a given
+rotation angle 0◦. It can be seen that the RSS value nonlin-
+early decreases with the distance and varies approximately
+Fig. 23. Sampled RSS values, fitted curves, and Lambert radiation model
+for different distances and rotation angle values.
+TABLE III
+RMSE B ETWEEN RSS S AMPLES AND LAMBERT MODEL AS WELL AS
+FITTED CURVE
+according to the cosine value of the rotation angle, and that is
+approximately consistent with the general Lambert radiation
+model.
+The root-mean-square error (RMSE) between the measured
+RSS samples and the above two model curves in Fig. 23
+are shown in Table III. We see that the fitted model (65) is
+generally more accurate than the Lambert radiation model used
+in the previous simulation. Actually, in practical positioning
+scenarios, not all LED lamps can be modeled as a standard
+Lambert radiation source because of the various shapes of
+lamps and indoor facilities. We usually need to obtain the
+RSS model based on actual measured RSS samples and
+mathematical tools, such as curve fitting. Therefore, in the
+practical localization, we recommend the newly derived RSS
+model (65) instead of the original simulation model. When
+considering the complex NLOS environments, we can update
+C1 and C2 in (65) according to the RSS samples newly
+measured in that case.
+Therefore, by using (65), we can construct the parameter
+estimation model, such as (37), and the TN’s position can
+be estimated by the positioning algorithm demonstrated in
+Section III. For good robustness, it would be better to regularly
+update the RSS model based on changes in indoor environ-
+ments, such as furniture layout and ambient light.
+Fig. 24 shows the overall positioning effect of the proposed
+LS-IGWO algorithm using the RSS data measured at 25 posi-
+tions uniformly distributed in the experimental environment.
+The value of D is adjusted to 3 cm, and other parameters
+of the positioning algorithm are consistent with the previ-
+ous simulation. It can be seen that the proposed LS-IGWO
+algorithm has good positioning accuracy and robustness. Due
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+W ANG et al.: DESIGN AND PERFORMANCE ANALYSIS FOR INDOOR VISIBLE LIGHT POSITIONING 5502414
+Fig. 24. Positioning result of the proposed LS-IGWO algorithm (field test
+result).
+Fig. 25. Boxplot distribution of the positioning error for the six investigated
+positioning algorithms (field test result).
+to the influence of the reflection optical power, the APE of a
+column against the wall is 1.65 cm, which is slightly higher
+than other positions.
+Fig. 25 shows the minimum, first quartile, median, third
+quartile, and maximum positioning error values of the six
+investigated algorithms. These results further verify the effec-
+tiveness and robustness of the proposed LS-IGWO algorithm
+for indoor positioning.
+In addition, according to our statistics, the averaged calcu-
+lation time of all the GWO-based localization algorithms is
+about 9.7 ms. Due to the simplicity of the RSS parameter
+estimation model established by (65), there is no need to
+establish a fingerprint database, such as previous simulations,
+to improve computational efficiency.
+VI. C ONCLUSION
+In this article, we evaluated the theoretical performance of
+an existing STRP-based receiver in the SLSP scenarios and
+then proposed an LS-IGWO-based VLP algorithm to mitigate
+the impact of the first-order reflection optical signals. Accord-
+ing to the derived CRLB of the positioning error, the proper
+angles of inclination and rotation are selected. Simulation and
+field test results show that for different LED orientations,
+the proposed LS-IGWO positioning algorithm has higher
+positioning accuracy and stronger stability than the original
+LS [21], the original GWO [22], single IGWO, pure LS-
+GWO, and the existing fingerprint positioning algorithm [20].
+Therefore, the proposed LS-IGWO positioning algorithm with
+STRP is effective and feasible and can be considered as a
+competitive solution for SLSP-based IPS.
+In our future work, we will focus on developing RSS-based
+VLP systems, including more accurate single-LED-based
+positioning schemes, real-time positioning algorithms, simul-
+taneous positioning and orientation for the receiver, LED
+orientation estimation, and system implementation for 6G
+applications.
+REFERENCES
+[1] S. E. Trevlakis et al., “Localization as a key enabler of 6G wireless sys-
+tems: A comprehensive survey and an outlook,” IEEE Open J. Commun.
+Soc., vol. 4, pp. 2733–2801, 2023.
+[2] Y . Zhuang et al., “A survey of positioning systems using visible LED
+lights,” IEEE Commun. Surveys Tuts., vol. 20, no. 3, pp. 1963–1988,
+3rd Quart., 2018.
+[3] T. Lan, X. Wang, Z. Chen, J. Zhu, and S. Zhang, “Fingerprint augment
+based on super-resolution for WiFi fingerprint based indoor localization,”
+IEEE Sensors J., vol. 22, no. 12, pp. 12152–12162, Jun. 2022.
+[4] K. Yang, Z. Liang, R. Liu, and W. Li, “RSS-based indoor localization
+using min-max algorithm with area partition strategy,” IEEE Access,
+vol. 9, pp. 125561–125568, 2021.
+[5] S. Shiraki and S. Shioda, “Contact information-based indoor pedestrian
+localization using Bluetooth low energy beacons,” IEEE Access, vol. 10,
+pp. 119863–119874, 2022.
+[6] D. Xie, X. Wang, A. Tang, and H. Zhu, “A portable RFID localization
+approach for mobile robots,” IEEE Internet Things J., vol. 9, no. 23,
+pp. 23332–23347, Dec. 2022.
+[7] J. Zhang, W. Wang, X. She, and X. Li, “2-D indoor passive real-
+time location system based on ultrawideband technology,” IEEE Trans.
+Instrum. Meas., vol. 71, pp. 1–17, 2022.
+[8] R. Liu, Z. Liang, Z. Wang, and W. Li, “Indoor visible light posi-
+tioning based on improved whale optimization method with min-max
+algorithm,” IEEE Trans. Instrum. Meas., vol. 72, pp. 1–10, 2023.
+[9] S. Ma et al., “Optimal power allocation for integrated visible light
+positioning and communication system with a single LED-lamp,” IEEE
+Trans. Commun., vol. 70, no. 10, pp. 6734–6747, Oct. 2022.
+[10] R. Liu, Z. Liang, K. Yang, and W. Li, “Machine learning based visible
+light indoor positioning with single-LED and single rotatable photo
+detector,” IEEE Photon. J., vol. 14, no. 3, pp. 1–11, Jun. 2022.
+[11] M. F. Keskin, A. D. Sezer, and S. Gezici, “Localization via visible light
+systems,” Proc. IEEE, vol. 106, no. 6, pp. 1063–1088, Jun. 2018.
+[12] W. Gu, M. Aminikashani, P. Deng, and M. Kavehrad, “Impact of
+multipath reflections on the performance of indoor visible light posi-
+tioning systems,” J. Lightw. Technol., vol. 34, no. 10, pp. 2578–2587,
+May 15, 2016.
+[13] B. Zhou, A. Liu, and V . Lau, “Performance limits of visible light-based
+user position and orientation estimation using received signal strength
+under NLOS propagation,” IEEE Trans. Wireless Commun., vol. 18,
+no. 11, pp. 5227–5241, Nov. 2019.
+[14] S. Shen and S. Li, “Theoretical bound of position and orientation
+estimation for visible light systems subject to NLOS channel and
+power uncertainty,” IEEE Commun. Lett., vol. 26, no. 6, pp. 1283–1287,
+Jun. 2022.
+[15] H. Q. Tran and C. Ha, “Fingerprint-based indoor positioning system
+using visible light communication—A novel method for multipath
+reflections,” Electronics, vol. 8, no. 1, p. 63, Jan. 2019.
+[16] G. Shi, Y . Li, and W. Cheng, “Accuracy analysis of indoor visible light
+communication localization system based on received signal strength
+in non-line-of-sight environments by using least squares method,” Opt.
+Eng., vol. 58, no. 5, pp. 056102-1–056102-11, May 2019.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
+
+5502414 IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 73, 2024
+[17] V . P. Rekkas et al., “Artificial intelligence in visible light positioning for
+indoor IoT: A methodological review,” IEEE Open J. Commun. Soc.,
+vol. 4, pp. 2838–2869, 2023.
+[18] X. Yu, J. Wang, and H. Lu, “Single LED-based indoor positioning
+system using multiple photodetectors,” IEEE Photon. J., vol. 10, no. 6,
+pp. 1–8, Dec. 2018.
+[19] B. Hussain, Y . Wang, R. Chen, and C. P. Yue, “Camera pose estimation
+using a VLC-modulated single rectangular LED for indoor positioning,”
+IEEE Trans. Instrum. Meas., vol. 71, pp. 1–11, 2022.
+[20] T. Huang et al., “Visible light indoor positioning fashioned with a single
+tilted optical receiver,” in Proc. 14th Int. Conf. Opt. Commun. Netw.
+(ICOCN), Jul. 2015, pp. 1–4.
+[21] K. Cengiz, “Comprehensive analysis on least-squares lateration for
+indoor positioning systems,” IEEE Internet Things J., vol. 8, no. 4,
+pp. 2842–2856, Feb. 2021.
+[22] M. Dong, Y . Qi, X. Wang, and Y . Liu, “A non-line-of-sight mitigation
+method for indoor ultra-wideband localization with multiple walls,”
+IEEE Trans. Ind. Informat., vol. 19, no. 7, pp. 8183–8195, Jul. 2023.
+[23] J. Xiong, R. Zhang, L. Lu, Q. T. Sun, and K. Long, “Physical-layer
+network coding enhanced visible light communications using RGB
+LEDs,” IEEE Photon. J., vol. 15, no. 1, pp. 1–10, Feb. 2023.
+[24] M. I. S. Chowdhury, W. Zhang, and M. Kavehrad, “Combined determin-
+istic and modified Monte Carlo method for calculating impulse responses
+of indoor optical wireless channels,” J. Lightw. Technol., vol. 32, no. 18,
+pp. 3132–3148, Sep. 15, 2014.
+[25] Z. Wang, Z. Liang, X. Li, and H. Li, “Indoor visible light positioning
+based on improved particle swarm optimization method with min-max
+algorithm,” IEEE Access, vol. 10, pp. 130068–130077, 2022.
+[26] I. Cappelli et al., “Enhanced visible light localization based on machine
+learning and optimized fingerprinting in wireless sensor networks,”IEEE
+Trans. Instrum. Meas., vol. 72, pp. 1–10, 2023.
+[27] S. Shen, S. Li, and H. Steendam, “Hybrid position and orientation
+estimation for visible light systems in the presence of prior information
+on the orientation,” IEEE Trans. Wireless Commun., vol. 21, no. 8,
+pp. 6271–6284, Aug. 2022.
+[28] Y . Cai, W. Guan, Y . Wu, C. Xie, Y . Chen, and L. Fang, “Indoor high
+precision three-dimensional positioning system based on visible light
+communication using particle swarm optimization,” IEEE Photon. J.,
+vol. 9, no. 6, pp. 1–20, Dec. 2017.
+[29] IEEE Standard for Local and Metropolitan Area Networks—Part
+15.7: Short-Range Optical Wireless Communications, IEEE Stan-
+dard 802.15.7-2018, Revision IEEE Standard 802.15.7-2011, 2018,
+pp. 1–407.
+Zhenyu Wang received the B.Eng. degree in com-
+munication engineering from Chang’an University,
+Xi’an, China, in 2021, where he is currently pur-
+suing the master’s degree with the Department of
+Communication Engineering, School of Information
+Engineering.
+The focus of his current research is on indoor
+visible light localization techniques. His research
+interests include machine learning, wireless commu-
+nications, and indoor positioning.
+Zhonghua Liang (Senior Member, IEEE) received
+the B.Sc. degree in radio engineering and the M.Sc.
+and Ph.D. degrees in information and communi-
+cation engineering from Xi’an Jiaotong University,
+Xi’an, China, in 1996, 2002, and 2007, respectively.
+From July 1996 to August 1999, he was with the
+Guilin Institute of Optical Communications (GIOC),
+Guilin, China, where he was a System Engineer of
+optical transmission systems. From 2008 to 2009,
+he was a Post-Doctoral Fellow with the Department
+of Electrical and Computer Engineering, University
+of Victoria, Victoria, BC, Canada. Since 2010, he has been with the School of
+Information Engineering, Chang’an University, Xi’an, where he is currently
+a Professor. His research interests include ultrawideband technology, wireless
+communication theory, the Internet of Things, and indoor positioning tech-
+niques.
+Ren Liu received the B.Eng. degree in electronic
+information engineering from the Civil Aviation
+University of China, Tianjin, China, in 2019.
+He is currently pursuing the Ph.D. degree with the
+Department of Communication Engineering, School
+of Information Engineering, Chang’an University,
+Xi’an, China.
+The focus of his Ph.D. research is on algorithm
+and hardware implementation of indoor visible light
+positioning system. His research interests include
+visible light positioning channel modeling, finger-
+print positioning, and intelligent optimization.
+Xunuo Li received the B.Eng. degree in com-
+munication engineering from Chang’an University,
+Xi’an, China, in 2021, where she is currently pur-
+suing the master’s degree with the Department of
+Communication Engineering, School of Information
+Engineering.
+The focus of her current research is on indoor
+visible light positioning techniques. Her research
+interests include visible light communication, indoor
+positioning, and optimization algorithms.
+Hui Li received the B.Eng. degree in communication
+engineering from Northeast Electric Power Univer-
+sity, Jilin City, China, in 2021. She is currently
+pursuing the master’s degree with the Department of
+Communication Engineering, School of Information
+Engineering, Chang’an University, Xi’an, China.
+The focus of her current research is on indoor
+ultrawideband positioning techniques. Her research
+interests include machine learning, indoor position-
+ing, and optimization algorithms.
+Authorized licensed use limited to: Universite de Versailles St Quentin. Downloaded on September 03,2026 at 11:06:43 UTC from IEEE Xplore.  Restrictions apply. 
