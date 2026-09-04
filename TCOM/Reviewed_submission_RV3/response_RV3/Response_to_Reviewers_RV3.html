@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Responses to the Reviewers - IEEE TCOM (TCOM-TPS-25-2414.R1)</title>
+<!--
+  Source file for the response letter. Convert to Word with:
+    pandoc Response_to_Reviewers_RV3.html -f html+tex_math_single_backslash -t docx --reference-doc=custom-reference.docx -o Response_to_Reviewers_RV3.docx
+  Math written as \( ... \) is converted by pandoc into native Word equations.
+  Colors are applied through the Word styles defined in custom-reference.docx.
+-->
+</head>
+<body>
+
+<div custom-style="Letter Title"><p>Responses to the Reviewers&rsquo; Comments on the manuscript with ID TCOM-TPS-25-2414.R1</p></div>
+
+<div custom-style="Letter Subtitle"><p>Model-Based Beam-Steered Optical Wireless Positioning with Single-LED Single-Photodiode for 3D Localization</p></div>
+
+<div custom-style="Letter Authors"><p>by Kevin Acuna-Condori, Bastien B&eacute;chadergue, Hongyu Guan, and Luc Chassagne</p></div>
+
+<p>We would like to thank the Editor and the Reviewers for their careful reading of the revised manuscript and for their constructive comments, which have helped us further improve the accuracy of the claims and the presentation quality of the paper. We hope that the present version addresses all remaining comments and suggestions.</p>
+
+<p>In this document, we provide detailed explanations of the changes made in the revised version of our article to address these comments. Each comment is reminded in <span custom-style="Red Text">red</span> and is followed by our response, in black font. The changes made to the revised manuscript are mentioned in <span custom-style="Blue Text">blue</span>. Please also note that, unless stated otherwise, all page, section, figure, table, equation, and reference numbers, as well as acronyms, refer to the revised manuscript. In the marked-up version of the revised manuscript, added text is shown in blue and removed text in red.</p>
+
+<!-- ===================================================================== -->
+<div custom-style="Section Title"><p>Responses to the Editor</p></div>
+
+<div custom-style="General Comment"><p>The revised manuscript has been improved, and the main technical concerns raised in the previous round have largely been addressed. In particular, the proposed two-stage procedure and the distinction between direction finding and distance recovery are now much clearer. One important consistency issue, however, remains. The direction-finding stage operates without receiver reorientation, whereas completion of the 3D position requires one cooperative PD reorientation for distance recovery. This distinction is correctly explained in several parts of the revised manuscript. However, statements such as &ldquo;full 3D indoor localization without receiver rotation&rdquo; still appear, particularly in the Conclusion. Such wording overstates the capability of the complete positioning procedure and may affect the credibility of the claimed practical advantage. This point should therefore be corrected consistently throughout the manuscript. The authors should also carefully address the remaining reviewer comments (see also the attached file) and clearly acknowledge the simulation-based nature and practical limitations of the present validation.</p></div>
+
+<p>We would like to thank the Editor for the positive assessment of our revised manuscript and for this clear summary of the remaining points, which we address in detail in the following sections. We fully agree with the Editor&rsquo;s remark on the remaining consistency issue. <b>The main change made in this revision is to distinguish, with a single formulation used throughout the manuscript, the direction-finding stage&mdash;which operates with the receiver held at an arbitrary, unknown orientation&mdash;from the completion of the 3D position, which requires a single cooperative PD reorientation for distance recovery.</b> The corresponding modifications, together with the explicit acknowledgment of the simulation-based nature and practical limitations of the validation, are summarized here:</p>
+
+<ul>
+  <li><b>Conclusion</b> <span custom-style="Blue Text">(Section VIII)</span>: &ldquo;without receiver rotation&rdquo; has been removed from the first paragraph, which now states the requirement of each stage <span custom-style="Blue Text">(page 13)</span>; in the third paragraph, the simulations <span custom-style="Blue Text">&ldquo;support&rdquo;</span> the framework <span custom-style="Blue Text">&ldquo;within the scope of the simulation-based validation delimited in Section VII-D&rdquo;</span>, and experimental validation on a hardware prototype is listed as the first future work item <span custom-style="Blue Text">(page 14)</span>.</li>
+  <li><b>Abstract</b> <span custom-style="Blue Text">(page 1)</span>: the cooperative measurement is described as one <span custom-style="Blue Text">&ldquo;in which the PD is reoriented once toward the LED&rdquo;</span>, and the tilt robustness is attributed to the direction-finding stage.</li>
+  <li><b>Section I</b>: the paragraph preceding the contributions <span custom-style="Blue Text">(page 2)</span> and the first contribution <span custom-style="Blue Text">(page 3)</span> now mention the single cooperative PD reorientation of the distance-recovery step.</li>
+  <li><b>Table I</b> <span custom-style="Blue Text">(page 2)</span>: the entry of the proposed system is tagged with explicit &ldquo;(D-F)&rdquo; and &ldquo;(3D)&rdquo; labels, and its footnote has been rewritten.</li>
+  <li><b>Section VII-A-2</b> <span custom-style="Blue Text">(page 10)</span>: the robustness to receiver tilt is stated to be specific to the direction-finding stage.</li>
+  <li><b>New Section VII-D, &ldquo;Limitations of the Present Validation&rdquo;</b> <span custom-style="Blue Text">(page 13)</span>: acknowledges the simulation-based nature of the results and the absence of experimental validation, states the system requirements presupposed by the validation (including the actuated receiver needed for the cooperative alignment), and delimits the receiver-orientation independence under NLOS multipath.</li>
+  <li><b>Responses to Reviewer 3</b>: physical explanation of the WLS trend <span custom-style="Blue Text">(Section VII-B)</span>, definition of the 14 dB operating point <span custom-style="Blue Text">(Section IV)</span>, initialization of the genetic algorithm <span custom-style="Blue Text">(Section IV)</span>, applications in edge computing and digital twins <span custom-style="Blue Text">(Section I)</span>, and explicit tilt/azimuth labels in <span custom-style="Blue Text">Table II</span>.</li>
+  <li><b>Editorial corrections</b>: the GA selection operator is now correctly described as stochastic uniform selection <span custom-style="Blue Text">(Section IV)</span>, the acronyms IRS and WKNN are defined, and an equation cross-reference in <span custom-style="Blue Text">Section III-A</span> has been corrected.</li>
+</ul>
+
+<!-- ===================================================================== -->
+<div custom-style="Section Title"><p>Responses to Reviewer 1</p></div>
+
+<div custom-style="General Comment"><p>No further comments.</p></div>
+
+<p>We would like to thank the reviewer for the time devoted to the evaluation of our manuscript and for the positive assessment of the revised version.</p>
+
+<!-- ===================================================================== -->
+<div custom-style="Section Title"><p>Responses to Reviewer 2</p></div>
+
+<div custom-style="General Comment"><p>The revised manuscript has addressed the major logical concern and is now much clearer and more coherent. The remaining issues are related primarily to practical validation and presentation clarity rather than fundamental technical flaws.</p></div>
+
+<p>We sincerely thank the reviewer for the positive assessment of the revised manuscript and for the remaining comments, which we fully share and have addressed as detailed below.</p>
+
+<!-- R2 #1 -->
+<div custom-style="Reviewer Comment"><p>1.&nbsp;&nbsp;&nbsp;The direction-finding stage can operate with arbitrary receiver orientation, whereas the complete 3D localization pipeline still requires cooperative PD reorientation for distance recovery. This should be clarified. The manuscript should still ensure that the Abstract, Table I, and contribution statements do not overstate the receiver-orientation-free nature of the complete 3D positioning system.</p></div>
+
+<p>We agree. A single formulation is now used throughout the manuscript: the direction-finding stage operates under an arbitrary (unknown, fixed) receiver orientation, whereas completing the 3D position requires a single cooperative PD reorientation for distance recovery. The corresponding changes are the following.</p>
+
+<p><span custom-style="Blue Text">Abstract (page 1)</span>:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;[&hellip;] to first estimate the LED-to-PD direction, and then recover the distance from a single cooperative beam-aligned measurement, in which the PD is reoriented once toward the LED.&rdquo;</p></div>
+
+<p><span custom-style="Blue Text">Section I, paragraph preceding the contributions (page 2)</span>:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;[&hellip;] the direction-finding stage requires zero receiver movement, and the entire beam-steering complexity resides in the infrastructure; on the receiver side, a single cooperative PD reorientation is required only at the final distance-recovery step.&rdquo;</p></div>
+
+<p><span custom-style="Blue Text">First contribution (Section I, page 3)</span>:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;[&hellip;] are mathematically independent of the receiver orientation <span class="math inline">\(\mathbf{n}_r\)</span>, enabling direction finding without receiver pose knowledge, followed by a single cooperative PD reorientation for distance recovery.&rdquo;</p></div>
+
+<p><span custom-style="Blue Text">Conclusion (Section VIII, first paragraph, page 13)</span>:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;This paper introduced a beam-steered single-LED, single-PD OWP architecture that delivers full 3D indoor localization without cameras or PD arrays: the direction-finding stage operates with the receiver held at an arbitrary, unknown orientation, while completing the 3D position requires a single cooperative PD reorientation for distance recovery.&rdquo;</p></div>
+
+<p><span custom-style="Blue Text">Table I (page 2)</span> has been relabeled as detailed in our response to Comment 3, and <span custom-style="Blue Text">the new Section VII-D (page 13)</span> lists the actuated receiver required for the cooperative alignment as a system requirement of the complete pipeline that does not apply to direction finding (see our response to Comment 2).</p>
+
+<!-- R2 #2 -->
+<div custom-style="Reviewer Comment"><p>2.&nbsp;&nbsp;&nbsp;There is one practical limitation remaining: the evaluation is still mainly simulation-based, so the absence of experimental validation or a more realistic hardware-implemented study should be more explicitly acknowledged.</p></div>
+
+<p>We agree. A new subsection, <span custom-style="Blue Text">Section VII-D &ldquo;Limitations of the Present Validation&rdquo; (page 13)</span>, has been added at the end of the results section. It reads:</p>
+
+<div custom-style="Manuscript Change">
+<p>&ldquo;The results reported in this paper are obtained from Monte Carlo simulations of the LOS channel model (1)&ndash;(3) under AWGN; no experimental validation is included at this stage. Beyond the modeling assumptions of Section II, the validation presupposes two system requirements: (i) accurate steering control, such that the commanded orientations <span class="math inline">\(\{\mathbf{n}_{t,i}\}\)</span> are reproduced without pointing error; and (ii) for the distance-recovery step, an actuated receiver coordinated with the transmitter to execute the cooperative alignment&mdash;a requirement of the complete pipeline that does not apply to direction finding.</p>
+<p>The LOS channel model also delimits the receiver-orientation independence of Section VI-C: under NLOS multipath, the received powers include reflected contributions that depend on both the LED steering orientation and <span class="math inline">\(\mathbf{n}_r\)</span> and cancel in neither (29) nor (24), so the property holds only approximately and is not guaranteed when reflections dominate; in indoor channels with an unobstructed LOS, however, the LOS component dominates the reflected contributions [44].</p>
+<p>The reported accuracies should therefore be read as the performance attainable under these conditions; their experimental assessment on a prototype of the proposed architecture is part of our ongoing work (Section VIII).&rdquo;</p>
+</div>
+
+<p>Consistently, <span custom-style="Blue Text">the third paragraph of the Conclusion (page 14)</span> now states that the simulations <span custom-style="Blue Text">&ldquo;support the effectiveness of the proposed framework, within the scope of the simulation-based validation delimited in Section VII-D&rdquo;</span> (instead of &ldquo;confirmed&rdquo;), and <span custom-style="Blue Text">future work item (i) (page 14)</span> reads <span custom-style="Blue Text">&ldquo;experimental validation of the complete two-stage pipeline on a hardware prototype (cf. Section VII-D)&rdquo;</span>. The experimental validation of the complete pipeline is part of our ongoing work.</p>
+
+<!-- R2 #3 -->
+<div custom-style="Reviewer Comment"><p>3.&nbsp;&nbsp;&nbsp;In Table I, the notation used for the proposed method, especially the &ldquo;Arbitrary / Controlled / D-F&rdquo; description of receiver orientation, is somewhat difficult to parse.</p></div>
+
+<p>We thank the reviewer for this remark. <span custom-style="Blue Text">In the revised Table I (page 2)</span>, each line of the &ldquo;Ours&rdquo; row is now tagged with the stage it refers to, and the footnote has been rewritten:</p>
+<ul>
+  <li><b>Rx Orientation</b>: <span custom-style="Blue Text">&ldquo;Arbitrary (D-F)&rdquo;</span> / <span custom-style="Blue Text">&ldquo;One reorient. (3D)&rdquo;</span> (the former &ldquo;Controlled&rdquo; has been removed);</li>
+  <li><b>Error (APE)</b>: <span custom-style="Blue Text">&ldquo;0.54&deg; (D-F)&rdquo;</span> / <span custom-style="Blue Text">&ldquo;2.00 cm (3D)&rdquo;</span>;</li>
+  <li><b>Footnote</b>: <span custom-style="Blue Text">&ldquo;&dagger;Two-stage system: during direction finding (D-F), the PD is held at any fixed, unknown orientation (arbitrary), without any receiver rotation; completing the 3D position requires a single cooperative PD reorientation toward the transmitter (one reorient.). See Section VI-C.&rdquo;</span></li>
+</ul>
+
+<!-- R2 #4 -->
+<div custom-style="Reviewer Comment"><p>4.&nbsp;&nbsp;&nbsp;The statements about robustness to random receiver tilts should clearly indicate that this property mainly applies to the direction-finding stage rather than to the complete distance-recovery measurement.</p></div>
+
+<p>We agree. The tilt-robustness evaluation of Section VII-A-2 concerns the direction-finding stage only, since the distance-recovery measurement is performed under cooperative alignment. The scope is now explicit in the two statements where it was not:</p>
+<ul>
+  <li><span custom-style="Blue Text">Abstract (page 1)</span>: <span custom-style="Blue Text">&ldquo;[&hellip;] with direction-finding robustness to random receiver tilts (degradation below 3%).&rdquo;</span></li>
+  <li><span custom-style="Blue Text">Section VII-A-2 (page 10)</span>: <span custom-style="Blue Text">&ldquo;This robustness is specific to the direction-finding stage, as distance recovery is performed under cooperative alignment (Section II).&rdquo;</span></li>
+</ul>
+
+<!-- ===================================================================== -->
+<div custom-style="Section Title"><p>Responses to Reviewer 3</p></div>
+
+<p>We sincerely thank the reviewer for the careful reading of the revised manuscript and for the constructive comments, which have helped us clarify several technical points. Our responses follow.</p>
+
+<!-- R3 #1 -->
+<div custom-style="Reviewer Comment"><p>1.&nbsp;&nbsp;&nbsp;The reviewer recommends providing a physical or geometric explanation of why the WLS performance degrades when moving from K=5 to K=9 orientations in Table VI, as it seems counterintuitive compared to the GLS and NLS trends.</p></div>
+
+<p>We thank the reviewer for this question. All <span class="math inline">\(K-1\)</span> power ratios <span class="math inline">\(\hat\beta_i=(\hat\mu_i/\hat\mu_1)^{1/m}\)</span> share the same reference measurement <span class="math inline">\(\hat\mu_1\)</span>. From (35), the error of each ratio contains an independent term <span class="math inline">\(n_i/\mu_i\)</span> and a common term <span class="math inline">\(-n_1/\mu_1\)</span>, identical for all <span class="math inline">\(i\)</span>; combining (37)&ndash;(38), the ratio-error covariance has the exact diagonal-plus-rank-one form <span class="math inline">\(\boldsymbol{\Sigma}_\beta\propto\operatorname{diag}(\beta_i^2/\mu_i^2)+\mu_1^{-2}\boldsymbol{\beta}\boldsymbol{\beta}^{\mathsf T}\)</span>, whose rank-one term is the noise of the shared reference. Geometrically, since <span class="math inline">\(\hat{\mathbf{a}}_i=\mathbf{a}_i-\tilde n_i\mathbf{n}_{t,1}\)</span> (Section VI-A), this common term displaces all constraint normals coherently along <span class="math inline">\(\mathbf{n}_{t,1}\)</span> and rotates the estimated direction systematically; unlike independent errors, it does not average out when orientations are added. GLS accounts for this structure exactly through <span class="math inline">\(\boldsymbol{\Sigma}_\beta^{-1}\)</span>, which attenuates the common component by <span class="math inline">\(1/(1+\sum_{i\ge 2}\mu_i^2/\mu_1^2)\)</span>, a factor that strengthens with <span class="math inline">\(K\)</span>. WLS retains only the diagonal and treats the single coherent perturbation as <span class="math inline">\(K-1\)</span> independent ones; this mismatch grows with the number of ratios sharing the reference (4 at <span class="math inline">\(K=5\)</span>, 8 at <span class="math inline">\(K=9\)</span>), which is also why Section VI-B recommends GLS when the cross-correlations are not negligible. We further note that the penalty is confined to the RMSE: in Table VI, the APE (2.25 &rarr; 2.15 cm) and the <span class="math inline">\(\mathrm{CDF}_{90\%}\)</span> (4.49 &rarr; 4.01 cm) of WLS improve from <span class="math inline">\(K=5\)</span> to <span class="math inline">\(K=9\)</span>, so the RMSE increase (2.92 &rarr; 3.42 cm) stems from a small subset of positions with large errors.</p>
+
+<p><span custom-style="Blue Text">Section VII-B (page 12)</span> now includes, after the sentence reporting the WLS degradation:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;These terms arise because all ratios share the measurement <span class="math inline">\(\hat\mu_1\)</span> (38): its noise perturbs every constraint normal <span class="math inline">\(\hat{\mathbf{a}}_i\)</span> coherently along <span class="math inline">\(\mathbf{n}_{t,1}\)</span> and hence does not average out with <span class="math inline">\(K\)</span>, so GLS suppresses it through <span class="math inline">\(\boldsymbol{\Sigma}_\beta^{-1}\)</span> whereas WLS weights it as independent noise&mdash;a mismatch that grows with the number of correlated ratios. The penalty is confined to the RMSE, as the APE and <span class="math inline">\(\mathrm{CDF}_{90\%}\)</span> of WLS still improve from <span class="math inline">\(K=5\)</span> to <span class="math inline">\(K=9\)</span>, i.e., it affects only a small subset of positions with large errors.&rdquo;</p></div>
+
+<!-- R3 #2 -->
+<div custom-style="Reviewer Comment"><p>2.&nbsp;&nbsp;&nbsp;The reviewer suggests explicitly defining how the baseline SNR value of 14dB used in Section VII was chosen or whether it represents a typical operational indoor environment.</p></div>
+
+<p>The value of 14 dB was not selected as a free parameter: it is the testbed-averaged SNR obtained from (6a)&ndash;(6c) with the nominal system parameters of Table II (<span class="math inline">\(P_t = 0.405\)</span> W, <span class="math inline">\(A_{\mathrm{det}} = 4.8\times5.5\)</span> mm<sup>2</sup>, <span class="math inline">\(R_p = 0.63\)</span> A/W, <span class="math inline">\(\sigma_w^2 = 1.19\times10^{-14}\)</span> A<sup>2</sup>), taken from the datasheets of the NIR LED and PIN photodiode considered, over the 1,792 receiver positions of the testbed. Since the operating SNR of a given deployment depends on the hardware and on the ambient-noise level, we do not claim that this value is universally typical; instead, the performance is characterized over SNR <span class="math inline">\(\in[10,50]\)</span> dB for both the bounds (Fig. 5) and the estimators (Fig. 10), and Section VII-C explains how the SNR axis can be read in terms of ambient light.</p>
+
+<p><span custom-style="Blue Text">Section IV (page 7)</span>, where the value first appears, now states:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;At a representative SNR of 14 dB, the <span class="math inline">\(K=5\)</span> set achieves an RMS-DEB below 0.3&deg; and an RMS-PEB below 1 cm. This value is the testbed-averaged SNR (6c) evaluated under the nominal system parameters of Table II.&rdquo;</p></div>
+<p><span custom-style="Blue Text">Section VII-C (page 12)</span> now refers to this definition: <span custom-style="Blue Text">&ldquo;[&hellip;] at the nominal operating point (SNR = 14 dB; cf. Section IV) [&hellip;]&rdquo;</span>.</p>
+
+<!-- R3 #3 -->
+<div custom-style="Reviewer Comment"><p>3.&nbsp;&nbsp;&nbsp;The reviewer thinks you should add a brief sentence in Section IV explaining how the initial population or search grid of the Genetic Algorithm was initialized to show it avoids getting stuck in local minima.</p></div>
+
+<p>We thank the reviewer for this suggestion. The initial population of <span class="math inline">\(P=300\)</span> individuals is generated by sampling each gene (tilt or azimuth) independently and uniformly at random within its interval of the bounded search range <span class="math inline">\(\Omega\)</span> (Table II), which, for at most <span class="math inline">\(2K=18\)</span> variables, provides a dense multi-point coverage of the search space. The population then evolves through stochastic uniform selection, scattered crossover (<span class="math inline">\(p_c=0.8\)</span>), and adaptive feasible mutation, which preserves diversity throughout the run. <span custom-style="Blue Text">Section IV (page 6)</span> now reads:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;The initial population of <span class="math inline">\(P\)</span> individuals is generated by sampling each gene independently and uniformly at random over its admissible interval in <span class="math inline">\(\Omega\)</span>, providing a dense, unbiased multi-point coverage of the <span class="math inline">\(2K\)</span>-dimensional search space. Standard genetic operators&mdash;stochastic uniform selection, crossover with probability <span class="math inline">\(p_c\)</span>, and adaptive feasible mutation&mdash;are applied for at most <span class="math inline">\(G_{\max}\)</span> generations, with early termination when the average relative improvement of the best fitness over <span class="math inline">\(G_{\max}\)</span> generations falls below <span class="math inline">\(10^{-6}\)</span>. This population-based exploration, combined with the diversity preserved by the mutation operator, makes the search robust against entrapment in local minima.&rdquo;</p></div>
+<p>While revising this paragraph, the selection operator, previously described as &ldquo;tournament selection&rdquo;, was corrected to <span custom-style="Blue Text">&ldquo;stochastic uniform selection&rdquo;</span>, which is the operator used in the implementation.</p>
+
+<!-- R3 #4 -->
+<div custom-style="Reviewer Comment"><p>4.&nbsp;&nbsp;&nbsp;The reviewer recommends clarify whether the proposed direction-finding algorithms can still maintain their mathematical independence from the receiver orientation if the non-line-of-sight multipath reflections become dominant.</p></div>
+
+<p>We thank the reviewer for this pertinent question. The independence established in Section VI-C relies on the LOS channel model (1)&ndash;(3), under which all receiver-dependent terms enter the <span class="math inline">\(K\)</span> mean powers through the common factor <span class="math inline">\(\eta=C\cos\psi/d^2\)</span>, which cancels exactly in the power ratios (29) of GLS/WLS and in the normalization (24) of NLS. Under NLOS multipath, each received power also includes reflected contributions that depend on the LED steering orientation and on <span class="math inline">\(\mathbf{n}_r\)</span>; they do not share a common factor and therefore cancel in neither (29) nor (24). The independence then holds only approximately, and it is no longer guaranteed when NLOS reflections become dominant. In indoor optical channels with an unobstructed LOS, the LOS component dominates the reflected contributions [44]; the explicit modeling of NLOS propagation is left for future work. The manuscript has been modified in two places. <span custom-style="Blue Text">Section VI-C (page 10)</span> now closes with:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;Its validity under non-line-of-sight (NLOS) multipath is discussed in Section VII-D.&rdquo;</p></div>
+<p>and <span custom-style="Blue Text">Section VII-D (page 13)</span> contains the discussion:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;The LOS channel model also delimits the receiver-orientation independence of Section VI-C: under NLOS multipath, the received powers include reflected contributions that depend on both the LED steering orientation and <span class="math inline">\(\mathbf{n}_r\)</span> and cancel in neither (29) nor (24), so the property holds only approximately and is not guaranteed when reflections dominate; in indoor channels with an unobstructed LOS, however, the LOS component dominates the reflected contributions [44].&rdquo;</p></div>
+
+<!-- R3 #5 -->
+<div custom-style="Reviewer Comment"><p>5.&nbsp;&nbsp;&nbsp;It is recommended to add discussions on the applications of the proposed scheme in edge computing and digital twins. The related works can be found in reliability-aware computation offloading for delay-sensitive applications in mec-enabled aerial computing, ieee transactions on green communications and networking, generative ai-aided qoe-aware resource allocations for ris-assisted digital twin interaction with uncertain evolution, ieee transactions on mobile computing, digital twins for low-altitude uav networks&ndash;cooperation and learning, ieee transactions on mobile computing. These studies can provide rich insights in these fields, and the authors should discuss all of them in this work.</p></div>
+
+<p>We thank the reviewer for pointing us to these works. Since the paper is focused on the positioning method, this discussion has been integrated in the Introduction, where the application context of indoor positioning is presented. The three works are now cited as [13], [14], and [15]. <span custom-style="Blue Text">The second paragraph of Section I (page 1)</span> now ends with:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;Beyond these use cases, such accuracy underpins emerging edge-computing and digital-twin services, from reliability-aware computation offloading [13] and quality-of-experience-aware resource allocation for digital-twin interaction [14] to cooperation and learning in low-altitude aerial networks [15].&rdquo;</p></div>
+
+<!-- R3 #6 -->
+<div custom-style="Reviewer Comment"><p>6.&nbsp;&nbsp;&nbsp;The reviewer suggests double-checking the header of Table II and the text body, as the room dimensions are listed as 3x3x2 cubic meters but the x and y ranges are specified with a pi subscript which looks like a typo.</p></div>
+
+<p>We thank the reviewer for the careful reading of Table II. The room dimensions (<span class="math inline">\(3\times3\times2\)</span> m<sup>3</sup>) and the receiver ranges (<span class="math inline">\(x,y\in[-1.5,1.5]\)</span> m, <span class="math inline">\(z\in[0,1.2]\)</span> m) are consistent: the transmitter is located at the center of the ceiling, <span class="math inline">\(\mathbf{t}=[0,0,2]^{\mathsf T}\)</span> m, so the horizontal ranges span the full <span class="math inline">\(3\times3\)</span> m<sup>2</sup> floor. The symbol that resembles a &ldquo;pi subscript&rdquo; is the azimuth angle <span class="math inline">\(\varphi_i\)</span> of the <span class="math inline">\(i\)</span>-th LED orientation in the row &ldquo;Search range&rdquo;, which specifies the intervals of the GA decision variables (tilt <span class="math inline">\(\theta_i\)</span> and azimuth <span class="math inline">\(\varphi_i\)</span>, Section IV) rather than the spatial ranges of the testbed. To avoid any ambiguity, <span custom-style="Blue Text">this row of Table II (page 6)</span> now labels both angles explicitly:</p>
+<div custom-style="Manuscript Change"><p>&ldquo;Search range (<span class="math inline">\(\Omega\)</span>): <span class="math inline">\(\theta_i\)</span> (tilt) <span class="math inline">\(\in[0,80^\circ]\)</span>, <span class="math inline">\(\varphi_i\)</span> (azimuth) <span class="math inline">\(\in[0,360^\circ]\)</span>&rdquo;</p></div>
+
+</body>
+</html>

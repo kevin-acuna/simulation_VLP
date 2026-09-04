@@ -34,7 +34,7 @@ This work was supported in part by the French National Research Agency (ANR) thr
 The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Villacoublay, France (e-mail: kevin-jose.acuna-condori@uvsq.fr).
 }
 }
-\markboth{IEEE Transactions on Communications,~Vol.~XX, No.~X, 2025}%
+\markboth{IEEE Transactions on Communications,~Vol.~XX, No.~X, 2026}%
 {Acuna-Condori \MakeLowercase{\textit{et al.}}: Model-Based Beam-Steered OWP with Single-LED Single-PD for 3D Localization}
 \maketitle
 
@@ -65,7 +65,7 @@ Within OWP, two estimation paradigms coexist. Data-driven methods---including fi
 \caption{State-of-the-art single-LED OWP systems and reported performance.}
 \label{tab:single_led_vlp}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|p{3.8cm}|c|c|p{3.8cm}|c|c|c|}
+\begin{tabular}{|c|c|p{3.8cm}|c|c|p{4.1cm}|c|c|c|}
 \hline
 \textbf{Year} & \textbf{Work} & \textbf{Configuration} & \textbf{Rx Orientation} & \textbf{2D/3D} & \textbf{Method} & \textbf{Error (APE)} & \textbf{Room ($m^3$)} & \textbf{Notes} \\
 \hline
@@ -74,25 +74,25 @@ Within OWP, two estimation paradigms coexist. Data-driven methods---including fi
 2021 & \cite{Qin2021} & 1 LED / 4 PD (1 horizontal + 3 tilted) & Fixed & 2D & Bayesian algorithm & 9.27 cm & \(3 \times 3 \times 3\) & Exp. \\ \hline
 2022 & \cite{Liu2022} & 1 LED / 1 rotatable PD & Fixed & 2D & Extreme Learning Machine & 1.74 cm & \(4 \times 4 \times 3.1\) & Sim. \\ \hline
 2023 & \cite{Zia-Ul-Mustafa2023} & 1 LED / 4 PD & Fixed & 2D & Least Square & 7 cm (CDF$_{90\%}$) & \(6 \times 6 \times 3\) & Exp. \\ \hline
-2024 & \cite{Zhang2024} & 1 LED / 4 PD & Fixed & 2D & Extreme Learning Machine / WKNN & 2.93 cm & \(5 \times 5 \times 3\) & Sim. \\ \hline
+2024 & \cite{Zhang2024} & 1 LED / 4 PD & Fixed & 2D & Extreme Learning Machine / \added{Weighted $k$-Nearest Neighbors (}WKNN\added{)} & 2.93 cm & \(5 \times 5 \times 3\) & Sim. \\ \hline
 2024 & \cite{Li2024} & 1 LED / 4 PD (1 horizontal + 3 tilted) & Fixed & 3D & Deep Residual Shrinkage method & 5.85 cm & \(3.6 \times 3.6 \times 3.0\) & Exp. \\ \hline
 2024 & \cite{Wang2024} & 1 LED / 1 PD (tilted-rotatable PD) & Rotatable & 2D & Least Squares + Improved Grey Wolf Optimizer (LS-IGWO) & 1.65 cm & \(0.5 \times 0.5 \times 0.3\) & Exp. \\ \hline
 2024 & \cite{Ma2024} & 1 LED / 4 PD + IMU (orientation) & Arbitrary & 3D & MultiLayer Perceptron & 1.77 cm & \(1.5 \times 1.5 \times 1.5\) & Exp. \\ \hline
 2025 & \cite{Chassagne2025} & 1 reorientable LED / 1 PD & Arbitrary & 2D & Model-based (Power ratio) & 5.9 cm (CDF$_{90\%}$) & \(4 \times 4 \times 2.5\) & Sim. \\ \hline
 2025 & \cite{Shi2025} & 1 LED / 1 rotatable PD & Fixed & 2D & Least Square & 4.96 cm & \(5 \times 5 \times 4\) & Exp. \\ \hline
 2025 & \cite{ShiJin2025} & 1 LED / 16 IRS / 1 PD & Fixed & 2D & Levenberg--Marquardt algorithm & 5.6 cm (RMSE) & \(4 \times 5 \times 5\) & Sim. \\ \hline
-2026 & Ours$^\dagger$ & 1 reorientable LED / 1 PD & \begin{tabular}[c]{@{}c@{}}Arbitrary~\added{(D-F)} \\ \removed{Controlled}~\added{One reorient. (3D)}\end{tabular} & \begin{tabular}[c]{@{}c@{}}D-F \\ 3D\end{tabular} & Model-based (closed-form GLS) & \begin{tabular}[c]{@{}c@{}}$0.54^\circ$~\added{(D-F)} \\ 2.00\,cm~\added{(3D)}\end{tabular} & \(3 \times 3 \times 2\) & Sim. \\
+2026 & Ours$^\dagger$ & 1 reorientable LED / 1 PD & \begin{tabular}[c]{@{}c@{}}Arbitrary~\added{(D-F)} \\ \added{One reorientation (3D)}\end{tabular} & \begin{tabular}[c]{@{}c@{}}D-F \\ 3D\end{tabular} & Model-based (closed-form GLS) & \begin{tabular}[c]{@{}c@{}}$0.54^\circ$~\added{(D-F)} \\ 2.00\,cm~\added{(3D)}\end{tabular} & \(3 \times 3 \times 2\) & Sim. \\
 \hline
 \end{tabular}
 }
 \begin{flushleft}
-\scriptsize Note: ``Sim.'' denotes simulation results; ``Exp.'' denotes experimental results. $^\dagger$Two-stage system: \removed{direction finding (D-F) operates with any receiver orientation (arbitrary); 3D distance recovery requires a single cooperative PD reorientation toward the transmitter (controlled).} \added{during direction finding (D-F), the PD is held at any fixed, unknown orientation (arbitrary), without any receiver rotation; completing the 3D position requires a single cooperative PD reorientation toward the transmitter (one reorient.).} See Section~\ref{subsec:nr_independence}.
+\scriptsize Note: ``Sim.'' denotes simulation results; ``Exp.'' denotes experimental results. $^\dagger$Two-stage system: \removed{direction finding (D-F) operates with any receiver orientation (arbitrary); 3D distance recovery requires a single cooperative PD reorientation toward the transmitter (controlled).} \added{during direction finding (D-F), the PD is held at any fixed, unknown orientation (arbitrary), without any receiver rotation; completing the 3D position requires a single cooperative PD reorientation toward the transmitter (one reorientation).} See Section~\ref{subsec:nr_independence}.
 \end{flushleft}
 \end{table*}
 
 The majority of OWP implementations follow a multi-LED paradigm, where several fixed LEDs with known positions act as anchors and the receiver resolves its position via triangulation or trilateration, analogous to GNSS \cite{Zhuang2018, Wang2024b}. When reusing visible-light luminaires---the standard approach in visible light positioning (VLP)---the anchor constellation is co-designed with illumination: placement, power, and beam patterns must satisfy lighting standards and uniformity, constraining anchor geometry and modulation \cite{photonics9100750}. Crucially, at least three to four LEDs must be concurrently visible to the receiver to resolve a three-dimensional (3D) position \cite{Plets2019, electronics8111311, ALMADANI2021126654, Zhang2020}, a condition that may not hold in environments with sparse lighting. Installing and maintaining a dense multi-LED network, with unique identifiers or modulation for each lamp, further increases deployment cost and complexity \cite{Cossu2022}. Consequently, reducing the infrastructure burden by localizing with a single light source is a highly desirable research goal \cite{Rekkas2023}.
 
-Table~\ref{tab:single_led_vlp} summarizes representative single-LED OWP systems. The reported solutions adopt a variety of receiver architectures to compensate for the limited information provided by a single source at a fixed orientation: multiple tilted photodiodes (PD) that create directional diversity \cite{Qin2020, Qin2021, Zia-Ul-Mustafa2023, Zhang2024, Li2024}, a single mechanically rotatable PD \cite{Liu2022, Wang2024, Shi2025}, or aiding sensors such as inertial measurement units (IMU) \cite{Ma2024} and intelligent reflecting surfaces \cite{ShiJin2025}. Several systems are restricted to two-dimensional (2D) positioning \cite{Chen2021, Qin2021, Liu2022, Zia-Ul-Mustafa2023, Chassagne2025, Zhang2024, Wang2024, Shi2025, ShiJin2025}, whereas fewer achieve 3D localization \cite{Qin2020, Li2024, Ma2024}. A common thread emerges: with a single LED at a fixed orientation, one received signal strength (RSS) measurement is insufficient to resolve a 3D position; existing single-LED systems therefore compensate by placing hardware or computational complexity at the receiver side---through PD arrays, continuous mechanical rotation, or sensor fusion---limiting the simplicity and scalability of the user equipment.
+Table~\ref{tab:single_led_vlp} summarizes representative single-LED OWP systems. The reported solutions adopt a variety of receiver architectures to compensate for the limited information provided by a single source at a fixed orientation: multiple tilted photodiodes (PD) that create directional diversity \cite{Qin2020, Qin2021, Zia-Ul-Mustafa2023, Zhang2024, Li2024}, a single mechanically rotatable PD \cite{Liu2022, Wang2024, Shi2025}, or aiding sensors such as inertial measurement units (IMU) \cite{Ma2024} and intelligent reflecting surfaces \added{(IRS)} \cite{ShiJin2025}. Several systems are restricted to two-dimensional (2D) positioning \cite{Chen2021, Qin2021, Liu2022, Zia-Ul-Mustafa2023, Chassagne2025, Zhang2024, Wang2024, Shi2025, ShiJin2025}, whereas fewer achieve 3D localization \cite{Qin2020, Li2024, Ma2024}. A common thread emerges: with a single LED at a fixed orientation, one received signal strength (RSS) measurement is insufficient to resolve a 3D position; existing single-LED systems therefore compensate by placing hardware or computational complexity at the receiver side---through PD arrays, continuous mechanical rotation, or sensor fusion---limiting the simplicity and scalability of the user equipment.
 
 Recent advances in OWC suggest a fundamentally different strategy: shifting the spatial diversity requirement from the receiver to the transmitter infrastructure through beam steering. In particular, microelectromechanical system (MEMS) micromirror gimbals redirect the LED beam mechanically, thereby preserving the native Lambertian emission pattern while achieving kHz-rate reorientation \cite{Liu:25}. Moreover, OWC roadmaps increasingly regard dynamic beam steering as a core enabler for high-capacity, mobile, multiuser links and blockage mitigation \cite{mi13070990, Zeng2023, Jin2023}. A recent comparative study has further shown that beam-steered transmitters substantially outperform fixed-antenna configurations in terms of indoor communication coverage \cite{AlSatai2026}, making it natural to exploit the same transmitter-side capability for positioning. In this work, we employ a near-infrared (NIR) LED transmitter, as opposed to conventional VLP which must respect visible-light illumination standards. Since NIR is imperceptible to humans, the positioning link is decoupled from room lighting constraints, allowing unrestricted steering and reorientation of the source \cite{Zhu2025}.
 
@@ -238,7 +238,7 @@ At each transmitter orientation $i=1,\ldots,K$, the sample-mean received power~\
   \mathcal{N}\!\bigl(\mu_{i}(\mathbf r),\,\sigma^{2}/N\bigr),
 \quad i=1,\dots,K.
 \end{equation}
-From~\eqref{eq:Pr_i}--\eqref{eq:cosines}, the noise-free mean power factorizes as:
+From~\eqref{eq:hLOS}--\eqref{eq:Pr_i}, the noise-free mean power factorizes as:
 \begin{equation}
 \mu_i = \eta\,Q_i^{\,m},
 \label{eq:mu_factorized}
