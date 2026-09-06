@@ -1,3 +1,4 @@
+import { createOpticalParameters, normalizeOpticalParameters } from '../science'
 import { DEFAULT_THEME, isThemeId } from '../theme/themes'
 import { createReceiver, normalizeReceiver } from './receiver'
 import type { LedFixture, TwinConfig, WorldPosition } from './types'
@@ -22,6 +23,7 @@ export function createDefaultConfig(): TwinConfig {
   return {
     room,
     receiver: createReceiver(room),
+    optical: createOpticalParameters(),
     lighting: {
       count: 4,
       shape: 'circular',
@@ -73,6 +75,7 @@ function fixtureId(index: number): string {
 export function normalizeConfig(input: unknown): TwinConfig {
   const result = createDefaultConfig()
   const source = record(input)
+  result.optical = normalizeOpticalParameters(own(source, 'optical'))
   const room = record(own(source, 'room'))
   const lighting = record(own(source, 'lighting'))
   const display = record(own(source, 'display'))

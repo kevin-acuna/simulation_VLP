@@ -1,0 +1,1994 @@
+{
+  "metadata": {
+    "modelId": "lambertian-los-v1",
+    "sourceFunctions": [
+      "poc_params",
+      "rx_powers",
+      "rotm_zyx"
+    ],
+    "sourceRelativePath": "../../../../simulations/PoC",
+    "generator": "generate_reference.m",
+    "matlabRelease": "2026a",
+    "matlabVersion": "26.1.0.3203278 (R2026a)",
+    "powerReference": "Original rx_powers output, without noise or optical gain",
+    "angleReference": "World geometry from original rotm_zyx attitude",
+    "units": {
+      "position": "m",
+      "normal": "unit vector",
+      "power": "W",
+      "area": "m^2",
+      "angles": "deg",
+      "variance": "W^2"
+    }
+  },
+  "baseline": {
+    "halfPowerAngleDeg": 45,
+    "detectorAreaM2": 2.6399999999999995E-5,
+    "fovHalfAngleDeg": 85,
+    "powerW": 0.405,
+    "varianceW2": 3.0000000000000005E-14,
+    "averagingSamples": 1000
+  },
+  "cases": [
+    {
+      "id": "center-baseline",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 1.2762634886539089E-6,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "height-030",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 1.7664546555763446E-6,
+        "distanceM": 1.7,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "height-060",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 2.6046193645998145E-6,
+        "distanceM": 1.4,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "height-120",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          1.2
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 7.9766468040869284E-6,
+        "distanceM": 0.8,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "lateral-x030",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.3,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 1.2072078572159338E-6,
+        "distanceM": 2.0223748416156684,
+        "irradianceAngleDeg": 8.53076560994814,
+        "incidenceAngleDeg": 8.53076560994814,
+        "status": "los"
+      }
+    },
+    {
+      "id": "lateral-x150",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          1.5,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 4.182060199621129E-7,
+        "distanceM": 2.5,
+        "irradianceAngleDeg": 36.869897645844013,
+        "incidenceAngleDeg": 36.869897645844013,
+        "status": "los"
+      }
+    },
+    {
+      "id": "lateral-negative-x-positive-y",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          -1.2,
+          0.9,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 3.8519372522843593E-7,
+        "distanceM": 2.0518284528683188,
+        "irradianceAngleDeg": 46.974934010881967,
+        "incidenceAngleDeg": 46.974934010881967,
+        "status": "los"
+      }
+    },
+    {
+      "id": "lateral-positive-x-negative-y",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.9,
+          -1.2,
+          1.2
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 1.8408808948811084E-7,
+        "distanceM": 1.7,
+        "irradianceAngleDeg": 61.927513064147043,
+        "incidenceAngleDeg": 61.927513064147043,
+        "status": "los"
+      }
+    },
+    {
+      "id": "tilt-30",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.5,
+          0,
+          0.8660254037844386
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.5,
+        0,
+        0.8660254037844386
+      ],
+      "expected": {
+        "powerW": 1.1052766030968376E-6,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 30.000000000000004,
+        "status": "los"
+      }
+    },
+    {
+      "id": "tilt-75",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.96592582628906831,
+          0,
+          0.25881904510252074
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.96592582628906831,
+        0,
+        0.25881904510252074
+      ],
+      "expected": {
+        "powerW": 3.3032129743261652E-7,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 75,
+        "status": "los"
+      }
+    },
+    {
+      "id": "tilt-84-inside",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.99452189536827329,
+          0,
+          0.10452846326765348
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.99452189536827329,
+        0,
+        0.10452846326765348
+      ],
+      "expected": {
+        "powerW": 1.334058611936074E-7,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 84,
+        "status": "los"
+      }
+    },
+    {
+      "id": "tilt-86-outside",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.9975640502598242,
+          0,
+          0.0697564737441253
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.9975640502598242,
+        0,
+        0.0697564737441253
+      ],
+      "expected": {
+        "powerW": 0,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 86,
+        "status": "outside-fov"
+      }
+    },
+    {
+      "id": "tilt-120-backface",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.8660254037844386,
+          0,
+          -0.5
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.8660254037844386,
+        0,
+        -0.5
+      ],
+      "expected": {
+        "powerW": -0,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 120.00000000000001,
+        "status": "outside-fov"
+      }
+    },
+    {
+      "id": "tilt-azimuth-45",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.9,
+          0.6,
+          0.6
+        ],
+        "normal": [
+          0.40557978767263886,
+          0.40557978767263886,
+          0.8191520442889918
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.40557978767263886,
+        0.40557978767263886,
+        0.8191520442889918
+      ],
+      "expected": {
+        "powerW": 3.1083895827934207E-7,
+        "distanceM": 1.7691806012954132,
+        "irradianceAngleDeg": 37.690324811702794,
+        "incidenceAngleDeg": 72.281173163196669,
+        "status": "los"
+      }
+    },
+    {
+      "id": "tilt-azimuth-225",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.9,
+          0.6,
+          0.6
+        ],
+        "normal": [
+          -0.40557978767263886,
+          -0.40557978767263886,
+          0.8191520442889918
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        -0.40557978767263886,
+        -0.40557978767263886,
+        0.8191520442889918
+      ],
+      "expected": {
+        "powerW": 1.0132528986877284E-6,
+        "distanceM": 1.7691806012954132,
+        "irradianceAngleDeg": 37.690324811702794,
+        "incidenceAngleDeg": 7.2122737758538324,
+        "status": "los"
+      }
+    },
+    {
+      "id": "attitude-yaw",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.6,
+          -0.3,
+          0.6
+        ],
+        "normal": [
+          0.09960050292505121,
+          0.56486252146362337,
+          0.8191520442889918
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        60,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.53898554469575621,
+        0.19617469496901108,
+        0.8191520442889918
+      ],
+      "expected": {
+        "powerW": 1.3943769846080613E-6,
+        "distanceM": 1.5524174696260022,
+        "irradianceAngleDeg": 25.601756857129494,
+        "incidenceAngleDeg": 35.9636156272514,
+        "status": "los"
+      }
+    },
+    {
+      "id": "attitude-pitch",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          -0.6,
+          0.3,
+          0.6
+        ],
+        "normal": [
+          0.42261826174069944,
+          0,
+          0.90630778703664994
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        25,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 1.6894413008257457E-6,
+        "distanceM": 1.5524174696260022,
+        "irradianceAngleDeg": 25.601756857129494,
+        "incidenceAngleDeg": 11.28519852963187,
+        "status": "los"
+      }
+    },
+    {
+      "id": "attitude-roll",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.6,
+          0.9,
+          0.3
+        ],
+        "normal": [
+          0,
+          0.5,
+          0.8660254037844386
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        -30
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 4.5408517137048037E-7,
+        "distanceM": 2.0149441679609885,
+        "irradianceAngleDeg": 32.467526658865729,
+        "incidenceAngleDeg": 59.513802999508556,
+        "status": "los"
+      }
+    },
+    {
+      "id": "attitude-yaw-pitch-roll",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.6,
+          -0.3,
+          1.2
+        ],
+        "normal": [
+          -0.20241662482314682,
+          0.50444159842725234,
+          0.83938440762940325
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        35,
+        20,
+        -15
+      ],
+      "bodyDetectorNormal": [
+        -0.17101007166283436,
+        0.2961981327260238,
+        0.93969262078590843
+      ],
+      "expected": {
+        "powerW": 2.4872500437000097E-6,
+        "distanceM": 1.0440306508910551,
+        "irradianceAngleDeg": 39.980690507534838,
+        "incidenceAngleDeg": 25.248573673216672,
+        "status": "los"
+      }
+    },
+    {
+      "id": "attitude-negative-yaw-pitch-roll",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          -0.6,
+          0.9,
+          0.3
+        ],
+        "normal": [
+          -0.41435629835943932,
+          0.6995896984308041,
+          0.58213667798839119
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        -110,
+        -35,
+        25
+      ],
+      "bodyDetectorNormal": [
+        -0.088521326901376859,
+        -0.24321034680169396,
+        0.96592582628906831
+      ],
+      "expected": {
+        "powerW": 0,
+        "distanceM": 2.0149441679609885,
+        "irradianceAngleDeg": 32.467526658865729,
+        "incidenceAngleDeg": 86.831024625748412,
+        "status": "outside-fov"
+      }
+    },
+    {
+      "id": "power-off",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 0,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "off"
+      }
+    },
+    {
+      "id": "power-0100",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.1,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.6,
+          0.3,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 3.8360725643691011E-7,
+        "distanceM": 1.5524174696260022,
+        "irradianceAngleDeg": 25.601756857129494,
+        "incidenceAngleDeg": 25.601756857129494,
+        "status": "los"
+      }
+    },
+    {
+      "id": "power-0810",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.81,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 2.5525269773078177E-6,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "power-1620",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 1.62,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 5.1050539546156355E-6,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "half-angle-20",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 20
+      },
+      "detector": {
+        "position": [
+          0.6,
+          0.3,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 2.4445594465623968E-6,
+        "distanceM": 1.5524174696260022,
+        "irradianceAngleDeg": 25.601756857129494,
+        "incidenceAngleDeg": 25.601756857129494,
+        "status": "los"
+      }
+    },
+    {
+      "id": "half-angle-60",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 60
+      },
+      "detector": {
+        "position": [
+          0.6,
+          0.3,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 1.1485001694239247E-6,
+        "distanceM": 1.5524174696260022,
+        "irradianceAngleDeg": 25.601756857129494,
+        "incidenceAngleDeg": 25.601756857129494,
+        "status": "los"
+      }
+    },
+    {
+      "id": "half-angle-80",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 80
+      },
+      "detector": {
+        "position": [
+          0.6,
+          0.3,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 8.5324368553951161E-7,
+        "distanceM": 1.5524174696260022,
+        "irradianceAngleDeg": 25.601756857129494,
+        "incidenceAngleDeg": 25.601756857129494,
+        "status": "los"
+      }
+    },
+    {
+      "id": "area-minimum",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 1E-8,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 4.8343313964163225E-10,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "area-10-square-mm",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 1E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 4.8343313964163226E-7,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "area-package-maximum",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 0.0001,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 4.8343313964163222E-6,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 0,
+        "status": "los"
+      }
+    },
+    {
+      "id": "fov-30-inside",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.48480962024633706,
+          0,
+          0.87461970713939574
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 30
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.48480962024633706,
+        0,
+        0.87461970713939574
+      ],
+      "expected": {
+        "powerW": 1.1162451986791854E-6,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 29.000000000000011,
+        "status": "los"
+      }
+    },
+    {
+      "id": "fov-30-outside",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.51503807491005416,
+          0,
+          0.85716730070211233
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 30
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.51503807491005416,
+        0,
+        0.85716730070211233
+      ],
+      "expected": {
+        "powerW": 0,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 30.999999999999993,
+        "status": "outside-fov"
+      }
+    },
+    {
+      "id": "fov-60-inside",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.85716730070211233,
+          0,
+          0.51503807491005416
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 60
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.85716730070211233,
+        0,
+        0.51503807491005416
+      ],
+      "expected": {
+        "powerW": 6.57324290274299E-7,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 59.000000000000007,
+        "status": "los"
+      }
+    },
+    {
+      "id": "fov-60-outside",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.87461970713939574,
+          0,
+          0.48480962024633706
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 60
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.87461970713939574,
+        0,
+        0.48480962024633706
+      ],
+      "expected": {
+        "powerW": 0,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 60.999999999999993,
+        "status": "outside-fov"
+      }
+    },
+    {
+      "id": "fov-90-inside",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0.99984769515639127,
+          0,
+          0.017452406437283512
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 90
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0.99984769515639127,
+        0,
+        0.017452406437283512
+      ],
+      "expected": {
+        "powerW": 2.2273869125053393E-8,
+        "distanceM": 2,
+        "irradianceAngleDeg": 0,
+        "incidenceAngleDeg": 89,
+        "status": "los"
+      }
+    },
+    {
+      "id": "emission-backface",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 0,
+        "distanceM": 2,
+        "irradianceAngleDeg": 180,
+        "incidenceAngleDeg": 0,
+        "status": "outside-emission"
+      }
+    },
+    {
+      "id": "emission-above-anchor",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0,
+          0,
+          3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": -0,
+        "distanceM": 1,
+        "irradianceAngleDeg": 180,
+        "incidenceAngleDeg": 180,
+        "status": "outside-emission"
+      }
+    },
+    {
+      "id": "emission-tilted-anchor",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0.5,
+          0,
+          -0.8660254037844386
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          0.3,
+          -0.4,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 1.8271728437678025E-6,
+        "distanceM": 1.4866068747318504,
+        "irradianceAngleDeg": 23.584165262480223,
+        "incidenceAngleDeg": 19.653824058053292,
+        "status": "los"
+      }
+    },
+    {
+      "id": "emission-displaced-anchor",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0.4,
+          -0.3,
+          2.2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.405,
+        "halfPowerAngleDeg": 45
+      },
+      "detector": {
+        "position": [
+          -0.6,
+          0.2,
+          0.6
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "areaM2": 2.6399999999999995E-5,
+        "fovHalfAngleDeg": 85
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        0,
+        0,
+        0
+      ],
+      "bodyDetectorNormal": [
+        0,
+        0,
+        1
+      ],
+      "expected": {
+        "powerW": 7.37985527820046E-7,
+        "distanceM": 1.9519221295943137,
+        "irradianceAngleDeg": 34.94474285586049,
+        "incidenceAngleDeg": 34.94474285586049,
+        "status": "los"
+      }
+    },
+    {
+      "id": "attitude-combined-optical-parameters",
+      "emitter": {
+        "id": "anchor",
+        "position": [
+          0,
+          0,
+          2
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "powerW": 0.7,
+        "halfPowerAngleDeg": 35
+      },
+      "detector": {
+        "position": [
+          0.3,
+          -0.6,
+          0.9
+        ],
+        "normal": [
+          0.073665408645996758,
+          -0.67394821663515647,
+          0.73509673435766976
+        ],
+        "areaM2": 4E-5,
+        "fovHalfAngleDeg": 70
+      },
+      "bodyAttitudeYawPitchRollDeg": [
+        70,
+        -15,
+        10
+      ],
+      "bodyDetectorNormal": [
+        -0.39713126196710286,
+        -0.144543958452599,
+        0.90630778703664994
+      ],
+      "expected": {
+        "powerW": 0,
+        "distanceM": 1.2884098726725126,
+        "irradianceAngleDeg": 31.376372406940337,
+        "incidenceAngleDeg": 72.7467049474376,
+        "status": "outside-fov"
+      }
+    }
+  ]
+}

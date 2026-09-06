@@ -223,6 +223,75 @@ kbd { font-family: inherit; font-size: 8px; padding: 4px 6px; border: 1px solid 
 .receiver-axis:active, .receiver-axis[data-dragging='true'] { cursor: grabbing; background: var(--accent-hover); }
 .receiver-tag:focus-visible, .receiver-axis:focus-visible, .receiver-properties:focus-visible { outline-offset: 3px; }
 
+.control-panel .panel-tabs:has(> button:nth-child(5)) { margin-left: 12px; margin-right: 12px; gap: 0; }
+.control-panel .panel-tabs:has(> button:nth-child(5)) button { gap: 3px; font-size: 9px; }
+.control-panel .panel-tabs:has(> button:nth-child(5)) button svg { width: 13px; height: 13px; }
+.optical-settings .section-description { margin-bottom: 16px; }
+.optical-settings .optical-badge { padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; background: var(--accent-soft); color: var(--accent); font-size: 7px; letter-spacing: 1px; white-space: nowrap; }
+.optical-settings .field-heading { align-items: flex-start; }
+.optical-settings .field-heading label { padding-top: 5px; line-height: 1.4; }
+.optical-settings .value-field { flex-shrink: 0; }
+.optical-settings .optical-noise .number-input { width: 74px; }
+.optical-settings .toggle-row { gap: 12px; }
+.optical-settings .toggle-row small { line-height: 1.6; }
+.optical-settings .optical-readouts { margin: 14px 0 0; padding: 9px 10px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface-muted); }
+.optical-settings .optical-readouts > div { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 9px; }
+.optical-settings .optical-readouts dt { color: var(--muted); }
+.optical-settings .optical-readouts dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; }
+.optical-settings .optical-assumptions { padding-bottom: 18px; }
+.optical-settings .optical-reset-note { text-align: center; }
+.rss-toggle { position: absolute; top: 16px; right: 16px; z-index: 5; min-width: 40px; height: 40px; padding: 0 11px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border); border-radius: 9px; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(16px); box-shadow: 0 5px 20px color-mix(in srgb, var(--shadow) 6%, transparent), 0 1px 2px color-mix(in srgb, var(--shadow) 4%, transparent); color: var(--muted); font-size: 10px; font-weight: 600; }
+.rss-toggle:hover { background: var(--accent-hover); color: var(--accent); }
+.rss-toggle.active, .rss-toggle[aria-expanded='true'] { background: var(--accent-soft); border-color: var(--border-strong); color: var(--accent); }
+.rss-panel { --rss-series-1: #2675b0; --rss-series-2: #b86020; --rss-series-3: #338255; --rss-series-4: #9262b8; --rss-series-5: #c14b58; --rss-series-6: #138d99; --rss-series-7: #a48220; --rss-series-8: #b14b93; --rss-series-9: #79634c; position: absolute; z-index: 3; right: 16px; bottom: 84px; width: min(460px, calc(100% - 32px)); height: 340px; max-height: max(0px, calc(100dvh - 160px)); min-height: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--surface) 97%, transparent); backdrop-filter: blur(16px); box-shadow: 0 8px 30px color-mix(in srgb, var(--shadow) 10%, transparent); color: var(--text); }
+.rss-panel .rss-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px 9px; flex-shrink: 0; }
+.rss-panel .rss-heading h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: -.1px; }
+.rss-panel .rss-heading p { margin: 5px 0 0; font-size: 8px; color: var(--muted); }
+.rss-panel .rss-close { width: 30px; height: 30px; flex-shrink: 0; }
+.rss-panel .rss-actions { display: flex; flex-shrink: 0; align-items: center; gap: 5px; padding: 0 14px 9px; border-bottom: 1px solid var(--border); }
+.rss-panel .rss-actions button { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 27px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface-muted); color: var(--text); font-size: 9px; }
+.rss-panel .rss-actions button:last-child { margin-left: auto; }
+.rss-panel .rss-actions button:hover { background: var(--accent-hover); border-color: var(--border-strong); color: var(--accent); }
+.rss-panel .rss-actions button:focus-visible, .rss-panel .rss-close:focus-visible { outline-offset: 2px; }
+.rss-panel .rss-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; padding: 9px 12px 11px; }
+.rss-panel .rss-chart-figure { margin: 0; }
+.rss-panel .rss-chart-svg { display: block; width: 100%; height: auto; overflow: hidden; }
+.rss-panel .rss-chart-svg text { font-family: inherit; font-variant-numeric: tabular-nums; }
+.rss-panel .rss-axis-label, .rss-panel .rss-tick { fill: var(--muted); font-size: 9px; }
+.rss-panel .rss-axis-label { font-weight: 500; }
+.rss-panel .rss-gridline { stroke: var(--border); stroke-width: .7; }
+.rss-panel .rss-axis-mark { stroke: var(--border-strong); stroke-width: .7; }
+.rss-panel .rss-zero-line { stroke: var(--border-strong); stroke-width: 1; }
+.rss-panel .rss-trace path { fill: none; stroke: var(--rss-channel-color); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.rss-panel .rss-trace circle { fill: var(--rss-channel-color); }
+.rss-panel .rss-trace-ideal { opacity: .48; }
+.rss-panel .rss-trace-ideal path { stroke-width: 1.2; stroke-dasharray: 4 3; }
+.rss-panel .rss-empty-label { fill: var(--muted); font-size: 10px; }
+.rss-panel .rss-trace-key { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 12px; padding: 5px 0 8px; font-size: 8px; color: var(--muted); }
+.rss-panel .rss-trace-key > span { display: inline-flex; align-items: center; gap: 5px; }
+.rss-panel .rss-trace-key i { width: 16px; border-top: 2px solid var(--text); }
+.rss-panel .rss-trace-key .rss-key-ideal { border-top-style: dashed; opacity: .5; }
+.rss-panel .rss-channels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; list-style: none; margin: 0; padding: 0; }
+.rss-panel .rss-channel { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 7px; padding: 7px 0; border-top: 1px solid var(--border); }
+.rss-panel .rss-channel-name { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 9px; }
+.rss-panel .rss-channel-name strong { font-weight: 500; overflow-wrap: anywhere; }
+.rss-panel .rss-swatch { width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: var(--rss-channel-color); }
+.rss-panel .rss-channel-status { flex-basis: 100%; color: var(--muted); font-size: 8px; line-height: 1.4; }
+.rss-panel .rss-channel-values { display: flex; flex-shrink: 0; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 9px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rss-panel .rss-ideal-value, .rss-panel .rss-waiting { color: var(--muted); font-size: 8px; }
+.rss-panel .rss-footnote { margin: 9px 0 0; color: var(--muted); font-size: 8px; line-height: 1.6; }
+.rss-panel .rss-message { margin: 0 0 8px; padding: 8px 10px; background: var(--surface-muted); border: 1px solid var(--border-strong); border-radius: 5px; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .settings-toggle.active ~ .rss-toggle { visibility: hidden; pointer-events: none; }
+  .rss-panel { right: 12px; width: calc(100% - 24px); height: clamp(250px, 46dvh, 340px); max-height: max(0px, calc(100dvh - 160px)); }
+  .rss-panel .rss-heading { padding: 11px 12px 8px; }
+  .rss-panel .rss-actions { padding-left: 12px; padding-right: 12px; }
+  .rss-panel .rss-channels { column-gap: 10px; }
+}
+@media (max-width: 360px) {
+  .rss-panel .rss-channels { grid-template-columns: minmax(0, 1fr); }
+}
+
 @media (min-width: 1600px) {
   .control-section { padding-top: 29px; padding-bottom: 25px; }
   .range-field { margin-top: 25px; }

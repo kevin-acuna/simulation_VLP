@@ -139,7 +139,7 @@ export default function ReceiverPanel({ config, onUpdate }: ReceiverPanelProps) 
           </dl>
         </div>
       </section>
-      <div className="info-card"><Ruler size={17} /><p><strong>Physical scale, visual prototype</strong>The assembly is modelled at its real dimensions. Photodiode response and channel physics are not simulated.</p></div>
+      <div className="info-card"><Ruler size={17} /><p><strong>Package and active area</strong>The drawn PD package is 10 × 10 mm. Its sensitive area and FOV are configured separately in Optics; RSS uses the detector centre shown above.</p></div>
     </>
   )
 }

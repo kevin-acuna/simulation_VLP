@@ -1,0 +1,188 @@
+import { expect, test } from '@playwright/test'
+import type { Page } from '@playwright/test'
+
+async function readConfig(page: Page) {
+  return page.evaluate(() => JSON.parse(localStorage.getItem('cambridge-digital-twin:v1') ?? '{}'))
+}
+
+async function singleLed(page: Page) {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('cambridge-digital-twin:v1')) {
+      localStorage.setItem('cambridge-digital-twin:v1', JSON.stringify({ lighting: { count: 1 } }))
+    }
+  })
+}
+
+async function editNumber(page: Page, label: string, value: string) {
+  const input = page.getByRole('spinbutton', { name: `${label} value`, exact: true })
+  await input.fill(value)
+  await input.press('Enter')
+}
+
+async function ideal(page: Page, id = 'LED-01') {
+  return Number(await page.getByLabel(`${id} ideal received power`, { exact: true }).getAttribute('data-ideal-power-w'))
+}
+
+async function measured(page: Page, id = 'LED-01') {
+  return Number(await page.getByLabel(`${id} measured RSS`, { exact: true }).getAttribute('data-rss-w'))
+}
+
+function captureErrors(page: Page) {
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
+  return errors
+}
+
+test('RSS agrees with the optical formula and configurable area, emission order and power', async ({ page }, testInfo) => {
+  test.setTimeout(90000)
+  const errors = captureErrors(page)
+  await singleLed(page)
+  await page.goto('/')
+  await expect(page.locator('.led-tag')).toHaveCount(1)
+  await expect(page.getByRole('complementary', { name: 'RSS chart' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Open RSS chart', exact: true }).click()
+  const panel = page.getByRole('complementary', { name: 'RSS chart' })
+  const expected = 0.405 * 3 * (4.8e-3 * 5.5e-3) / (2 * Math.PI * (2 - 0.341) ** 2)
+  await expect.poll(() => ideal(page)).toBeCloseTo(expected, 14)
+  await expect(panel.locator('.rss-channel')).toHaveCount(1)
+  await expect(panel).toHaveAttribute('data-model', 'lambertian-los-v1')
+  await expect(page.getByRole('img', { name: 'Received optical power over time' })).toBeVisible()
+  await panel.getByRole('button', { name: 'Optical settings', exact: true }).click()
+  await expect(page.getByRole('tab', { name: 'Optics', exact: true })).toHaveAttribute('aria-selected', 'true')
+  expect(Number(await page.getByRole('spinbutton', { name: 'PD active area value', exact: true }).inputValue())).toBeCloseTo(26.4)
+  await editNumber(page, 'PD active area', '52.8')
+  await expect.poll(() => ideal(page)).toBeCloseTo(expected * 2, 14)
+  await editNumber(page, 'PD active area', '26.4')
+  await editNumber(page, 'LED half-power angle', '60')
+  await expect.poll(() => ideal(page)).toBeCloseTo(expected * 2 / 3, 14)
+  await expect(page.getByLabel('Lambertian order', { exact: true })).toHaveText('1.0000')
+  await page.getByRole('tab', { name: 'Lighting', exact: true }).click()
+  await editNumber(page, 'Optical power / LED', '0.81')
+  await expect.poll(() => ideal(page)).toBeCloseTo(expected * 4 / 3, 14)
+  const downloadEvent = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export scene', exact: true }).click()
+  const stream = await (await downloadEvent).createReadStream()
+  let text = ''
+  for await (const chunk of stream!) text += chunk.toString()
+  const exported = JSON.parse(text)
+  expect(exported.opticalModel).toBe('lambertian-los-v1')
+  expect(exported.opticalScene.emitters[0]).toMatchObject({ powerW: 0.81, normal: [0, 0, -1], halfPowerAngleDeg: 60 })
+  expect(exported.opticalScene.detector.position[2]).toBeCloseTo(0.341)
+  expect(exported.config.optical.detectorAreaM2).toBeCloseTo(26.4e-6, 14)
+  await page.screenshot({ path: testInfo.outputPath('rss-optical-settings.png'), fullPage: true })
+  await page.reload()
+  await expect(page.getByRole('complementary', { name: 'RSS chart' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Open RSS chart', exact: true }).click()
+  await expect.poll(() => ideal(page)).toBeCloseTo(expected * 4 / 3, 14)
+  expect(errors).toEqual([])
+})
+
+test('RSS follows the live drag preview before release and ignores camera and palette changes', async ({ page }) => {
+  test.setTimeout(90000)
+  const errors = captureErrors(page)
+  await singleLed(page)
+  await page.goto('/')
+  await expect(page.locator('.receiver-tag')).toBeVisible()
+  await page.getByRole('button', { name: 'Top view', exact: true }).click()
+  await page.getByRole('button', { name: 'Open RSS chart', exact: true }).click()
+  await expect.poll(() => ideal(page)).toBeGreaterThan(0)
+  const initial = await ideal(page)
+  const stored = (await readConfig(page)).receiver.position
+  await page.locator('canvas').evaluate((canvas) => canvas.setAttribute('data-original-canvas', 'true'))
+  const tag = page.getByRole('button', { name: 'Move receiver in X and Y', exact: true })
+  await tag.hover()
+  const rect = (await tag.boundingBox())!
+  await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2)
+  await page.mouse.down()
+  await expect(tag).toHaveAttribute('data-dragging', 'true')
+  await page.mouse.move(rect.x + rect.width / 2 + 130, rect.y + rect.height / 2, { steps: 4 })
+  await expect.poll(() => ideal(page)).toBeLessThan(initial * 0.95)
+  expect((await readConfig(page)).receiver.position).toEqual(stored)
+  await page.keyboard.press('Escape')
+  await page.mouse.up()
+  await expect.poll(() => ideal(page)).toBeCloseTo(initial, 14)
+  const panel = page.getByRole('complementary', { name: 'RSS chart' })
+  const elapsed = Number(await panel.getAttribute('data-time'))
+  await page.getByRole('button', { name: 'Perspective view', exact: true }).click()
+  await expect.poll(() => ideal(page)).toBeCloseTo(initial, 14)
+  await panel.getByRole('button', { name: 'Optical settings', exact: true }).click()
+  await page.getByRole('tab', { name: 'View', exact: true }).click()
+  await page.getByRole('button', { name: 'Mist palette', exact: true }).click()
+  await expect.poll(() => ideal(page)).toBeCloseTo(initial, 14)
+  expect(Number(await panel.getAttribute('data-time'))).toBeGreaterThanOrEqual(elapsed)
+  await page.getByRole('button', { name: 'Close configuration panel', exact: true }).click()
+  await panel.getByRole('button', { name: 'Close RSS chart', exact: true }).click()
+  await expect(panel).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Open RSS chart', exact: true })).toBeFocused()
+  await expect(page.locator('canvas')).toHaveAttribute('data-original-canvas', 'true')
+  expect(errors).toEqual([])
+})
+
+test('multiple LED channels, FOV gating and seeded Gaussian traces remain explicit and controllable', async ({ page }) => {
+  test.setTimeout(90000)
+  const errors = captureErrors(page)
+  await page.goto('/')
+  await expect(page.locator('.led-tag')).toHaveCount(4)
+  await page.getByRole('button', { name: 'Open RSS chart', exact: true }).click()
+  const panel = page.getByRole('complementary', { name: 'RSS chart' })
+  await expect(panel.locator('.rss-channel')).toHaveCount(4)
+  await expect.poll(() => ideal(page)).toBeGreaterThan(0)
+  await panel.getByRole('button', { name: 'Optical settings', exact: true }).click()
+  await editNumber(page, 'PD FOV half-angle', '1')
+  for (const id of ['LED-01', 'LED-02', 'LED-03', 'LED-04']) await expect.poll(() => ideal(page, id)).toBe(0)
+  await expect(panel.getByText('Outside FOV', { exact: true })).toHaveCount(4)
+  await editNumber(page, 'Noise standard deviation', '1000')
+  await editNumber(page, 'Samples averaged', '25')
+  await page.getByRole('switch', { name: 'Gaussian RSS noise' }).check()
+  await expect(page.getByLabel('Averaged noise standard deviation', { exact: true })).toContainText('0.20000')
+  await expect(panel.getByText('LOS + AWGN', { exact: false })).toBeVisible()
+  await expect.poll(() => measured(page)).not.toBe(0)
+  const before = await measured(page)
+  await expect.poll(() => measured(page)).not.toBe(before)
+  await panel.getByRole('button', { name: 'Pause RSS trace', exact: true }).click()
+  const paused = await measured(page)
+  const count = await panel.getAttribute('data-sample-count')
+  await page.waitForTimeout(200)
+  expect(await measured(page)).toBe(paused)
+  expect(await panel.getAttribute('data-sample-count')).toBe(count)
+  await panel.getByRole('button', { name: 'Clear RSS trace', exact: true }).click()
+  await expect(panel).toHaveAttribute('data-sample-count', '1')
+  await expect(panel).toHaveAttribute('data-time', '0')
+  const first = await measured(page)
+  await panel.getByRole('button', { name: 'Clear RSS trace', exact: true }).click()
+  await expect.poll(() => measured(page)).toBe(first)
+  await expect(panel.locator('.rss-trace circle')).toHaveCount(8)
+  await page.getByRole('tab', { name: 'Lighting', exact: true }).click()
+  for (let count = 4; count < 9; count += 1) await page.getByRole('button', { name: 'Add one LED', exact: true }).click()
+  await expect(panel.locator('.rss-channel')).toHaveCount(9)
+  const colors = await panel.locator('.rss-channel').evaluateAll((rows) => rows.map((row) => getComputedStyle(row).getPropertyValue('--rss-channel-color')))
+  expect(new Set(colors).size).toBe(9)
+  await page.getByRole('tab', { name: 'Optics', exact: true }).click()
+  await page.getByRole('button', { name: 'Reset optical parameters', exact: true }).click()
+  expect((await readConfig(page)).optical.noise.enabled).toBe(false)
+  await expect(panel.locator('[data-rss-w]')).toHaveCount(0)
+  expect(await panel.getByRole('img', { name: 'Received optical power over time' }).innerHTML()).not.toMatch(/NaN|Infinity/)
+  expect(errors).toEqual([])
+})
+
+test('RSS remains an optional floating overlay on small and short screens', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await expect(page.locator('.receiver-tag')).toBeVisible()
+  await page.getByRole('button', { name: 'Open RSS chart', exact: true }).click()
+  const panel = page.getByRole('complementary', { name: 'RSS chart' })
+  await expect(panel).toBeInViewport()
+  await expect.poll(() => ideal(page)).toBeGreaterThan(0)
+  await panel.getByRole('button', { name: 'Optical settings', exact: true }).click()
+  await expect(page.getByRole('tab', { name: 'Optics', exact: true })).toHaveAttribute('aria-selected', 'true')
+  await editNumber(page, 'PD active area', '50')
+  await page.getByRole('button', { name: 'Close configuration panel', exact: true }).click()
+  await page.setViewportSize({ width: 844, height: 390 })
+  await expect(panel).toBeInViewport()
+  await panel.getByRole('button', { name: 'Close RSS chart', exact: true }).click()
+  await expect(panel).toHaveCount(0)
+  const bounds = (await page.locator('canvas').boundingBox())!
+  expect(bounds).toEqual({ x: 0, y: 0, width: 844, height: 390 })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})

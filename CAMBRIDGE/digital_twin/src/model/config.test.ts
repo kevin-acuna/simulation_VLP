@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { createOpticalParameters, normalizeOpticalParameters } from '../science'
 import {
   STORAGE_KEY,
   createDefaultConfig,
@@ -20,6 +21,8 @@ function deepFreeze(config: TwinConfig): TwinConfig {
   Object.freeze(config.receiver.position)
   Object.freeze(config.receiver)
   Object.freeze(config.lighting)
+  Object.freeze(config.optical.noise)
+  Object.freeze(config.optical)
   Object.freeze(config.display)
   Object.freeze(config.appearance)
   Object.values(config.positions).forEach(Object.freeze)
@@ -28,8 +31,9 @@ function deepFreeze(config: TwinConfig): TwinConfig {
 }
 
 describe('default configuration', () => {
-  it('uses the exact room, receiver, lighting, display, appearance, and storage defaults', () => {
+  it('uses the exact room, receiver, lighting, optical, display, appearance, and storage defaults', () => {
     expect(createDefaultConfig()).toEqual({
+      optical: createOpticalParameters(),
       room: { width: 3, depth: 3, height: 2 },
       receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true },
       lighting: {
@@ -150,7 +154,7 @@ describe('normalization', () => {
   )
 
   it.each([null, [], false, 'broken', 27])('handles invalid nested sections %s', (value) => {
-    expect(normalizeConfig({ room: value, receiver: value, lighting: value, positions: value, display: value, appearance: value }))
+    expect(normalizeConfig({ room: value, receiver: value, lighting: value, optical: value, positions: value, display: value, appearance: value }))
       .toEqual(createDefaultConfig())
   })
 
@@ -264,9 +268,86 @@ describe('normalization', () => {
   })
 })
 
+describe('optical configuration and migration', () => {
+  it('adds science defaults to a legacy config without changing any existing field or stored byte', () => {
+    const legacy: Omit<TwinConfig, 'optical'> = {
+      room: { width: 7, depth: 5, height: 3.1 },
+      receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'drone', rotorsSpinning: false },
+      lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
+      positions: { 'LED-03': [0.2, -0.4] },
+      display: { grid: true, dimensions: false, labels: false, beams: true, ceiling: true },
+      appearance: { theme: 'mist' },
+    }
+    const serialized = JSON.stringify(legacy)
+    const stored = { [STORAGE_KEY]: serialized }
+    const migrated = normalizeConfig(JSON.parse(stored[STORAGE_KEY]))
+    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters() })
+    expect(normalizeConfig(migrated)).toEqual(migrated)
+    expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
+    expect(stored[STORAGE_KEY]).toBe(serialized)
+    expect(JSON.stringify(legacy)).toBe(serialized)
+  })
+
+  it.each([
+    undefined,
+    null,
+    [],
+    'corrupt',
+    { halfPowerAngleDeg: 45, detectorAreaM2: 0.00005, fovHalfAngleDeg: 65 },
+    { halfPowerAngleDeg: -5, detectorAreaM2: 0, fovHalfAngleDeg: 200 },
+    { halfPowerAngleDeg: NaN, detectorAreaM2: Infinity, fovHalfAngleDeg: '60' },
+    { noise: { enabled: true, varianceW2: 1e-16, averagingSamples: 32, seed: 42 } },
+    { noise: { enabled: 'true', varianceW2: -1, averagingSamples: 0.5, seed: Infinity } },
+    { noise: null },
+  ])('delegates optical normalization to science for %j', (optical) => {
+    expect(normalizeConfig({ optical }).optical).toEqual(normalizeOpticalParameters(optical))
+  })
+
+  it('ignores an inherited optical section', () => {
+    const inherited = Object.create({ optical: { halfPowerAngleDeg: 45, detectorAreaM2: 0.00005 } })
+    expect(normalizeConfig(inherited)).toEqual(createDefaultConfig())
+  })
+
+  it('preserves custom optical and noise settings through frozen normalization and JSON round trips', () => {
+    const optical = {
+      halfPowerAngleDeg: 60,
+      detectorAreaM2: 0.00005,
+      fovHalfAngleDeg: 65,
+      noise: { enabled: true, varianceW2: 1e-16, averagingSamples: 32, seed: 42 },
+    }
+    const saved = deepFreeze({ ...createDefaultConfig(), optical })
+    const before = JSON.stringify(saved)
+    const normalized = normalizeConfig(saved)
+    expect(normalized).toEqual(saved)
+    expect(normalized.optical).not.toBe(saved.optical)
+    expect(normalized.optical.noise).not.toBe(saved.optical.noise)
+    expect(normalizeConfig(normalized)).toEqual(saved)
+    expect(normalizeConfig(JSON.parse(before))).toEqual(saved)
+    expect(JSON.stringify(saved)).toBe(before)
+  })
+
+  it('keeps optical defaults and normalized noise objects independent', () => {
+    const first = createDefaultConfig()
+    const second = createDefaultConfig()
+    first.optical.halfPowerAngleDeg = 60
+    first.optical.noise.enabled = !second.optical.noise.enabled
+    expect(first.optical).not.toBe(second.optical)
+    expect(first.optical.noise).not.toBe(second.optical.noise)
+    const normalized = normalizeConfig(first)
+    expect(normalized.optical).not.toBe(first.optical)
+    expect(normalized.optical.noise).not.toBe(first.optical.noise)
+    normalized.optical.halfPowerAngleDeg = 30
+    normalized.optical.noise.seed = second.optical.noise.seed + 1
+    expect(first.optical.halfPowerAngleDeg).toBe(60)
+    expect(first.optical.noise.seed).toBe(second.optical.noise.seed)
+    expect(second.optical).toEqual(createOpticalParameters())
+  })
+})
+
 describe('appearance normalization and migration', () => {
   it.each(themes)('preserves %s and all saved settings through normalization and a JSON round trip', (theme) => {
     const saved = deepFreeze({
+      optical: createOpticalParameters(),
       appearance: { theme },
       room: { width: 7, depth: 5, height: 3.1 },
       receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'cylinder', rotorsSpinning: true },
@@ -291,7 +372,7 @@ describe('appearance normalization and migration', () => {
     }
     const stored = { [STORAGE_KEY]: JSON.stringify(legacy) }
     const migrated = normalizeConfig(JSON.parse(stored['cambridge-digital-twin:v1']))
-    expect(migrated).toEqual({ ...legacy, receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: 'chalk' } })
+    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: 'chalk' } })
     expect(getFixtures(migrated)[0].position).toEqual([-1.2, 0.3, 3.1])
     expect(getFixtures(migrated)[5].position).toEqual([0.2, -0.4, 3.1])
     expect(getTotalPower(migrated)).toBeCloseTo(0.762, 12)
@@ -312,7 +393,7 @@ describe('appearance normalization and migration', () => {
     }
     const before = JSON.stringify(saved)
     const migrated = normalizeConfig(saved)
-    expect(migrated).toEqual({ ...saved, receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: expectedTheme } })
+    expect(migrated).toEqual({ ...saved, optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: expectedTheme } })
     expect(normalizeConfig(JSON.parse(before))).toEqual(migrated)
     expect(getFixtures(migrated)[0].position).toEqual([-1.2, 0.3, 3.1])
     expect(getFixtures(migrated)[5].position).toEqual([0.2, -0.4, 3.1])
@@ -381,7 +462,7 @@ describe('receiver configuration and migration', () => {
     const serialized = JSON.stringify(legacy)
     const stored = { [STORAGE_KEY]: serialized }
     const migrated = normalizeConfig(JSON.parse(stored['cambridge-digital-twin:v1']))
-    expect(migrated).toEqual({ ...legacy, receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true } })
+    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true } })
     expect(normalizeConfig(migrated)).toEqual(migrated)
     expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
     expect(stored[STORAGE_KEY]).toBe(serialized)
@@ -461,7 +542,7 @@ describe('receiver platform configuration and migration', () => {
     const serialized = JSON.stringify(legacy)
     const stored = { [STORAGE_KEY]: serialized }
     const migrated = normalizeConfig(JSON.parse(stored[STORAGE_KEY]))
-    expect(migrated).toEqual({ ...legacy, receiver: { ...legacy.receiver, platform: 'cylinder', rotorsSpinning: true } })
+    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters(), receiver: { ...legacy.receiver, platform: 'cylinder', rotorsSpinning: true } })
     expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
     expect(getFixtures(migrated)).toEqual(getFixtures(normalizeConfig(legacy)))
     expect(getTotalPower(migrated)).toBeCloseTo(0.762, 12)
@@ -472,6 +553,7 @@ describe('receiver platform configuration and migration', () => {
   it.each(platforms)('preserves saved %s receiver and all unrelated data through normalization and serialization', (platform) => {
     for (const rotorsSpinning of [false, true]) {
       const saved = deepFreeze({
+        optical: createOpticalParameters(),
         room: { width: 7, depth: 5, height: 3.1 },
         receiver: { position: [1.234567, -0.654321, 1.123456], yaw: 123.456789, platform, rotorsSpinning },
         lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },

@@ -1,3 +1,5 @@
+import type { OpticalParameters } from '../science/types'
+
 export type LedShape = 'circular' | 'square'
 export type LedLayout = 'grid' | 'ring' | 'line'
 export type CameraView = 'isometric' | 'top' | 'front' | 'perspective'
@@ -41,6 +43,7 @@ export interface TwinConfig {
   receiver: ReceiverConfig
   room: RoomConfig
   lighting: LightingConfig
+  optical: OpticalParameters
   positions: Record<string, [number, number]>
   display: DisplayConfig
   appearance: { theme: ThemeId }
