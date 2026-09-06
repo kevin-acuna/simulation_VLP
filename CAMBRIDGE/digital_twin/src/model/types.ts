@@ -28,7 +28,17 @@ export interface DisplayConfig {
   ceiling: boolean
 }
 
+export type ReceiverPlatform = 'cylinder' | 'drone'
+
+export interface ReceiverConfig {
+  position: WorldPosition
+  yaw: number
+  platform: ReceiverPlatform
+  rotorsSpinning: boolean
+}
+
 export interface TwinConfig {
+  receiver: ReceiverConfig
   room: RoomConfig
   lighting: LightingConfig
   positions: Record<string, [number, number]>
@@ -48,7 +58,9 @@ export interface SceneProps {
   config: TwinConfig
   fixtures: LedFixture[]
   selectedId: string | null
-  onSelect: (id: string | null) => void
+  onSelect: (id: string | null, inspect?: boolean) => void
+  onReceiverPreview: (position: WorldPosition) => void
+  onReceiverCommit: (position: WorldPosition | null) => void
   view: CameraView
   cameraReset: number
   framing: CameraFraming

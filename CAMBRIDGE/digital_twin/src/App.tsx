@@ -2,18 +2,20 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import { Box, Camera, Grid2X2, Maximize, RotateCcw, Ruler, Square, Layers3, SlidersHorizontal } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import { getFixtures } from './model/config'
+import { getReceiverGeometry, RECEIVER_ID } from './model/receiver'
 import { getThemeVariables } from './theme/themes'
 import { useTwinConfig } from './state/useTwinConfig'
 import ControlPanel from './components/ControlPanel'
 import SceneBoundary from './components/SceneBoundary'
 import type { PanelTab } from './components/ControlPanel'
-import type { CameraFraming, CameraView } from './model/types'
+import type { CameraFraming, CameraView, WorldPosition } from './model/types'
 
 const TestbedScene = lazy(() => import('./scene/TestbedScene'))
 
 export default function App() {
   const { config, updateConfig, saved, resetConfig } = useTwinConfig()
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [receiverDraft, setReceiverDraft] = useState<WorldPosition | null>(null)
   const [tab, setTab] = useState<PanelTab>('room')
   const [view, setView] = useState<CameraView>('isometric')
   const [cameraReset, setCameraReset] = useState(0)
@@ -22,7 +24,8 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const settingsButton = useRef<HTMLButtonElement>(null)
   const fixtures = useMemo(() => getFixtures(config), [config])
-  const activeId = fixtures.some((fixture) => fixture.id === selectedId) ? selectedId : null
+  const liveConfig = useMemo(() => receiverDraft ? { ...config, receiver: { ...config.receiver, position: receiverDraft } } : config, [config, receiverDraft])
+  const activeId = selectedId === RECEIVER_ID || fixtures.some((fixture) => fixture.id === selectedId) ? selectedId : null
   const closeSettings = useCallback(() => {
     setSettingsOpen(false)
     settingsButton.current?.focus({ preventScroll: true })
@@ -37,12 +40,20 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleEscape)
   }, [settingsOpen, closeSettings])
 
-  function selectLed(id: string | null) {
+  function selectObject(id: string | null, inspect = true) {
     setSelectedId(id)
     if (id) {
-      setTab('lighting')
-      setSettingsOpen(true)
+      setTab(id === RECEIVER_ID ? 'receiver' : 'lighting')
+      if (inspect) setSettingsOpen(true)
     }
+  }
+  function selectTab(nextTab: PanelTab) {
+    setTab(nextTab)
+    if (nextTab === 'receiver') setSelectedId(RECEIVER_ID)
+  }
+  function commitReceiver(position: WorldPosition | null) {
+    if (position) updateConfig((previous) => ({ ...previous, receiver: { ...previous.receiver, position } }))
+    setReceiverDraft(null)
   }
   function resetCamera(nextView: CameraView = view, nextFraming: CameraFraming = nextView === 'isometric' || nextView === 'perspective' ? 'immersive' : 'fit') {
     setView(nextView)
@@ -50,7 +61,7 @@ export default function App() {
     setCameraReset((previous) => previous + 1)
   }
   function exportScene() {
-    const blob = new Blob([JSON.stringify({ schemaVersion: 1, coordinateSystem: 'right-handed, Z-up, metres', config }, null, 2)], { type: 'application/json' })
+    const blob = new Blob([JSON.stringify({ schemaVersion: 1, coordinateSystem: 'right-handed, Z-up, metres', receiverGeometry: getReceiverGeometry(config.receiver.platform), config }, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
@@ -62,6 +73,7 @@ export default function App() {
   }
   function resetScene() {
     resetConfig()
+    setReceiverDraft(null)
     setSelectedId(null)
     resetCamera('isometric')
   }
@@ -71,7 +83,7 @@ export default function App() {
       <main className="main-layout">
         <section className="workspace" aria-label="Interactive 3D testbed">
           <div className="scene-viewport" data-testid="scene-viewport">
-            <SceneBoundary><Suspense fallback={<div className="scene-loading"><Box size={28} /><span>Building your environment…</span></div>}><TestbedScene config={config} fixtures={fixtures} selectedId={activeId} onSelect={selectLed} view={view} cameraReset={cameraReset} framing={framing} /></Suspense></SceneBoundary>
+            <SceneBoundary><Suspense fallback={<div className="scene-loading"><Box size={28} /><span>Building your environment…</span></div>}><TestbedScene config={liveConfig} fixtures={fixtures} selectedId={activeId} onSelect={selectObject} onReceiverPreview={setReceiverDraft} onReceiverCommit={commitReceiver} view={view} cameraReset={cameraReset} framing={framing} /></Suspense></SceneBoundary>
           </div>
           <button ref={settingsButton} className={`settings-toggle${settingsOpen ? ' active' : ''}`} aria-label={settingsOpen ? 'Close settings' : 'Open settings'} title={settingsOpen ? 'Close settings' : 'Scene settings'} aria-expanded={settingsOpen} aria-controls="scene-settings" onClick={() => settingsOpen ? closeSettings() : setSettingsOpen(true)}><SlidersHorizontal size={19} /></button>
           <div className="workspace-bottom">
@@ -90,7 +102,7 @@ export default function App() {
               <button onClick={() => resetCamera(view)} aria-label="Reset camera" title="Reset current view"><RotateCcw size={16} /></button>
             </div>
           </div>
-          {settingsOpen && <ControlPanel config={config} fixtures={fixtures} selectedId={activeId} tab={tab} onTab={setTab} onSelect={selectLed} onUpdate={updateConfig} onReset={resetScene} onClose={closeSettings} onExport={exportScene} exported={exported} saved={saved} interior={view === 'perspective'} />}
+          {settingsOpen && <ControlPanel config={liveConfig} fixtures={fixtures} selectedId={activeId} tab={tab} onTab={selectTab} onSelect={selectObject} onUpdate={updateConfig} onReset={resetScene} onClose={closeSettings} onExport={exportScene} exported={exported} saved={saved} interior={view === 'perspective'} />}
         </section>
       </main>
     </div>

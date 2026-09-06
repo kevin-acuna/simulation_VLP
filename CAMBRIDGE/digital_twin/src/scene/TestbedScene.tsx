@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three'
 import type { SceneProps } from '../model/types'
@@ -6,10 +6,13 @@ import { getTheme } from '../theme/themes'
 import CameraRig from './CameraRig'
 import Led from './Led'
 import Room from './Room'
+import Receiver from './Receiver'
+import { RECEIVER_ID } from '../model/receiver'
 import SceneGuides from './SceneGuides'
 import SceneLighting from './SceneLighting'
 
-export default function TestbedScene({ config, fixtures, selectedId, onSelect, view, cameraReset, framing }: SceneProps) {
+export default function TestbedScene({ config, fixtures, selectedId, onSelect, onReceiverPreview, onReceiverCommit, view, cameraReset, framing }: SceneProps) {
+  const [dragging, setDragging] = useState(false)
   const { accent, muted } = getTheme(config.appearance.theme).colors
   const interior = view === 'perspective'
 
@@ -29,7 +32,7 @@ export default function TestbedScene({ config, fixtures, selectedId, onSelect, v
         gl.toneMappingExposure = 1.05
         gl.outputColorSpace = SRGBColorSpace
       }}
-      onPointerMissed={() => onSelect(null)}
+      onPointerMissed={() => { if (!dragging) onSelect(null) }}
       fallback={<div className="scene-fallback" role="status">This 3D testbed requires a browser with WebGL enabled. Your room settings remain available in the control panel.</div>}
     >
       <Suspense fallback={null}>
@@ -50,7 +53,8 @@ export default function TestbedScene({ config, fixtures, selectedId, onSelect, v
         ))}
         <SceneGuides room={config.room} display={{ ...config.display, dimensions: !interior && config.display.dimensions }} accent={accent} guideColor={muted} />
         <SceneLighting room={config.room} interior={interior} />
-        <CameraRig room={config.room} view={view} cameraReset={cameraReset} dimensions={config.display.dimensions} framing={framing} />
+        <Receiver receiver={config.receiver} room={config.room} selected={selectedId === RECEIVER_ID} view={view} cameraReset={cameraReset} accent={accent} guideColor={muted} onSelect={(inspect) => onSelect(RECEIVER_ID, inspect)} onPreview={onReceiverPreview} onCommit={onReceiverCommit} onDragChange={setDragging} />
+        <CameraRig room={config.room} view={view} cameraReset={cameraReset} dimensions={config.display.dimensions} framing={framing} enabled={!dragging} />
       </Suspense>
     </Canvas>
   )

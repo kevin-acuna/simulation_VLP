@@ -7,15 +7,18 @@ import {
   normalizeConfig,
   toScenePosition,
 } from './config'
-import type { LedLayout, ThemeId, TwinConfig, WorldPosition } from './types'
+import type { LedLayout, ReceiverPlatform, ThemeId, TwinConfig, WorldPosition } from './types'
 
 const themes: ThemeId[] = ['chalk', 'white', 'sage', 'sand', 'mist', 'rose']
 const layouts: LedLayout[] = ['grid', 'ring', 'line']
+const platforms: ReceiverPlatform[] = ['cylinder', 'drone']
 const counts = Array.from({ length: 9 }, (_, index) => index + 1)
 const spacings = [0.2, 0.5, 0.8]
 
 function deepFreeze(config: TwinConfig): TwinConfig {
   Object.freeze(config.room)
+  Object.freeze(config.receiver.position)
+  Object.freeze(config.receiver)
   Object.freeze(config.lighting)
   Object.freeze(config.display)
   Object.freeze(config.appearance)
@@ -25,9 +28,10 @@ function deepFreeze(config: TwinConfig): TwinConfig {
 }
 
 describe('default configuration', () => {
-  it('uses the exact room, lighting, display, appearance, and storage defaults', () => {
+  it('uses the exact room, receiver, lighting, display, appearance, and storage defaults', () => {
     expect(createDefaultConfig()).toEqual({
       room: { width: 3, depth: 3, height: 2 },
+      receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true },
       lighting: {
         count: 4,
         shape: 'circular',
@@ -146,7 +150,7 @@ describe('normalization', () => {
   )
 
   it.each([null, [], false, 'broken', 27])('handles invalid nested sections %s', (value) => {
-    expect(normalizeConfig({ room: value, lighting: value, positions: value, display: value, appearance: value }))
+    expect(normalizeConfig({ room: value, receiver: value, lighting: value, positions: value, display: value, appearance: value }))
       .toEqual(createDefaultConfig())
   })
 
@@ -265,6 +269,7 @@ describe('appearance normalization and migration', () => {
     const saved = deepFreeze({
       appearance: { theme },
       room: { width: 7, depth: 5, height: 3.1 },
+      receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'cylinder', rotorsSpinning: true },
       lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
       positions: { 'LED-03': [0.2, -0.4] },
       display: { grid: true, dimensions: false, labels: false, beams: true, ceiling: true },
@@ -286,7 +291,7 @@ describe('appearance normalization and migration', () => {
     }
     const stored = { [STORAGE_KEY]: JSON.stringify(legacy) }
     const migrated = normalizeConfig(JSON.parse(stored['cambridge-digital-twin:v1']))
-    expect(migrated).toEqual({ ...legacy, appearance: { theme: 'chalk' } })
+    expect(migrated).toEqual({ ...legacy, receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: 'chalk' } })
     expect(getFixtures(migrated)[0].position).toEqual([-1.2, 0.3, 3.1])
     expect(getFixtures(migrated)[5].position).toEqual([0.2, -0.4, 3.1])
     expect(getTotalPower(migrated)).toBeCloseTo(0.762, 12)
@@ -307,7 +312,7 @@ describe('appearance normalization and migration', () => {
     }
     const before = JSON.stringify(saved)
     const migrated = normalizeConfig(saved)
-    expect(migrated).toEqual({ ...saved, appearance: { theme: expectedTheme } })
+    expect(migrated).toEqual({ ...saved, receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: expectedTheme } })
     expect(normalizeConfig(JSON.parse(before))).toEqual(migrated)
     expect(getFixtures(migrated)[0].position).toEqual([-1.2, 0.3, 3.1])
     expect(getFixtures(migrated)[5].position).toEqual([0.2, -0.4, 3.1])
@@ -361,6 +366,181 @@ describe('appearance normalization and migration', () => {
       expect(JSON.stringify(baseline)).toBe(before)
       expect(JSON.stringify(input)).toBe(inputBefore)
     }
+  })
+})
+
+describe('receiver configuration and migration', () => {
+  it('adds a centered receiver to legacy v1 data while retaining every existing field and stored byte', () => {
+    const legacy = {
+      room: { width: 7, depth: 5, height: 3.1 },
+      lighting: { count: 6, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
+      positions: { 'LED-01': [-1.2, 0.3], 'LED-06': [0.2, -0.4] },
+      display: { grid: true, dimensions: false, labels: false, beams: true, ceiling: true },
+      appearance: { theme: 'mist' },
+    }
+    const serialized = JSON.stringify(legacy)
+    const stored = { [STORAGE_KEY]: serialized }
+    const migrated = normalizeConfig(JSON.parse(stored['cambridge-digital-twin:v1']))
+    expect(migrated).toEqual({ ...legacy, receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true } })
+    expect(normalizeConfig(migrated)).toEqual(migrated)
+    expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
+    expect(stored[STORAGE_KEY]).toBe(serialized)
+    expect(JSON.stringify(legacy)).toBe(serialized)
+    expect(getFixtures(migrated)).toEqual(getFixtures(normalizeConfig(legacy)))
+    expect(getTotalPower(migrated)).toBeCloseTo(0.762, 12)
+  })
+
+  it.each([
+    { width: 0, depth: 0, height: 0 },
+    { width: 30, depth: 30, height: 30 },
+    { width: 6, depth: 8, height: 4.2 },
+  ])('initializes missing and invalid receiver positions at 0.3 m after normalizing room %j', (room) => {
+    expect(normalizeConfig({ room }).receiver).toEqual({ platform: 'cylinder', rotorsSpinning: true, position: [0, 0, 0.3], yaw: 0 })
+    expect(normalizeConfig({ room, receiver: { position: [1, 2], yaw: 27 } }).receiver)
+      .toEqual({ platform: 'cylinder', rotorsSpinning: true, position: [0, 0, 0.3], yaw: 27 })
+  })
+
+  it('preserves custom receiver coordinates and yaw through normalization and JSON serialization', () => {
+    const saved = deepFreeze({ ...createDefaultConfig(), receiver: { position: [0.8, -0.7, 1.2], yaw: 123.45, platform: 'cylinder', rotorsSpinning: true } })
+    const before = JSON.stringify(saved)
+    expect(normalizeConfig(saved)).toEqual(saved)
+    expect(normalizeConfig(JSON.parse(before))).toEqual(saved)
+    expect(JSON.stringify(saved)).toBe(before)
+  })
+
+  it('clamps a receiver when the room shrinks while preserving its yaw and all unrelated settings', () => {
+    const saved = deepFreeze(normalizeConfig({
+      room: { width: 10, depth: 10, height: 5 },
+      receiver: { position: [4, -4, 4], yaw: 285 },
+      lighting: { power: 1.2, shape: 'square' },
+      appearance: { theme: 'rose' },
+    }))
+    const smaller = normalizeConfig({ ...saved, room: { width: 0, depth: 0, height: 0 } })
+    expect(smaller).toEqual({
+      ...saved,
+      room: { width: 2, depth: 2, height: 1.8 },
+      receiver: { position: [0.94, -0.94, 1.8 - 0.04 - 0.002 - 0.01], yaw: 285, platform: 'cylinder', rotorsSpinning: true },
+    })
+    expect(saved.receiver).toEqual({ platform: 'cylinder', rotorsSpinning: true, position: [4, -4, 4], yaw: 285 })
+  })
+
+  it('ignores inherited receivers and strips unconfigurable geometry and hostile keys', () => {
+    expect(normalizeConfig(Object.create({ receiver: { position: [1, 1, 1.5], yaw: 90 } }))).toEqual(createDefaultConfig())
+    const hostile = JSON.parse('{"receiver":{"position":[0.2,-0.3,1.4],"yaw":-90,"diameter":7,"geometry":{"pdWidth":2},"__proto__":{"polluted":true},"constructor":{"polluted":true}}}')
+    expect(normalizeConfig(hostile).receiver).toEqual({ platform: 'cylinder', rotorsSpinning: true, position: [0.2, -0.3, 1.4], yaw: 270 })
+    expect(Object.prototype.hasOwnProperty.call(Object.prototype, 'polluted')).toBe(false)
+  })
+
+  it('returns fresh centered receiver data on reset without sharing previous defaults or normalized positions', () => {
+    const changed = createDefaultConfig()
+    changed.receiver.position[0] = 1
+    changed.receiver.yaw = 70
+    const normalized = normalizeConfig(changed)
+    normalized.receiver.position[1] = -1
+    normalized.receiver.yaw = 20
+    const reset = createDefaultConfig()
+    expect(reset.receiver).toEqual({ platform: 'cylinder', rotorsSpinning: true, position: [0, 0, 0.3], yaw: 0 })
+    expect(changed.receiver).toEqual({ platform: 'cylinder', rotorsSpinning: true, position: [1, 0, 0.3], yaw: 70 })
+    expect(reset.receiver).not.toBe(changed.receiver)
+    expect(normalized.receiver).not.toBe(changed.receiver)
+    expect(reset.receiver.position).not.toBe(changed.receiver.position)
+    expect(normalized.receiver.position).not.toBe(changed.receiver.position)
+  })
+})
+
+describe('receiver platform configuration and migration', () => {
+  it('migrates stored receiver data missing platform fields without changing existing pose or any other settings', () => {
+    const legacy = {
+      room: { width: 7, depth: 5, height: 3.1 },
+      receiver: { position: [1.234567, -0.654321, 1], yaw: 123.456789 },
+      lighting: { count: 6, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
+      positions: { 'LED-01': [-1.2, 0.3], 'LED-06': [0.2, -0.4] },
+      display: { grid: true, dimensions: false, labels: false, beams: true, ceiling: true },
+      appearance: { theme: 'mist' },
+    }
+    const serialized = JSON.stringify(legacy)
+    const stored = { [STORAGE_KEY]: serialized }
+    const migrated = normalizeConfig(JSON.parse(stored[STORAGE_KEY]))
+    expect(migrated).toEqual({ ...legacy, receiver: { ...legacy.receiver, platform: 'cylinder', rotorsSpinning: true } })
+    expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
+    expect(getFixtures(migrated)).toEqual(getFixtures(normalizeConfig(legacy)))
+    expect(getTotalPower(migrated)).toBeCloseTo(0.762, 12)
+    expect(stored[STORAGE_KEY]).toBe(serialized)
+    expect(JSON.stringify(legacy)).toBe(serialized)
+  })
+
+  it.each(platforms)('preserves saved %s receiver and all unrelated data through normalization and serialization', (platform) => {
+    for (const rotorsSpinning of [false, true]) {
+      const saved = deepFreeze({
+        room: { width: 7, depth: 5, height: 3.1 },
+        receiver: { position: [1.234567, -0.654321, 1.123456], yaw: 123.456789, platform, rotorsSpinning },
+        lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
+        positions: { 'LED-03': [0.2, -0.4] },
+        display: { grid: true, dimensions: false, labels: false, beams: true, ceiling: true },
+        appearance: { theme: 'mist' },
+      })
+      const before = JSON.stringify(saved)
+      const normalized = normalizeConfig(saved)
+      expect(normalized).toEqual(saved)
+      expect(normalized.receiver).not.toBe(saved.receiver)
+      expect(normalized.receiver.position).not.toBe(saved.receiver.position)
+      expect(normalizeConfig(JSON.parse(before))).toEqual(saved)
+      expect(normalizeConfig(normalized)).toEqual(saved)
+      const toggled = normalizeConfig({ ...saved, receiver: { ...saved.receiver, rotorsSpinning: !rotorsSpinning } })
+      expect(toggled).toEqual({ ...saved, receiver: { ...saved.receiver, rotorsSpinning: !rotorsSpinning } })
+      const changed = normalizeConfig({ ...saved, receiver: { ...saved.receiver, platform: platform === 'drone' ? 'cylinder' : 'drone' } })
+      expect(changed).toEqual({ ...saved, receiver: { ...saved.receiver, platform: platform === 'drone' ? 'cylinder' : 'drone' } })
+      expect(getFixtures(changed)).toEqual(getFixtures(saved))
+      expect(getTotalPower(changed)).toBe(getTotalPower(saved))
+      expect(JSON.stringify(saved)).toBe(before)
+    }
+  })
+
+  it('defaults corrupt serialized platform and animation fields independently without losing valid receiver data', () => {
+    const corrupt = JSON.parse('{"receiver":{"position":[0.234567,-0.345678,1.234567],"yaw":234.56789,"platform":"constructor","rotorsSpinning":"false"},"lighting":{"power":0.127},"appearance":{"theme":"sage"}}')
+    const expected = createDefaultConfig()
+    expected.receiver.position = [0.234567, -0.345678, 1.234567]
+    expected.receiver.yaw = 234.56789
+    expected.lighting.power = 0.127
+    expected.appearance.theme = 'sage'
+    expect(normalizeConfig(corrupt)).toEqual(expected)
+    expect(normalizeConfig({ ...corrupt, receiver: { ...corrupt.receiver, platform: 'drone', rotorsSpinning: false } }))
+      .toEqual({ ...expected, receiver: { ...expected.receiver, platform: 'drone', rotorsSpinning: false } })
+  })
+
+  it('clamps only necessary coordinates on a near-wall platform or yaw change', () => {
+    const saved = deepFreeze(normalizeConfig({
+      receiver: { position: [1.44, -0.654321, 1.234567], yaw: 0, rotorsSpinning: false },
+      lighting: { power: 0.127, count: 6, shape: 'square', layout: 'ring' },
+      positions: { 'LED-03': [0.2, -0.4] },
+      appearance: { theme: 'mist' },
+    }))
+    const drone = normalizeConfig({ ...saved, receiver: { ...saved.receiver, platform: 'drone' } })
+    expect(drone).toEqual({ ...saved, receiver: { ...saved.receiver, platform: 'drone', position: [1.35, -0.654321, 1.234567] } })
+    const rotated = normalizeConfig({ ...drone, receiver: { ...drone.receiver, yaw: 405 } })
+    const angle = 45 * Math.PI / 180
+    const limit = 1.5 - (0.08 * (Math.abs(Math.cos(angle)) + Math.abs(Math.sin(angle))) + 0.06 + 0.01)
+    expect(rotated).toEqual({ ...drone, receiver: { ...drone.receiver, yaw: 45, position: [limit, -0.654321, 1.234567] } })
+    expect(normalizeConfig({ ...rotated, receiver: { ...rotated.receiver, platform: 'cylinder' } }))
+      .toEqual({ ...rotated, receiver: { ...rotated.receiver, platform: 'cylinder' } })
+    expect(saved.receiver.position).toEqual([1.44, -0.654321, 1.234567])
+  })
+
+  it('uses normalized room dimensions and rotated drone bounds when a room shrinks', () => {
+    const saved = deepFreeze(normalizeConfig({
+      room: { width: 10, depth: 10, height: 5 },
+      receiver: { position: [4, -4, 4], yaw: 45, platform: 'drone', rotorsSpinning: false },
+      lighting: { power: 1.2, shape: 'square' },
+      appearance: { theme: 'rose' },
+    }))
+    const smaller = normalizeConfig({ ...saved, room: { width: 0, depth: 0, height: 0 } })
+    const margin = 0.08 * (Math.cos(Math.PI / 4) + Math.sin(Math.PI / 4)) + 0.06 + 0.01
+    expect(smaller).toEqual({
+      ...saved,
+      room: { width: 2, depth: 2, height: 1.8 },
+      receiver: { ...saved.receiver, position: [1 - margin, -1 + margin, 1.8 - 0.03 - 0.002 - 0.01] },
+    })
+    expect(saved.receiver.position).toEqual([4, -4, 4])
   })
 })
 

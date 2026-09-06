@@ -12,6 +12,7 @@ interface CameraRigProps {
   cameraReset: number
   dimensions: boolean
   framing: CameraFraming
+  enabled: boolean
 }
 
 interface CameraSnapshot {
@@ -25,7 +26,7 @@ interface CameraSnapshot {
   viewportHeight: number
 }
 
-export default function CameraRig({ room, view, cameraReset, dimensions, framing }: CameraRigProps) {
+export default function CameraRig({ room, view, cameraReset, dimensions, framing, enabled }: CameraRigProps) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null)
   const previous = useRef<CameraSnapshot | null>(null)
   const interacted = useRef(false)
@@ -153,6 +154,7 @@ export default function CameraRig({ room, view, cameraReset, dimensions, framing
       ref={controls}
       camera={camera}
       makeDefault
+      enabled={enabled}
       enableDamping
       dampingFactor={0.085}
       rotateSpeed={view === 'perspective' ? 0.4 : 0.65}

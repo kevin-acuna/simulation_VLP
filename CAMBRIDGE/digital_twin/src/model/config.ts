@@ -1,4 +1,5 @@
 import { DEFAULT_THEME, isThemeId } from '../theme/themes'
+import { createReceiver, normalizeReceiver } from './receiver'
 import type { LedFixture, TwinConfig, WorldPosition } from './types'
 
 export const STORAGE_KEY = 'cambridge-digital-twin:v1'
@@ -17,8 +18,10 @@ const GRID_ROWS = [
 ]
 
 export function createDefaultConfig(): TwinConfig {
+  const room = { width: 3, depth: 3, height: 2 }
   return {
-    room: { width: 3, depth: 3, height: 2 },
+    room,
+    receiver: createReceiver(room),
     lighting: {
       count: 4,
       shape: 'circular',
@@ -82,6 +85,7 @@ export function normalizeConfig(input: unknown): TwinConfig {
   result.room.width = finiteNumber(own(room, 'width'), result.room.width, 2, 10)
   result.room.depth = finiteNumber(own(room, 'depth'), result.room.depth, 2, 10)
   result.room.height = finiteNumber(own(room, 'height'), result.room.height, 1.8, 5)
+  result.receiver = normalizeReceiver(own(source, 'receiver'), result.room)
 
   result.lighting.count = Math.round(finiteNumber(own(lighting, 'count'), result.lighting.count, 1, 9))
   result.lighting.power = finiteNumber(own(lighting, 'power'), result.lighting.power, 0, 2)

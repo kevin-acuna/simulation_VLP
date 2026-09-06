@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react'
-import { Circle, Grid2X2, Rows3, Square, Box, Lightbulb, ScanEye, X, RotateCcw, Check, Download } from 'lucide-react'
+import { Circle, Grid2X2, Rows3, Square, Box, Lightbulb, Radio, ScanEye, X, RotateCcw, Check, Download } from 'lucide-react'
 import { Choice, RangeField, Stepper, Toggle } from './Controls'
 import CeilingPlan from './CeilingPlan'
+import ReceiverPanel from './ReceiverPanel'
 import ThemePicker from './ThemePicker'
 import { getTotalPower } from '../model/config'
 import type { DisplayConfig, LedFixture, LightingConfig, RoomConfig, TwinConfig } from '../model/types'
 
-export type PanelTab = 'room' | 'lighting' | 'view'
+export type PanelTab = 'room' | 'lighting' | 'receiver' | 'view'
 
 interface ControlPanelProps {
   config: TwinConfig
@@ -52,7 +53,7 @@ export default function ControlPanel({ config, fixtures, selectedId, tab, onTab,
     <aside id="scene-settings" className="control-panel" aria-label="Scene configuration">
       <div className="panel-heading"><div><span className="eyebrow">SETTINGS</span><h2>Scene configuration</h2></div><button ref={closeButton} className="icon-button panel-close" onClick={onClose} aria-label="Close configuration panel" title="Close settings (Esc)"><X size={18} /></button></div>
       <div className="panel-tabs" role="tablist" aria-label="Configuration sections">
-        {([{ id: 'room', icon: Box, label: 'Room' }, { id: 'lighting', icon: Lightbulb, label: 'Lighting' }, { id: 'view', icon: ScanEye, label: 'View' }] as const).map(({ id, icon: Icon, label }) => (
+        {([{ id: 'room', icon: Box, label: 'Room' }, { id: 'lighting', icon: Lightbulb, label: 'Lighting' }, { id: 'receiver', icon: Radio, label: 'Receiver' }, { id: 'view', icon: ScanEye, label: 'View' }] as const).map(({ id, icon: Icon, label }) => (
           <button key={id} id={`tab-${id}`} role="tab" aria-selected={tab === id} aria-controls={`panel-${id}`} className={tab === id ? 'active' : ''} onClick={() => onTab(id)}><Icon size={15} />{label}</button>
         ))}
       </div>
@@ -94,6 +95,7 @@ export default function ControlPanel({ config, fixtures, selectedId, tab, onTab,
             <button className="text-button" onClick={() => onUpdate((previous) => ({ ...previous, positions: Object.fromEntries(Object.entries(previous.positions).filter(([id]) => id !== selected.id)) }))}><RotateCcw size={12} />Reset this position</button>
           </section> : <CeilingPlan room={room} fixtures={fixtures} selectedId={selectedId} onSelect={onSelect} />}
         </>}
+        {tab === 'receiver' && <ReceiverPanel config={config} onUpdate={onUpdate} />}
         {tab === 'view' && <>
           <ThemePicker value={config.appearance.theme} onChange={(theme) => onUpdate((previous) => ({ ...previous, appearance: { ...previous.appearance, theme } }))} />
           <section className="control-section">
