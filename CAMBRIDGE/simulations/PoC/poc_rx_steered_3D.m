@@ -24,7 +24,7 @@ addpath(fileparts(mfilename('fullpath')));
 rng(42);
 DESIGN        = 'vertical_cone';   % 'led_centred' (2-stage adaptive) | 'vertical_cone' | 'wang'
 K_A           = 8;               % Stage A: orientations on the vertical cone
-theta_A       = 20;              % Stage A: cone half-angle [deg] (safe w.r.t. FOV; = Wang's tilt)
+theta_A       = 30;              % Stage A: cone half-angle [deg] (safe w.r.t. FOV; = Wang's tilt)
 ADD_NADIR_A   = true;            % Stage A: append the body-vertical orientation (K_A+1 measurements)
 K_B           = 4;               % Stage B: orientations on the LED-centred cone
 theta_B       = 63.4;            % Stage B: cone half-angle [deg]  (design rule tan(theta)=2)

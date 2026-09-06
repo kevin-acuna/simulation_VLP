@@ -1,0 +1,18 @@
+# Digital twin project context
+
+- This is an independent React + TypeScript + React Three Fiber application. Do not modify the MATLAB simulations or unrelated papers when working on the viewer.
+- Run commands from `CAMBRIDGE/digital_twin` with Node.js 22.22 or later in the Node 22 line. Install locked dependencies with `npm ci`.
+- Development: `npm run dev`. Production verification: `npm run build`. Unit tests: `npm test`. Browser tests: `npm run test:e2e`.
+- Browser tests use Playwright Chromium and a local server on port 5173. Install the browser with `npx playwright install chromium` when absent; set `PLAYWRIGHT_SKIP_BROWSER_GC=1` to retain other cached browser versions.
+- `src/model` owns pure configuration, validation, layout generation, and canonical coordinate conversion. `src/state` owns browser persistence. `src/scene` owns rendering. `src/components` owns controls.
+- Keep the canvas full-window, without branding/header/footer bands. Settings are hidden on load and overlay the scene on the left without resizing/remounting it; export belongs in settings. Align the panel with its trigger and balance the outer margins. Only the camera toolbar floats at the bottom, with transparent pointer-pass-through space around it.
+- Workspace palettes live in `src/theme/themes.ts` and are persisted as `appearance.theme`. Chalk is the default; Pure White has three `#ffffff` background stops and replaces legacy Lavender. Preserve valid saved choices and migrate saved Lavender to Pure White. Use semantic CSS variables and matching 3D guide accents; changing a palette must not change LED power/temperature, physical materials, geometry, camera or positioning data.
+- Start and reset the isometric camera with immersive framing: 1.6 times the full-room fit, capped by viewport width. Keep the separate Fit room to view action, and top/front presets, fully fitted. Framing is transient camera state, not physical room geometry.
+- Perspective is an alternative real 66-degree camera at entry/eye level. Switch cameras without remounting Canvas; Reset camera resets the current view. Interior walls use camera-position cutaway, with an opaque ceiling and subdued studio fill. Dimension guides and ghost-ceiling controls are temporarily unavailable in Perspective without mutating saved display settings.
+- Domain coordinates are right-handed `[x, y, z]`, Z-up, in metres, with the floor centre at the origin. Three.js coordinates are `[x, z, -y]`; use the canonical model conversion rather than duplicating it.
+- Room geometry, LED positions, guides and camera bounds must share the centred coordinate frame. Keep regression tests for this invariant.
+- The MATLAB baseline in `../simulations/PoC/poc_params.m` uses a 3 x 3 m floor, ceiling LED at 2 m, and 0.405 W optical power. The viewer defaults to four LEDs for the visual prototype.
+- Rendering intensity and colour temperature are illustrative, not calibrated radiometry. No PD channel, hardware connection or positioning estimate is implemented yet; do not present rendered brightness as received optical power.
+- Keep configuration serializable and independently testable. Count, layout and spacing changes clear manual position overrides; shape, power and temperature changes preserve them.
+- Avoid runtime asset/CDN dependencies for the initial scene. Materials and reflection lighting are generated locally.
+- Dependencies are pinned in `package.json` and `package-lock.json`. npm 10.9.4 can fail with an `edgesOut` error when updating Vitest optional peers; npm 11.10.1 was verified for that update without changing global npm.
