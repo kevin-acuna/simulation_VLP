@@ -2,8 +2,8 @@ This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded forma
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**main_tracking.tex
-(./main_tracking.tex
+**main.tex
+(./main.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (./IEEEtran.cls
@@ -563,27 +563,27 @@ Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count343
 )
-(build/main_tracking.aux)
-\openout1 = `main_tracking.aux'.
+(build/main.aux)
+\openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
 
 -- Lines per column: 58 (exact).
 (c:/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -613,35 +613,35 @@ Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: End \AtBeginDocument code.
 \symgns@font=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `gns@font' in version `bold'
-(Font)                  TS1/ptm/m/n --> TS1/ptm/b/n on input line 25.
-Package gensymb Info: Math companion symbols declared on input line 25.
-LaTeX Info: Redefining \degree on input line 25.
-LaTeX Info: Redefining \celsius on input line 25.
+(Font)                  TS1/ptm/m/n --> TS1/ptm/b/n on input line 22.
+Package gensymb Info: Math companion symbols declared on input line 22.
+LaTeX Info: Redefining \degree on input line 22.
+LaTeX Info: Redefining \celsius on input line 22.
 Package gensymb Info: Using text companion symbols for \degree, \celsius and \p
-erthousand on input line 25.
-LaTeX Info: Redefining \ohm on input line 25.
-Package gensymb Info: Using \textohm for \ohm on input line 25.
-Package gensymb Info: Using \textmu for \micro on input line 25.
-Package hyperref Info: Link coloring ON on input line 25.
+erthousand on input line 22.
+LaTeX Info: Redefining \ohm on input line 22.
+Package gensymb Info: Using \textohm for \ohm on input line 22.
+Package gensymb Info: Using \textmu for \micro on input line 22.
+Package hyperref Info: Link coloring ON on input line 22.
 
-(build/main_tracking.out) (build/main_tracking.out)
+(build/main.out) (build/main.out)
 \@outlinefile=\write3
-\openout3 = `main_tracking.out'.
+\openout3 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 43.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 40.
 
 
 (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 43.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 40.
 
 
 (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 4
-3.
+0.
 
 (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
@@ -649,66 +649,69 @@ File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 026/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
-] [2]
+]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\\' on input line 127.
+(hyperref)                removing `\\' on input line 124.
 
 <Figures/II. System/Figure1.png, id=323, 755.82375pt x 484.81125pt>
 File: Figures/II. System/Figure1.png Graphic file (type png)
 <use Figures/II. System/Figure1.png>
-Package pdftex.def Info: Figures/II. System/Figure1.png  used on input line 161
+Package pdftex.def Info: Figures/II. System/Figure1.png  used on input line 158
 .
 (pdftex.def)             Requested size: 252.0pt x 161.63786pt.
 [3 <./Figures/II. System/Figure1.png>] [4]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 343.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\le' on input line 343.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 343.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 346.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\le' on input line 346.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 346.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 349.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 349.
-
-
-Underfull \hbox (badness 4132) in paragraph at lines 349--350
+Underfull \hbox (badness 4132) in paragraph at lines 346--347
  \OT1/ptm/m/it/10 2) Just-Determined Regime ($\OML/cmm/m/it/10 K \OT1/cmr/m/n/1
 0 = 3$\OT1/ptm/m/it/10 ): [][][] \OT1/ptm/m/n/10 With three
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 349--350
+Underfull \hbox (badness 10000) in paragraph at lines 346--347
 \OT1/ptm/m/n/10 ori-en-ta-tions whose gra-di-ent vec-tors $\OMS/cmsy/m/n/10 f[]
 \OML/cmm/m/it/10 ; []; []\OMS/cmsy/m/n/10 g$ \OT1/ptm/m/n/10 are
  []
 
 
-Underfull \hbox (badness 3547) in paragraph at lines 349--350
+Underfull \hbox (badness 3547) in paragraph at lines 346--347
 \OT1/ptm/m/n/10 lin-early independent---which re-quires non-coplanar LED
  []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 352.
+(hyperref)                removing `math shift' on input line 349.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ge' on input line 352.
+(hyperref)                removing `\ge' on input line 349.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 352.
+(hyperref)                removing `math shift' on input line 349.
 
 [5]
 <Figures/IV. Optimization/DEB_violin_comparison.pdf, id=428, 432.61626pt x 236.
@@ -717,41 +720,41 @@ File: Figures/IV. Optimization/DEB_violin_comparison.pdf Graphic file (type pdf
 )
 <use Figures/IV. Optimization/DEB_violin_comparison.pdf>
 Package pdftex.def Info: Figures/IV. Optimization/DEB_violin_comparison.pdf  us
-ed on input line 448.
+ed on input line 445.
 (pdftex.def)             Requested size: 252.0pt x 137.98618pt.
 <Figures/IV. Optimization/DEB_heatmap_K5.pdf, id=429, 242.9075pt x 339.2675pt>
 File: Figures/IV. Optimization/DEB_heatmap_K5.pdf Graphic file (type pdf)
 <use Figures/IV. Optimization/DEB_heatmap_K5.pdf>
 Package pdftex.def Info: Figures/IV. Optimization/DEB_heatmap_K5.pdf  used on i
-nput line 456.
+nput line 453.
 (pdftex.def)             Requested size: 252.0pt x 351.96535pt.
  [6 <./Figures/IV. Optimization/DEB_violin_comparison.pdf>]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 5
-02.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 4
+99.
 
 (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 501--503
+Underfull \hbox (badness 10000) in paragraph at lines 498--500
 \OT1/ptm/m/n/10 To solve [], we repa-ram-e-ter-ize the di-rec-tion
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 501--503
+Underfull \hbox (badness 10000) in paragraph at lines 498--500
 \OT1/ptm/m/n/10 in spher-i-cal co-or-di-nates $\OT1/cmr/m/n/10 (\OML/cmm/m/it/1
 0 ^^R[]; ^^^[]\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/10 so that $\OT1/cmr/bx/n/10 v \O
 T1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 3058) in paragraph at lines 501--503
+Underfull \hbox (badness 3058) in paragraph at lines 498--500
 \OT1/cmr/m/n/10 [[] \OML/cmm/m/it/10 ^^R[] [] ^^^[];  [] ^^R[] [] ^^^[];  \OMS/
 cmsy/m/n/10 ^^@ [] \OML/cmm/m/it/10 ^^R[]\OT1/cmr/m/n/10 ][]$\OT1/ptm/m/n/10 , 
 which sat-is-fies
  []
 
 
-Underfull \hbox (badness 5345) in paragraph at lines 501--503
+Underfull \hbox (badness 5345) in paragraph at lines 498--500
 \OT1/pcr/m/n/10 lsqnonlin\OT1/ptm/m/n/10 ), which uses the Gauss--Newton Hes-si
 an
  []
@@ -763,7 +766,7 @@ File: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf Graphic file (type pdf
 )
 <use Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf>
 Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf  us
-ed on input line 517.
+ed on input line 514.
 (pdftex.def)             Requested size: 252.0pt x 184.19844pt.
 <Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf, id=538, 300.12125pt x 
 223.83624pt>
@@ -771,17 +774,17 @@ File: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf Graphic file (type
  pdf)
 <use Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf>
 Package pdftex.def Info: Figures/IV. Optimization/Bound_vs_SNR_envelope_rms.pdf
-  used on input line 524.
+  used on input line 521.
 (pdftex.def)             Requested size: 252.0pt x 187.95285pt.
 
-Underfull \hbox (badness 2393) in paragraph at lines 546--547
+Underfull \hbox (badness 2393) in paragraph at lines 543--544
  \OT1/ptm/m/it/10 1) Lam-ber-tian Power Ra-tios and Ho-mo-ge-neous Con-
  []
 
 [8 <./Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms.pdf> <./Figures/IV. Optimi
 zation/Bound_vs_SNR_envelope_rms.pdf>]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 703.
+put line 700.
  [9]
 <Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf, id=699
 , 285.065pt x 191.71625pt>
@@ -789,10 +792,10 @@ File: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf Gr
 aphic file (type pdf)
 <use Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf>
 Package pdftex.def Info: Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt10
-0_sig5_max30.pdf  used on input line 861.
+0_sig5_max30.pdf  used on input line 858.
 (pdftex.def)             Requested size: 252.0pt x 169.47725pt.
 
-Underfull \hbox (badness 2310) in paragraph at lines 871--873
+Underfull \hbox (badness 2310) in paragraph at lines 868--870
  []\OT1/ptm/m/it/10 GLS: [] \OT1/ptm/m/n/10 From []--[], the full co-vari-ance 
 $\OT1/cmr/bx/n/10 ^^F[] \OMS/cmsy/m/n/10 2
  []
@@ -802,7 +805,7 @@ $\OT1/cmr/bx/n/10 ^^F[] \OMS/cmsy/m/n/10 2
 File: Figures/VII.Simulations/Fig_Time.png Graphic file (type png)
 <use Figures/VII.Simulations/Fig_Time.png>
 Package pdftex.def Info: Figures/VII.Simulations/Fig_Time.png  used on input li
-ne 884.
+ne 881.
 (pdftex.def)             Requested size: 252.0pt x 188.8454pt.
 <Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png, id=727, 285.34605pt 
 x 190.0701pt>
@@ -810,7 +813,7 @@ File: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png Graphic file (ty
 pe png)
 <use Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png>
 Package pdftex.def Info: Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.p
-ng  used on input line 899.
+ng  used on input line 896.
 (pdftex.def)             Requested size: 252.0pt x 167.85672pt.
  [11 <./Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30.pdf>
  <./Figures/VII.Simulations/Fig_Time.png (PNG copy)>]
@@ -819,11 +822,11 @@ t>
 File: Figures/VII.Simulations/Fig_Comparison_3D.png Graphic file (type png)
 <use Figures/VII.Simulations/Fig_Comparison_3D.png>
 Package pdftex.def Info: Figures/VII.Simulations/Fig_Comparison_3D.png  used on
- input line 935.
+ input line 932.
 (pdftex.def)             Requested size: 252.0pt x 176.97403pt.
  [12 <./Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png (PNG copy)> <.
 /Figures/VII.Simulations/Fig_Comparison_3D.png (PNG copy)>]
-Underfull \hbox (badness 1642) in paragraph at lines 948--949
+Underfull \hbox (badness 1642) in paragraph at lines 945--946
 \OT1/ptm/m/n/10 the best ac-cu-racy (nearly match-ing the bound) but re-
  []
 
@@ -833,7 +836,7 @@ File: Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png Graphic file (type png)
 
 <use Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png>
 Package pdftex.def Info: Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png  use
-d on input line 953.
+d on input line 950.
 (pdftex.def)             Requested size: 226.79846pt x 188.36716pt.
 <Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png, id=787, 231.7458pt x 191.27
 46pt>
@@ -841,73 +844,73 @@ File: Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png Graphic file (type png)
 
 <use Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png>
 Package pdftex.def Info: Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png  use
-d on input line 955.
+d on input line 952.
 (pdftex.def)             Requested size: 226.79846pt x 187.19972pt.
 
-Underfull \hbox (badness 2689) in paragraph at lines 966--967
-[][]\OT1/ptm/m/n/10 The LOS chan-nel model also de-lim-its the receiver-
+Underfull \hbox (badness 2689) in paragraph at lines 963--964
+[]\OT1/ptm/m/n/10 The LOS chan-nel model also de-lim-its the receiver-
  []
 
 [13 <./Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png (PNG copy)> <./Figures
 /VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png (PNG copy)>]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\hbox' on input line 987.
+(hyperref)                removing `\hbox' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathsurround' on input line 987.
+(hyperref)                removing `\mathsurround' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\z@' on input line 987.
+(hyperref)                removing `\z@' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\unskip' on input line 987.
+(hyperref)                removing `\unskip' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@@italiccorr' on input line 987.
+(hyperref)                removing `\@@italiccorr' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\hbox' on input line 1023.
+(hyperref)                removing `\hbox' on input line 1020.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathsurround' on input line 1023.
+(hyperref)                removing `\mathsurround' on input line 1020.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\z@' on input line 1023.
+(hyperref)                removing `\z@' on input line 1020.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\unskip' on input line 1023.
+(hyperref)                removing `\unskip' on input line 1020.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@@italiccorr' on input line 1023.
+(hyperref)                removing `\@@italiccorr' on input line 1020.
 
-(build/main_tracking.bbl [14]) [15] [16
+(build/main.bbl [14]) [15] [16
 
-] (build/main_tracking.aux)
+] (build/main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-Package rerunfilecheck Info: File `main_tracking.out' has not changed.
+Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 03D1F40ADEB094AE481FCBF58FDF880C;9347.
  ) 
 Here is how much of TeX's memory you used:
- 14414 strings out of 467525
- 232791 string characters out of 5423209
- 695333 words of memory out of 5000000
- 42895 multiletter control sequences out of 15000+600000
+ 14412 strings out of 467525
+ 232563 string characters out of 5423209
+ 695245 words of memory out of 5000000
+ 42893 multiletter control sequences out of 15000+600000
  681592 words of font info for 151 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,19n,79p,1760b,588s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,18n,79p,1751b,588s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
 live/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><c:/texlive/2026/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2026/texmf-dist
@@ -940,7 +943,7 @@ pe1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/ut
 mb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texl
 ive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dis
 t/fonts/type1/urw/times/utmri8a.pfb>
-Output written on build/main_tracking.pdf (16 pages, 2759335 bytes).
+Output written on build/main.pdf (16 pages, 2758966 bytes).
 PDF statistics:
  1038 PDF objects out of 1200 (max. 8388607)
  869 compressed objects within 9 object streams
