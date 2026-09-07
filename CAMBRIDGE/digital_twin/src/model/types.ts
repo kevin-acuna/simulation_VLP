@@ -39,7 +39,18 @@ export interface ReceiverConfig {
   rotorsSpinning: boolean
 }
 
+export type MotionPattern = 'circle' | 'figure-eight' | 'raster'
+
+export interface MotionConfig {
+  pattern: MotionPattern
+  extentM: number
+  altitudeM: number
+  speedMps: number
+  loop: boolean
+}
+
 export interface TwinConfig {
+  motion: MotionConfig
   receiver: ReceiverConfig
   room: RoomConfig
   lighting: LightingConfig
@@ -64,6 +75,7 @@ export interface SceneProps {
   onSelect: (id: string | null, inspect?: boolean) => void
   onReceiverPreview: (position: WorldPosition) => void
   onReceiverCommit: (position: WorldPosition | null) => void
+  onReceiverDragStart: (position: WorldPosition) => void
   view: CameraView
   cameraReset: number
   framing: CameraFraming

@@ -8,7 +8,9 @@ import {
   normalizeConfig,
   toScenePosition,
 } from './config'
-import type { LedLayout, ReceiverPlatform, ThemeId, TwinConfig, WorldPosition } from './types'
+import { createMotionConfig, normalizeMotionConfig } from './motion'
+import { getReceiverBounds } from './receiver'
+import type { LedLayout, MotionPattern, ReceiverPlatform, ThemeId, TwinConfig, WorldPosition } from './types'
 
 const themes: ThemeId[] = ['chalk', 'white', 'sage', 'sand', 'mist', 'rose']
 const layouts: LedLayout[] = ['grid', 'ring', 'line']
@@ -20,6 +22,7 @@ function deepFreeze(config: TwinConfig): TwinConfig {
   Object.freeze(config.room)
   Object.freeze(config.receiver.position)
   Object.freeze(config.receiver)
+  Object.freeze(config.motion)
   Object.freeze(config.lighting)
   Object.freeze(config.optical.noise)
   Object.freeze(config.optical)
@@ -31,9 +34,10 @@ function deepFreeze(config: TwinConfig): TwinConfig {
 }
 
 describe('default configuration', () => {
-  it('uses the exact room, receiver, lighting, optical, display, appearance, and storage defaults', () => {
+  it('uses the exact room, receiver, motion, lighting, optical, display, appearance, and storage defaults', () => {
     expect(createDefaultConfig()).toEqual({
       optical: createOpticalParameters(),
+      motion: createMotionConfig(),
       room: { width: 3, depth: 3, height: 2 },
       receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true },
       lighting: {
@@ -154,7 +158,7 @@ describe('normalization', () => {
   )
 
   it.each([null, [], false, 'broken', 27])('handles invalid nested sections %s', (value) => {
-    expect(normalizeConfig({ room: value, receiver: value, lighting: value, optical: value, positions: value, display: value, appearance: value }))
+    expect(normalizeConfig({ room: value, receiver: value, motion: value, lighting: value, optical: value, positions: value, display: value, appearance: value }))
       .toEqual(createDefaultConfig())
   })
 
@@ -270,7 +274,7 @@ describe('normalization', () => {
 
 describe('optical configuration and migration', () => {
   it('adds science defaults to a legacy config without changing any existing field or stored byte', () => {
-    const legacy: Omit<TwinConfig, 'optical'> = {
+    const legacy: Omit<TwinConfig, 'optical' | 'motion'> = {
       room: { width: 7, depth: 5, height: 3.1 },
       receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'drone', rotorsSpinning: false },
       lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
@@ -281,7 +285,7 @@ describe('optical configuration and migration', () => {
     const serialized = JSON.stringify(legacy)
     const stored = { [STORAGE_KEY]: serialized }
     const migrated = normalizeConfig(JSON.parse(stored[STORAGE_KEY]))
-    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters() })
+    expect(migrated).toEqual({ ...legacy, motion: createMotionConfig(), optical: createOpticalParameters() })
     expect(normalizeConfig(migrated)).toEqual(migrated)
     expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
     expect(stored[STORAGE_KEY]).toBe(serialized)
@@ -344,10 +348,89 @@ describe('optical configuration and migration', () => {
   })
 })
 
+describe('motion configuration and migration', () => {
+  it('adds motion defaults to old persisted data without changing any other field or stored byte', () => {
+    const legacy: Omit<TwinConfig, 'motion'> = {
+      room: { width: 7, depth: 5, height: 3.1 },
+      receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'drone', rotorsSpinning: false },
+      optical: normalizeOpticalParameters({ halfPowerAngleDeg: 60, noise: { enabled: true, seed: 42 } }),
+      lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
+      positions: { 'LED-03': [0.2, -0.4] },
+      display: { grid: true, dimensions: false, labels: false, beams: true, ceiling: true },
+      appearance: { theme: 'mist' },
+    }
+    const serialized = JSON.stringify(legacy)
+    const stored = { [STORAGE_KEY]: serialized }
+    const migrated = normalizeConfig(JSON.parse(stored[STORAGE_KEY]))
+    expect(migrated).toEqual({ ...legacy, motion: createMotionConfig() })
+    expect(normalizeConfig(migrated)).toEqual(migrated)
+    expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
+    expect(stored[STORAGE_KEY]).toBe(serialized)
+    expect(JSON.stringify(legacy)).toBe(serialized)
+    expect(getFixtures(migrated)).toEqual(getFixtures(normalizeConfig(legacy)))
+  })
+
+  it.each(['circle', 'figure-eight', 'raster'] satisfies MotionPattern[])('round trips frozen %s settings without changing geometry, receiver, or science', (pattern) => {
+    const baseline = deepFreeze(normalizeConfig({
+      room: { width: 7, depth: 5, height: 3.1 },
+      receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'drone', rotorsSpinning: false },
+      optical: { halfPowerAngleDeg: 60, noise: { enabled: true, seed: 42 } },
+      positions: { 'LED-03': [0.2, -0.4] },
+      appearance: { theme: 'mist' },
+    }))
+    const motion = { pattern, extentM: 3.5, altitudeM: 1.23, speedMps: 0.375, loop: false }
+    const saved = deepFreeze({ ...baseline, motion })
+    const serialized = JSON.stringify(saved)
+    const normalized = normalizeConfig(saved)
+    expect(normalized).toEqual(saved)
+    expect(normalized.motion).not.toBe(saved.motion)
+    expect(normalizeConfig(normalized)).toEqual(saved)
+    expect(normalizeConfig(JSON.parse(serialized))).toEqual(saved)
+    expect(JSON.stringify(saved)).toBe(serialized)
+    expect(getFixtures(normalized)).toEqual(getFixtures(baseline))
+    expect(getTotalPower(normalized)).toBe(getTotalPower(baseline))
+    expect(normalized.optical).toEqual(baseline.optical)
+    expect(normalized.receiver).toEqual(baseline.receiver)
+  })
+
+  it.each(platforms)('normalizes motion only after the room and %s receiver', (platform) => {
+    for (const altitudeM of [-100, 100]) {
+      const motion = { pattern: 'raster', extentM: 4, altitudeM, speedMps: 0.1, loop: false }
+      const normalized = normalizeConfig({ room: { width: 0, depth: 30, height: 0 }, receiver: { platform, yaw: 405 }, motion })
+      expect(normalized.room).toEqual({ width: 2, depth: 10, height: 1.8 })
+      expect(normalized.receiver.yaw).toBe(45)
+      const bounds = getReceiverBounds(normalized.room, platform, 45)
+      expect(normalized.motion.altitudeM).toBe(altitudeM < 0 ? bounds.z[0] : bounds.z[1])
+      expect(normalized.motion.extentM).toBe(4)
+      expect(normalized.motion).toEqual(normalizeMotionConfig(motion, normalized.room, normalized.receiver))
+    }
+  })
+
+  it('ignores inherited and accessor motion sections and drops transient playback state', () => {
+    expect(normalizeConfig(Object.create({ motion: { pattern: 'raster', loop: false } }))).toEqual(createDefaultConfig())
+    expect(normalizeConfig(Object.defineProperty({}, 'motion', { get() { throw new Error('accessor executed') } }))).toEqual(createDefaultConfig())
+    expect(normalizeConfig({ motion: Object.create({ pattern: 'circle', speedMps: 1 }) })).toEqual(createDefaultConfig())
+    expect(normalizeConfig({ motion: { ...createMotionConfig(), playing: true, progress: 12, route: [[1, 2, 3]] } })).toEqual(createDefaultConfig())
+  })
+
+  it('keeps default and normalized motion objects independent', () => {
+    const first = createDefaultConfig()
+    const second = createDefaultConfig()
+    first.motion.extentM = 2
+    expect(second.motion).toEqual(createMotionConfig())
+    expect(first.motion).not.toBe(second.motion)
+    const normalized = normalizeConfig(first)
+    normalized.motion.loop = false
+    expect(first.motion.loop).toBe(true)
+    expect(normalized.motion).not.toBe(first.motion)
+  })
+})
+
 describe('appearance normalization and migration', () => {
   it.each(themes)('preserves %s and all saved settings through normalization and a JSON round trip', (theme) => {
     const saved = deepFreeze({
       optical: createOpticalParameters(),
+      motion: createMotionConfig(),
       appearance: { theme },
       room: { width: 7, depth: 5, height: 3.1 },
       receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'cylinder', rotorsSpinning: true },
@@ -372,7 +455,7 @@ describe('appearance normalization and migration', () => {
     }
     const stored = { [STORAGE_KEY]: JSON.stringify(legacy) }
     const migrated = normalizeConfig(JSON.parse(stored['cambridge-digital-twin:v1']))
-    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: 'chalk' } })
+    expect(migrated).toEqual({ ...legacy, motion: createMotionConfig(), optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: 'chalk' } })
     expect(getFixtures(migrated)[0].position).toEqual([-1.2, 0.3, 3.1])
     expect(getFixtures(migrated)[5].position).toEqual([0.2, -0.4, 3.1])
     expect(getTotalPower(migrated)).toBeCloseTo(0.762, 12)
@@ -393,7 +476,7 @@ describe('appearance normalization and migration', () => {
     }
     const before = JSON.stringify(saved)
     const migrated = normalizeConfig(saved)
-    expect(migrated).toEqual({ ...saved, optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: expectedTheme } })
+    expect(migrated).toEqual({ ...saved, motion: createMotionConfig(), optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true }, appearance: { theme: expectedTheme } })
     expect(normalizeConfig(JSON.parse(before))).toEqual(migrated)
     expect(getFixtures(migrated)[0].position).toEqual([-1.2, 0.3, 3.1])
     expect(getFixtures(migrated)[5].position).toEqual([0.2, -0.4, 3.1])
@@ -462,7 +545,7 @@ describe('receiver configuration and migration', () => {
     const serialized = JSON.stringify(legacy)
     const stored = { [STORAGE_KEY]: serialized }
     const migrated = normalizeConfig(JSON.parse(stored['cambridge-digital-twin:v1']))
-    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true } })
+    expect(migrated).toEqual({ ...legacy, motion: createMotionConfig(), optical: createOpticalParameters(), receiver: { position: [0, 0, 0.3], yaw: 0, platform: 'cylinder', rotorsSpinning: true } })
     expect(normalizeConfig(migrated)).toEqual(migrated)
     expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
     expect(stored[STORAGE_KEY]).toBe(serialized)
@@ -542,7 +625,7 @@ describe('receiver platform configuration and migration', () => {
     const serialized = JSON.stringify(legacy)
     const stored = { [STORAGE_KEY]: serialized }
     const migrated = normalizeConfig(JSON.parse(stored[STORAGE_KEY]))
-    expect(migrated).toEqual({ ...legacy, optical: createOpticalParameters(), receiver: { ...legacy.receiver, platform: 'cylinder', rotorsSpinning: true } })
+    expect(migrated).toEqual({ ...legacy, motion: createMotionConfig(), optical: createOpticalParameters(), receiver: { ...legacy.receiver, platform: 'cylinder', rotorsSpinning: true } })
     expect(normalizeConfig(JSON.parse(JSON.stringify(migrated)))).toEqual(migrated)
     expect(getFixtures(migrated)).toEqual(getFixtures(normalizeConfig(legacy)))
     expect(getTotalPower(migrated)).toBeCloseTo(0.762, 12)
@@ -554,6 +637,7 @@ describe('receiver platform configuration and migration', () => {
     for (const rotorsSpinning of [false, true]) {
       const saved = deepFreeze({
         optical: createOpticalParameters(),
+        motion: createMotionConfig(),
         room: { width: 7, depth: 5, height: 3.1 },
         receiver: { position: [1.234567, -0.654321, 1.123456], yaw: 123.456789, platform, rotorsSpinning },
         lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },

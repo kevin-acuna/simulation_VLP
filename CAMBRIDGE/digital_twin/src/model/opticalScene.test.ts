@@ -4,6 +4,7 @@ import type { NoiseParameters, OpticalScene } from '../science/types'
 import { createDefaultConfig, getFixtures, normalizeConfig, STORAGE_KEY } from './config'
 import { opticalScenarioKey, toOpticalScene } from './opticalScene'
 import { getPhotodiodePosition } from './receiver'
+import { createMotionConfig } from './motion'
 import type { LedLayout, ReceiverPlatform, TwinConfig, WorldPosition } from './types'
 
 const platforms: ReceiverPlatform[] = ['cylinder', 'drone']
@@ -129,7 +130,7 @@ describe('toOpticalScene', () => {
   })
 
   it('preserves legacy physical settings, adds optical defaults, and adapts the migrated PD pose', () => {
-    const legacy: Omit<TwinConfig, 'optical'> = {
+    const legacy: Omit<TwinConfig, 'optical' | 'motion'> = {
       room: { width: 7, depth: 5, height: 3.1 },
       receiver: { position: [1.2, -0.6, 1.1], yaw: 73.25, platform: 'drone', rotorsSpinning: false },
       lighting: { count: 7, shape: 'square', layout: 'ring', power: 0.127, temperature: 5300, spacing: 0.375 },
@@ -140,7 +141,7 @@ describe('toOpticalScene', () => {
     const serialized = JSON.stringify(legacy)
     const stored = { [STORAGE_KEY]: serialized }
     const migrated = normalizeConfig(JSON.parse(stored[STORAGE_KEY]))
-    const expected = { ...legacy, optical: createOpticalParameters() }
+    const expected = { ...legacy, optical: createOpticalParameters(), motion: createMotionConfig() }
     expect(migrated).toEqual(expected)
     const scene = toOpticalScene(migrated)
     expect(scene).toEqual(toOpticalScene(expected))

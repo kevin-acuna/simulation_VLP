@@ -1,5 +1,6 @@
 import { createOpticalParameters, normalizeOpticalParameters } from '../science'
 import { DEFAULT_THEME, isThemeId } from '../theme/themes'
+import { createMotionConfig, normalizeMotionConfig } from './motion'
 import { createReceiver, normalizeReceiver } from './receiver'
 import type { LedFixture, TwinConfig, WorldPosition } from './types'
 
@@ -23,6 +24,7 @@ export function createDefaultConfig(): TwinConfig {
   return {
     room,
     receiver: createReceiver(room),
+    motion: createMotionConfig(),
     optical: createOpticalParameters(),
     lighting: {
       count: 4,
@@ -51,7 +53,7 @@ function record(value: unknown): Record<string, unknown> {
 }
 
 function own(source: Record<string, unknown>, key: string): unknown {
-  return Object.prototype.hasOwnProperty.call(source, key) ? source[key] : undefined
+  return Object.getOwnPropertyDescriptor(source, key)?.value
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {
@@ -89,6 +91,7 @@ export function normalizeConfig(input: unknown): TwinConfig {
   result.room.depth = finiteNumber(own(room, 'depth'), result.room.depth, 2, 10)
   result.room.height = finiteNumber(own(room, 'height'), result.room.height, 1.8, 5)
   result.receiver = normalizeReceiver(own(source, 'receiver'), result.room)
+  result.motion = normalizeMotionConfig(own(source, 'motion'), result.room, result.receiver)
 
   result.lighting.count = Math.round(finiteNumber(own(lighting, 'count'), result.lighting.count, 1, 9))
   result.lighting.power = finiteNumber(own(lighting, 'power'), result.lighting.power, 0, 2)

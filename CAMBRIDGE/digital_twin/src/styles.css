@@ -240,10 +240,26 @@ kbd { font-family: inherit; font-size: 8px; padding: 4px 6px; border: 1px solid 
 .optical-settings .optical-readouts dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; }
 .optical-settings .optical-assumptions { padding-bottom: 18px; }
 .optical-settings .optical-reset-note { text-align: center; }
-.rss-toggle { position: absolute; top: 16px; right: 16px; z-index: 5; min-width: 40px; height: 40px; padding: 0 11px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border); border-radius: 9px; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(16px); box-shadow: 0 5px 20px color-mix(in srgb, var(--shadow) 6%, transparent), 0 1px 2px color-mix(in srgb, var(--shadow) 4%, transparent); color: var(--muted); font-size: 10px; font-weight: 600; }
-.rss-toggle:hover { background: var(--accent-hover); color: var(--accent); }
-.rss-toggle.active, .rss-toggle[aria-expanded='true'] { background: var(--accent-soft); border-color: var(--border-strong); color: var(--accent); }
-.rss-panel { --rss-series-1: #2675b0; --rss-series-2: #b86020; --rss-series-3: #338255; --rss-series-4: #9262b8; --rss-series-5: #c14b58; --rss-series-6: #138d99; --rss-series-7: #a48220; --rss-series-8: #b14b93; --rss-series-9: #79634c; position: absolute; z-index: 3; right: 16px; bottom: 84px; width: min(460px, calc(100% - 32px)); height: 340px; max-height: max(0px, calc(100dvh - 160px)); min-height: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--surface) 97%, transparent); backdrop-filter: blur(16px); box-shadow: 0 8px 30px color-mix(in srgb, var(--shadow) 10%, transparent); color: var(--text); }
+.analysis-toggles { position: absolute; top: 16px; right: 16px; z-index: 5; display: flex; gap: 8px; pointer-events: none; }
+.rss-toggle, .plan-toggle { position: static; min-width: 40px; height: 40px; padding: 0 11px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border); border-radius: 9px; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(16px); box-shadow: 0 5px 20px color-mix(in srgb, var(--shadow) 6%, transparent), 0 1px 2px color-mix(in srgb, var(--shadow) 4%, transparent); color: var(--muted); font-size: 10px; font-weight: 600; pointer-events: auto; }
+.rss-toggle:hover, .plan-toggle:hover { background: var(--accent-hover); color: var(--accent); }
+.rss-toggle.active, .rss-toggle[aria-expanded='true'], .plan-toggle.active, .plan-toggle[aria-expanded='true'] { background: var(--accent-soft); border-color: var(--border-strong); color: var(--accent); }
+.analysis-panels { position: absolute; z-index: 3; right: 16px; bottom: 84px; width: min(460px, calc(100% - 32px)); max-height: max(0px, calc(100dvh - 160px)); display: flex; flex-direction: column; gap: 12px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; pointer-events: auto; }
+.analysis-panels > * { flex-shrink: 0; pointer-events: auto; }
+.rss-panel, .plan-panel { --rss-series-1: #2675b0; --rss-series-2: #b86020; --rss-series-3: #338255; --rss-series-4: #9262b8; --rss-series-5: #c14b58; --rss-series-6: #138d99; --rss-series-7: #a48220; --rss-series-8: #b14b93; --rss-series-9: #79634c; position: static; width: 100%; min-width: 0; min-height: 0; flex-shrink: 0; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--surface) 97%, transparent); backdrop-filter: blur(16px); box-shadow: 0 8px 30px color-mix(in srgb, var(--shadow) 10%, transparent); color: var(--text); pointer-events: auto; }
+.rss-panel { overflow: hidden; }
+.rss-panel.compact { min-height: 245px; }
+.rss-panel.expanded { height: 340px; }
+.rss-panel.compact .rss-heading { padding: 8px 12px 4px; }
+.rss-panel.compact .rss-heading h2 { font-size: 11px; }
+.rss-panel .rss-heading h2 > span { color: var(--muted); font-weight: 400; }
+.rss-heading-actions { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.rss-details-toggle { display: inline-flex; align-items: center; gap: 4px; min-height: 27px; padding: 4px 5px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); font-size: 9px; }
+.rss-details-toggle:hover { background: var(--accent-hover); color: var(--accent); }
+.rss-details-toggle:focus-visible { outline-offset: 2px; }
+.rss-panel.compact .rss-body { padding: 0 12px 8px; }
+.rss-color-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 12px; list-style: none; padding: 0; margin: 5px 0 0; font-size: 9px; line-height: 12px; }
+.rss-color-legend li { display: inline-flex; align-items: center; gap: 5px; overflow-wrap: anywhere; }
 .rss-panel .rss-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px 9px; flex-shrink: 0; }
 .rss-panel .rss-heading h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: -.1px; }
 .rss-panel .rss-heading p { margin: 5px 0 0; font-size: 8px; color: var(--muted); }
@@ -281,11 +297,50 @@ kbd { font-family: inherit; font-size: 8px; padding: 4px 6px; border: 1px solid 
 .rss-panel .rss-ideal-value, .rss-panel .rss-waiting { color: var(--muted); font-size: 8px; }
 .rss-panel .rss-footnote { margin: 9px 0 0; color: var(--muted); font-size: 8px; line-height: 1.6; }
 .rss-panel .rss-message { margin: 0 0 8px; padding: 8px 10px; background: var(--surface-muted); border: 1px solid var(--border-strong); border-radius: 5px; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
+.plan-panel { min-height: 300px; }
+.plan-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 14px; flex-shrink: 0; }
+.plan-heading h2 { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: -.1px; }
+.plan-close { width: 30px; height: 30px; flex-shrink: 0; }
+.plan-close:focus-visible { outline-offset: 2px; }
+.plan-figure { margin: 0; padding: 0 12px 12px; }
+.plan-chart-svg { display: block; width: 100%; height: 222px; }
+.plan-chart-svg text { font-family: inherit; font-variant-numeric: tabular-nums; }
+.plan-room { fill: var(--surface-muted); stroke: var(--border-strong); stroke-width: 1; }
+.plan-gridline { stroke: var(--border); stroke-width: .6; }
+.plan-axis { stroke: var(--border-strong); stroke-width: .7; }
+.plan-tick-mark { stroke: var(--border-strong); stroke-width: .7; }
+.plan-tick, .plan-axis-label { fill: var(--muted); font-size: 9px; }
+.plan-axis-label { font-weight: 500; }
+.plan-route { fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 4 4; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.plan-led-point { fill: var(--rss-channel-color); stroke: var(--surface); stroke-width: 1.2; }
+.plan-marker-label { fill: var(--text); font-size: 9px; paint-order: stroke; stroke: var(--surface-muted); stroke-width: 3px; stroke-linejoin: round; }
+.plan-receiver-point { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.plan-rx-label { fill: var(--ink); font-weight: 600; }
+.plan-estimate-point { fill: none; stroke: var(--rss-channel-color); stroke-width: 1.8; stroke-linecap: round; }
+.plan-caption { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 12px; padding-top: 6px; font-size: 9px; line-height: 12px; color: var(--muted); }
+.plan-caption output { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.plan-route-key { display: inline-flex; align-items: center; gap: 5px; }
+.plan-route-key i { width: 16px; border-top: 1px dashed var(--accent); }
+.plan-estimate-legend { display: flex; flex-wrap: wrap; gap: 5px 12px; list-style: none; margin: 8px 0 0; padding: 0; color: var(--muted); font-size: 9px; }
+.plan-estimate-legend li { display: inline-flex; align-items: center; gap: 5px; }
+.plan-estimate-legend li > span { color: var(--rss-channel-color); font-size: 14px; }
+.motion-settings .section-description { margin-bottom: 16px; }
+.motion-settings .motion-patterns { gap: 6px; }
+.motion-patterns .choice { min-width: 0; gap: 6px; padding: 12px 4px; }
+.motion-settings .toggle-row { gap: 12px; }
+.motion-settings .toggle-row small { line-height: 1.6; }
+.motion-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+.motion-actions button { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 32px; width: auto; margin: 0; padding: 7px 10px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface-muted); color: var(--text); font-size: 9px; }
+.motion-actions button:not(:disabled):hover { background: var(--accent-hover); border-color: var(--border-strong); color: var(--accent); }
+.motion-actions button.active, .motion-actions button[aria-pressed='true'] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.viewport-toolbar .motion-play.active, .viewport-toolbar .motion-play[aria-pressed='true'] { background: var(--accent-soft); color: var(--accent); }
+.viewport-toolbar .motion-play:disabled { background: transparent; color: var(--muted); opacity: .35; }
 @media (max-width: 600px) {
-  .settings-toggle.active ~ .rss-toggle { visibility: hidden; pointer-events: none; }
-  .rss-panel { right: 12px; width: calc(100% - 24px); height: clamp(250px, 46dvh, 340px); max-height: max(0px, calc(100dvh - 160px)); }
-  .rss-panel .rss-heading { padding: 11px 12px 8px; }
-  .rss-panel .rss-actions { padding-left: 12px; padding-right: 12px; }
+  .settings-toggle.active ~ .analysis-toggles, .settings-toggle[aria-expanded='true'] ~ .analysis-toggles { visibility: hidden; }
+  .settings-toggle.active ~ .analysis-toggles > *, .settings-toggle[aria-expanded='true'] ~ .analysis-toggles > * { pointer-events: none; }
+  .analysis-panels { right: 12px; width: calc(100% - 24px); max-height: max(0px, calc(100dvh - 154px)); }
+  .rss-panel .rss-heading { padding: 11px 12px 8px; gap: 8px; }
+  .rss-panel .rss-actions { padding-left: 12px; padding-right: 12px; flex-wrap: wrap; }
   .rss-panel .rss-channels { column-gap: 10px; }
 }
 @media (max-width: 360px) {

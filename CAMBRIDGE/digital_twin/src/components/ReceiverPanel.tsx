@@ -1,11 +1,16 @@
 import { Circle, Crosshair, Drone, Ruler } from 'lucide-react'
 import { Choice, RangeField, Toggle } from './Controls'
+import MotionSettings from './MotionSettings'
 import { createReceiver, DRONE_GEOMETRY, getPhotodiodePosition, getReceiverBounds, getReceiverGeometry, RECEIVER_ID } from '../model/receiver'
 import type { ReceiverPlatform, TwinConfig, WorldPosition } from '../model/types'
 
 interface ReceiverPanelProps {
   config: TwinConfig
   onUpdate: (update: (previous: TwinConfig) => TwinConfig) => void
+  motionPlaying: boolean
+  onPlayMotion: () => void
+  onPauseMotion: () => void
+  onRestartMotion: () => void
 }
 
 function ReceiverDiagram({ platform }: { platform: ReceiverPlatform }) {
@@ -80,7 +85,7 @@ function ReceiverDiagram({ platform }: { platform: ReceiverPlatform }) {
   )
 }
 
-export default function ReceiverPanel({ config, onUpdate }: ReceiverPanelProps) {
+export default function ReceiverPanel({ config, onUpdate, motionPlaying, onPlayMotion, onPauseMotion, onRestartMotion }: ReceiverPanelProps) {
   const { receiver, room } = config
   const isDrone = receiver.platform === 'drone'
   const bounds = getReceiverBounds(room, receiver.platform, receiver.yaw)
@@ -102,7 +107,7 @@ export default function ReceiverPanel({ config, onUpdate }: ReceiverPanelProps) 
 
   return (
     <>
-      <section className="control-section receiver-platform">
+      <section className="control-section receiver-platform" onPointerDownCapture={onPauseMotion} onFocusCapture={onPauseMotion}>
         <Choice<ReceiverPlatform> label="PD platform" value={receiver.platform} options={[
           { value: 'cylinder', label: 'Cylinder', icon: <Circle size={20} /> },
           { value: 'drone', label: 'Drone', icon: <Drone size={20} /> },
@@ -114,7 +119,8 @@ export default function ReceiverPanel({ config, onUpdate }: ReceiverPanelProps) 
           </>
         )}
       </section>
-      <section className="control-section receiver-pose">
+      {isDrone && <MotionSettings config={config} onUpdate={onUpdate} playing={motionPlaying} onPlay={onPlayMotion} onPause={onPauseMotion} onRestart={onRestartMotion} />}
+      <section className="control-section receiver-pose" onPointerDownCapture={onPauseMotion} onFocusCapture={onPauseMotion}>
         <div className="section-title"><h3>Receiver pose</h3><span>{RECEIVER_ID}</span></div>
         <p className="section-description">Position is the body centre, relative to the floor centre. World coordinates in metres; Z points up.</p>
         <RangeField label="Receiver position · X" value={receiver.position[0]} min={bounds.x[0]} max={bounds.x[1]} step={0.01} digits={3} unit="m" onChange={(value) => setPosition(0, value)} />

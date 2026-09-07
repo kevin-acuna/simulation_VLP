@@ -1,5 +1,6 @@
-import { Pause, Play, RotateCcw, SlidersHorizontal, X } from 'lucide-react'
-import type { CSSProperties } from 'react'
+import { ChevronDown, ChevronUp, Pause, Play, RotateCcw, SlidersHorizontal, X } from 'lucide-react'
+import { useState } from 'react'
+import { channelStyle } from './chartSeries'
 import { MODEL_ID, toMicrowatts } from '../science'
 import type { OpticalParameters, OpticalScene, RssChannel } from '../science/types'
 import { useRssStream } from '../state/useRssStream'
@@ -19,12 +20,6 @@ const STATUS_LABELS: Record<RssChannel['status'], string> = {
   off: 'Off',
 }
 
-function channelStyle(id: string): CSSProperties {
-  const suffix = id.match(/(\d+)$/)
-  const index = suffix ? Number(suffix[1]) - 1 : Array.from(id).reduce((hash, character) => hash * 31 + character.charCodeAt(0) | 0, 0)
-  return { '--rss-channel-color': `var(--rss-series-${((index % 9) + 9) % 9 + 1})` } as CSSProperties
-}
-
 function formatPower(powerW: number): string {
   return Number.isFinite(powerW) ? `${toMicrowatts(powerW).toPrecision(6)} µW` : 'Unavailable'
 }
@@ -38,6 +33,7 @@ function formatTick(value: number): string {
 
 export default function RssPanel({ scene, parameters, onClose, onSettings }: RssPanelProps) {
   const { samples, paused, setPaused, clear, error } = useRssStream(scene, parameters.noise)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const noisy = parameters.noise.enabled
   const latest = samples.at(-1)
   const series = scene.emitters.map(({ id }) => ({
@@ -69,16 +65,19 @@ export default function RssPanel({ scene, parameters, onClose, onSettings }: Rss
   const hasPoints = series.some(({ points }) => points.length > 0)
 
   return (
-    <aside id="rss-chart" className="rss-panel" role="complementary" aria-label="RSS chart" data-model={MODEL_ID} data-sample-count={samples.length} data-time={latest?.time ?? 0} onKeyDown={(event) => { if (event.key === 'Escape') { event.stopPropagation(); onClose() } }}>
+    <aside id="rss-chart" className={`rss-panel ${detailsOpen ? 'expanded' : 'compact'}`} role="complementary" aria-label="RSS chart" data-model={MODEL_ID} data-sample-count={samples.length} data-time={latest?.time ?? 0} onKeyDown={(event) => { if (event.key === 'Escape') { event.stopPropagation(); onClose() } }}>
       <div className="rss-heading">
-        <div><h2>Received optical power</h2><p>{noisy ? 'LOS + AWGN' : 'LOS'}<span aria-hidden="true"> · </span>{paused ? 'Paused' : 'Live'}<span aria-hidden="true"> · </span>20 s window</p></div>
-        <button className="icon-button rss-close" aria-label="Close RSS chart" title="Close RSS chart" onClick={onClose}><X size={17} /></button>
+        <div><h2>{detailsOpen ? 'Received optical power' : <>RSS <span>/ µW</span></>}</h2>{detailsOpen && <p>{noisy ? 'LOS + AWGN' : 'LOS'}<span aria-hidden="true"> · </span>{paused ? 'Paused' : 'Live'}<span aria-hidden="true"> · </span>20 s window</p>}</div>
+        <div className="rss-heading-actions">
+          <button className="rss-details-toggle" aria-label={detailsOpen ? 'Hide RSS details' : 'Show RSS details'} aria-expanded={detailsOpen} onClick={() => setDetailsOpen((open) => !open)}>Details{detailsOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}</button>
+          <button className="icon-button rss-close" aria-label="Close RSS chart" title="Close RSS chart" onClick={onClose}><X size={17} /></button>
+        </div>
       </div>
-      <div className="rss-actions">
+      {detailsOpen && <div className="rss-actions">
         <button aria-label={paused ? 'Resume RSS trace' : 'Pause RSS trace'} onClick={() => setPaused(!paused)}>{paused ? <Play size={12} /> : <Pause size={12} />}{paused ? 'Resume' : 'Pause'}</button>
         <button aria-label="Clear RSS trace" onClick={clear}><RotateCcw size={12} />Clear</button>
         <button aria-label="Optical settings" onClick={onSettings}><SlidersHorizontal size={12} />Optical settings</button>
-      </div>
+      </div>}
       <div className="rss-body">
         {error && <p className="rss-message rss-error" role="alert">RSS unavailable: {error}</p>}
         <figure className="rss-chart-figure">
@@ -108,9 +107,9 @@ export default function RssPanel({ scene, parameters, onClose, onSettings }: Rss
             ))}
             {!hasPoints && <text x={CHART.left + plotWidth / 2} y={CHART.top + plotHeight / 2} textAnchor="middle" className="rss-empty-label">{error ? 'Trace unavailable' : paused ? 'Trace cleared · resume to sample' : scene.emitters.length ? 'Warming up…' : 'No LED channels'}</text>}
           </svg>
-          <figcaption className="rss-trace-key">{noisy ? <><span><i aria-hidden="true" />Measured RSS</span><span><i className="rss-key-ideal" aria-hidden="true" />Ideal LOS</span><span>Signed estimates are not clipped.</span></> : <span><i aria-hidden="true" />Ideal LOS received power</span>}</figcaption>
+          {detailsOpen && <figcaption className="rss-trace-key">{noisy ? <><span><i aria-hidden="true" />Measured RSS</span><span><i className="rss-key-ideal" aria-hidden="true" />Ideal LOS</span><span>Signed estimates are not clipped.</span></> : <span><i aria-hidden="true" />Ideal LOS received power</span>}</figcaption>}
         </figure>
-        <ul className="rss-channels" aria-label="Current received power by LED">
+        {detailsOpen ? <ul className="rss-channels" aria-label="Current received power by LED">
           {scene.emitters.map(({ id }) => {
             const channel = latest?.channels.find((entry) => entry.id === id)
             return <li key={id} className="rss-channel" style={channelStyle(id)}>
@@ -123,8 +122,10 @@ export default function RssPanel({ scene, parameters, onClose, onSettings }: Rss
               </div>
             </li>
           })}
-        </ul>
-        <p className="rss-footnote">20 Hz display rate, not a carrier waveform. Ideal LED channel separation. Direct LOS only; reflections and occlusion are not modelled.</p>
+        </ul> : <ul className="rss-color-legend" aria-label="LED color legend">
+          {scene.emitters.map(({ id }) => <li key={id} style={channelStyle(id)}><span className="rss-swatch" aria-hidden="true" />{id}</li>)}
+        </ul>}
+        {detailsOpen && <p className="rss-footnote">20 Hz display rate, not a carrier waveform. Ideal LED channel separation. Direct LOS only; reflections and occlusion are not modelled.</p>}
       </div>
     </aside>
   )

@@ -11,7 +11,7 @@ import { RECEIVER_ID } from '../model/receiver'
 import SceneGuides from './SceneGuides'
 import SceneLighting from './SceneLighting'
 
-export default function TestbedScene({ config, fixtures, selectedId, onSelect, onReceiverPreview, onReceiverCommit, view, cameraReset, framing }: SceneProps) {
+export default function TestbedScene({ config, fixtures, selectedId, onSelect, onReceiverPreview, onReceiverCommit, onReceiverDragStart, view, cameraReset, framing }: SceneProps) {
   const [dragging, setDragging] = useState(false)
   const { accent, muted } = getTheme(config.appearance.theme).colors
   const interior = view === 'perspective'
@@ -53,7 +53,7 @@ export default function TestbedScene({ config, fixtures, selectedId, onSelect, o
         ))}
         <SceneGuides room={config.room} display={{ ...config.display, dimensions: !interior && config.display.dimensions }} accent={accent} guideColor={muted} />
         <SceneLighting room={config.room} interior={interior} />
-        <Receiver receiver={config.receiver} room={config.room} selected={selectedId === RECEIVER_ID} view={view} cameraReset={cameraReset} accent={accent} guideColor={muted} onSelect={(inspect) => onSelect(RECEIVER_ID, inspect)} onPreview={onReceiverPreview} onCommit={onReceiverCommit} onDragChange={setDragging} />
+        <Receiver receiver={config.receiver} room={config.room} selected={selectedId === RECEIVER_ID} view={view} cameraReset={cameraReset} accent={accent} guideColor={muted} onSelect={(inspect) => onSelect(RECEIVER_ID, inspect)} onPreview={onReceiverPreview} onCommit={onReceiverCommit} onDragChange={(active) => { setDragging(active); if (active) onReceiverDragStart(config.receiver.position) }} />
         <CameraRig room={config.room} view={view} cameraReset={cameraReset} dimensions={config.display.dimensions} framing={framing} enabled={!dragging} />
       </Suspense>
     </Canvas>

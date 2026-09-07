@@ -171,7 +171,12 @@ export default function useReceiverDrag(options: ReceiverDragOptions) {
     }
     const cancel = (next: PointerEvent) => { if (next.pointerId === drag.pointerId) finish(true) }
     const blur = () => finish(true)
-    const keydown = (next: KeyboardEvent) => { if (next.key === 'Escape') finish(true) }
+    const keydown = (next: KeyboardEvent) => {
+      if (next.key !== 'Escape') return
+      next.preventDefault()
+      next.stopImmediatePropagation()
+      finish(true)
+    }
     const blockAdditionalPointer = (next: PointerEvent) => { if (next.pointerId !== drag.pointerId) next.stopPropagation() }
     window.addEventListener('pointermove', move, { capture: true, passive: false })
     window.addEventListener('pointerup', up, { capture: true, passive: false })

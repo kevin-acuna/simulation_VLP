@@ -24,9 +24,13 @@ interface ControlPanelProps {
   exported: boolean
   saved: boolean
   interior: boolean
+  motionPlaying: boolean
+  onPlayMotion: () => void
+  onPauseMotion: () => void
+  onRestartMotion: () => void
 }
 
-export default function ControlPanel({ config, fixtures, selectedId, tab, onTab, onSelect, onUpdate, onReset, onClose, onExport, exported, saved, interior }: ControlPanelProps) {
+export default function ControlPanel({ config, fixtures, selectedId, tab, onTab, onSelect, onUpdate, onReset, onClose, onExport, exported, saved, interior, motionPlaying, onPlayMotion, onPauseMotion, onRestartMotion }: ControlPanelProps) {
   const { room, lighting, display } = config
   const selected = fixtures.find((led) => led.id === selectedId)
   const closeButton = useRef<HTMLButtonElement>(null)
@@ -36,6 +40,7 @@ export default function ControlPanel({ config, fixtures, selectedId, tab, onTab,
   }, [])
 
   function setRoom(key: keyof RoomConfig, value: number) {
+    onPauseMotion()
     onUpdate((previous) => ({ ...previous, room: { ...previous.room, [key]: value } }))
   }
   function setLighting<K extends keyof LightingConfig>(key: K, value: LightingConfig[K]) {
@@ -96,7 +101,7 @@ export default function ControlPanel({ config, fixtures, selectedId, tab, onTab,
             <button className="text-button" onClick={() => onUpdate((previous) => ({ ...previous, positions: Object.fromEntries(Object.entries(previous.positions).filter(([id]) => id !== selected.id)) }))}><RotateCcw size={12} />Reset this position</button>
           </section> : <CeilingPlan room={room} fixtures={fixtures} selectedId={selectedId} onSelect={onSelect} />}
         </>}
-        {tab === 'receiver' && <ReceiverPanel config={config} onUpdate={onUpdate} />}
+        {tab === 'receiver' && <ReceiverPanel config={config} onUpdate={onUpdate} motionPlaying={motionPlaying} onPlayMotion={onPlayMotion} onPauseMotion={onPauseMotion} onRestartMotion={onRestartMotion} />}
         {tab === 'optics' && <OpticalSettings parameters={config.optical} onChange={(optical) => onUpdate((previous) => ({ ...previous, optical }))} />}
         {tab === 'view' && <>
           <ThemePicker value={config.appearance.theme} onChange={(theme) => onUpdate((previous) => ({ ...previous, appearance: { ...previous.appearance, theme } }))} />
