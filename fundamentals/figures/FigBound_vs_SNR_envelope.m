@@ -22,12 +22,13 @@ close all; clear variables; clc;
 
 %% ===== HYPERPARAMETERS =====
 METRIC      = 'rms';                 % 'rms' or 'p90'
-SNR_dB      = -30:5:30;              % SNR sweep [dB]
+SNR_dB      = 0:5:50;                % SNR sweep [dB] (absolute scale, same as Fig. 10)
+SNR_NOMINAL_dB = 14;                 % SNR of the nominal sigma2 in system_params.m (operating point of Tables III/VI)
 K_VALUES    = 3:9;                   % K range for envelope
 K_HIGHLIGHT = 5;                     % accent curve
 PHI_HALF    = 45;                    % LED half-power angle [°]
 
-SAVE_OUTPUT = false;
+SAVE_OUTPUT = true;
 RECOMPUTE   = true;
 
 %% ===== PATHS =====
@@ -69,11 +70,11 @@ N_pos = size(positions, 2);
 fprintf('Testbed: %d positions over 3x3x1.2 m³ (step=%.2f m)\n', N_pos, step);
 
 %% ===== NOISE LEVELS =====
-% Scale base sigma² so that SNR=0 dB matches the noise floor used in the rest of the paper.
-% SNR_lin = sigma2_ref / sigma2  =>  sigma2(SNR) = sigma2_ref * 10^(-SNR/10)
+% Anchor the SNR axis so that the nominal sigma² from system_params.m corresponds to
+% SNR_NOMINAL_dB, i.e. the same absolute convention as run_RMSE_vs_SNR_parallel.m (Fig. 10):
+%   sigma2(SNR) = sigma2_ref * 10^((SNR_NOMINAL_dB - SNR)/10)
 sigma2_ref    = sigma2;                               % from system_params.m
-SNR_lin       = 10.^(SNR_dB/10);
-sigma2_values = sigma2_ref ./ SNR_lin;
+sigma2_values = sigma2_ref .* 10.^((SNR_NOMINAL_dB - SNR_dB)/10);
 nSNR  = numel(SNR_dB);
 nK    = numel(K_VALUES);
 
@@ -126,7 +127,7 @@ else
     fprintf('Total time: %.1f s\n', toc(total_t0));
 
     if SAVE_OUTPUT
-        save(data_file, 'deb_mat', 'peb_mat', 'SNR_dB', 'K_VALUES', ...
+        save(data_file, 'deb_mat', 'peb_mat', 'SNR_dB', 'SNR_NOMINAL_dB', 'K_VALUES', ...
                         'METRIC', 'PHI_HALF', 'sigma2_values');
     end
 end
@@ -242,7 +243,6 @@ yc_left   = sqrt(deb_data_min*deb_data_max);
 yc_right  = sqrt(peb_data_min*peb_data_max);
 left_bot  = round(log10(yc_left)  - LEFT_FRAC *ndec_axis);
 right_bot = round(log10(yc_right) - RIGHT_FRAC*ndec_axis);
-left_bot=-2;
 yyaxis left
 yL = [10^left_bot, 10^(left_bot + ndec_axis)];
 ylim(yL);
