@@ -1,0 +1,278 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,amsthm,bm,booktabs,geometry}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\geometry{margin=25mm}
+\newtheorem{proposition}{Proposición}
+\newcommand{\RR}{\mathbb R}
+\newcommand{\PEB}{\operatorname{PEB}}
+\newcommand{\tr}{\operatorname{tr}}
+\title{Posicionamiento 3D con un LED fijo y un único PD reorientable:\\identificabilidad, cota de Cramér--Rao y diseño experimental}
+\author{Proyecto Cambridge}
+\date{11 de septiembre de 2026}
+\begin{document}
+\maketitle
+
+\section{Alcance y relación con los manuscritos de partida}
+En la arquitectura cooperativa de \cite{tcom}, el LED se reorienta $K$ veces y una medición adicional alineada proporciona distancia. En \cite{broadcast}, las mismas $K$ potencias absolutas permiten recuperar distancia cuando la orientación del PD es conocida. Aquí el LED permanece fijo y se reorienta el PD. La dualidad es arquitectónica, no una equivalencia de las leyes angulares: la emisión tiene exponente Lambertiano $m$, mientras que la respuesta del PD ideal tiene exponente uno. Esta diferencia permite una representación lineal exacta del nuevo modelo.
+
+Las hipótesis de esta cota son: (i) posición y eje del LED conocidos; (ii) potencia, patrón Lambertiano, área y ganancia óptica calibrados; (iii) normales del PD conocidas en coordenadas globales, no sólo comandos relativos del gimbal; (iv) el centro óptico del PD no se traslada durante las $K$ adquisiciones; (v) propagación LOS sin reflexiones, oclusiones ni saturación; (vi) ruido aditivo Gaussiano independiente con varianza conocida, constante respecto a la posición; (vii) respuesta cosenoidal del PD dentro de su FOV. Dos grados de libertad orientan una normal; el giro alrededor de ella no altera un PD ideal axialmente simétrico. Las cotas no incluyen incertidumbre de IMU, holgura del gimbal, desplazamiento de su pivote, ni errores de calibración.
+
+\section{Geometría y modelo de observación}
+Sean $\mathbf t$ la posición conocida del LED, $\mathbf n_t$ su eje unitario fijo, y $\mathbf r=[x,y,z]^{\mathsf T}$ la posición desconocida del PD. Usaremos la dirección \emph{del receptor al transmisor}, opuesta a la de los manuscritos de partida:
+\begin{equation}
+\mathbf v=\mathbf t-\mathbf r,\qquad d=\|\mathbf v\|>0,\qquad
+\mathbf u=\frac{\mathbf v}{d},\qquad \mathbf q=-\mathbf n_t,\qquad
+c=\mathbf q^{\mathsf T}\mathbf u=\cos\phi.
+\label{eq:geometry}
+\end{equation}
+La normal conocida del PD en la adquisición $i$ y su coseno de incidencia son:
+\begin{equation}
+\mathbf n_i=\begin{bmatrix}\sin\theta_i\cos\alpha_i\\\sin\theta_i\sin\alpha_i\\\cos\theta_i\end{bmatrix},\qquad
+s_i=\mathbf n_i^{\mathsf T}\mathbf u=\cos\psi_i.
+\label{eq:normals}
+\end{equation}
+La inclinación $\theta_i$ se mide desde la vertical positiva; $\alpha_i$ es el azimut global. La semiapertura a mitad de potencia del LED $\Phi_{1/2}$ y la semiapertura de aceptación del receptor $\Psi$ son parámetros diferentes:
+\begin{equation}
+m=-\frac{\ln 2}{\ln(\cos\Phi_{1/2})}>0,\qquad
+C=\frac{P_t(m+1)A_{\mathrm{PD}}T_s g}{2\pi}>0.
+\label{eq:C}
+\end{equation}
+Se admite una transmisión de filtro $T_s$ y una ganancia constante $g$ conocidas; por defecto ambas son uno, sin concentrador. El ángulo $\Phi_{1/2}$ \emph{no} es un corte de emisión: hay potencia en todo el hemisferio $c>0$. Para $0<\Psi\leq\pi/2$, el modelo óptico es:
+\begin{equation}
+\mu_i(\mathbf r)=\begin{cases}
+C d^{-2}c^m s_i,&c>0,\ s_i>0,\ s_i\geq\cos\Psi,\\
+0,&\text{en otro caso}.
+\end{cases}
+\label{eq:mean}
+\end{equation}
+Todas las orientaciones se adquieren, incluso cuando su señal LOS es nula. No se seleccionan observaciones en función de su potencia ruidosa. Para $N_i$ muestras independientes por orientación:
+\begin{equation}
+Y_{i,j}=\mu_i(\mathbf r)+\varepsilon_{i,j},\quad
+\varepsilon_{i,j}\sim\mathcal N(0,\sigma^2),\qquad
+\bar Y_i\sim\mathcal N(\mu_i(\mathbf r),\sigma^2/N_i).
+\label{eq:noise}
+\end{equation}
+La varianza $\sigma^2$ está en $\mathrm W^2$, antes de promediar. Una responsividad conocida $R_p$ transforma corriente en potencia mediante $\sigma^2=\sigma_w^2/R_p^2$. No debe multiplicarse otra vez por $R_p$ cuando el modelo ya está expresado en potencia. Para ruido homoscedástico, las medias son suficientes para la posición.
+
+\section{Identificabilidad y recuperación exacta de la posición}
+En una región abierta con conjunto visible $\mathcal V$ invariable, definimos:
+\begin{equation}
+\beta=\frac{C c^m}{d^2},\qquad \mathbf b=\beta\mathbf u,\qquad
+\mathbf H_{\mathcal V}=\begin{bmatrix}\mathbf n_{i_1}^{\mathsf T}\\\vdots\\\mathbf n_{i_{|\mathcal V|}}^{\mathsf T}\end{bmatrix},\qquad
+\bm\mu_{\mathcal V}=\mathbf H_{\mathcal V}\mathbf b.
+\label{eq:linear}
+\end{equation}
+Si $\mathbf H_{\mathcal V}$ tiene rango tres, $\mathbf b$ se recupera de las potencias sin ruido. La transformación inversa es explícita:
+\begin{equation}
+\mathbf u=\frac{\mathbf b}{\|\mathbf b\|},\qquad
+c=\mathbf q^{\mathsf T}\mathbf u,\qquad
+d=\sqrt{\frac{C c^m}{\|\mathbf b\|}},\qquad
+\mathbf r=\mathbf t-d\mathbf u.
+\label{eq:inverse}
+\end{equation}
+Para $c>0$, $\mathbf b\ne\mathbf0$ y $C$ conocido, la transformación es unívoca. Si las potencias positivas identifican en ausencia de ruido al conjunto visible, sus normales de rango tres también garantizan unicidad entre regiones de visibilidad: cualquier posición con las mismas potencias debe reproducir esas mismas filas positivas y, por tanto, el mismo $\mathbf b$. La cota local no presupone un detector perfecto del conjunto visible en presencia de ruido.
+
+\subsection{Demostración de la condición de rango}
+Las derivadas geométricas respecto a la posición son:
+\begin{equation}
+\nabla_{\mathbf r}d=-\mathbf u,\qquad
+\frac{\partial\mathbf u}{\partial\mathbf r^{\mathsf T}}=-\frac{\mathbf I-\mathbf u\mathbf u^{\mathsf T}}{d},\qquad
+\nabla_{\mathbf r}c=-\frac{\mathbf q-c\mathbf u}{d}.
+\label{eq:geoderivatives}
+\end{equation}
+En consecuencia:
+\begin{equation}
+\nabla_{\mathbf r}\beta=\frac{\beta}{d}\left[(m+2)\mathbf u-\frac{m}{c}\mathbf q\right],\qquad
+\mathbf B\equiv\frac{\partial\mathbf b}{\partial\mathbf r^{\mathsf T}}
+=-\frac{\beta}{d}\left[\mathbf I+\mathbf u\left(\frac{m}{c}\mathbf q^{\mathsf T}-(m+3)\mathbf u^{\mathsf T}\right)\right].
+\label{eq:B}
+\end{equation}
+Por el lema del determinante para una actualización de rango uno:
+\begin{equation}
+\det\mathbf B=\left(-\frac{\beta}{d}\right)^3
+\left[1+\frac{m}{c}\mathbf q^{\mathsf T}\mathbf u-(m+3)\mathbf u^{\mathsf T}\mathbf u\right]
+=2\left(\frac{\beta}{d}\right)^3\ne0.
+\label{eq:det}
+\end{equation}
+Luego $\mathbf B$ es invertible en todo el dominio iluminado. Esto evita singularidades artificiales de una parametrización azimut--elevación en la vertical del LED.
+
+\begin{proposition}
+En cualquier región regular iluminada, con varianzas positivas y parámetros radiométricos y normales globales conocidos, la posición 3D es localmente identificable si y sólo si las normales visibles abarcan $\RR^3$. En particular, son necesarias al menos tres orientaciones visibles, pero el número por sí solo no es suficiente.
+\end{proposition}
+\begin{proof}
+El Jacobiano visible es $\mathbf J_{\mathcal V}=\mathbf H_{\mathcal V}\mathbf B$. Como $\mathbf B$ es invertible, su rango es el de $\mathbf H_{\mathcal V}$. La ponderación Gaussiana positiva no cambia ese rango y la FIM tiene el rango de $\mathbf J_{\mathcal V}$. Si el rango es menor que tres, perturbaciones pequeñas de $\mathbf b$ en el núcleo de $\mathbf H_{\mathcal V}$ permanecen en la misma región abierta y producen exactamente las mismas medias, impidiendo la identificación local.
+\end{proof}
+Normales distintas pueden seguir siendo linealmente dependientes. Por otro lado, tres normales sobre un cono de inclinación no nula y menor que $90^\circ$, con azimuts distintos, tienen rango tres aunque sus extremos pertenezcan a un plano afín horizontal. No se debe confundir coplanaridad afín de sus extremos con dependencia lineal de los vectores desde el origen.
+
+\subsection{Papel de la calibración y de los parámetros auxiliares}
+Si la ganancia $C$ es desconocida, la transformación $d\mapsto a d$, $C\mapsto a^2C$ conserva todas las medias, manteniendo dirección y visibilidad. Para $\gamma=\ln C$, la FIM ampliada y la información equivalente de posición son:
+\begin{equation}
+\mathcal I_{(\mathbf r,\gamma)}=
+\begin{bmatrix}\mathbf J^{\mathsf T}\mathbf W\mathbf J&\mathbf J^{\mathsf T}\mathbf W\bm\mu\\
+\bm\mu^{\mathsf T}\mathbf W\mathbf J&\bm\mu^{\mathsf T}\mathbf W\bm\mu\end{bmatrix},\qquad
+\mathcal I_{\rm e}=\mathbf J^{\mathsf T}\mathbf W\mathbf J-
+\frac{\mathbf J^{\mathsf T}\mathbf W\bm\mu\bm\mu^{\mathsf T}\mathbf W\mathbf J}{\bm\mu^{\mathsf T}\mathbf W\bm\mu}.
+\label{eq:nuisance}
+\end{equation}
+La dirección radial se pierde, pues:
+\begin{equation}
+\mathbf J\mathbf u=\frac{2}{d}\bm\mu,\qquad \mathcal I_{\rm e}\mathbf u=\mathbf0.
+\label{eq:radial_null}
+\end{equation}
+Esto también advierte sobre un $m$ desconocido: en una sola posición su efecto es un factor común en las orientaciones del PD y no permite separar distancia de patrón. Si el gimbal sólo informa orientaciones relativas y se desconoce su actitud global, tampoco puede usarse directamente la cota de posición conocida aquí; por ejemplo, con LED vertical existe ambigüedad de azimut ante un giro global conjunto del receptor y su posición.
+
+Un fondo aditivo común desconocido $a$ debe ser otro parámetro auxiliar. En el cono de inclinación única, la columna constante está en el espacio de las normales porque $H\mathbf e_z=\cos\theta\,\mathbf1$. No es posible identificar a la vez las tres componentes de $\mathbf b$ y $a$ con ese cono, por grande que sea $K$. Es necesario calibrar/sustraer el fondo o variar las inclinaciones de forma que $[H,\mathbf1]$ alcance rango cuatro.
+
+\section{Derivación completa de la FIM y del PEB}
+\subsection{Gradiente de la potencia}
+En una orientación estrictamente visible, de \eqref{eq:geoderivatives} resulta:
+\begin{equation}
+\nabla_{\mathbf r}s_i=-\frac{\mathbf n_i-s_i\mathbf u}{d}.
+\label{eq:ds}
+\end{equation}
+Aplicando la regla del producto a $\mu_i=C d^{-2}c^m s_i$:
+\begin{align}
+\nabla_{\mathbf r}\mu_i
+&=C\left[-2d^{-3}c^m s_i\nabla d+d^{-2}mc^{m-1}s_i\nabla c+d^{-2}c^m\nabla s_i\right]\label{eq:product}\\
+&=\frac{C c^m}{d^3}\left[-\mathbf n_i-\frac{m s_i}{c}\mathbf q+(m+3)s_i\mathbf u\right]
+=\mathbf B^{\mathsf T}\mathbf n_i.
+\label{eq:gradient}
+\end{align}
+Fuera de la FOV o del hemisferio iluminado, y lejos de las fronteras, $\mu_i$ es localmente cero y su gradiente también es cero. La fórmula no se evalúa con potencias fraccionarias de cosenos negativos.
+
+\subsection{Verosimilitud, puntuación e información}
+Con $\mathbf W=\operatorname{diag}(N_i/\sigma^2)$, la log-verosimilitud es:
+\begin{equation}
+\ell(\mathbf r;\bar{\mathbf Y})=-\frac12\sum_{i=1}^K
+\left[\ln\left(2\pi\frac{\sigma^2}{N_i}\right)+\frac{N_i}{\sigma^2}(\bar Y_i-\mu_i)^2\right].
+\label{eq:likelihood}
+\end{equation}
+Sea $\mathbf J$ el Jacobiano $K\times3$ cuyas filas son $\nabla\mu_i^{\mathsf T}$. La puntuación tiene esperanza nula:
+\begin{equation}
+\mathbf s=\nabla_{\mathbf r}\ell=\mathbf J^{\mathsf T}\mathbf W(\bar{\mathbf Y}-\bm\mu),\qquad
+\mathbb E[\mathbf s]=\mathbf0.
+\label{eq:score}
+\end{equation}
+Usando independencia y $\operatorname{Cov}(\bar{\mathbf Y})=\mathbf W^{-1}$, se obtiene:
+\begin{equation}
+\boxed{\mathcal I(\mathbf r)=\mathbb E[\mathbf s\mathbf s^{\mathsf T}]
+=\mathbf J^{\mathsf T}\mathbf W\mathbf J
+=\sum_{i\in\mathcal V}\frac{N_i}{\sigma^2}\nabla\mu_i\nabla\mu_i^{\mathsf T}
+=\mathbf B^{\mathsf T}\mathbf H_{\mathcal V}^{\mathsf T}\mathbf W_{\mathcal V}\mathbf H_{\mathcal V}\mathbf B.}
+\label{eq:FIM}
+\end{equation}
+Sus unidades son $\mathrm m^{-2}$. Para un estimador regular localmente insesgado, la desigualdad matricial de Cramér--Rao~\cite{kay} y su consecuencia para el error euclídeo son:
+\begin{equation}
+\operatorname{Cov}(\hat{\mathbf r})\succeq\mathcal I^{-1},\qquad
+\sqrt{\mathbb E\|\hat{\mathbf r}-\mathbf r\|^2}\geq
+\boxed{\PEB(\mathbf r)=\sqrt{\tr(\mathcal I^{-1})}}.
+\label{eq:PEB}
+\end{equation}
+La cota está en metros y no implica que cualquier estimador sesgado deba satisfacerla. Es una cota local determinista, no una garantía de precisión alcanzada, ni una cota Bayesiana. Las coordenadas del volumen de evaluación no se utilizan como una observación o un prior. En un mapa a altura fija se evalúa la misma FIM $3\times3$, sin suponer que el estimador conoce $z$.
+
+Si la FIM es singular, se reporta $\PEB=+\infty$: la traza de una pseudoinversa no representa una cota finita para el error de las tres coordenadas sin restricciones. Numéricamente se usa la SVD del Jacobiano blanqueado $\widetilde{\mathbf J}=\mathbf W^{1/2}\mathbf J$:
+\begin{equation}
+\widetilde{\mathbf J}=\mathbf U\operatorname{diag}(s_1,s_2,s_3)\mathbf V^{\mathsf T},\qquad
+\PEB^2=\sum_{j=1}^3 s_j^{-2},\qquad
+\mathcal I^{-1}=\mathbf V\operatorname{diag}(s_j^{-2})\mathbf V^{\mathsf T}.
+\label{eq:svd}
+\end{equation}
+Se separan las singularidades exactas de la pérdida numérica de rango mediante una tolerancia relativa configurable $s_3/s_1\leq10^{-10}$; esta clasificación conservadora es invariante al escalado de potencia, área y ruido. No se añade regularización para producir cotas artificialmente finitas.
+
+\subsection{Fronteras de FOV y modelos de ruido alternativos}
+En $s_i=\cos\Psi$ el corte duro del modelo puede producir una discontinuidad. En $c=0$ o en incidencia rasante también puede fallar la diferenciabilidad. La CRLB regular anterior no se aplica en esas superficies: la implementación devuelve \texttt{NaN} y un indicador de frontera (tolerancia $10^{-12}$ en coseno), no información infinita procedente de derivar una función escalón. En los criterios de diseño esos puntos no se consideran cubiertos por una cota regular. La información de eventos de detección o de un sensor con transición angular suave requiere su propia verosimilitud.
+
+Si las medias tienen varianzas conocidas dependientes de posición $v_i(\mathbf r)$, la expresión Gaussiana correcta sería:
+\begin{equation}
+\mathcal I_{ab}=\sum_i\left[\frac{\partial_a\mu_i\partial_b\mu_i}{v_i}
++\frac{\partial_a v_i\partial_b v_i}{2v_i^2}\right].
+\label{eq:hetero}
+\end{equation}
+No basta sustituir una varianza dependiente de señal en \eqref{eq:FIM} omitiendo el segundo término. Además, si se observan las muestras originales de ruido Gaussiano heteroscedástico, las medias solas ya no son suficientes; la información de su varianza muestral añade información. El proyecto usa exclusivamente \eqref{eq:noise}; no reivindica un modelo completo de ruido electrónico dependiente de área o FOV.
+
+\section{Resultados analíticos útiles para el diseño}
+\subsection{Cono uniforme: diversidad angular sin orientación adaptada a la posición}
+Para separar claramente el efecto de inclinación y número de orientaciones se emplea un cono global fijo:
+\begin{equation}
+\theta_i=\theta,\qquad \alpha_i=\alpha_0+\frac{2\pi(i-1)}{K},\quad i=1,\ldots,K.
+\label{eq:cone}
+\end{equation}
+No se apunta al LED desde la posición verdadera del PD. El cono es una familia de referencia dentro de la libertad de dos grados de libertad; no constituye una optimización global sobre las $2K$ variables. Para $K\geq3$, todas las orientaciones visibles y $N_i=N$, se tiene:
+\begin{equation}
+\mathbf H^{\mathsf T}\mathbf H=K\operatorname{diag}\left(\frac{\sin^2\theta}{2},\frac{\sin^2\theta}{2},\cos^2\theta\right).
+\label{eq:conegram}
+\end{equation}
+En el eje vertical del LED ($\mathbf u=\mathbf q=\mathbf e_z$), $\mathbf B=(C/d^3)\operatorname{diag}(-1,-1,2)$ y:
+\begin{equation}
+\PEB^2=\frac{\sigma^2 d^6}{N C^2 K}\left[\frac{4}{\sin^2\theta}+\frac{1}{4\cos^2\theta}\right],\qquad 0<\theta<\Psi.
+\label{eq:axis}
+\end{equation}
+Con $a=\sin^2\theta$, la derivada del factor angular se anula cuando:
+\begin{equation}
+-\frac4{a^2}+\frac1{4(1-a)^2}=0
+\quad\Longrightarrow\quad a=\frac45,\quad
+\theta_\star=\arctan2\simeq63.43495^\circ.
+\label{eq:axisopt}
+\end{equation}
+Este valor es una comprobación analítica, no el óptimo del volumen completo. Si la FOV limita antes de ese ángulo, el ínfimo local puede aproximarse desde el interior a la frontera, donde la cota regular no se evalúa. $\theta=0$ da normales idénticas; $\theta=90^\circ$ elimina la componente vertical y no identifica tres coordenadas.
+
+\subsection{FOV, número de adquisiciones y área}
+Con $g$, $\sigma^2$ y las mismas normales fijos, aumentar la FOV sólo puede añadir términos semidefinidos positivos a la FIM, comparando puntos regulares. Por tanto no empeora el PEB puntual. Curvas de FOV distintas coinciden cuando aceptan el mismo conjunto de normales. No se introduce una ganancia $n^2/\sin^2\Psi$ sin un concentrador físicamente especificado, ni se interpreta la FOV como un exponente del patrón del PD.
+
+Añadir mediciones a un conjunto \emph{anidado}, sin quitar tiempo a las anteriores, no empeora la información. Regenerar el cono uniforme para otro $K$ cambia las direcciones: con cortes FOV no hay garantía general de monotonía. Sin cortes y con conos uniformes, \eqref{eq:conegram} implica:
+\begin{equation}
+\PEB\propto (NK)^{-1/2}\quad(N\text{ fijo}),\qquad
+\PEB\text{ independiente de }K\quad(NK=M\text{ fijo, asignación ideal}).
+\label{eq:Kscaling}
+\end{equation}
+El experimento con presupuesto fijo distribuye $M$ muestras enteras entre $K$ orientaciones, con diferencias de a lo sumo una muestra. El coste mecánico de giro y asentamiento no está incluido. Sin un coste o requisito de precisión, no existe un $K$ óptimo interior garantizado.
+
+Con ruido óptico constante, todos los gradientes son proporcionales al área y a la potencia:
+\begin{equation}
+\mathcal I\propto P_t^2 A_{\mathrm{PD}}^2 N/\sigma^2,\qquad
+\PEB\propto\frac{\sigma}{P_t A_{\mathrm{PD}}\sqrt N}.
+\label{eq:area}
+\end{equation}
+Por ello el área de menor PEB dentro de un intervalo es su extremo superior. Un óptimo físico con capacitancia, ancho de banda, ruido térmico/de disparo, saturación o coste requiere especificar esas dependencias. Se reporta también el área mínima de la rejilla que satisface un objetivo configurable de RMS-PEB, sin confundir esa regla de ingeniería con un óptimo físico.
+
+\section{Protocolo reproducible de diseño}
+Se heredan de \cite{broadcast} $P_t=0.405\,\mathrm W$, $A_0=26.4\,\mathrm{mm}^2$, $R_p=0.63\,\mathrm{A/W}$, $\sigma^2=3\times10^{-14}\,\mathrm W^2$, $N=1000$, recinto $3\times3\times2\,\mathrm m^3$, LED en $(0,0,2)$ y volumen $x,y\in[-1.5,1.5]$, $z\in[0,1.2]$. El paso $0.2\,\mathrm m$ da 1792 posiciones, sin punto exactamente en $x=y=0$; las pruebas analíticas añaden explícitamente el eje. Para $\Phi_{1/2}\in\{30,45,60,75\}^\circ$ se comparan $\Psi\in\{30,45,60,75,85\}^\circ$, inclinaciones de $0$ a $85^\circ$ en pasos de $1^\circ$ (incluido además \eqref{eq:axisopt}), y $K=9$ en la fase inicial.
+
+Sobre una misma rejilla $\mathcal R$, definimos cobertura regular y dos estadísticas diferentes:
+\begin{equation}
+\begin{aligned}
+\mathcal R_f&=\{\mathbf r\in\mathcal R:\PEB(\mathbf r)<\infty\text{ y es regular}\},\qquad
+\rho=\frac{|\mathcal R_f|}{|\mathcal R|},\\
+F_{\rm cond}&=\sqrt{\frac{1}{|\mathcal R_f|}\sum_{\mathbf r\in\mathcal R_f}\PEB^2(\mathbf r)},\qquad
+F_{\rm full}=\begin{cases}F_{\rm cond},&\rho=1,\\+\infty,&\rho<1.\end{cases}
+\end{aligned}
+\label{eq:objective}
+\end{equation}
+$F_{\rm cond}$ no está definido si $\mathcal R_f$ es vacío. No se omiten fallos del promedio de volumen completo. Las cuatro figuras de inclinación muestran $F_{\rm cond}$ discontinuo/segmentado, resaltan los tramos de cobertura completa, y acompañan las curvas con cobertura. Se minimiza $F_{\rm full}$: una FOV con menor error sólo en un subconjunto pequeño no puede ganar al ignorar zonas ciegas.
+
+Para cada semiángulo se congela la mejor inclinación/FOV de la fase inicial y se compara $K\in\{1,\ldots,15\}$ bajo $N=1000$ y bajo $M=9000$ muestras totales. Se reporta el mínimo de PEB en la rejilla de $K$, y separadamente el menor $K$ con PEB a menos del 5\% de ese mínimo como compromiso explícito. Si no hay configuración de cobertura completa, el programa se detiene en lugar de proclamar un óptimo inexistente.
+
+En el $K$ de compromiso se permite variar individualmente $(\theta_i,\alpha_i)$ mediante búsqueda determinista por coordenadas, iniciada desde el cono y desde una normal vertical más un anillo. Se usan pasos angulares decrecientes, se conserva cobertura completa y sólo se aceptan mejoras de $F_{\rm full}$. Se guarda el historial y la comparación con el cono; se trata de un refinamiento local, no de una certificación de óptimo global. Esta etapa explota explícitamente los dos grados de libertad sin adaptar las normales a la posición desconocida.
+
+El área se barre para las configuraciones refinadas, manteniendo ruido, $K$ y potencia constantes. Se guarda el área de menor PEB en el intervalo, y el área mínima ensayada que alcanza un objetivo por defecto de $2\,\mathrm{cm}$ de RMS-PEB. Los mapas finales comparan las cuatro configuraciones a $z=0.8\,\mathrm m$ con una escala común y, para la mejor, muestran varias alturas. Los mapas principales usan el área nominal; los mapas de la mejor configuración incluyen también el área de mínimo PEB ensayada. Las zonas sin cota finita aparecen en gris, no como cero ni como el máximo truncado. La mejor configuración se reevalúa en una rejilla 3D intercalada más densa; se reporta su cobertura independientemente de la rejilla de diseño. Ninguna rejilla finita certifica cobertura de todo el continuo.
+
+\section{Validación y estimador de referencia}
+Cuando todas las orientaciones son visibles y $H$ tiene rango tres, el estimador lineal ponderado del vector óptico es:
+\begin{equation}
+\hat{\mathbf b}=(\mathbf H^{\mathsf T}\mathbf W\mathbf H)^{-1}\mathbf H^{\mathsf T}\mathbf W\bar{\mathbf Y},\qquad
+\operatorname{Cov}(\hat{\mathbf b})=(\mathbf H^{\mathsf T}\mathbf W\mathbf H)^{-1}.
+\label{eq:GLS}
+\end{equation}
+Es exactamente insesgado y eficiente para $\mathbf b$ en el modelo lineal sin restricciones. Aplicar \eqref{eq:inverse} produce un estimador de posición generalmente sesgado a SNR finita. Sólo si la solución satisface la geometría y las condiciones de visibilidad corresponde al máximo de verosimilitud dentro de esa región. No es un estimador universal que resuelva los cambios de conjunto visible. A alta SNR, su covarianza propagada de primer orden es:
+\begin{equation}
+\operatorname{Cov}(\hat{\mathbf r})\simeq\mathbf B^{-1}(\mathbf H^{\mathsf T}\mathbf W\mathbf H)^{-1}\mathbf B^{-\mathsf T}=\mathcal I^{-1}.
+\label{eq:delta}
+\end{equation}
+Las pruebas MATLAB contrastan: gradientes por diferencias centrales en puntos interiores; rango de FIM y normales visibles; caso axial cerrado y su óptimo; ganancias exactas de área, ruido, muestras y potencia; invariancia a rotaciones y traslaciones globales; eliminación de distancia con ganancia desconocida; degeneración de fondo común en un cono; fronteras FOV no regulares; monotonía con mediciones anidadas y mayor FOV; reconstrucción exacta sin ruido; y covarianza de Monte Carlo a alta SNR con semilla reproducible. Las pruebas no se utilizan para afirmar eficiencia global a baja SNR o en fronteras de visibilidad.
+
+\bibliographystyle{IEEEtran}
+\bibliography{PEB_references}
+\end{document}
