@@ -1,0 +1,1505 @@
+{
+  "seed": 20260912,
+  "random_trials_per_case": 300,
+  "grid_resolution": 61,
+  "python": "3.12.8",
+  "numpy": "1.26.4",
+  "scipy": "1.14.0",
+  "matplotlib": "3.9.0",
+  "cases": [
+    {
+      "case": {
+        "name": "grid_baseline_full_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.015
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.905960796527384e-27,
+        "max_chief_ray_tilt_deg": 42.96738727601869,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        85.1137859214429,
+        0.002678849045034727,
+        0.0016479813594386294,
+        303.608845991498,
+        279.13632882447246,
+        5.708367505361194e-06,
+        11.547290658056676,
+        253.73189830059212,
+        121.66248605416504,
+        145.4846071323974,
+        204.47471390458108,
+        0.016337230949498904,
+        271.7295558559003,
+        193.85888611379931,
+        0.0001306371379117519,
+        214.93132878431447,
+        2.9530197266615617e-06,
+        1.5559942010404262,
+        282.8125450305606,
+        0.00040493676391370416,
+        10.759088328289254,
+        229.04344054174987,
+        29.05421241550396,
+        20.76212389296173
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_baseline_full_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.015
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.905960796527384e-27,
+        "max_chief_ray_tilt_deg": 42.96738727601869,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        73.08642355096234,
+        0.002197876782210867,
+        0.0010550646598603696,
+        211.16965226826525,
+        108.17304529777212,
+        1.304676707514865e-06,
+        33.605956525674,
+        102.4442818031389,
+        95.50676895013203,
+        61.54792631683783,
+        110.57057113860594,
+        0.014390420437018547,
+        138.00332335942474,
+        116.78091459531277,
+        0.00016226702890268887,
+        48.895538824580804,
+        8.681756383478457e-08,
+        2.2930672341317315,
+        80.01330080882065,
+        0.00025240920269370214,
+        9.04664612484072,
+        60.69491839964765,
+        18.761116002441963,
+        5.168859412017982
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_convex_core_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.012,
+            0.015
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 1.8,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.128672274487791e-25,
+        "max_chief_ray_tilt_deg": 48.168625445962974,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        164.2654747262778,
+        226.2663886117278,
+        365.61308520781836,
+        442.8055125567961,
+        436.1047270762041,
+        322.22952993518044,
+        361.22971940343155,
+        323.9594791539541,
+        402.4435818455434,
+        270.37024560208806,
+        412.36918682322397,
+        389.7822174473082,
+        141.31345960510416,
+        326.9187599016006,
+        377.42500837965065,
+        507.1427820477583,
+        343.76932621009917,
+        279.18540901159247,
+        402.15097700124164,
+        167.06761413852198,
+        239.80727466926695,
+        550.3371589674244,
+        138.10403741072338,
+        147.2819397486298
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_convex_core_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.012,
+            0.015
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 1.8,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.128672274487791e-25,
+        "max_chief_ray_tilt_deg": 48.168625445962974,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        105.04117768906882,
+        109.24745677770471,
+        209.83545021044188,
+        200.64799971249747,
+        122.43628643777697,
+        47.3565549046014,
+        115.82589358303471,
+        133.00733391376386,
+        243.10170205976473,
+        51.52143084226477,
+        99.84656112618593,
+        272.5815878014359,
+        75.74133726129232,
+        66.69443114900325,
+        50.53964409580934,
+        59.180594979058675,
+        52.29786396452188,
+        124.60905328456309,
+        206.589205073025,
+        99.19143018776376,
+        107.5555511839312,
+        143.898581120093,
+        48.638375513076284,
+        92.08709942334997
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_diverging_full_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 56.15943031635213,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        116.8825243768822,
+        121.76596879739544,
+        144.57299910608108,
+        545.2258372823661,
+        233.74377544015718,
+        166.92093931159135,
+        207.62621408775158,
+        307.30300398515703,
+        307.0655237938192,
+        194.98146176174004,
+        96.80415445838835,
+        186.26518605009804,
+        169.78666173325507,
+        251.13660153250444,
+        88.60625121132377,
+        374.8435561669305,
+        111.04686196769156,
+        66.91259140613637,
+        247.16947594504185,
+        131.06519635546007,
+        50.54460426183408,
+        455.01680357563356,
+        47.58291932616235,
+        94.00175895880636
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_diverging_full_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 56.15943031635213,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        70.14049896726155,
+        46.0618914215986,
+        49.58402357420016,
+        193.51558847686096,
+        119.04029274785358,
+        33.05226750993998,
+        117.90640575867774,
+        100.36934857907963,
+        172.67990858888464,
+        128.41078352954432,
+        81.47899057117316,
+        110.43679482388434,
+        76.55408964104352,
+        70.27604970271597,
+        47.205447295592464,
+        66.37296466662096,
+        50.66511129041966,
+        30.820346959912477,
+        182.78186404488423,
+        44.56794618248736,
+        19.603348615874943,
+        106.99787106768524,
+        33.61747474366548,
+        40.56674079498508
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_convex_retilted_full_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.01,
+            0.012,
+            0.015
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 27.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 300,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          18.18181818181818,
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          55.0,
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.999999999999999,
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 1.723384320297045e-22,
+        "max_chief_ray_tilt_deg": 64.23060814607338,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          93.45321933816672,
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        272.8254992653499,
+        122.30145829120976,
+        302.2684943197586,
+        268.5515006431271,
+        291.1460509626113,
+        106.36731636278013,
+        271.7661775067398,
+        256.8141692321723,
+        198.82454505232084,
+        318.64162847500774,
+        259.2512725528163,
+        95.84224546458535,
+        199.3249785751971,
+        239.62379706669816,
+        132.49386889796696,
+        277.2729447881939,
+        114.51271817040576,
+        80.28947275646291,
+        279.019585336756,
+        78.25103394731218,
+        123.89686389032829,
+        360.5691291453776,
+        268.7545973065921,
+        283.0980917685274
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_convex_retilted_full_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.01,
+            0.012,
+            0.015
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 27.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 300,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          18.18181818181818,
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          55.0,
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.999999999999999,
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 1.723384320297045e-22,
+        "max_chief_ray_tilt_deg": 64.23060814607338,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          93.45321933816672,
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        111.65873125354584,
+        96.73575123542926,
+        226.4206740678024,
+        238.17515530702698,
+        27.806522793021177,
+        27.64158744557402,
+        76.96100058085914,
+        111.99369005195808,
+        185.264706319653,
+        110.51869161571263,
+        99.36238623321947,
+        25.99568888825314,
+        109.73523183376005,
+        58.55346944633688,
+        65.60812937655696,
+        51.87850341657543,
+        22.656764365200463,
+        77.3843756285299,
+        163.11845941999712,
+        48.63982380077926,
+        104.51984513595386,
+        201.17985692895357,
+        57.6047114299831,
+        141.45285524859335
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_convex_full_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.012,
+            0.015
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.128672274487791e-25,
+        "max_chief_ray_tilt_deg": 48.168625445962974,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        56.8115219712108,
+        0.12467527803060531,
+        2.5931059685064928,
+        350.59462184525125,
+        104.2044896175818,
+        0.07968691264592949,
+        106.26986693828407,
+        115.50356617192836,
+        224.50550252892597,
+        82.11003856125404,
+        99.70490883872527,
+        2.6489480635157565,
+        171.9772056460435,
+        119.63199867334184,
+        0.5119300972590222,
+        63.40262628569891,
+        0.0012887682597005612,
+        18.988668098350477,
+        150.53374549619147,
+        0.13427344980475092,
+        65.38621500095694,
+        111.99068412203023,
+        57.808693466929604,
+        23.5507518322295
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_diverging_prism_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 3,
+        "frustum": false,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 56.15943031635213,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        22.839737307696158,
+        39.25129941508839,
+        38.36252108943267,
+        211.40391622802127,
+        102.72548312857907,
+        0.2391628287351072,
+        52.99607342732002,
+        69.18155607235131,
+        208.25253161481226,
+        108.24439236382023,
+        54.28138262610489,
+        69.25831857536123,
+        53.11466272992122,
+        119.70220344546837,
+        19.46493265328822,
+        147.03857188518523,
+        70.51326780025119,
+        11.874438147717271,
+        184.54505499903848,
+        2.424030288770272,
+        13.641937089122534,
+        73.53192799367935,
+        40.470274348239094,
+        41.33241158560308
+      ]
+    },
+    {
+      "case": {
+        "name": "grid_diverging_full_3d_unknown_gain",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 9,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 2.5,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": true
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 56.15943031635213,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        36.63392903392816,
+        35.53728326962153,
+        22.71811460112624,
+        154.27065560725356,
+        106.75465947895253,
+        13.908560158672618,
+        81.60839415921829,
+        80.46370186449285,
+        171.833069721794,
+        128.28369464476253,
+        22.45917843586267,
+        55.090754983578194,
+        56.08908159263731,
+        62.448205887647816,
+        31.389042852051457,
+        33.06501297168281,
+        4.305476408988533,
+        29.488320822397913,
+        32.504369805854786,
+        26.732099234463263,
+        15.848761095578048,
+        86.05167131895091,
+        8.427349901597253,
+        20.30472861865737
+      ]
+    }
+  ],
+  "nonfinite_json_values": "null means an unbounded or numerically unidentifiable result; never zero",
+  "robustness": [
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "matched",
+      "count": 100,
+      "median_m": 0.003158240251594963,
+      "p95_m": 0.009712337262232088,
+      "max_m": 0.019087369321142203,
+      "rmse_m": 0.005337872389251361,
+      "rmse_x_m": 0.0006004486150005545,
+      "rmse_y_m": 0.0006675776552674577,
+      "rmse_z_m": 0.005261813677703111,
+      "fraction_error_1cm": 0.96,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "global_gain_plus2pct",
+      "count": 100,
+      "median_m": 0.024586511032025575,
+      "p95_m": 0.034532842092923045,
+      "max_m": 0.03788332083594726,
+      "rmse_m": 0.02499985499581141,
+      "rmse_x_m": 0.0020689081585058265,
+      "rmse_y_m": 0.002218368376832737,
+      "rmse_z_m": 0.024815140752934152,
+      "fraction_error_1cm": 0.03,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "vcsel_calibration_1pct",
+      "count": 100,
+      "median_m": 0.008869645010460399,
+      "p95_m": 0.02224059774663662,
+      "max_m": 0.03053623007815353,
+      "rmse_m": 0.012042871249978725,
+      "rmse_x_m": 0.0011182990848492824,
+      "rmse_y_m": 0.0010622542385639055,
+      "rmse_z_m": 0.01194369168360614,
+      "fraction_error_1cm": 0.61,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "residual_background_0p1nW",
+      "count": 100,
+      "median_m": 0.009708557415934977,
+      "p95_m": 0.025137111780788726,
+      "max_m": 0.03634240483826896,
+      "rmse_m": 0.01398937880206638,
+      "rmse_x_m": 0.0018148465653207895,
+      "rmse_y_m": 0.0014972278548526137,
+      "rmse_z_m": 0.013790118199736398,
+      "fraction_error_1cm": 0.51,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "pd_tilt_3deg",
+      "count": 100,
+      "median_m": 0.0049866563659449,
+      "p95_m": 0.015447889947463241,
+      "max_m": 0.031982510165699314,
+      "rmse_m": 0.007938648595204854,
+      "rmse_x_m": 0.0008784782845301434,
+      "rmse_y_m": 0.0009002720059257193,
+      "rmse_z_m": 0.007838362567341694,
+      "fraction_error_1cm": 0.85,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "curvature_error_0.1pct",
+      "count": 100,
+      "median_m": 0.007974072846440125,
+      "p95_m": 0.016568717829995378,
+      "max_m": 0.02371492441086182,
+      "rmse_m": 0.010176740511741576,
+      "rmse_x_m": 0.0008087422973179618,
+      "rmse_y_m": 0.0008731812032490136,
+      "rmse_z_m": 0.010106905457465388,
+      "fraction_error_1cm": 0.57,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "curvature_error_1pct",
+      "count": 100,
+      "median_m": 0.07602225814819846,
+      "p95_m": 0.12434560363015118,
+      "max_m": 0.15623419608194594,
+      "rmse_m": 0.08400162554565772,
+      "rmse_x_m": 0.0058876682601263,
+      "rmse_y_m": 0.006195199712850091,
+      "rmse_z_m": 0.08356571041575306,
+      "fraction_error_1cm": 0.03,
+      "fraction_error_10cm": 0.66,
+      "failure_10cm_wilson95_low": 0.2546152079734838,
+      "failure_10cm_wilson95_high": 0.43722271145275104
+    },
+    {
+      "case": "tile_baseline_core_3d",
+      "perturbation": "edge_thickness_plus0p1mm",
+      "count": 100,
+      "median_m": 0.01048528594835963,
+      "p95_m": 0.02284698206855051,
+      "max_m": 0.0365770455083831,
+      "rmse_m": 0.012704855479463179,
+      "rmse_x_m": 0.00136281118999246,
+      "rmse_y_m": 0.0014138935931696196,
+      "rmse_z_m": 0.012552171259255139,
+      "fraction_error_1cm": 0.47,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "matched",
+      "count": 100,
+      "median_m": 0.003645925970856747,
+      "p95_m": 0.010993423354920637,
+      "max_m": 0.0665596664022959,
+      "rmse_m": 0.00952757307124197,
+      "rmse_x_m": 0.001207033583325631,
+      "rmse_y_m": 0.001284396319307951,
+      "rmse_z_m": 0.009363121522843087,
+      "fraction_error_1cm": 0.87,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "global_gain_plus2pct",
+      "count": 100,
+      "median_m": 0.02437289624146858,
+      "p95_m": 0.036465432330099856,
+      "max_m": 0.06098353390317067,
+      "rmse_m": 0.02552656179969566,
+      "rmse_x_m": 0.002941236210684776,
+      "rmse_y_m": 0.003080739593724488,
+      "rmse_z_m": 0.02516870140516384,
+      "fraction_error_1cm": 0.05,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "vcsel_calibration_1pct",
+      "count": 100,
+      "median_m": 0.010547430070312114,
+      "p95_m": 0.02545262530540089,
+      "max_m": 0.05266378687938543,
+      "rmse_m": 0.01404626961310797,
+      "rmse_x_m": 0.0019621140575186344,
+      "rmse_y_m": 0.0017352715337812475,
+      "rmse_z_m": 0.013799877940527465,
+      "fraction_error_1cm": 0.45,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "residual_background_0p1nW",
+      "count": 100,
+      "median_m": 0.0062891067932707885,
+      "p95_m": 0.028768580971671415,
+      "max_m": 0.06719240488476469,
+      "rmse_m": 0.015628426197891333,
+      "rmse_x_m": 0.001928142473916713,
+      "rmse_y_m": 0.0021102896737761044,
+      "rmse_z_m": 0.015364786022459553,
+      "fraction_error_1cm": 0.72,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "pd_tilt_3deg",
+      "count": 100,
+      "median_m": 0.005203695608317988,
+      "p95_m": 0.016539870303432447,
+      "max_m": 0.05436356459359723,
+      "rmse_m": 0.010754676022799189,
+      "rmse_x_m": 0.0014203344136396684,
+      "rmse_y_m": 0.0014023099906153075,
+      "rmse_z_m": 0.010567839571029794,
+      "fraction_error_1cm": 0.75,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "curvature_error_0.1pct",
+      "count": 100,
+      "median_m": 0.007777092425431295,
+      "p95_m": 0.01905537610001339,
+      "max_m": 0.04970075082941529,
+      "rmse_m": 0.01153298004962607,
+      "rmse_x_m": 0.001233438984603647,
+      "rmse_y_m": 0.0013711853462405692,
+      "rmse_z_m": 0.011384555671724214,
+      "fraction_error_1cm": 0.65,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "curvature_error_1pct",
+      "count": 100,
+      "median_m": 0.07211661866186134,
+      "p95_m": 0.12726656087754137,
+      "max_m": 0.17655602260277303,
+      "rmse_m": 0.0788287864499327,
+      "rmse_x_m": 0.005528241429519692,
+      "rmse_y_m": 0.006476057527337597,
+      "rmse_z_m": 0.07836757491953321,
+      "fraction_error_1cm": 0.04,
+      "fraction_error_10cm": 0.79,
+      "failure_10cm_wilson95_low": 0.14165654061915461,
+      "failure_10cm_wilson95_high": 0.299799688340896
+    },
+    {
+      "case": "tile_convex_core_3d",
+      "perturbation": "edge_thickness_plus0p1mm",
+      "count": 100,
+      "median_m": 0.010032273163734588,
+      "p95_m": 0.025108983937563948,
+      "max_m": 0.08148144703057907,
+      "rmse_m": 0.015141157871586325,
+      "rmse_x_m": 0.0017053765955633475,
+      "rmse_y_m": 0.001808784594069449,
+      "rmse_z_m": 0.014935683802620564,
+      "fraction_error_1cm": 0.5,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "matched",
+      "count": 100,
+      "median_m": 0.0033255722004611266,
+      "p95_m": 0.011824288863184929,
+      "max_m": 0.020389005485667435,
+      "rmse_m": 0.00566637460605414,
+      "rmse_x_m": 0.0010477529170677719,
+      "rmse_y_m": 0.001268212880658333,
+      "rmse_z_m": 0.005422328936005586,
+      "fraction_error_1cm": 0.9,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "global_gain_plus2pct",
+      "count": 100,
+      "median_m": 0.024637270475373174,
+      "p95_m": 0.03513377578967972,
+      "max_m": 0.046896610359030776,
+      "rmse_m": 0.026149083625812395,
+      "rmse_x_m": 0.0038756952411290076,
+      "rmse_y_m": 0.0042863060704538885,
+      "rmse_z_m": 0.025502571265227553,
+      "fraction_error_1cm": 0.02,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "vcsel_calibration_1pct",
+      "count": 100,
+      "median_m": 0.011949100435952584,
+      "p95_m": 0.022531971877839476,
+      "max_m": 0.033601649062289136,
+      "rmse_m": 0.013614465451281626,
+      "rmse_x_m": 0.0023624448336930885,
+      "rmse_y_m": 0.0024413093695584034,
+      "rmse_z_m": 0.013183798105781358,
+      "fraction_error_1cm": 0.42,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "residual_background_0p1nW",
+      "count": 100,
+      "median_m": 0.009253307122819902,
+      "p95_m": 0.029153707005077186,
+      "max_m": 0.06349564649209972,
+      "rmse_m": 0.01570917277441751,
+      "rmse_x_m": 0.002557178374230248,
+      "rmse_y_m": 0.0035855275711809773,
+      "rmse_z_m": 0.015079222130308,
+      "fraction_error_1cm": 0.58,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "pd_tilt_3deg",
+      "count": 100,
+      "median_m": 0.007738320343567149,
+      "p95_m": 0.025157447716220145,
+      "max_m": 0.0313073605121696,
+      "rmse_m": 0.011441396193503834,
+      "rmse_x_m": 0.0022222612746992747,
+      "rmse_y_m": 0.0019347304421362265,
+      "rmse_z_m": 0.011055492743427013,
+      "fraction_error_1cm": 0.59,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "curvature_error_0.1pct",
+      "count": 100,
+      "median_m": 0.0055091161959209475,
+      "p95_m": 0.01620169934912483,
+      "max_m": 0.028775922560558415,
+      "rmse_m": 0.008942013567390616,
+      "rmse_x_m": 0.001212736279675223,
+      "rmse_y_m": 0.0015320638890330722,
+      "rmse_z_m": 0.008725918724998429,
+      "fraction_error_1cm": 0.79,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "curvature_error_1pct",
+      "count": 100,
+      "median_m": 0.05531381851997566,
+      "p95_m": 0.11122654419999682,
+      "max_m": 0.13860776785542686,
+      "rmse_m": 0.06469649521618649,
+      "rmse_x_m": 0.006986176576465743,
+      "rmse_y_m": 0.006898242647931143,
+      "rmse_z_m": 0.06394719758105703,
+      "fraction_error_1cm": 0.03,
+      "fraction_error_10cm": 0.9,
+      "failure_10cm_wilson95_low": 0.055229137060675976,
+      "failure_10cm_wilson95_high": 0.174365661504911
+    },
+    {
+      "case": "tile_diverging_ninth_3d",
+      "perturbation": "edge_thickness_plus0p1mm",
+      "count": 100,
+      "median_m": 0.004633381938793227,
+      "p95_m": 0.013775829959500012,
+      "max_m": 0.024257512843778226,
+      "rmse_m": 0.007791959323166621,
+      "rmse_x_m": 0.0013269244068470052,
+      "rmse_y_m": 0.001657830966836898,
+      "rmse_z_m": 0.0074970326261657415,
+      "fraction_error_1cm": 0.83,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "matched",
+      "count": 100,
+      "median_m": 0.0028520099357375057,
+      "p95_m": 0.017815202539199222,
+      "max_m": 0.050308081215757285,
+      "rmse_m": 0.00875058878917572,
+      "rmse_x_m": 0.004347190015939319,
+      "rmse_y_m": 0.004326738959547516,
+      "rmse_z_m": 0.0062413198202382605,
+      "fraction_error_1cm": 0.9,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "global_gain_plus2pct",
+      "count": 100,
+      "median_m": 0.029432269724840032,
+      "p95_m": 0.042120677994843765,
+      "max_m": 0.04943152060727784,
+      "rmse_m": 0.03049128516152748,
+      "rmse_x_m": 0.011533635454569193,
+      "rmse_y_m": 0.012278717734980819,
+      "rmse_z_m": 0.025415090296659542,
+      "fraction_error_1cm": 0.03,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "vcsel_calibration_1pct",
+      "count": 100,
+      "median_m": 0.007701618277893311,
+      "p95_m": 0.02379410644285338,
+      "max_m": 0.0652470862999188,
+      "rmse_m": 0.013684717705468625,
+      "rmse_x_m": 0.006727944943263403,
+      "rmse_y_m": 0.0060044075278291136,
+      "rmse_z_m": 0.010293364161367844,
+      "fraction_error_1cm": 0.68,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "residual_background_0p1nW",
+      "count": 100,
+      "median_m": 0.011181674960593635,
+      "p95_m": 0.04007028800331858,
+      "max_m": 0.07917340491277823,
+      "rmse_m": 0.020135521688768712,
+      "rmse_x_m": 0.009133912904287436,
+      "rmse_y_m": 0.008907488783259239,
+      "rmse_z_m": 0.015577789070079152,
+      "fraction_error_1cm": 0.41,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "pd_tilt_3deg",
+      "count": 100,
+      "median_m": 0.029444643498895612,
+      "p95_m": 0.07036195256944647,
+      "max_m": 0.14425710594884059,
+      "rmse_m": 0.040993717771961966,
+      "rmse_x_m": 0.020482653823452525,
+      "rmse_y_m": 0.01534312119190837,
+      "rmse_z_m": 0.03202396635656315,
+      "fraction_error_1cm": 0.17,
+      "fraction_error_10cm": 0.98,
+      "failure_10cm_wilson95_low": 0.005501967550162523,
+      "failure_10cm_wilson95_high": 0.07001179072854186
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "curvature_error_0.1pct",
+      "count": 100,
+      "median_m": 0.0051796595799738394,
+      "p95_m": 0.021630635566960897,
+      "max_m": 0.043721064187483345,
+      "rmse_m": 0.010724332249811687,
+      "rmse_x_m": 0.004283742560448749,
+      "rmse_y_m": 0.005104802635339607,
+      "rmse_z_m": 0.008402490222212747,
+      "fraction_error_1cm": 0.74,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "curvature_error_1pct",
+      "count": 100,
+      "median_m": 0.03950895778695808,
+      "p95_m": 0.13053002427068325,
+      "max_m": 0.27115628693022803,
+      "rmse_m": 0.06766096582132099,
+      "rmse_x_m": 0.02207113761953376,
+      "rmse_y_m": 0.02834926338553315,
+      "rmse_z_m": 0.057334025199276197,
+      "fraction_error_1cm": 0.13,
+      "fraction_error_10cm": 0.88,
+      "failure_10cm_wilson95_low": 0.06999406437019591,
+      "failure_10cm_wilson95_high": 0.19812099426711172
+    },
+    {
+      "case": "grid_diverging_full_3d",
+      "perturbation": "edge_thickness_plus0p1mm",
+      "count": 100,
+      "median_m": 0.0043421557950060865,
+      "p95_m": 0.01793516434672904,
+      "max_m": 0.04771466068592297,
+      "rmse_m": 0.009901024987608748,
+      "rmse_x_m": 0.0045869302476369035,
+      "rmse_y_m": 0.004766884280970769,
+      "rmse_z_m": 0.007366626158588493,
+      "fraction_error_1cm": 0.85,
+      "fraction_error_10cm": 1.0,
+      "failure_10cm_wilson95_low": 0.0,
+      "failure_10cm_wilson95_high": 0.036993498206983715
+    }
+  ]
+}

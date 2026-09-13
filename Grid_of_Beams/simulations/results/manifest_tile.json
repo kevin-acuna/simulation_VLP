@@ -1,0 +1,1258 @@
+{
+  "seed": 20260912,
+  "random_trials_per_case": 300,
+  "grid_resolution": 61,
+  "python": "3.12.8",
+  "numpy": "1.26.4",
+  "scipy": "1.14.0",
+  "matplotlib": "3.9.0",
+  "cases": [
+    {
+      "case": {
+        "name": "tile_baseline_core_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.45,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.905960796527384e-27,
+        "max_chief_ray_tilt_deg": 13.614986896164874,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        245.47342326942146,
+        140.01067897261433,
+        148.02449350283692,
+        275.0115996158794,
+        165.56282428589003,
+        234.9706550641471,
+        220.29938989046832,
+        182.78326950614883,
+        238.09851522344445,
+        248.43627478954087,
+        156.807559280403,
+        142.61701370556804,
+        138.83562903743916,
+        270.31113020918383,
+        145.29387941182722,
+        128.5083027988513,
+        138.77182603599923,
+        131.94970074506705,
+        249.83433402364022,
+        285.104087393633,
+        179.32805254769667,
+        168.57327481471847,
+        239.30096174700208,
+        152.6266687410277
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_baseline_core_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.45,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.905960796527384e-27,
+        "max_chief_ray_tilt_deg": 13.614986896164874,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        59.135023279050536,
+        59.59511668641321,
+        61.09185863263329,
+        58.417406217595364,
+        38.249245506890254,
+        31.531815216529562,
+        48.70579365332541,
+        65.10899219181167,
+        66.66054143288477,
+        51.5504891196093,
+        57.78590517497335,
+        37.89108692900052,
+        21.356973076801015,
+        27.738604630776596,
+        28.090062864300833,
+        37.91322202171235,
+        45.225129380169776,
+        43.093508442450535,
+        28.489602669851426,
+        30.843299531469334,
+        52.6653865017294,
+        38.656837930279124,
+        71.12810007620494,
+        28.659144304317504
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_baseline_ninth_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.905960796527384e-27,
+        "max_chief_ray_tilt_deg": 13.614986896164874,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        35.72901530603676,
+        1.6430532193228087,
+        0.07552415298422498,
+        244.29949853610287,
+        163.5663808281964,
+        0.05666499270710725,
+        150.7307612251691,
+        126.67977837836732,
+        243.9830523773258,
+        167.97606727852582,
+        92.8291805108049,
+        2.3053738842599785,
+        188.33766439782022,
+        87.73925414372573,
+        0.02102659224532976,
+        214.29019093993463,
+        0.039802103256190866,
+        0.425649223103772,
+        166.66637629186337,
+        2.4401409820181557,
+        1.608457007243347,
+        232.9656853407993,
+        6.438015219843983,
+        2.454976105170966
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_baseline_ninth_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.905960796527384e-27,
+        "max_chief_ray_tilt_deg": 13.614986896164874,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        8.872790684700243,
+        0.024058944493360462,
+        0.0765935383712473,
+        56.891171375958876,
+        31.592206941466706,
+        0.022331434171748238,
+        54.640021152785934,
+        106.77429472074623,
+        70.17937628433828,
+        11.07160410205515,
+        5.014574430978875,
+        0.5482750570289439,
+        20.52559383691623,
+        42.473276584664724,
+        0.0042292276464058354,
+        48.97005499426892,
+        0.014608221167030224,
+        0.12494945127286186,
+        121.609889025347,
+        0.22988318224905582,
+        0.3518045817917925,
+        57.17586769006276,
+        10.0071777777909,
+        1.6990729530067288
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_convex_core_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.012,
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.6,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.128672274487791e-25,
+        "max_chief_ray_tilt_deg": 18.81767431690371,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        212.24966251632242,
+        224.07003584551344,
+        172.5237336924791,
+        226.21929208150203,
+        308.34327502974287,
+        304.0305036535943,
+        202.9547449992115,
+        214.9067101405278,
+        318.37820847801055,
+        288.07876011669435,
+        413.23260029418503,
+        212.61141347476928,
+        193.82505095322665,
+        316.21110913366323,
+        209.4066420615223,
+        250.94215111593493,
+        205.05915909069273,
+        251.24403229956383,
+        201.39228001522773,
+        204.4378030027443,
+        192.81596698462377,
+        297.9059344161084,
+        82.27384921039459,
+        145.8995379382628
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_convex_core_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.012,
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.6,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.128672274487791e-25,
+        "max_chief_ray_tilt_deg": 18.81767431690371,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        79.27968392680312,
+        79.1581317869203,
+        73.52387596365413,
+        87.6926230684317,
+        77.94822791953744,
+        87.34774755350296,
+        38.31273342856121,
+        59.67318232470079,
+        106.45359753940924,
+        57.95022913863667,
+        133.8155444927107,
+        50.65618112302322,
+        61.67523995088043,
+        121.55202774637267,
+        33.92939463350233,
+        51.08863724146387,
+        23.0859734015632,
+        96.26765394999514,
+        62.77068766355674,
+        87.44068766566878,
+        53.0119870356536,
+        27.497841295716867,
+        60.41068869471195,
+        29.685459783939557
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_diverging_ninth_2d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 2,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 26.810302720358457,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        119.15085057533595,
+        151.37488790888972,
+        70.8925847563741,
+        134.03208073120894,
+        229.3802597500061,
+        136.23252239176873,
+        105.32693938509689,
+        111.11554122516796,
+        168.50220665462308,
+        136.53412902262627,
+        200.7028188576326,
+        67.03834646850576,
+        135.81161420475195,
+        134.18904483429307,
+        79.64255516785197,
+        151.240256095129,
+        86.17205161626191,
+        96.48605090175158,
+        181.16414538132727,
+        71.10088395058264,
+        153.3289135935809,
+        115.72330562468538,
+        235.45733815596657,
+        75.87204749172676
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_diverging_ninth_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 26.810302720358457,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        48.36601392529996,
+        49.16603103141206,
+        36.270330362142104,
+        73.54425653095588,
+        91.02732944973518,
+        50.08047269417218,
+        53.39069153372477,
+        46.47545198856706,
+        70.49535049632973,
+        67.14692975970617,
+        86.16951697922453,
+        24.482808757735985,
+        39.288362280242566,
+        79.84995572683849,
+        26.143693933859502,
+        38.70490956394387,
+        23.0785078855275,
+        45.157289926627904,
+        32.922323760239486,
+        33.641043265381484,
+        22.475176112523798,
+        33.990858015670966,
+        61.286477932342386,
+        28.239935782383096
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_convex_ninth_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.012,
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          21.818181818181817,
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          45.833333333333336,
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          5.055728090000841,
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.128672274487791e-25,
+        "max_chief_ray_tilt_deg": 18.81767431690371,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          113.23483145463523,
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        43.869328186582436,
+        3.934560731460308,
+        10.153866726796558,
+        96.97579115399961,
+        46.89500124392331,
+        2.1679030705963225,
+        93.4111579971256,
+        110.70446003918809,
+        66.97530217384671,
+        62.3940216690099,
+        15.993057516061045,
+        1.3621548892721516,
+        69.8836546727252,
+        52.723938390169636,
+        0.5068793132746332,
+        51.90538925157076,
+        2.2366842967252336,
+        5.460999979558774,
+        127.9298018765019,
+        10.693049723786267,
+        18.841109221535795,
+        56.83711530626812,
+        75.31096049031129,
+        12.367503759469257
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_scan8_ninth_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.01,
+            0.011,
+            0.012,
+            0.013,
+            0.015,
+            0.017,
+            0.02,
+            0.025
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 800,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          18.18181818181818,
+          20.0,
+          21.818181818181817,
+          23.636363636363633,
+          27.27272727272727,
+          30.909090909090907,
+          36.36363636363636,
+          45.45454545454545
+        ],
+        "optical_power_diopters": [
+          55.0,
+          50.00000000000001,
+          45.833333333333336,
+          42.307692307692314,
+          36.66666666666667,
+          32.35294117647059,
+          27.5,
+          22.0
+        ],
+        "center_thickness_mm": [
+          5.999999999999999,
+          5.45016556472925,
+          5.055728090000841,
+          4.753049234040402,
+          4.311422459550478,
+          4.0,
+          3.6696972201766385,
+          3.314561435345977
+        ],
+        "max_clipping_upper_bound": 1.723384320297045e-22,
+        "max_chief_ray_tilt_deg": 26.810302720358457,
+        "min_virtual_waist_distance_mm": 7.885735758525612,
+        "min_output_rayleigh_range_mm": 0.11384768869861725,
+        "center_beam_radius_at_3m_mm": [
+          93.45321933816672,
+          104.69647937728311,
+          113.23483145463523,
+          120.00647859562848,
+          130.14017506853327,
+          137.39748983414444,
+          145.12235947054208,
+          153.37491672188156
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        116.79414940901172,
+        24.408259759114728,
+        44.035425488446634,
+        194.47821846603702,
+        95.8830155631887,
+        13.129660323444554,
+        124.82921057755816,
+        183.1165711802504,
+        230.50620305204532,
+        103.56077069168481,
+        49.84353891456264,
+        62.86834533501562,
+        86.33731817557441,
+        95.7146420710871,
+        28.782627128111088,
+        93.69646171577847,
+        22.76071279316543,
+        61.56114406494607,
+        126.13029517082863,
+        82.33368719719796,
+        93.08898230605722,
+        91.89455114680072,
+        80.40047243549944,
+        31.307265515792263
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_diverging_single_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818
+        ],
+        "optical_power_diopters": [
+          -55.0
+        ],
+        "center_thickness_mm": [
+          2.000000000000001
+        ],
+        "max_clipping_upper_bound": 2.1554948750111385e-24,
+        "max_chief_ray_tilt_deg": 26.810302720358457,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        36.60764697414024,
+        6.58455954629631,
+        16.093918157328133,
+        52.85091089839408,
+        51.77412787794272,
+        26.688357731830376,
+        45.33234352735185,
+        35.96606859279787,
+        52.76073037787652,
+        46.334186296480745,
+        48.54148437000369,
+        17.599675946850436,
+        19.70939858547985,
+        26.46395846699471,
+        12.231806538220535,
+        29.45455732244586,
+        8.252425063966523,
+        6.035189497724678,
+        18.277627928982387,
+        4.114015847058409,
+        11.725004084251168,
+        26.849940055192853,
+        16.18810830198003,
+        20.662944315264742
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_diverging_prism_3d",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 3,
+        "frustum": false,
+        "gain_unknown": false
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 26.810302720358457,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        28.156263816803737,
+        43.66228266413908,
+        24.570330746675655,
+        63.37410257635237,
+        80.64469574336658,
+        45.56002683484714,
+        66.18904301445885,
+        74.13650696513547,
+        57.116745058460864,
+        31.348456360438806,
+        102.04963969942108,
+        20.61107814140829,
+        40.78621651186638,
+        44.60543190514512,
+        22.618526115561423,
+        43.85579622623161,
+        25.010016112737155,
+        27.805324277705193,
+        34.14517618726173,
+        40.44814936305714,
+        23.326622088321344,
+        41.69187603658116,
+        42.100535205838625,
+        36.18003720176899
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_baseline_core_3d_unknown_gain",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.002,
+          "radii": [
+            0.015
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.45,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": true
+      },
+      "noise": {
+        "bandwidth": 100,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          27.27272727272727
+        ],
+        "optical_power_diopters": [
+          36.66666666666667
+        ],
+        "center_thickness_mm": [
+          4.311422459550478
+        ],
+        "max_clipping_upper_bound": 7.905960796527384e-27,
+        "max_chief_ray_tilt_deg": 13.614986896164874,
+        "min_virtual_waist_distance_mm": 9.538102728520341,
+        "min_output_rayleigh_range_mm": 0.15061479232223574,
+        "center_beam_radius_at_3m_mm": [
+          130.14017506853327
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        6.323825281772663,
+        17.227610748474437,
+        18.36135874030868,
+        30.866479565329055,
+        21.927039123612285,
+        3.4712522970002055,
+        14.421856876984576,
+        27.6697937359756,
+        26.619660130185313,
+        14.2417273350641,
+        20.993615434470282,
+        25.00944722385453,
+        8.431155360528681,
+        9.744563052436243,
+        13.713979541222958,
+        16.99743441423265,
+        21.522892200380795,
+        13.139123436991131,
+        11.813176645545523,
+        22.220216678628002,
+        6.775185631582463,
+        24.592128936540593,
+        38.88431699818294,
+        1.9662392030131657
+      ]
+    },
+    {
+      "case": {
+        "name": "tile_diverging_ninth_3d_unknown_gain",
+        "config": {
+          "wavelength": 9.5e-07,
+          "waist": 5e-06,
+          "index": 1.55,
+          "power": 0.01,
+          "pitch": 0.002,
+          "array_lens_distance": 0.005,
+          "diameter": 0.016,
+          "edge_thickness": 0.006,
+          "radii": [
+            -0.01,
+            -0.011
+          ],
+          "tiles": 1,
+          "tile_spacing": 0.02,
+          "tilt_deg": 21.0,
+          "array_height": 3.0,
+          "pd_area": 1e-06,
+          "fov_deg": 70.0,
+          "transmission": 0.9
+        },
+        "half_width": 0.8333333333333334,
+        "dimensions": 3,
+        "frustum": true,
+        "gain_unknown": true
+      },
+      "noise": {
+        "bandwidth": 200,
+        "responsivity": 0.7,
+        "temperature": 300.0,
+        "feedback_resistance": 10000.0,
+        "amplifier_current_density": 2e-12,
+        "background_current": 1e-05,
+        "rin": 3.1622776601683793e-16,
+        "repeatability": 0.005
+      },
+      "optics": {
+        "focal_mm": [
+          -18.18181818181818,
+          -20.0
+        ],
+        "optical_power_diopters": [
+          -55.0,
+          -50.00000000000001
+        ],
+        "center_thickness_mm": [
+          2.000000000000001,
+          2.54983443527075
+        ],
+        "max_clipping_upper_bound": 5.696688460766252e-23,
+        "max_chief_ray_tilt_deg": 26.810302720358457,
+        "min_virtual_waist_distance_mm": 4.673611325168927,
+        "min_output_rayleigh_range_mm": 0.041690174434636,
+        "center_beam_radius_at_3m_mm": [
+          244.58969801840587,
+          242.12251391314604
+        ]
+      },
+      "seed": 20260912,
+      "fingerprint_far_sigma": [
+        3.8349258000802946,
+        15.360566763730143,
+        8.39129035238176,
+        36.60708382311921,
+        36.35496664290384,
+        8.325114394034841,
+        12.2776758569079,
+        18.185011235447433,
+        28.661754094301063,
+        8.401456440943951,
+        35.83358199323067,
+        5.8723916651452885,
+        10.833431048157978,
+        37.7218024584115,
+        3.9184471215549133,
+        15.826077615787487,
+        13.595158101922515,
+        4.084175470675787,
+        17.69233621183662,
+        10.110812974255195,
+        8.081011162930402,
+        11.885545997473514,
+        33.17881573560908,
+        0.9779616658410585
+      ]
+    }
+  ],
+  "nonfinite_json_values": "null means an unbounded or numerically unidentifiable result; never zero"
+}
