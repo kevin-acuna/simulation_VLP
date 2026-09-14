@@ -2,14 +2,14 @@ addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
 
-p.transmitter.power_W = 0.405;
+p.transmitter.power_W = 0.65;
 p.receiver.fov_deg = 85;
-p.receiver.area_m2 = 26.4e-6;
+p.receiver.area_m2 = 75.4e-6;
 p.acquisition.samples_per_orientation = 1000;
 p.noise.variance_W2 = 3e-14;
-fixed_K = 14;
-fixed_tilt_deg = 40;
-half_angles_deg = 75;
+fixed_K = 9;
+fixed_tilt_deg = 3;
+half_angles_deg = 60;
 
 experiment = struct();
 experiment.cases = rx_cone_cases(p, half_angles_deg, fixed_tilt_deg, fixed_K);

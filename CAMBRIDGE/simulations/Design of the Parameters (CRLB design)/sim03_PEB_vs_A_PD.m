@@ -2,7 +2,7 @@ addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
 
-p.transmitter.power_W = 0.405;
+p.transmitter.power_W = 0.65;
 p.receiver.fov_deg = 85;
 p.acquisition.samples_per_orientation = 1000;
 p.noise.variance_W2 = 3e-14;

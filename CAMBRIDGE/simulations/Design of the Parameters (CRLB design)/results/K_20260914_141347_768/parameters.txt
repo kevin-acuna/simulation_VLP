@@ -1,0 +1,30 @@
+
+============================================================
+CAMBRIDGE | K | 14-Sep-2026 14:13:47
+FIXED SYSTEM (case-specific optical parameters follow)
+Room [m]: [3 3 2] | LED position [m]: [0 0 2] | LED normal: [0 0 -1]
+P_t = 0.405 W | R_p = 0.4 A/W | T_s = 1 | optical gain = 1
+Noise: independent_homoscedastic_optical_power; sigma^2 = 3e-14 W^2 per sample
+Maximum PD tilt = 85 deg | SVD tolerance = 1e-10 | boundary tolerance = 1e-12
+Design grid: x=[-1.5 -1.3 -1.1 -0.9 -0.7 -0.5 -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1 1.3 1.5] m
+             y=[-1.5 -1.3 -1.1 -0.9 -0.7 -0.5 -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1 1.3 1.5] m
+             z=[0 0.2 0.4 0.6 0.8 1 1.2] m
+Number of positions: 1792
+Acquisition modes: per_orientation, fixed_total
+  per_orientation: N_i=1000; total samples = K*N_i
+  fixed_total: M=9000; integer counts allocated separately at every K
+CASE SETTINGS (NaN = swept quantity or not applicable to an explicit pattern)
+    Case            Label            HalfAngle_deg    LambertianOrder    FOV_deg     K     Area_mm2    ConeTilt_deg    AzimuthOffset_deg       Pattern    
+    ____    _____________________    _____________    _______________    _______    ___    ________    ____________    _________________    ______________
+
+     1      "\Phi_{1/2} = 15 deg"         15              19.994           85       NaN      75.4           30                 0            "uniform_cone"
+     2      "\Phi_{1/2} = 30 deg"         30              4.8188           85       NaN      75.4           30                 0            "uniform_cone"
+     3      "\Phi_{1/2} = 45 deg"         45                   2           85       NaN      75.4           30                 0            "uniform_cone"
+     4      "\Phi_{1/2} = 60 deg"         60                   1           85       NaN      75.4           30                 0            "uniform_cone"
+
+SWEPT VARIABLES
+  K: [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15]; cones are regenerated, not nested, without re-optimizing tilt.
+Assumptions: LOS, calibrated gain, known global normals, stationary PD.
+Local PEB: Inf = rank-deficient; NaN = nonregular boundary.
+Full-domain RMS is Inf if ANY position lacks a finite regular bound.
+============================================================
