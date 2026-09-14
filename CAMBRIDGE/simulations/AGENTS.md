@@ -11,14 +11,20 @@ Verified with MATLAB R2026a on Windows. The numerical implementation uses base M
 From the repository root in MATLAB:
 
 ```matlab
-addpath('CAMBRIDGE');
+addpath('CAMBRIDGE/simulations');
 run_cambridge('test');
 results = run_cambridge('full');
 ```
 
 `run_cambridge('quick')` is a coarse-grid integration check, not the publication-resolution design. Each design invocation creates a timestamped output directory. The returned `results.output_directory` locates CSV tables, the complete MAT dataset, and editable FIG/vector PDF/PNG figures. Tests create and clean up their own temporary artifacts.
 
-All editable experiment inputs are in `System/Parameters/system_parameters.m`. A custom parameter struct can be supplied as `run_cambridge('full', p)`. `p.output.export_figures=false` runs calculations and table/MAT export without rendering figures. `p.output.visible='on'` shows figures during rendering; exported FIG files can be opened afterwards.
+`System/Parameters/system_parameters.m` contains shared defaults. For exploratory work, edit the parameter block at the top of one independent script in `Design of the Parameters (CRLB design)`: `sim01_PEB_vs_inclination.m`, `sim02_PEB_vs_K.m`, `sim03_PEB_vs_A_PD.m`, or `sim04_PEB_heatmap.m`. Each script runs alone using MATLAB's Run button, prints fixed/swept parameters, saves a timestamped MAT/CSV/parameter manifest, and leaves its figures open. From the repository root, call `addpath('CAMBRIDGE/simulations'); cambridge_setup();` before invoking a script by name.
+
+Calculations live in `studies/study_*.m` and never plot or optimize implicitly. Rendering lives in `plotting/plot_PEB_*.m`; appearance is controlled by a separate `style = ieee_plot_style()` struct. Use `replot_experiment(mat_file, style)` to redraw saved data without recomputing physics, or pass a third argument (`inclination`, `K`, `area`, `heatmap`, `heatmap_best`) to select part of a complete-design dataset. Replots use new sibling directories and resolve paths from the supplied MAT file, not stale paths stored before the project was moved.
+
+`rx_cone_cases` creates editable cases. Cone normals are regenerated from K/tilt/azimuth before evaluation. For arbitrary or optimized normals use `family='explicit'`; these are frozen, printed, and cannot be silently resized by the K sweep. `rx_cases_from_design` imports a complete design only when explicitly requested. The default independent K/area/map experiments use a common 40-degree cone, not the optimized patterns; keep their results distinct from the full-design benchmark.
+
+The complete workflow remains available as `run_cambridge('full', p)`, with its own `p.output.export_figures` and `p.output.visible` controls. Independent scripts use `style.export`, `style.visible`, and `style.keep_open`. Neither scripts nor renderers clear the workspace, close unrelated figures, or overwrite existing exports.
 
 Compile the mathematical derivation from `Bounds (3D)/Position Error Bound` after ensuring the `build` directory exists:
 
@@ -30,6 +36,8 @@ pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build PEB_der
 ```
 
 The derivation uses `PEB_references.bib` and the TeX Live `IEEEtran.bst` style. Run BibTeX from the source directory as above so it can locate the bibliography while writing its outputs into `build`.
+
+The full project report is `Bounds (3D)/Position Error Bound/Project_report.tex`. Compile it with the same four-command sequence, replacing `PEB_derivation` by `Project_report`. It includes the derivation summary, assumptions, file responsibilities, experiment/replot examples, and the verified benchmark figures. Its result and figure paths deliberately point to a particular saved run, not whichever run happens to be newest. Journal export uses the `exportgraphics` Padding option, verified in R2026a; the full graphics workflow is not claimed to support older releases.
 
 ## Scientific conventions
 

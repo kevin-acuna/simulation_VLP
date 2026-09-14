@@ -1,0 +1,53 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Planteamiento, objetivos y recorrido del estudio}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}La pregunta que resolvemos}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Qué significa que una solución funcione}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Resumen del recorrido lógico}{4}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Preservación de la versión Python y autonomía MATLAB}{5}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Modelo óptico: de los parámetros a las potencias}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Parámetros, hipótesis y convenciones}{6}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Posición de emisores y superficie curva}{6}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Demostración de la dirección refractada}{7}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Demostración de la transformación del parámetro complejo}{7}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Coordenadas globales y los nueve tiles}{8}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}De irradiancia a potencia del PD}{8}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Extensión exploratoria de curvatura negativa}{9}{subsection.2.7}%
+\contentsline {section}{\numberline {3}Identificabilidad: demostraciones y límites}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Una explicación analítica del caso 2D}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Por qué una focal puede bastar para 3D calibrado}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Demostración de la ambigüedad con ganancia libre}{10}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Demostración del Jacobiano completo}{11}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Rango local no equivale a unicidad global}{11}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Información de posición y ganancia nuisance}{12}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Ruido, adquisición y algoritmo de estimación}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Modelo de ruido en unidades de potencia}{12}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Comparación justa del número de estados}{13}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Función objetivo sin información de la posición verdadera}{13}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Biblioteca, varios arranques y ajuste local}{14}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Regresión que comprueba la búsqueda}{14}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Diseño de experimentos y trazabilidad de las pruebas}{14}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Regiones: no confundir un núcleo útil con un noveno nominal}{14}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Demostración del muestreo uniforme en volumen}{15}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Tamaño, semillas y estadísticas}{15}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Catálogo de los 25 casos principales}{16}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Barridos y controles que acompañan a Monte Carlo}{17}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Perturbaciones de calibración}{17}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Trazado de rayos independiente}{17}{subsection.5.7}%
+\contentsline {section}{\numberline {6}Resultados MATLAB, interpretación y decisión}{18}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Primero: la solución más simple que funciona}{18}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Segundo: dónde falla extrapolar la solución}{18}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Distribuciones del error y resultados completos}{19}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}La ganancia desconocida cambia la conclusión de profundidad}{22}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}La calibración importa incluso sin liberar la ganancia}{22}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Comprobación física: no aceptar una solución solo por su CDF}{23}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Tiempo, área y complejidad}{25}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}Relación con las cifras Python}{26}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}Recomendación final y límites de aplicabilidad}{27}{subsection.6.9}%
+\contentsline {section}{\numberline {7}Organización, depuración y reproducción}{27}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Qué abrir primero}{27}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Mapa de archivos y relación con el razonamiento}{27}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Estructura interna de una ejecución}{29}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Cómo ejecutar y depurar en MATLAB}{30}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Verificación de la migración y peculiaridades MATLAB}{31}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Compilar el informe}{31}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Lista final de interpretación correcta}{31}{subsection.7.7}%

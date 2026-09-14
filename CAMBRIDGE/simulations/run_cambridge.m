@@ -2,10 +2,7 @@ function results = run_cambridge(mode, p)
 if nargin < 1
     mode = 'full';
 end
-root = fileparts(mfilename('fullpath'));
-addpath(fullfile(root, 'System'), fullfile(root, 'System', 'Parameters'));
-addpath(fullfile(root, 'Bounds (3D)', 'Position Error Bound'));
-addpath(fullfile(root, 'Design of the Parameters (CRLB design)'));
+root = cambridge_setup();
 if nargin < 2
     p = system_parameters();
 end

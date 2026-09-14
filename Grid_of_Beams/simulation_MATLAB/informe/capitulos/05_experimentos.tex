@@ -1,0 +1,91 @@
+\section{Diseño de experimentos y trazabilidad de las pruebas}
+\subsection{Regiones: no confundir un núcleo útil con un noveno nominal}
+Para un semiancho $a$ en el plano de referencia se define
+\begin{equation}\label{eq:domain}
+\mathcal V_a=\{(x,y,z):0\le z\le1,\ |x|,|y|\le a(3-z)/3\}.
+\end{equation}
+Es un tronco de pirámide, no un prisma. La sección se contrae con la altura porque una huella angular cubre menos superficie cerca del techo. Se ensayan también prismas $|x|,|y|\le a$, $0\le z\le1$, para no extrapolar injustificadamente resultados a esquinas superiores no iluminadas.
+
+\begin{table}[H]\centering\begin{tabular}{lll}\toprule
+$a$ & Base en $z=0$ & Interpretación\\\midrule
+0.45 m & $0.90\times0.90$ m$^2$ & Núcleo de un tile\\
+0.60 m & $1.20\times1.20$ m$^2$ & Núcleo ampliado\\
+$5/6$ m & $1.667\times1.667$ m$^2$ & Noveno nominal de 25 m$^2$\\
+1.80 m & $3.60\times3.60$ m$^2$ & Región central del AP completo\\
+2.50 m & $5.00\times5.00$ m$^2$ & Huella nominal completa\\\bottomrule
+\end{tabular}\caption{La sección en $z=1$ tiene $2/3$ del lado de la base. El receptor 3D no se restringe a una altura conocida.}\end{table}
+
+La caja de búsqueda del estimador es la envolvente rectangular de la región. No se le da la relación del borde \eqref{eq:domain} como una ecuación para determinar la altura. Tampoco se le indica el tile dominante correcto.
+
+\subsection{Demostración del muestreo uniforme en volumen}
+Una altura uniforme no produciría densidad uniforme en un tronco cuya sección cambia. El área de sección es $A(z)=4a^2(3-z)^2/9$. El volumen es
+\begin{equation}
+V_a=\int_0^1 A(z)\,dz=4a^2\frac{19}{27}.
+\end{equation}
+Para densidad espacial constante, la función acumulada de altura debe ser
+\begin{equation}
+F_z(z)=\frac{\int_0^z A(t)dt}{V_a}=\frac{27-(3-z)^3}{19}.
+\end{equation}
+Por inversión, con $U\sim\mathcal U(0,1)$:
+\begin{equation}
+z=3-(27-19U)^{1/3}.
+\end{equation}
+Condicionadas a esa altura, $x$ e $y$ se sortean uniformemente en su sección. El código implementa exactamente esta construcción. Para el prisma se usan las tres coordenadas uniformes en sus intervalos.
+
+\subsection{Tamaño, semillas y estadísticas}
+Cada caso principal tiene 300 posiciones aleatorias. Se añaden nueve puntos estructurados en 2D y 27 en 3D: combinaciones de coordenadas extremas y centrales en las alturas 0, 0.5 y 1 m. Los errores de estos puntos no se mezclan con los percentiles aleatorios; se informan por separado.
+
+Los mapas finales utilizan $61\times61$ puntos en 2D y $61\times61\times5$ en 3D. El barrido de diseño utiliza una malla distinta, generalmente $17\times17\times5$; el barrido de inclinación usa $25\times25\times5$. La fracción de puntos de una malla no equivale a una fracción volumétrica, mientras que Monte Carlo sí sigue el volumen definido.
+
+El generador MATLAB es \archivo{mt19937ar}, con semilla 20260912 para el estudio; 20260912+9000 para auditorías sin ruido y 20260912+3000 para sensibilidad. El ray tracing usa semilla 193 y muestras antitéticas. Python utilizaba PCG64, por lo que el mismo entero de semilla no genera las mismas posiciones. Se emplean nuevas realizaciones MATLAB y se identifica explícitamente esa diferencia.
+
+El percentil de errores utiliza interpolación lineal con índice $1+(N-1)p$, equivalente a la convención de NumPy utilizada antes. Para mapas que contienen $\infty$ se usa el estadístico ordenado inferior, evitando operaciones indefinidas entre infinitos. No se eliminan los puntos no observables para mejorar artificialmente un promedio.
+
+Para una tasa observada de fallo $\hat p$ y $N$ ensayos, se utiliza el intervalo de Wilson, con $z_{.975}=1.95996$:
+\begin{equation}
+\frac{\hat p+z_{.975}^2/(2N)\ \pm\ z_{.975}\sqrt{\hat p(1-\hat p)/N+z_{.975}^2/(4N^2)}}{1+z_{.975}^2/N}.
+\end{equation}
+Con cero fallos en 300 realizaciones, el extremo superior sigue siendo aproximadamente 1.26\%. Por tanto, ``300/300 por debajo de 10 cm'' no es una garantía de fallo nulo.
+
+\subsection{Catálogo de los 25 casos principales}
+Los identificadores C01--C25 del resto de las tablas corresponden al catálogo siguiente. La columna de dominio indica tronco (T) o prisma (P); las variantes con ganancia libre son parámetros nuisance, no una calibración de ganancia conocida.
+\input{../informe/generado/catalogo.tex}
+
+La progresión no se ha limitado a seleccionar casos favorables:
+\begin{itemize}
+\item \textbf{Una focal convexa:} $R=15$ mm, primero núcleo y después noveno nominal.
+\item \textbf{Dos focales convexas:} $R=12,15$ mm para ampliar la región; se prueban también regiones nominales y fronteras.
+\item \textbf{Ocho estados:} $R=10,11,12,13,15,17,20,25$ mm para comprobar si muchos estados reparan los huecos.
+\item \textbf{Familia cóncava exploratoria:} $R=-10,-11$ mm y borde 6 mm, sin cambiar los VCSELs ni el pitch.
+\item \textbf{Nueve tiles:} geometría original de $21^\circ$, núcleo, huella nominal y prisma. También se prueba $27^\circ$ y tres estados $R=10,12,15$ mm.
+\item \textbf{Ganancia común desconocida:} núcleo de un tile, tile cóncavo y AP cóncavo completo, con ganancia verdadera 1.08. Sus mapas de información se normalizan a ganancia uno para comparar geometría; sus ensayos estiman la ganancia real.
+\end{itemize}
+
+\subsection{Barridos y controles que acompañan a Monte Carlo}
+\begin{longtable}{p{4.5cm}p{10cm}}\toprule
+Tabla en \archivo{tablas/} & Pregunta que responde\\\midrule\endhead
+\archivo{design_sweep.csv} & Pitch 1.5, 2, 2.25 y 2.5 mm; estados individuales, pares y barridos amplios. También separación array--lente de 1 mm, waists 3 y 2 $\mu$m y array mayor de pitch 4 mm/lente 28 mm. Las configuraciones se guardan además en MAT.\\
+\archivo{design_rejected.csv} & Geometrías individuales rechazadas por restricciones de lente; no son fallos ocultados de localización.\\
+\archivo{diversity_controls.csv} & Repetir el mismo estado frente a variar R; ganancia conocida, común libre y por estado.\\
+\archivo{grid_tilt_sweep.csv} & Inclinaciones 21, 24, 27, 30 y 33 grados y seis conjuntos de estados.\\
+\archivo{noise_area_tradeoff.csv} & Banda de referencia 10--10000 Hz y áreas de PD 0.1, 1 y 10 mm$^2$. La electrónica y el fondo se mantienen fijos: no es una optimización de capacitancia real.\\
+\archivo{radial_ambiguity.csv} & Comparación de dos posiciones separadas aproximadamente 0.60 m sobre una misma dirección, con y sin ajuste de ganancia.\\
+\archivo{robustness.csv} & Ocho condiciones en cuatro configuraciones, 100 posiciones por condición: 3200 ajustes.\\
+\archivo{ray_validation.csv} & Quince combinaciones de curvatura y emisor, 200000 rayos cada una.\\\bottomrule
+\end{longtable}
+
+\subsection{Perturbaciones de calibración}
+La sensibilidad se estudia sin informar al estimador de las perturbaciones: control concordante, +2\% de ganancia, 1\% de error fijo por VCSEL compartido entre estados, fondo residual 0.1 nW, PD inclinado $3^\circ$, errores de R de 0.1\% y 1\%, y borde aumentado 0.1 mm. Se comparten realizaciones de ruido entre condiciones para comparar cambios controlados. Se conservan verdad, medias, medidas y estimaciones, no únicamente una tabla final.
+
+\subsection{Trazado de rayos independiente}
+El generador de rayos parte del waist con desviaciones de posición $w_0/2$ y pendientes $\lambda/(2\pi w_0)$. Traza la cara plana, intersección exacta con la esfera y refracción de salida por \eqref{eq:snell}. Descarta rayos fuera de apertura, TIR y propagación inversa. Después calcula centroide, matriz de covarianza transversal y radios $2\sqrt{\lambda_j(C)}$.
+
+La referencia circular sobre un plano inclinado tiene covarianza aproximada
+\begin{equation}
+C_{xy}^{ABCD}=\frac{w^2}{4}\left[I_2+\frac{\vect v_{xy}\vect v_{xy}^T}{v_z^2}\right].
+\end{equation}
+Comparar ambas covarianzas distingue la elipse de proyección geométrica de la astigmatización que el $q$ circular no recoge. El momento cuarto de Mahalanobis se divide por ocho, su valor esperado para un Gaussian bidimensional ideal.
+
+Se prueban $R=12,15,-10,-11,10$ mm en emisor central 13, lateral 3 y esquina 1: tres millones de rayos. Es una comprobación geométrica, no una simulación electromagnética coherente, una réplica certificada de Zemax ni una prueba de laboratorio. No incluye Fresnel angular ni rugosidad. Su finalidad es detectar cuándo no debe confiarse en la precisión del modelo circular.
+
+\textbf{Archivos del capítulo:} \archivo{configuracion/gob_study_cases.m}, \archivo{configuracion/gob_run_options.m}, las funciones de \archivo{experimentos/}, \archivo{validacion/gob_trace_beam.m} y \archivo{modelo/gob_snell.m}.

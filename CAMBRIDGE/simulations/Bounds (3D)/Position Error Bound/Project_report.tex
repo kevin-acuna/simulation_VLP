@@ -1,0 +1,389 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,bm,booktabs,array,longtable,graphicx,geometry}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\geometry{margin=23mm}
+\newcommand{\PEB}{\operatorname{PEB}}
+\newcommand{\tr}{\operatorname{tr}}
+\graphicspath{{../../Design of the Parameters (CRLB design)/results/full_20260914_104329_971/replot_20260914_105421_998/}}
+\title{Informe del proyecto Cambridge\\Posicionamiento 3D con un LED fijo y un PD reorientable\\\large Modelo, cotas y laboratorio de experimentos MATLAB}
+\author{Proyecto de investigación Cambridge}
+\date{14 de septiembre de 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Se estudia la identificación de tres coordenadas mediante las potencias recibidas por un único fotodiodo cuya normal se controla con dos grados de libertad. El LED permanece fijo. El informe resume las hipótesis, las derivaciones centrales, la organización del entorno de simulación y los resultados de referencia. El entorno separa experimentos, cálculos, representación gráfica y optimización: cada barrido puede ejecutarse por sí solo, mostrando sus parámetros efectivos, y cada figura puede regenerarse desde datos guardados sin repetir la simulación. Las precisiones reportadas son cotas locales bajo un modelo LOS ideal, no resultados experimentales de un estimador.
+\end{abstract}
+\tableofcontents
+\clearpage
+
+\section{Objetivo y alcance}
+La arquitectura es el problema dual del posicionamiento con LED reorientable de los manuscritos \cite{tcom,broadcast}. En el primero, una medida cooperativa adicional recupera distancia; en el segundo, la orientación conocida del receptor permite utilizar las potencias absolutas del mismo barrido. Aquí la diversidad angular se traslada al receptor: el transmisor no gira y el centro óptico del PD permanece en una posición desconocida durante las $K$ adquisiciones.
+
+La dualidad no es una simetría exacta de la respuesta óptica. El patrón del transmisor tiene exponente Lambertiano $m$, mientras que el PD ideal responde con un coseno de incidencia de exponente uno. Esa estructura permite representar las potencias como una función lineal de un vector óptico de dimensión tres, y después recuperar dirección y distancia.
+
+El entorno tiene dos usos distintos:
+\begin{enumerate}
+\item \textbf{Experimentación controlada}: fijar explícitamente un conjunto de parámetros y barrer sólo las variables de interés. No requiere resultados de otro experimento ni realiza optimización oculta.
+\item \textbf{Diseño secuencial completo}: seleccionar inclinación/FOV, comparar $K$, refinar los ángulos individuales y explorar área/mapas. Es opcional y sirve como benchmark reproducible.
+\end{enumerate}
+El proyecto activo está en \path{CAMBRIDGE/simulations}. La aplicación \path{CAMBRIDGE/digital_twin_ows} y los otros proyectos del repositorio son independientes.
+
+\section{Hipótesis y parámetros del sistema}
+\subsection{Hipótesis de la cota}
+\begin{enumerate}
+\item Posición, eje fijo, potencia y orden Lambertiano del LED conocidos.
+\item Área, transmisión del filtro y ganancia óptica calibradas. Por defecto no hay concentrador.
+\item Normales del PD conocidas en el sistema global, no solamente ángulos relativos del gimbal. El giro alrededor de la normal no cambia el PD ideal axialmente simétrico.
+\item Posición del centro óptico constante durante el barrido. No se modela la traslación debida a un pivote desplazado ni el movimiento de un dron.
+\item Propagación LOS, sin multipath, oclusiones ni saturación. La respuesta del PD es cosenoidal con corte FOV ideal.
+\item Ruido Gaussiano independiente, con varianza óptica conocida y constante respecto a posición, orientación, FOV y área. Las muestras promediadas son independientes.
+\item La posición se estima en tres dimensiones: incluso al representar una altura fija, la FIM sigue siendo $3\times3$. La rejilla espacial no es un prior utilizado por el estimador.
+\end{enumerate}
+Los errores de IMU, calibración, patrón angular, ruido dependiente de señal y asentamiento mecánico quedan fuera de esta cota. No se deben extrapolar sus valores directamente a un prototipo.
+
+\subsection{Parámetros nominales}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Magnitud & Valor nominal \\
+\midrule
+Recinto & $3\times3\times2\ \mathrm m^3$ \\
+Posición y eje del LED & $(0,0,2)\ \mathrm m$, $(0,0,-1)$ \\
+Potencia óptica & $0.405\ \mathrm W$ \\
+Semiángulos a mitad de potencia & $30,45,60,75$ grados \\
+Área nominal del PD & $26.4\ \mathrm{mm}^2$ \\
+Responsividad & $0.63\ \mathrm{A/W}$ \\
+FOV, semiapertura & $30,45,60,75,85$ grados \\
+Varianza por muestra & $3\times10^{-14}\ \mathrm W^2$ \\
+Muestras por orientación & $N_i=1000$ \\
+Presupuesto alternativo & $M=9000$ muestras totales \\
+Rejilla de diseño & $x,y\in[-1.5,1.5]$, $z\in[0,1.2]$, paso $0.2\ \mathrm m$ \\
+Comprobación densa & Mismo dominio, paso $0.1\ \mathrm m$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+La rejilla original tiene 1792 puntos; la densa, 12493. No tienen el mismo peso relativo de bordes y esquinas, por lo que sus promedios no deben coincidir necesariamente. Las unidades internas son SI; los sufijos de los campos MATLAB distinguen grados, metros, metros cuadrados y vatios. La responsividad no se multiplica otra vez cuando las potencias y la varianza ya están en dominio óptico.
+
+\section{Principales derivaciones}
+La demostración extendida permanece en \path{PEB_derivation.tex}. Se resumen aquí las expresiones necesarias para interpretar los experimentos.
+
+\subsection{Modelo y representación lineal}
+Con posición desconocida $\mathbf r$, transmisor $\mathbf t$, eje $\mathbf n_t$ y normales receptoras $\mathbf n_i$, definimos:
+\begin{equation}
+d=\|\mathbf t-\mathbf r\|,\quad \mathbf u=\frac{\mathbf t-\mathbf r}{d},\quad
+\mathbf q=-\mathbf n_t,\quad c=\mathbf q^{\mathsf T}\mathbf u,\quad s_i=\mathbf n_i^{\mathsf T}\mathbf u.
+\end{equation}
+La dirección $\mathbf u$ apunta del PD al LED, al contrario que la dirección de propagación usada en los manuscritos previos. Las constantes ópticas son:
+\begin{equation}
+m=-\frac{\ln2}{\ln(\cos\Phi_{1/2})},\qquad
+C=\frac{P_t(m+1)A_{\mathrm{PD}}T_sg}{2\pi}.
+\end{equation}
+El ángulo de mitad de potencia no es un corte de emisión. En el interior visible, con $c>0$, $s_i>\cos\Psi$ y $s_i>0$:
+\begin{equation}
+\mu_i=C d^{-2}c^m s_i,\qquad
+\bar Y_i\sim\mathcal N(\mu_i,\sigma^2/N_i).
+\label{eq:report_model}
+\end{equation}
+Fuera de aceptación, la señal LOS es cero. Para un conjunto visible $\mathcal V$ localmente constante, la factorización es:
+\begin{equation}
+\beta=Cc^m/d^2,\quad \mathbf b=\beta\mathbf u,\quad
+\bm\mu_{\mathcal V}=\mathbf H_{\mathcal V}\mathbf b,\qquad
+\mathbf H_{\mathcal V}=\begin{bmatrix}\mathbf n_{i_1}^{\mathsf T}\\\vdots\\\mathbf n_{i_{|\mathcal V|}}^{\mathsf T}\end{bmatrix}.
+\end{equation}
+Si se conoce $\mathbf b\ne0$ y $C$ está calibrado, la posición se recupera sin una medición adicional:
+\begin{equation}
+\mathbf u=\mathbf b/\|\mathbf b\|,\qquad
+d=\sqrt{C(\mathbf q^{\mathsf T}\mathbf u)^m/\|\mathbf b\|},\qquad
+\mathbf r=\mathbf t-d\mathbf u.
+\label{eq:report_inverse}
+\end{equation}
+
+\subsection{Identificabilidad}
+El Jacobiano del vector óptico es:
+\begin{equation}
+\mathbf B=\frac{\partial\mathbf b}{\partial\mathbf r^{\mathsf T}}
+=-\frac{\beta}{d}\left[\mathbf I+\mathbf u\left(\frac{m}{c}\mathbf q^{\mathsf T}-(m+3)\mathbf u^{\mathsf T}\right)\right],
+\qquad \det\mathbf B=2(\beta/d)^3\ne0.
+\end{equation}
+Dado que $\mathbf J_{\mathcal V}=\mathbf H_{\mathcal V}\mathbf B$, resulta la condición exacta de rango en una región regular:
+\begin{equation}
+\operatorname{rank}\mathcal I=\operatorname{rank}\mathbf H_{\mathcal V}.
+\end{equation}
+Por tanto, la posición 3D es localmente identificable si y sólo si las normales visibles abarcan $\mathbb R^3$. Tener $K\geq3$ es necesario, pero no basta si se pierden orientaciones por FOV o si los vectores son dependientes. Los extremos de un cono pertenecen a un plano afín horizontal, pero eso no impide que las normales desde el origen tengan rango tres.
+
+Si $C$ es desconocido, $d\mapsto ad$, $C\mapsto a^2C$ conserva las medias. La información equivalente tras eliminar la ganancia tiene un núcleo radial; no existe una cota finita de las tres coordenadas bajo ese modelo. Un fondo aditivo desconocido también es relevante: con inclinación común, $H\mathbf e_z=\cos\theta\,\mathbf1$, de modo que la columna del fondo no añade una dirección independiente. Debe calibrarse o introducirse diversidad de inclinaciones adecuada.
+
+\subsection{FIM y PEB}
+Derivando \eqref{eq:report_model} con respecto a las tres coordenadas:
+\begin{equation}
+\nabla_{\mathbf r}\mu_i=\frac{Cc^m}{d^3}
+\left[-\mathbf n_i-\frac{ms_i}{c}\mathbf q+(m+3)s_i\mathbf u\right].
+\end{equation}
+Para $\mathbf W=\operatorname{diag}(N_i/\sigma^2)$, la puntuación y su segundo momento proporcionan \cite{kay}:
+\begin{equation}
+\nabla\ell=\mathbf J^{\mathsf T}\mathbf W(\bar{\mathbf Y}-\bm\mu),\qquad
+\mathcal I=\mathbf J^{\mathsf T}\mathbf W\mathbf J,\qquad
+\PEB=\sqrt{\tr(\mathcal I^{-1})}.
+\label{eq:report_peb}
+\end{equation}
+La FIM está en $\mathrm m^{-2}$ y el PEB en metros. La desigualdad CRLB se aplica a estimadores regulares localmente insesgados, no a todo estimador sesgado ni a su error en cualquier realización de ruido. Se calcula mediante SVD del Jacobiano blanqueado, sin regularización ni pseudoinversa para ocultar coordenadas no observables:
+\begin{equation}
+\widetilde J=W^{1/2}J=U\operatorname{diag}(s_1,s_2,s_3)V^{\mathsf T},\qquad
+\PEB^2=s_1^{-2}+s_2^{-2}+s_3^{-2}.
+\end{equation}
+La tolerancia relativa de rango es $10^{-10}$. El PEB local es \texttt{Inf} si no hay rango tres y \texttt{NaN} sobre una frontera no regular, con tolerancia $10^{-12}$ en coseno. No se deriva el escalón FOV para obtener información artificial.
+
+\subsection{Comprobaciones analíticas}
+Para un cono uniforme totalmente visible con $K\geq3$:
+\begin{equation}
+H^{\mathsf T}H=K\operatorname{diag}\left(\frac{\sin^2\theta}{2},\frac{\sin^2\theta}{2},\cos^2\theta\right).
+\end{equation}
+Sobre el eje vertical del LED:
+\begin{equation}
+\PEB^2=\frac{\sigma^2d^6}{NC^2K}\left(\frac4{\sin^2\theta}+\frac1{4\cos^2\theta}\right),\qquad
+\theta_\star=\arctan(2)\simeq63.435^\circ.
+\end{equation}
+El óptimo axial no es el óptimo espacial del recinto. Además, para ruido constante y sin cambios de visibilidad:
+\begin{equation}
+\PEB\propto\frac{\sigma}{P_tA_{\mathrm{PD}}\sqrt{NK}}.
+\label{eq:report_scaling}
+\end{equation}
+La ley en $K$ exige la geometría uniforme totalmente visible. Con presupuesto $NK=M$ fijo, ese beneficio desaparece idealmente; con FOV y asignaciones enteras pueden quedar variaciones geométricas. Añadir una medición a un conjunto anidado nunca resta información, pero regenerar el cono al cambiar $K$ no construye conjuntos anidados.
+
+\section{Experimentos independientes y trazabilidad}
+\subsection{Qué se modifica y qué permanece fijo}
+Los cuatro scripts se encuentran directamente en \path{Design of the Parameters (CRLB design)}. Sus bloques iniciales son el lugar habitual de edición.
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.39\linewidth}>{\raggedright\arraybackslash}p{0.55\linewidth}}
+\toprule
+Script & Variables y controles \\
+\midrule
+\endhead
+\path{sim01_PEB_vs_inclination.m} & Barre inclinación y FOV, con una figura por semiángulo LED. Fija $K$, área, potencia, ruido, muestras y azimut inicial. No selecciona automáticamente valores para otro experimento. \\
+\path{sim02_PEB_vs_K.m} & Barre $K$ con conos de inclinación congelada. Compara presupuesto por orientación y presupuesto total. La inclinación común por defecto es $40^\circ$; se pueden definir inclinaciones diferentes por caso. \\
+\path{sim03_PEB_vs_A_PD.m} & Barre el área, fijando normales, $K$, FOV, potencia y ruido. Por defecto compara los cuatro semiángulos con $K=14$ y cono de $40^\circ$, no con los patrones refinados. \\
+\path{sim04_PEB_heatmap.m} & Evalúa una rejilla $x,y$ en alturas elegidas. Por defecto utiliza $75^\circ$, FOV $85^\circ$, $K=14$ y cono de $40^\circ$. Puede comparar varios casos y matrices explícitas. \\
+\bottomrule
+\end{longtable}
+No es necesario ejecutar \texttt{sim01} antes de \texttt{sim02}, ni completar una optimización antes de dibujar un mapa. Cambiar el bloque \texttt{p} modifica condiciones físicas; cambiar \texttt{experiment} modifica el barrido; cambiar \texttt{style} modifica solamente la representación. Los scripts no borran el workspace ni cierran figuras ajenas.
+
+En Command Window aparecen: geometría, posición/eje del LED, potencia, responsividad, ganancia/filtro, ruido, tolerancias, rejilla, muestras y presupuestos, parámetros ópticos por caso y variables barridas. Para patrones explícitos se imprimen las normales. Un \texttt{NaN} en la tabla de parámetros indica una cantidad barrida o una inclinación común no aplicable; no es un fallo del cálculo.
+
+Cada ejecución crea un directorio con fecha y hora y conserva:
+\begin{itemize}
+\item \path{experiment_results.mat}: datos numéricos y configuración completa.
+\item \path{metrics.csv}: métricas por configuración evaluada.
+\item \path{parameters.txt}: resumen de parámetros mostrado en consola.
+\item \path{cases.csv}: tabla de casos, cuando corresponde.
+\end{itemize}
+El MAT contiene los parámetros efectivos, el experimento, los PEB por posición, la geometría y las métricas. Las medias ópticas individuales no se guardan en esos barridos; se obtienen si se solicitan los diagnósticos de \texttt{rx\_peb}. Los PDF/PNG/FIG se generan después, desde ese resultado. Así un fallo de dibujo no obliga a repetir el cálculo.
+
+\subsection{Cobertura y promedios}
+Si $\mathcal R_f$ es el conjunto de posiciones con PEB finito y regular, se reporta:
+\begin{equation}
+\rho=\frac{|\mathcal R_f|}{|\mathcal R|},\quad
+F_{\mathrm{cond}}=\sqrt{\frac1{|\mathcal R_f|}\sum_{r\in\mathcal R_f}\PEB^2(r)},\quad
+F_{\mathrm{full}}=\begin{cases}F_{\mathrm{cond}},&\rho=1,\\+\infty,&\rho<1.\end{cases}
+\end{equation}
+Las líneas continuas representan la rejilla completa; las punteadas, sólo el subconjunto finito. La cobertura se muestra separadamente. En los experimentos independientes una configuración inviable se conserva como dato: no se aborta sólo porque su cobertura sea baja. En cambio, la selección del flujo completo exige cobertura regular completa.
+
+Un ejemplo importante ocurre con el cono no optimizado de $40^\circ$: en algunas rejillas cartesianas, ciertas incidencias son exactamente $85^\circ$. En la ejecución independiente del mapa, las alturas $0.6$ y $1.2$ m contienen dos puntos no regulares cada una entre 3721 puntos, por lo que la cobertura regular es aproximadamente $99.946\%$ y el RMS completo es infinito. Esto no equivale a que una región extensa carezca de señal; refleja una frontera del modelo de corte duro. Se conserva la distinción en vez de desplazar artificialmente la rejilla u omitir esos puntos.
+
+\section{Organización y descripción de archivos}
+\subsection{Núcleo físico, no dependiente de las figuras}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.39\linewidth}>{\raggedright\arraybackslash}p{0.55\linewidth}}
+\toprule
+Archivo & Responsabilidad \\
+\midrule
+\endhead
+\path{System/Parameters/system_parameters.m} & Valores comunes nominales y configuración del benchmark completo. Cada script puede sobreescribirlos localmente antes de crear sus casos. \\
+\path{System/rx_channel.m} & Medias ópticas, Jacobiano cartesiano y máscaras de visibilidad/frontera, vectorizados por posición. \\
+\path{Bounds (3D)/Position Error Bound/rx_peb.m} & Blanqueo, SVD, rango, FIM, covarianza CRLB, cotas por eje y PEB. \\
+\path{System/rx_normals.m}, \path{System/rx_cone_normals.m} & Conversión de inclinación/azimut a normales globales y generación de conos uniformes. \\
+\path{System/rx_sample_counts.m} & Asignación entera de muestras para ambos presupuestos. \\
+\path{System/rx_testbed.m} & Rejillas de diseño y comprobación densa. \\
+\path{System/rx_position_gls.m} & Estimador de referencia con visibilidad completa. No resuelve el problema general de selección de máscaras FOV desconocidas. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Cálculo, ejecución y visualización}
+Los caminos siguientes son relativos a \path{Design of the Parameters (CRLB design)} salvo donde se indica otra raíz.
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.39\linewidth}>{\raggedright\arraybackslash}p{0.55\linewidth}}
+\toprule
+Archivo o grupo & Responsabilidad \\
+\midrule
+\endhead
+\path{studies/study_inclination.m} & Barrido numérico de inclinación/FOV/LED, sin dibujar ni optimizar. \\
+\path{studies/study_K.m} & Barrido de $K$ y presupuestos. Rechaza redimensionar silenciosamente patrones explícitos. \\
+\path{studies/study_area.m} & Barrido de área con geometría angular congelada. \\
+\path{studies/study_heatmap.m} & Rejillas espaciales y alturas, con FIM 3D en todos los puntos. \\
+\path{run_rx_experiment.m} & Ejecuta sólo el estudio elegido; imprime parámetros y persiste datos/métricas. \\
+\path{plotting/plot_PEB_vs_inclination.m} & Figura por semiángulo con PEB y cobertura. \\
+\path{plotting/plot_PEB_vs_K.m} & Paneles de presupuesto y cobertura. \\
+\path{plotting/plot_PEB_vs_area.m} & Dependencia con área y objetivo de RMS-PEB. \\
+\path{plotting/plot_PEB_heatmap.m} & Paneles espaciales con una escala cromática común. \\
+\path{plotting/ieee_plot_style.m} & Tipografía, dimensiones físicas, colores, marcadores, escalas, límites y exportación. \\
+\path{plotting/rx_ieee_figure.m}, \path{plotting/rx_ieee_axes.m} & Creación y formato consistente, sin alterar preferencias globales de MATLAB. \\
+\path{plotting/rx_plot_bound.m}, \path{plotting/rx_plot_coverage.m} & Convenciones de PEB completo/condicional y cobertura. \\
+\path{plotting/rx_export_figures.m} & PDF vectorial, PNG y FIG. Rechaza sobrescribir exportaciones existentes. \\
+\path{replot_experiment.m} & Regenera un experimento o una parte de un diseño guardado, sin evaluar canal/FIM ni optimización. \\
+\path{run_parameter_design.m} & Orquestación opcional del diseño secuencial usando los mismos estudios numéricos. \\
+\path{plot_parameter_design.m} & Adaptador corto para dibujar el conjunto completo de resultados. \\
+\path{rx_refine_orientations.m} & Búsqueda local determinista en los $2K$ ángulos, con cobertura completa. \\
+\path{rx_design_metrics.m}, \path{support/rx_summarize_study.m} & Estadísticas con conservación explícita de fallos y puntos no regulares. \\
+\path{support/rx_cone_cases.m}, \path{support/rx_case_parameters.m} & Casos editables y resolución de normales efectivas. Los conos se regeneran a partir de $K$, inclinación y azimut; los patrones explícitos se conservan. \\
+\path{support/rx_cases_from_design.m} & Importación explícita de patrones optimizados desde un struct o un MAT existente. \\
+\path{support/rx_print_experiment.m}, \path{support/rx_case_table.m} & Resumen verificable de parámetros y casos. \\
+\path{support/rx_study_from_design.m} & Compatibilidad con los MAT del diseño anterior; sólo adapta datos guardados. \\
+\path{support/rx_design_summary.m}, \path{support/rx_write_design_tables.m}, \path{support/rx_design_heatmaps.m} & Tablas, exportación y mapas del benchmark completo. \\
+\path{cambridge_setup.m} (raíz) & Añade únicamente las rutas de este proyecto; funciona tras mover la carpeta. \\
+\path{run_cambridge.m} (raíz) & Modos \texttt{full}, \texttt{quick} y \texttt{test}. \\
+\path{tests/test_rx_bounds.m}, \path{tests/test_rx_experiments.m} (raíz) & Verificación física, numérica, independencia, persistencia y redibujado. \\
+\bottomrule
+\end{longtable}
+
+\section{Guía de trabajo para mejorar experimentos y figuras}
+\subsection{Ejecutar sólo lo necesario}
+Desde la raíz del repositorio, elegir un único script:
+\begin{verbatim}
+addpath('CAMBRIDGE/simulations');
+cambridge_setup();
+sim02_PEB_vs_K;
+\end{verbatim}
+También puede abrirse ese script y pulsar Run. Para estudiar otro ruido, área o recinto, editar sus asignaciones de \texttt{p}; para cambiar el barrido, editar \texttt{experiment}. Se recomienda variar una hipótesis física cada vez, mantener las demás condiciones y comparar siempre cobertura y presupuesto.
+
+\subsection{Redibujar sin recalcular}
+Tras una ejecución, el workspace contiene \texttt{result}. Para cambiar solamente la estética:
+\begin{verbatim}
+style = ieee_plot_style();
+style.width_inches = 7.16;
+style.font_size = 8;
+style.line_width = 1.3;
+style.show_titles = false;
+mat_file = fullfile(result.output_directory, ...
+    'experiment_results.mat');
+[figures, render_dir] = replot_experiment(mat_file, style);
+\end{verbatim}
+El redibujado no utiliza cambios recientes en \texttt{p}: utiliza los datos guardados. Si cambia la física o la rejilla, se debe repetir el experimento, no solamente redibujar. Para un MAT del diseño completo, un tercer argumento selecciona \texttt{inclination}, \texttt{K}, \texttt{area}, \texttt{heatmap} o \texttt{heatmap\_best}. Las nuevas figuras van a un subdirectorio distinto y no reemplazan las versiones anteriores.
+
+Para modificar un detalle específico de una gráfica, editar su correspondiente \texttt{plot\_PEB\_*}, no el orquestador general. Para cambiar la apariencia común, editar \texttt{ieee\_plot\_style} o sobreescribir sus campos en el script. La propiedad \texttt{UserData.plot\_style} de cada FIG conserva el estilo utilizado.
+
+\subsection{Importar un diseño refinado voluntariamente}
+Para estudiar el área o los mapas con los patrones refinados:
+\begin{verbatim}
+previous = load(design_file, 'results');
+p = previous.results.parameters;
+experiment = struct();
+experiment.cases = rx_cases_from_design(previous.results, 4);
+experiment.area_values_mm2 = 20:1:40;
+result = run_rx_experiment('area', p, experiment);
+\end{verbatim}
+\texttt{design\_file} debe apuntar al MAT que el investigador elige. No se carga automáticamente el archivo más reciente ni se deduce una configuración óptima de otros experimentos. Para un patrón propio, usar \texttt{family='explicit'}, definir una matriz de normales unitarias de tamaño $3\times K$ y fijar $K$ coherentemente. El campo \texttt{label} controla la leyenda y debe describir el caso que se esté comparando.
+
+\subsection{Presentación para un journal IEEE}
+El ancho nominal de dos columnas es $7.16$ pulgadas, con tipografía Times New Roman de 8 puntos, trazos de 1.15 puntos, marcadores dispersos y colores distinguibles. Los marcadores permiten distinguir curvas también en escala de grises. Se exporta PDF vectorial y PNG a 300 dpi, además de FIG editable. Puede elegirse un ancho de una columna, pero se debe verificar de nuevo la legibilidad y la longitud de las leyendas al tamaño final.
+
+Las leyendas se sitúan fuera de los datos; los mapas comparten límites cromáticos y barra de color. Los paneles de cobertura evitan interpretar una reducción del conjunto evaluado como una mejora. Los títulos internos pueden suprimirse para trasladar al pie de figura los detalles experimentales, pero el pie debe indicar al menos dominio, $N$ o $M$, $K$, patrón, FOV, potencia, área, ruido y convención para fallos. Los límites manuales de ejes no deben utilizarse para ocultar resultados adversos.
+
+\section{Resultados del benchmark y su interpretación}
+\subsection{Trazabilidad de los resultados}
+El diseño completo se volvió a ejecutar tras separar los módulos. Sus cuatro RMS-PEB refinados coinciden con la ejecución original del 11 de septiembre con diferencia relativa inferior a $10^{-10}$. Los datos utilizados aquí están en el directorio \path{results/full_20260914_104329_971}; las figuras se regeneraron desde ese MAT, sin repetir física, en \path{replot_20260914_105421_998}. Las cifras siguientes son estadísticas de cotas, no RMSE medidos en hardware.
+
+\subsection{Inclinación, FOV y orden Lambertiano}
+Con $K=9$, el barrido del benchmark selecciona los conos de $17,31,35,40$ grados para semiángulos LED de $30,45,60,75$ grados, respectivamente. En todos los casos se selecciona FOV $85^\circ$. La diferencia con el óptimo axial de $63.435^\circ$ es esperable: el objetivo considera todo el volumen y el corte de visibilidad.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_vs_inclination_Phi30.pdf}
+\caption{Inclinación y FOV para $\Phi_{1/2}=30^\circ$, $K=9$, área nominal y ruido constante. Las curvas condicionales no sustituyen la comparación con cobertura completa.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_vs_inclination_Phi45.pdf}
+\caption{Mismo protocolo con $\Phi_{1/2}=45^\circ$. La FOV afecta el conjunto visible, no una ganancia de concentrador implícita.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_vs_inclination_Phi60.pdf}
+\caption{Mismo protocolo con $\Phi_{1/2}=60^\circ$. La inclinación equilibra diversidad angular, componente radial y visibilidad espacial.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_vs_inclination_Phi75.pdf}
+\caption{Mismo protocolo con $\Phi_{1/2}=75^\circ$. El mejor cono muestreado tiene inclinación $40^\circ$; eso no implica que todas las normales del posterior refinamiento conserven ese ángulo.}
+\end{figure}
+
+Bajo esta hipótesis de ruido y ganancia constantes, una FOV mayor no penaliza el PEB puntual regular: sólo puede añadir filas informativas. No hay evidencia en este modelo de un compromiso físico óptimo de FOV interior. Para introducirlo deben especificarse, por ejemplo, concentrador, respuesta angular y ruido ambiente dependiente de aceptación.
+
+\subsection{Número de orientaciones y refinamiento individual}
+El menor PEB de los conos en el intervalo $K\in[1,15]$ se obtiene en $K=15$. Se elige $K=14$ como el menor número dentro del 5\% del mínimo. Ese criterio es un compromiso explícito, no una prueba de optimalidad global en $K$ ni una estimación de latencia mecánica. Con presupuesto total fijo las curvas son mucho más planas.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_vs_K.pdf}
+\caption{Benchmark: los conos de $17,31,35,40$ grados permanecen congelados por semiángulo LED. Comparación entre $N_i=1000$ y $M=9000$ muestras totales. La cobertura y el carácter no anidado de los conos son esenciales para interpretar los puntos de $K$ pequeño.}
+\end{figure}
+
+La búsqueda local posterior modifica cada inclinación y azimut, con pasos decrecientes y cobertura completa en la rejilla de diseño. La tabla compara el cono y el refinamiento al mismo $K=14$, FOV $85^\circ$ y área nominal:
+\begin{center}
+\begin{tabular}{rrrrr}
+\toprule
+$\Phi_{1/2}$ & Cono [cm] & Refinado [cm] & Rejilla densa [cm] & Cobertura densa \\
+\midrule
+$30^\circ$ & 39.3520 & 30.6560 & 22.3988 & 100\% \\
+$45^\circ$ & 4.1798 & 3.2346 & 2.8342 & 100\% \\
+$60^\circ$ & 2.5245 & 2.1932 & 2.0117 & 100\% \\
+$75^\circ$ & 2.3419 & 2.1496 & 2.0024 & 100\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+Los LED de $60^\circ$ y $75^\circ$ son cercanos en este dominio. El LED de $30^\circ$ concentra energía hacia el eje, pero su potencia cae fuertemente fuera de él cuando el emisor está fijo. La mayor sensibilidad del promedio a la densidad de rejilla en ese caso indica la importancia de bordes y esquinas. Ninguna rejilla finita certifica la cobertura ni el promedio sobre el continuo, y el refinamiento no es una certificación de óptimo global sobre $2K$ variables.
+
+\subsection{Área del PD}
+En el benchmark refinado de $75^\circ$, pasar de $26.4$ a $100\ \mathrm{mm}^2$ reduce el RMS-PEB de $2.1496$ a $0.5675$ cm, exactamente según \eqref{eq:report_scaling}. No se ha encontrado un óptimo físico interior: el extremo superior gana porque no se modela ninguna penalización de área. El área mínima muestreada que cumple el objetivo de 2 cm es $30.1709\ \mathrm{mm}^2$; la interpolación analítica del mismo modelo da aproximadamente $28.3741\ \mathrm{mm}^2$. Cumplir un objetivo de RMS espacial no garantiza ese error máximo en cada posición.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_vs_A_PD.pdf}
+\caption{Benchmark refinado: patrones individuales congelados, $K=14$, FOV $85^\circ$, $N_i=1000$. La pendiente inversa con área es una consecuencia del modelo de ruido constante, no una conclusión sobre el área óptima de un circuito receptor real.}
+\end{figure}
+
+\subsection{Distribución espacial}
+Los mapas comparan PEB 3D con una escala común; los menores valores aparecen cerca del eje del LED. La ganancia de área no cambia las regiones de visibilidad del modelo. En la mejor configuración refinada, los mapas y la rejilla densa utilizados resultan regulares en todos sus puntos muestreados.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_heatmap_best_configurations.pdf}
+\caption{Configuraciones refinadas a $z=0.8$ m, con $K=14$, FOV $85^\circ$ y área $26.4\ \mathrm{mm}^2$. Cada pixel representa una cota de posición de tres coordenadas.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{PEB_heatmap_best_heights_and_area.pdf}
+\caption{Mejor configuración muestreada, $\Phi_{1/2}=75^\circ$, a tres alturas y dos áreas. El tiempo de adquisición por orientación y la varianza óptica permanecen constantes.}
+\end{figure}
+\clearpage
+
+\section{Verificación y siguientes pasos científicos}
+El entorno se verificó en MATLAB R2026a, sin requerir Optimization, Statistics ni Parallel Computing Toolbox. Las 21 pruebas cubren gradientes por diferencias centrales, fórmula axial, rango mínimo, FOV y sus fronteras, invariancias de coordenadas, escalado de área/potencia/ruido/muestras, ambigüedad de ganancia, reconstrucción sin ruido y covarianza Monte Carlo a alta SNR. También verifican que los estudios no dependen de barridos anteriores, que editar un cono afecta a sus normales efectivas, que se guardan parámetros y que redibujar no altera los datos ni cierra figuras ajenas. Los cuatro scripts se ejecutaron en sesiones independientes.
+
+La representación lineal permite un estimador GLS del vector óptico en una región de visibilidad conocida:
+\begin{equation}
+\hat{\mathbf b}=(H^{\mathsf T}WH)^{-1}H^{\mathsf T}W\bar{\mathbf Y}.
+\end{equation}
+Su transformación a posición es generalmente sesgada a SNR finita. El Monte Carlo incluido es una comprobación local a alta SNR, no una validación de precisión sobre todo el recinto ni cerca de los cambios de máscara.
+
+Para avanzar hacia un artículo y una validación experimental se recomienda:
+\begin{enumerate}
+\item Medir patrón angular, FOV efectiva, ganancia y ruido del receptor real, sin identificar el semiángulo Lambertiano con un corte de emisión.
+\item Añadir incertidumbre de actitud y calibración mediante una FIM aumentada y eliminación de parámetros auxiliares.
+\item Estudiar traslación residual del pivote y duración del barrido; una plataforma móvil no cumple automáticamente la hipótesis estacionaria.
+\item Repetir el diseño con ruido/capacitancia/ancho de banda dependientes de área y con aceptación angular suave. Si la varianza depende de posición, la FIM Gaussiana incluye también derivadas de varianza.
+\item Desarrollar y validar un estimador para máscaras de visibilidad desconocidas, ruido finito y restricciones físicas; comparar RMSE, sesgo y fallos, no sólo PEB.
+\item Usar varias inicializaciones, rejillas de validación independientes y criterios de peor caso para evaluar el alcance del diseño local.
+\end{enumerate}
+El objetivo inmediato del software es facilitar estas preguntas mediante experimentos controlados y figuras reutilizables, sin obligar a ejecutar el diseño completo cada vez.
+
+\bibliographystyle{IEEEtran}
+\bibliography{PEB_references}
+\end{document}

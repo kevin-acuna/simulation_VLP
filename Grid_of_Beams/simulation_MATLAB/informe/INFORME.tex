@@ -1,0 +1,44 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noshorthands,es-nodecimaldot]{babel}
+\usepackage{lmodern,amsmath,amssymb,amsthm,bm}
+\usepackage{geometry,graphicx,booktabs,longtable,tabularx,array,float,xcolor}
+\usepackage{hyperref,xurl,fancyhdr,listings}
+\geometry{margin=2.2cm}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+\newtheorem{proposicion}{Proposición}
+\newtheorem{observacion}{Observación}
+\newcommand{\archivo}[1]{\path{#1}}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\R}{\mathbb R}
+\lstset{language=Matlab,basicstyle=\ttfamily\small,breaklines=true,frame=single,columns=fullflexible,showstringspaces=false}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{3em}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{VCSEL + lente común + un PD}
+\fancyhead[R]{Estudio MATLAB}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+\input{generado/macros.tex}
+\title{Posicionamiento óptico 2D y 3D con un array de VCSELs, una lente común y un único fotodiodo\\[0.4em]\large Desarrollo matemático, implementación MATLAB y evaluación reproducible}
+\author{Estudio computacional basado en la arquitectura de Kazemi}
+\date{Versión MATLAB: septiembre de 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Se plantea y evalúa la recuperación de la posición de un único fotodiodo a partir de potencias individualmente identificadas de un array $5\times5$ de VCSELs. El modelo conserva el acoplamiento entre curvatura de una lente común, refracción de cada emisor y transformación Gaussian mediante matrices ABCD. Se distinguen identificabilidad, estabilidad bajo ruido, convergencia del estimador y validez de las aproximaciones ópticas. La implementación MATLAB se contrasta con valores deterministas de la versión Python y vuelve a ejecutar los experimentos: \NumeroCasos{} casos, \NumeroEnsayos{} localizaciones aleatorias y \NumeroSensibilidad{} pruebas de sensibilidad. Una focal basta en una región local con radiometría y orientación calibradas; dos focales amplían ciertas regiones, pero no garantizan cobertura de todo el volumen nominal. Las variantes más agresivas muestran discrepancias importantes con un trazado independiente de rayos. Este documento explica el razonamiento, las demostraciones bajo sus hipótesis, los experimentos favorables y desfavorables, y la localización de cada archivo necesario para reproducirlos.
+\end{abstract}
+\textbf{Resultado computacional, no certificación experimental.} Las precisiones indicadas suponen el modelo declarado y no representan mediciones de una lente comercial ni una certificación de seguridad ocular.
+\tableofcontents
+\clearpage
+\input{capitulos/01_planteamiento.tex}
+\input{capitulos/02_modelo_optico.tex}
+\input{capitulos/03_identificabilidad.tex}
+\input{capitulos/04_estimacion.tex}
+\input{capitulos/05_experimentos.tex}
+\input{capitulos/06_resultados.tex}
+\input{capitulos/07_reproduccion.tex}
+\end{document}

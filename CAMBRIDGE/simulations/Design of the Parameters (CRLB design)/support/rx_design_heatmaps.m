@@ -1,0 +1,19 @@
+function heatmap = rx_design_heatmaps(r)
+e.cases = rx_cases_from_design(r);
+e.heights_m = r.parameters.output.heatmap_comparison_height_m;
+e.grid_step_m = r.parameters.output.heatmap_step_m;
+comparison = study_heatmap(r.parameters, e);
+heatmap.x_m = comparison.x_m;
+heatmap.y_m = comparison.y_m;
+heatmap.comparison_height_m = e.heights_m;
+heatmap.comparison_peb_m = reshape(comparison.peb_m, numel(comparison.y_m), numel(comparison.x_m), []);
+b = r.best(r.best_half_index);
+c = rx_cases_from_design(r, r.best_half_index);
+e.cases = [c c];
+e.cases(2).area_m2 = b.area_minimum_peb_mm2*1e-6;
+e.heights_m = r.parameters.output.heatmap_heights_m;
+best = study_heatmap(r.parameters, e);
+heatmap.heights_m = e.heights_m;
+heatmap.areas_mm2 = 1e6*[e.cases.area_m2];
+heatmap.best_peb_m = reshape(best.peb_m, numel(best.y_m), numel(best.x_m), numel(e.heights_m), 2);
+end

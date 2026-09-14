@@ -1,0 +1,103 @@
+\section{Resultados MATLAB, interpretación y decisión}
+\subsection{Primero: la solución más simple que funciona}
+La ejecución principal corresponde a \DirectorioResultados. Las cifras que siguen se generan leyendo los datos MATLAB de esa ejecución, no transcribiendo los resultados Python.
+
+\begin{table}[H]\centering
+\input{generado/resumen_principal.tex}
+\caption{Percentil 95 del error euclídeo en realizaciones aleatorias. El lado corresponde a la base cuadrada en $z=0$; en 3D se usan los troncos de la sección anterior, no prismas. Todas estas filas suponen ganancia y normal conocidas.}
+\end{table}
+
+El núcleo del tile, con pitch 2 mm y una sola focal $f=27.27$ mm, da P95 de \TilePdos{} mm en 2D y \TilePtres{} mm en 3D. La focal no necesita variar para que exista información 3D: el vector aporta dirección y la escala calibrada aporta distancia. El máximo estructurado de frontera 3D de este caso es \TileFrontera{} mm.
+
+Dos estados convexos, $f=21.82$ y 27.27 mm, permiten ampliar la región a base $1.2\times1.2$ m$^2$, pero \textbf{no convierten todos sus puntos en igualmente robustos}. El máximo estructurado de frontera es \ParFrontera{} mm; la tabla completa también conserva los fallos aleatorios. Una mediana pequeña no puede utilizarse para esconder esa excepción.
+
+Para nueve tiles con inclinación original de $21^\circ$, los mismos dos estados dan P95 de \GridPdos{} mm en 2D y \GridPtres{} mm en 3D sobre la región de base $3.6\times3.6$ m$^2$. El máximo estructurado de frontera 3D es \GridFrontera{} mm. Esta es una extensión útil del esquema sin aumentar pitch ni introducir un barrido largo.
+
+\subsection{Segundo: dónde falla extrapolar la solución}
+El noveno nominal del tile tiene base $1.667\times1.667$ m$^2$, mayor que el núcleo anterior. Con una focal original, su P95 3D es \TileNovenoPtres{} mm. En la base nominal $5\times5$ m$^2$ del AP original, el P95 3D es \GridOriginalPtres{} mm. Existen zonas oscuras o con muy pocos gradientes detectables. No contradice por sí solo los objetivos de comunicaciones del artículo: se ha cambiado radicalmente el receptor y el criterio de suficiencia.
+
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{01_huellas_opticas.png}
+\caption{La lente fija separa los haces; demasiada separación deja poca información entre ellos o en los bordes. Dos focales cambian la huella. La familia cóncava aumenta el solapamiento en el modelo inicial, pero su adecuación física debe comprobarse aparte.}
+\end{figure}
+
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{05_mapas_informacion.png}
+\caption{Mapas de información en el plano $z=0$. Las escalas laterales varían entre paneles y se indican en los ejes. Los valores no acotados se representan saturados por encima de la escala, no como precisión nula. Las regiones con buena PEB no son un certificado de unicidad global.}
+\end{figure}
+
+\subsection{Distribuciones del error y resultados completos}
+Las curvas muestran todo el rango de errores, incluidos valores métricos. Son distribuciones espaciales con ruido, no únicamente repeticiones alrededor de una posición favorable.
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{06_cdf_tile.png}
+\caption{Experimentos de un tile. Se comparan dominios declarados distintos, no se afirma que reducir el dominio constituya una mejora óptica. Las líneas de referencia son 1 y 10 cm.}
+\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{07_cdf_grid.png}
+\caption{Experimentos de nueve tiles. Las etiquetas ``ideal'' identifican variantes cuya buena CDF bajo el modelo circular no constituye una validación física. La base 3.6 m no se confunde con la base nominal de 5 m.}
+\end{figure}
+
+\input{generado/resultados_completos.tex}
+\input{generado/fronteras_informacion.tex}
+
+Las tablas presentan error aleatorio y máximo estructurado por separado. La columna de éxito se refiere a error inferior a 10 cm, no a la bandera de convergencia del optimizador. Los intervalos de Wilson, RMSE por eje y mínimos alternativos se conservan en \archivo{tablas/summary.csv}. Los casos cóncavos se mantienen para documentar el camino explorado, no se seleccionan sin las reservas ópticas siguientes.
+
+\subsection{La ganancia desconocida cambia la conclusión de profundidad}
+En el núcleo del tile, liberar una ganancia común eleva el P95 3D a \GananciaLibrePtres{} mm. El AP con varios orígenes puede mejorar algunos puntos, pero no elimina todas las zonas de altura débil. Este resultado concuerda con la invariancia de campo lejano demostrada antes y con las curvas radiales del coste.
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{08_ganancia_desconocida.png}
+\caption{Ganancia calibrada frente a ganancia estimada. El mismo color agrupa una geometría; las líneas discontinuas liberan la ganancia. Las diferencias no deben atribuirse a un cambio de número de PDs.}
+\end{figure}
+
+\subsection{La calibración importa incluso sin liberar la ganancia}
+\begin{table}[H]\centering
+\input{generado/sensibilidad_nucleo.tex}
+\caption{Sensibilidad del núcleo del tile, con 100 posiciones por condición. El modelo del estimador permanece nominal. El control tiene una realización distinta de la serie principal de 300 posiciones.}
+\end{table}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{09_sensibilidad_calibracion.png}
+\caption{Errores de ganancia, curvatura, geometría y orientación. Estos ensayos paramétricos no sustituyen una simulación de estimación sobre irradiancias aberradas reales.}
+\end{figure}
+Un error porcentual de curvatura cambia simultáneamente dirección y ancho. Por eso puede producir sesgos considerablemente mayores que el ruido del caso perfectamente calibrado. Un valor milimétrico de una simulación concordante no equivale a tolerar errores porcentuales de fabricación.
+
+\subsection{Comprobación física: no aceptar una solución solo por su CDF}
+\begin{table}[H]\centering
+\input{generado/rayos_esquina.tex}
+\caption{Emisor de esquina: comparación entre segundos momentos del trazado y la aproximación circular proyectada. Cada fila utiliza 200000 rayos.}
+\end{table}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{10_validacion_ray_tracing.png}
+\caption{Comparación completa de quince configuraciones. Una razón de radios cercana a uno favorece la aproximación; grandes diferencias o desplazamientos de centroide invalidan una lectura literal de las CDF concordantes.}
+\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{11_aberraciones_esquina.png}
+\caption{Visualización de rayos de esquina y del contorno predicho por el Gaussian circular. El cambio a focal negativa fuerte requiere más que reutilizar un único ancho circular.}
+\end{figure}
+
+El estado original $R=15$ mm se mantiene relativamente próximo al modelo de referencia, aunque incluso errores de pocos puntos porcentuales en ancho pueden amplificarse en las colas de potencia. $R=12$ mm también requiere calibración de forma para defender precisión experimental fina. $R=10$ mm y los estados negativos fuertes muestran desviaciones off-axis mucho mayores; puede haber TIR de parte de los rayos aunque el rayo principal se transmita.
+
+\textbf{Decisión:} las variantes cóncava y de tres estados con reajuste a $27^\circ$ son rutas exploratorias, no recomendaciones validadas por este informe. Antes de adoptarlas deben usarse un modelo astigmático/no paraxial o firmas medidas y repetirse toda la evaluación. No se ha efectuado una estimación extremo a extremo usando un receptor real ni se demuestra el rendimiento bajo aberraciones reales con las cifras del modelo concordante.
+
+\subsection{Tiempo, área y complejidad}
+\begin{figure}[H]\centering\includegraphics[width=.88\linewidth]{12_tiempo_area_ruido.png}
+\caption{Sensibilidad del núcleo de un tile al área y a la banda de medida. Aumentar banda acorta integración. Se mantiene fija la electrónica y la corriente de fondo, por lo que no se está diseñando la capacitancia ni el amplificador de un PD mayor.}
+\end{figure}
+
+Los barridos de pitch y de muchos estados se conservan completos. No se observa una regla universal ``más separación o más K es mejor'': separar haces aumenta cobertura angular, pero puede reducir solapamiento detectable. Los controles de repetición indican qué parte de una mejora procede solo de promediado. El resultado práctico favorece empezar por una focal y una región útil delimitada.
+
+\begin{figure}[H]\centering\includegraphics[width=.9\linewidth]{13_barrido_pitch.png}
+\caption{Mejor fracción de puntos con PEB inferior a 10 cm entre los estados muestreados de cada grupo, en el noveno nominal. La selección procede de una malla finita: no es un óptimo global ni una garantía de cobertura continua.}
+\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{14_repeticion_vs_diversidad.png}
+\caption{Repetir la misma focal frente a variar la curvatura, con el mismo dominio y presupuesto de integración. Promediar fluctuaciones independientes no equivale a generar gradientes espaciales nuevos.}
+\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=.9\linewidth]{15_barrido_inclinacion.png}
+\caption{Inclinación de los tiles periféricos y fracción de puntos localmente favorables del AP. Se muestran cuatro de los seis conjuntos de estados para facilitar la lectura; todos se conservan en CSV. Los conjuntos con R=10 mm siguen sujetos a la advertencia de aberraciones.}
+\end{figure}
+
+\subsection{Relación con las cifras Python}
+\input{generado/comparacion_python.tex}
+La comparación anterior es estadística, no una prueba de igualdad muestra a muestra. Los generadores son distintos y \archivo{lsqnonlin} no usa exactamente el criterio de parada de SciPy. La equivalencia determinista se comprueba por separado con cinco configuraciones y ocho posiciones cada una: salidas, direcciones, $q$, potencias, Jacobianos e información en puntos numéricamente estables. Los puntos oscuros permanecen en los mapas y las estadísticas; no se omiten para forzar equivalencia de covarianzas mal condicionadas.
+
+\subsection{Recomendación final y límites de aplicabilidad}
+\begin{enumerate}
+\item Empezar por un tile, pitch 2 mm y $R=15$ mm, con normal y potencia absoluta calibradas.
+\item Utilizar el vector de emisores identificados y el ajuste conjunto, no solo el índice del haz máximo ni la suma.
+\item Añadir el estado $R=12$ mm si se necesita ampliar la región, después de calibrar su patrón off-axis.
+\item Para nueve tiles, mantener explícita la región útil; no prometer automáticamente 25 m$^2$ ni todo un prisma de altura variable.
+\item No confundir ganancia desconocida con una fluctuación pequeña: cambia fundamentalmente la observabilidad de distancia.
+\end{enumerate}
+
+No se ha identificado ni certificado una lente comercial que reproduzca simultáneamente curvatura, apertura, espesor y dinámica supuestos. Los estados convexos moderados requieren aproximadamente 36.67 y 45.83 dioptrías sobre 16 mm; los cóncavos exploratorios, $-50$ y $-55$ dioptrías. La repetibilidad, histéresis y aberraciones son parte de la verificación experimental pendiente. Los 10 mW se adoptan del contexto del artículo, pero no certifican seguridad ocular de los estados o transitorios modificados. Todas las pruebas de este informe son computacionales.

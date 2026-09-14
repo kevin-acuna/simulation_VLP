@@ -1,0 +1,22 @@
+function s = ieee_plot_style()
+s.width_inches = 7.16;
+s.height_inches = [];
+s.font_name = 'Times New Roman';
+s.font_size = 8;
+s.line_width = 1.15;
+s.marker_size = 3.5;
+s.marker_count = 8;
+s.colors = [0 114 178; 213 94 0; 0 145 105; 145 70 170; 80 80 80; 0 170 205]/255;
+s.markers = {'o', 's', '^', 'd', 'v', 'p'};
+s.visible = 'on';
+s.keep_open = true;
+s.export = true;
+s.resolution_dpi = 300;
+s.show_titles = true;
+s.show_conditional = true;
+s.x_limits = [];
+s.peb_limits_cm = [];
+s.peb_scale = 'log';
+s.color_limits_cm = [];
+s.color_scale = 'log';
+end

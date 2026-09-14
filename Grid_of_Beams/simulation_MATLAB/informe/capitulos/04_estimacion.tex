@@ -1,0 +1,66 @@
+\section{Ruido, adquisición y algoritmo de estimación}
+\subsection{Modelo de ruido en unidades de potencia}
+La medida simulada es $y_\ell=P_\ell(\vect p)+\varepsilon_\ell$, con ruido Gaussian independiente por piloto y desviación
+\begin{equation}\label{eq:noise}
+\sigma_P^2(P)=\frac{B}{\mathcal R^2}\left[
+\frac{4k_BT}{R_f}+i_a^2+2q_e(\mathcal RP+I_{bg})+
+\mathrm{RIN}(\mathcal RP)^2\right]+(\epsilon P)^2.
+\end{equation}
+La responsividad $\mathcal R$ convierte potencia en corriente; los términos entre corchetes son densidades espectrales de corriente, que se integran sobre el ancho de banda $B$ y se vuelven a expresar en W$^2$. Se incluyen ruido térmico, amplificador, shot de señal y fondo, RIN y una fluctuación multiplicativa por piloto.
+
+\begin{table}[H]\centering\begin{tabular}{ll}\toprule
+Parámetro & Valor\\\midrule
+$\mathcal R$ & 0.7 A/W\\
+$T$, $R_f$ & 300 K, 10 k$\Omega$\\
+$i_a$ & 2 pA/$\sqrt{\mathrm{Hz}}$\\
+$I_{bg}$, con media sustraída & 10 $\mu$A\\
+RIN & $-155$ dB/Hz\\
+$\epsilon$ & 0.5\%, independiente entre pilotos\\
+$B_0$ de referencia & 100 Hz\\
+Desviación sin señal, $B=B_0$ & aproximadamente 42.53 pW\\\bottomrule
+\end{tabular}\caption{Hipótesis de electrónica para el PD único. No se utiliza el ancho de banda de 2 GHz del receptor de comunicaciones del artículo.}\end{table}
+
+La componente multiplicativa no representa un error fijo de calibración: es una fluctuación independiente entre adquisiciones. Las incertidumbres persistentes por VCSEL, focal o ganancia común se tratan como perturbaciones separadas. No deben confundirse porque promediar puede reducir la primera, pero no corregir las segundas.
+
+\subsection{Comparación justa del número de estados}
+Se usa encendido secuencial, de modo que el shot de señal corresponde al emisor activo. Para una integración rectangular de duración $T_{int}$, la banda equivalente unilateral es $B=1/(2T_{int})$. Se fija
+\begin{equation}
+B_K=100K\ \mathrm{Hz},\qquad T_{int,K}=\frac1{200K}\ \mathrm{s}.
+\end{equation}
+El tiempo de integración de $25K$ pilotos es 125 ms por tile; para $225K$, 1.125 s. Así, aumentar $K$ no recibe gratuitamente más tiempo de integración.
+
+Esta igualdad no incluye asentamiento de la lente ni procesamiento. Tampoco hace equivalente un sistema de pilotos simultáneos: encender varios emisores cambia shot, RIN e interferencia. La posible reducción de latencia mediante pilotos ortogonales requiere un modelo de adquisición distinto. Las simulaciones presuponen posición constante durante todo el barrido.
+
+Se incluye un control especialmente importante: repetir exactamente $R=15$ mm dos y ocho veces. Ese control puede promediar la fluctuación multiplicativa independiente, pero no aporta nueva geometría. Compararlo con estados distintos permite separar promediado y diversidad real.
+
+\subsection{Función objetivo sin información de la posición verdadera}
+El generador conoce la verdad para crear datos; el estimador no la recibe. Sus pesos se calculan con las medidas:
+\begin{equation}
+\widehat\sigma_\ell=\sigma_P(\max(y_\ell,0)),\qquad
+\widehat{\vect p}=\arg\min_{\vect p\in\mathcal B}
+\sum_\ell\frac{(P_\ell(\vect p)-y_\ell)^2}{\widehat\sigma_\ell^2}.
+\end{equation}
+Esto es mínimos cuadrados ponderados factibles, no máxima verosimilitud exacta del modelo heteroscedástico. Las medidas negativas después de sustraer fondo se conservan en el residuo. Solo se limitan a cero al evaluar la varianza y la firma comprimida de inicialización.
+
+Si la ganancia es desconocida, el estado es $[x,y,z,\gamma]^T$, con $g=e^\gamma$, y el residuo es $(gP-y)/\widehat\sigma$. Se usan límites $0.2\le g\le5$. Para altura conocida se omite $z$ del estado. La derivada adicional respecto de $\gamma$ es $gP$, y la de posición es $gJ$.
+
+\subsection{Biblioteca, varios arranques y ajuste local}
+El procedimiento implementado es:
+\begin{enumerate}
+\item Construir una biblioteca de potencias del modelo en una malla de la caja de búsqueda.
+\item Ordenar los candidatos por coste ponderado. Si la ganancia es libre, perfilar su valor inicial mediante $g=\langle P,y\rangle_w/\langle P,P\rangle_w$, limitado al intervalo admisible.
+\item Ordenar también por distancia entre firmas $\operatorname{asinh}(P/\sigma_{oscuro})$. Esta compresión evita que un ligero desajuste de malla de un canal fuerte descarte la región correcta.
+\item Intercalar ambos órdenes y seleccionar seis semillas separadas al menos 12 cm.
+\item Ejecutar \archivo{lsqnonlin}, con Jacobiano analítico, restricciones de caja y algoritmo trust-region-reflective.
+\item Conservar la solución de menor coste y registrar mínimos alternativos separados más de 10 cm.
+\end{enumerate}
+La compresión \emph{no} cambia el modelo de observación ni el ajuste final: únicamente elige candidatos. La malla de inicialización es distinta de las posiciones aleatorias y de la malla de evaluación. Para el estudio se utilizan $35\times35$ candidatos laterales por tile, $51\times51$ para nueve tiles y nueve alturas en 3D. Las variables internas del optimizador y las semillas quedan accesibles en el struct devuelto.
+
+No se promete encontrar el mínimo global de una función no convexa. La convergencia de \archivo{lsqnonlin} se informa por separado del error real en simulación. En un punto oscuro, un algoritmo puede converger y seguir siendo incapaz de proporcionar una localización útil.
+
+\subsection{Regresión que comprueba la búsqueda}
+En Python se encontró una observación del AP completo cuya posición verdadera era aproximadamente $(-0.1024,-1.0424,0)$ m. La búsqueda basada solo en coste ponderado arrancaba en una región errónea y terminaba a 1.396 m de la verdad, pese a una información local favorable. Se introdujo la búsqueda combinada, sin suministrar la verdad al algoritmo.
+
+La observación concreta se conserva como referencia y se vuelve a ajustar en MATLAB. \archivo{testOriginalInitializerRegression} exige error inferior a 1 mm y coste inferior a 600. Se verifica así el mecanismo que resolvió el fallo, no solo que MATLAB ejecuta la sintaxis.
+
+\textbf{Archivos del capítulo:} \archivo{configuracion/gob_noise.m}, \archivo{modelo/gob_sigma.m}, \archivo{estimacion/gob_estimator.m}, \archivo{estimacion/gob_candidate_costs.m}, \archivo{estimacion/gob_residual.m}, \archivo{estimacion/gob_fit.m} y \archivo{demo_localizacion.m}.

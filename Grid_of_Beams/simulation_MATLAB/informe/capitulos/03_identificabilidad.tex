@@ -1,0 +1,102 @@
+\section{Identificabilidad: demostraciones y límites}
+\subsection{Una explicación analítica del caso 2D}
+\begin{proposicion}[Modelo simplificado de manchas de igual ancho]
+En un plano conocido, supóngase $P_i(\vect x)=c_i\exp(-2\|\vect x-\vect b_i\|^2/w^2)$, con $c_i>0$, ancho común conocido y centros conocidos. Si dos diferencias de centros respecto de un emisor de referencia son linealmente independientes, las razones de esas tres potencias determinan de forma única $\vect x=[x,y]^T$ dentro de este modelo.
+\end{proposicion}
+\begin{proof}
+Al tomar el logaritmo de una razón se elimina cualquier escala común:
+\begin{align}
+\log(P_i/P_j)-\log(c_i/c_j)
+&=-\frac2{w^2}\bigl(\|\vect x-\vect b_i\|^2-\|\vect x-\vect b_j\|^2\bigr)\\
+&=\frac4{w^2}(\vect b_i-\vect b_j)^T\vect x
+-\frac2{w^2}(\|\vect b_i\|^2-\|\vect b_j\|^2).
+\end{align}
+Dos razones proporcionan un sistema lineal $2\times2$. La hipótesis de independencia equivale a determinante no nulo; por tanto el sistema tiene una única solución.
+\end{proof}
+
+Esta proposición explica de dónde proviene la diversidad espacial, pero \textbf{no demuestra inyectividad global del modelo completo} con anchos off-axis diferentes, distancias axiales variables y máscaras. Tampoco legitima tomar logaritmos de señales débiles o negativas. El estimador real utiliza potencias lineales con ruido; la demostración es una herramienta de interpretación.
+
+El etiquetado es importante: reflejar una posición en un array simétrico suele permutar los canales. El vector etiquetado cambia, aunque la suma de potencias pueda ser igual. La prueba \archivo{testLabelSymmetry} verifica precisamente igual suma y vectores distintos. No se infiere unicidad de la potencia total.
+
+\subsection{Por qué una focal puede bastar para 3D calibrado}
+En campo lejano y para una dirección fija $\vect u$, el modelo tiene la estructura aproximada
+\begin{equation}\label{eq:farfield}
+\vect P(d,\vect u)\simeq d^{-2}\vect a(\vect u),
+\end{equation}
+donde $d$ es la distancia al origen óptico de referencia y $\vect a$ incorpora direcciones, divergencias y factores de incidencia. Las razones entre canales dependen sobre todo de $\vect u$; una vez determinada la dirección, un canal no nulo permite recuperar la escala:
+\begin{equation}
+d\simeq\sqrt{a_i(\vect u)/P_i},\qquad \vect p\simeq\vect p_{AP}+d\vect u.
+\end{equation}
+No es una triangulación con grandes distancias entre emisores: es una combinación de información angular y \emph{rango radiométrico}. La potencia, transmisión, área efectiva y ganancia electrónica deben estar calibradas. Este mecanismo ya existe con $K=1$.
+
+\subsection{Demostración de la ambigüedad con ganancia libre}
+\begin{proposicion}[Invariancia de campo lejano]
+Si la observación de uno o varios estados es $\vect y=(g/d^2)\vect a(\vect u)$ con $g>0$ desconocido, no pueden determinarse simultáneamente $d$ y $g$ a partir de esa observación.
+\end{proposicion}
+\begin{proof}
+Para cualquier $c>0$, tomar $d'=cd$ y $g'=c^2g$ deja $g'/d'^2=g/d^2$. Hay una familia continua de pares distintos con idéntica observación. Concatenar varios estados solo reemplaza $\vect a$ por $[\vect a_1^T,\ldots,\vect a_K^T]^T$, sin eliminar la invariancia.
+
+La misma degeneración aparece en el Jacobiano: $\partial\vect y/\partial d=-2\vect y/d$ y $\partial\vect y/\partial\log g=\vect y$. Ambas columnas son proporcionales. Una vez eliminada la ganancia como parámetro nuisance, no queda información radial en este modelo límite.
+\end{proof}
+
+El modelo geométrico completo no es exactamente \eqref{eq:farfield}: las salidas y los waists están separados, y los nueve tiles añaden pequeños desplazamientos. Estas correcciones pueden dar rango formal completo y mejorar algunos puntos. No se afirma imposibilidad absoluta para cualquier SNR. Lo que se comprueba es que, a la escala métrica ensayada, esa información puede ser demasiado débil y sensible a calibración para una altura robusta.
+
+Una incertidumbre de escala produce, linealizando $d\propto\sqrt{g}$,
+\begin{equation}
+\frac{\Delta d}{d}\simeq\frac12\frac{\Delta g}{g}.
+\end{equation}
+A 3 m, 1\% de error de ganancia puede corresponder a unos 15 mm de error radial. Esta sensibilidad explica por qué el caso calibrado no representa el caso de ganancia desconocida.
+
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{04_coste_y_ambiguedad.png}
+\caption{Izquierda: corte del coste a altura verdadera, usado solo para visualizar, no para inicializar el estimador 3D. La cruz marca la verdad; la malla de 9 mm no incluye necesariamente ese mínimo de coste cero. Derecha: comparación de firmas sobre una misma dirección espacial; perfilar la ganancia reduce notablemente la discriminación de altura. La horizontal uno corresponde a distancia cuadrática de una unidad de ruido.}
+\end{figure}
+
+\subsection{Demostración del Jacobiano completo}
+Se escribe $W=w^2$, $s=\vect v^T\vect d$ y $\vect t=(I-\vect v\vect v^T)\vect d$. Al ser $\vect v$ unitario y fijo en un estado,
+\begin{equation}
+\nabla s=\vect v,\qquad \nabla r^2=2\vect t,\qquad
+\nabla W=\frac{2\lambda}{\pi b}(s+a)\vect v.
+\end{equation}
+Dentro de una región visible regular, los factores de incidencia del modelo de eje no dependen de la posición. Por tanto,
+\begin{align}
+\log P&=\log C-\log W-2r^2/W,\\
+\nabla\log P&=-\frac{\nabla W}{W}-\frac{2\nabla r^2}{W}+\frac{2r^2\nabla W}{W^2},\\
+\boxed{\nabla P=P\left[\left(\frac{2r^2}{W^2}-\frac1W\right)\nabla W-\frac{4\vect t}{W}\right].}
+\end{align}
+La implementación usa esta expresión y la contrasta con diferencias centradas de paso $10^{-6}$ m. Se prueban uno y nueve tiles, varios estados, esquinas y casos cóncavos. El Jacobiano no se deduce ajustando datos de prueba.
+
+\subsection{Rango local no equivale a unicidad global}
+\begin{proposicion}[Condición suficiente local]
+Sea $\vect y:\mathcal U\subset\R^d\to\R^M$ diferenciable, $d=2$ o 3. Si su Jacobiano tiene rango columna $d$ en $\vect p_0$, existe un entorno de $\vect p_0$ donde el mapa es inyectivo.
+\end{proposicion}
+\begin{proof}
+Existe un menor $d\times d$ no singular. Seleccionando esas $d$ observaciones se obtiene un submapa cuyo Jacobiano cuadrado es invertible. El teorema de la función inversa da una inversa local de ese submapa. Si dos puntos próximos tuviesen la misma observación completa, tendrían también el mismo subvector y serían el mismo punto.
+\end{proof}
+
+La conclusión es local. Dos puntos lejanos podrían tener firmas iguales o casi iguales; además, un menor puede ser no nulo pero numéricamente minúsculo. Por eso se estudian singularidades ponderadas por ruido, mínimos alternativos, recuperación sin ruido y errores con ruido. Una malla finita no demuestra inyectividad en todo un volumen continuo.
+
+\subsection{Información de posición y ganancia nuisance}
+Con $J=\partial\vect P/\partial\vect p$ y covarianza fija positiva $\Sigma$,
+\begin{equation}
+J_w=\Sigma^{-1/2}J,\quad F_\mu=J_w^T J_w,\quad
+\operatorname{PEB}_\mu=\sqrt{\operatorname{tr}(F_\mu^{-1})}.
+\end{equation}
+Si $J_w=U\operatorname{diag}(s_1,\ldots,s_d)V^T$, entonces
+\begin{equation}
+F_\mu^{-1}=V\operatorname{diag}(s_1^{-2},\ldots,s_d^{-2})V^T.
+\end{equation}
+Esta expresión explica la implementación por SVD y la dominancia del menor valor singular. Si falta rango se devuelve $\infty$, no una pseudoinversa que elimine la dirección no observable. Se utilizan umbrales $s_d>10^{-9}s_1$ y $s_d>10^{-12}$ en el Jacobiano ponderado.
+
+Si $G_w$ contiene las derivadas ponderadas respecto de parámetros nuisance de ganancia, el complemento de Schur es
+\begin{equation}
+F_{p|g}=J_w^T\left[I-G_w(G_w^TG_w)^{-1}G_w^T\right]J_w.
+\end{equation}
+La matriz entre corchetes es la proyección ortogonal fuera del espacio generado por la ganancia. Es semidefinida positiva y no mayor que $I$; introducir una ganancia desconocida nunca aumenta la información de posición. Se comprueba con una ganancia común y con una por estado. El código trata columnas nulas sin invertir una norma cero.
+
+\textbf{Matiz estadístico importante.} El ruido utilizado depende ligeramente de la potencia. La información exacta de un modelo Gaussian heteroscedástico incluiría también
+\begin{equation}
+[F_{\Sigma}]_{ab}=\tfrac12\operatorname{tr}(\Sigma^{-1}\Sigma_{,a}\Sigma^{-1}\Sigma_{,b}).
+\end{equation}
+Aquí se publica la información de la media con covarianza congelada, no se explota ese segundo término como sensor de posición. Por ello $\operatorname{PEB}_\mu$ es una medida local del modelo de media/covarianza fijada; \textbf{no debe denominarse CRLB exacta del modelo heteroscedástico completo}. Tampoco garantiza errores de un estimador sesgado o sujeto a fronteras. Un estimador acotado en una caja puede tener error inferior a una cota local enorme sin contradicción: se han perdido las hipótesis de insesgadez y regularidad de esa cota.
+
+\textbf{Archivos del capítulo:} \archivo{modelo/gob_power.m}, \archivo{estimacion/gob_information.m}, \archivo{experimentos/gob_controls.m}, \archivo{pruebas/test_gob_inference.m} y \archivo{pruebas/test_gob_reference.m}.

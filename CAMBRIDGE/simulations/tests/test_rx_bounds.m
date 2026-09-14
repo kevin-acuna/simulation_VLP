@@ -4,9 +4,8 @@ end
 
 function setupOnce(testCase)
 root = fileparts(fileparts(mfilename('fullpath')));
-addpath(fullfile(root, 'System'), fullfile(root, 'System', 'Parameters'));
-addpath(fullfile(root, 'Bounds (3D)', 'Position Error Bound'));
-addpath(fullfile(root, 'Design of the Parameters (CRLB design)'));
+addpath(root);
+cambridge_setup();
 testCase.TestData.p = system_parameters();
 end
 

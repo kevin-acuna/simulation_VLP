@@ -1,0 +1,9 @@
+function c = gob_config(overrides)
+c = struct('wavelength',950e-9,'waist',5e-6,'index',1.55,'power',.010, ...
+    'pitch',.002,'array_lens_distance',.005,'diameter',.016,'edge_thickness',.002, ...
+    'radii',.015,'tiles',1,'tile_spacing',.020,'tilt_deg',21,'array_height',3, ...
+    'pd_area',1e-6,'fov_deg',70,'transmission',.90);
+if nargin>0
+    c = gob_update(c,overrides);
+end
+end

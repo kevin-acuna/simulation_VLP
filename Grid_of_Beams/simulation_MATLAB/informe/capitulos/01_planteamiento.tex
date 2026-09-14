@@ -1,0 +1,51 @@
+\section{Planteamiento, objetivos y recorrido del estudio}
+\subsection{La pregunta que resolvemos}
+El punto de partida es el manuscrito de Hossein Kazemi y colaboradores, \emph{A Novel Terabit Grid-of-Beam Optical Wireless Multi-User Access Network with Beam Clustering}. La fuente disponible es \archivo{../A Novel Terabit Grid-of-Beam Optical/Hossein_TCOM_Final_arXiv.tex}, respecto de la carpeta raíz de este estudio. Se utilizan especialmente las secciones de propagación Gaussian, diseño del transmisor y parámetros numéricos. No se atribuyen al nuevo receptor las ganancias del ADR del artículo.
+
+Para un tile, 25 VCSELs comparten una lente. Su posición dentro del array hace que la lente refracte sus ejes hacia direcciones diferentes. En un estado óptico $k$, el receptor obtiene un vector etiquetado
+\begin{equation}
+\vect P_k(\vect p)=[P_{1,k}(\vect p),\ldots,P_{25,k}(\vect p)]^T,
+\qquad \vect p=[x,y,z]^T.
+\end{equation}
+Con $K$ estados, la observación es
+\begin{equation}\label{eq:observation}
+\vect y(\vect p)=[\vect P_1^T,\ldots,\vect P_K^T]^T\in\R^{25K}.
+\end{equation}
+La identificación por pilotos o encendido secuencial es esencial: no se sustituye este vector por una potencia total. Para el AP completo se conserva la identidad de los 225 emisores y el vector tiene $225K$ componentes.
+
+\textbf{Caso 2D:} se conoce $z=z_0$ y se estiman $(x,y)$. En los experimentos principales $z_0=0$. \textbf{Caso 3D:} se estiman las tres coordenadas. La normal del PD se mantiene conocida; no se considera resuelto un problema conjunto de posición y actitud desconocidas.
+
+\subsection{Qué significa que una solución funcione}
+Se separan cuatro preguntas que no son equivalentes:
+\begin{enumerate}
+\item \textbf{Identificabilidad local:} ¿hay cambios independientes de las potencias frente a las coordenadas?
+\item \textbf{Estabilidad:} ¿son esos cambios suficientemente grandes frente al ruido disponible?
+\item \textbf{Estimación:} ¿un algoritmo sin la posición verdadera como inicialización encuentra una solución precisa?
+\item \textbf{Adecuación física:} ¿la aproximación de haz sigue siendo válida en los estados focales ensayados?
+\end{enumerate}
+Tener 25 o 225 canales no responde por sí solo a estas preguntas. Un punto puede recibir esencialmente un único haz: es luminosamente cubierto, pero tiene información insuficiente para una posición 3D estable.
+
+El criterio principal de éxito operativo de los experimentos es el error euclídeo; se publican mediana, RMSE, percentil 95, máximo y fracción inferior a 10 cm. Se separan las posiciones aleatorias de los puntos de frontera y se conservan los fallos.
+
+\subsection{Resumen del recorrido lógico}
+\begin{enumerate}
+\item Reconstruir el modelo de Snell y ABCD de Kazemi, haciendo explícitos sus parámetros no especificados.
+\item Evaluar una focal fija antes de introducir complejidad adicional.
+\item Calcular el Jacobiano ponderado por ruido y ajustar potencias mediante mínimos cuadrados.
+\item Probar dos focales, muchos estados y modificaciones de pitch u otras dimensiones; no asumir que una mayor separación es mejor.
+\item Introducir una ganancia común desconocida para saber de dónde procede realmente la información de profundidad.
+\item Repetir la idea en los nueve tiles y distinguir región central, huella nominal y prisma de altura variable.
+\item Contrastar los estados candidatos mediante un trazado de rayos independiente y perturbaciones de calibración.
+\end{enumerate}
+
+La conclusión más simple es favorable, pero local: con parámetros y normal conocidos, una focal ya permite localizar en el núcleo de un tile. No se afirma que el diseño original resuelva toda la habitación. Las cifras MATLAB principales se presentan al principio de la sección de resultados y se acompañan después de las excepciones.
+
+\subsection{Preservación de la versión Python y autonomía MATLAB}
+La carpeta \archivo{simulations} permanece intacta. Todo el nuevo trabajo reside en \archivo{simulation_MATLAB}. Se ha guardado y contrastado una huella SHA-256 de todos los archivos de la carpeta Python. Las simulaciones nuevas, el ajuste, las métricas, los gráficos y la exportación del informe se ejecutan en MATLAB.
+
+La única interfaz Python está aislada en \archivo{validacion/gob_export_python_reference.m}: sirve para extraer, en modo de solo lectura, una referencia determinista de la migración. Su resultado ya se entrega en \archivo{referencias/python_reference.mat}; no hace falta Python para ejecutar el estudio ni sus pruebas normales. No se han copiado las CDF anteriores atribuyéndolas a MATLAB.
+
+\begin{figure}[H]
+\centering\includegraphics[width=\linewidth]{02_geometria_sistema.png}
+\caption{Geometría implementada. Izquierda: un tile y la cara curva común, en escala milimétrica local. Derecha: los 225 ejes del AP y un PD, en coordenadas globales métricas. La primera vista ilustra la óptica, no el tamaño relativo de una habitación.}
+\end{figure}

@@ -1,0 +1,150 @@
+\section{Organización, depuración y reproducción}
+\subsection{Qué abrir primero}
+\begin{enumerate}
+\item Leer este PDF: \archivo{informe/compilado/INFORME.pdf}.
+\item Abrir \archivo{demo_localizacion.m} para recorrer manualmente la cadena parámetros $\to$ óptica $\to$ potencias $\to$ ruido $\to$ estimación $\to$ error.
+\item Abrir \archivo{configuracion/gob_config.m} y \archivo{configuracion/gob_noise.m} para identificar las hipótesis numéricas.
+\item Abrir un archivo MAT de \archivo{ensayos/} y la figura FIG correspondiente para inspeccionar resultados concretos.
+\end{enumerate}
+
+\subsection{Mapa de archivos y relación con el razonamiento}
+Todas las rutas de esta tabla son relativas a \archivo{simulation_MATLAB}.
+\begin{longtable}{p{6.1cm}p{8.4cm}}\toprule
+Archivo o carpeta & Función en el estudio\\\midrule\endhead
+\archivo{run_gob.m} & Punto de entrada. Modos demo, test, quick, full, plots, verify y report. Crea directorios fechados y rechaza sobreescrituras de ejecuciones.\\
+\archivo{gob_paths.m} & Añade únicamente las carpetas de este estudio al path; no importa árboles ajenos del repositorio.\\
+\archivo{demo_localizacion.m} & Script de depuración con nombres de variables en español y resultados en Workspace.\\
+\archivo{configuracion/gob_config.m} & Dimensiones, potencias, lente, pitch, tiles y PD.\\
+\archivo{configuracion/gob_noise.m} & Electrónica, ruido y fluctuación por piloto.\\
+\archivo{configuracion/gob_study_cases.m} & Catálogo de los 25 problemas y dominios.\\
+\archivo{configuracion/gob_run_options.m} & Semillas, resolución, número de ensayos y selección de experimentos.\\
+\archivo{modelo/gob_model.m} & Superficie, Snell de rayos principales, ABCD, montaje y etiquetas.\\
+\archivo{modelo/gob_power.m} & Potencias, Jacobiano y variables geométricas intermedias de cada haz.\\
+\archivo{modelo/gob_sigma.m} & Desviación de medida en W.\\
+\archivo{modelo/gob_rotation.m} & Rotaciones de los tiles.\\
+\archivo{modelo/gob_footprints.m} & Intersección de ejes con un plano receptor.\\
+\archivo{modelo/gob_diagnostics.m} & Focales, espesores, waists y clipping para auditar parámetros.\\
+\archivo{modelo/gob_snell.m} & Snell vectorial usado por el trazador independiente.\\
+\archivo{estimacion/gob_information.m} & Información por SVD y eliminación de ganancias nuisance.\\
+\archivo{estimacion/gob_estimator.m} & Biblioteca y opciones del ajuste MATLAB.\\
+\archivo{estimacion/gob_candidate_costs.m} & Coste de candidatos y ganancia inicial perfilada.\\
+\archivo{estimacion/gob_residual.m} & Residuo ponderado y Jacobiano que recibe lsqnonlin.\\
+\archivo{estimacion/gob_fit.m} & Arranques múltiples, ajuste y mínimos alternativos.\\
+\archivo{estimacion/gob_localize.m} & Función de uso directo con vector de potencias o CSV en W.\\
+\archivo{experimentos/gob_run_case.m} & Mapas, datos aleatorios, fronteras y auditoría de un caso.\\
+\archivo{experimentos/gob_sample_positions.m} & Muestreo uniforme en volumen demostrado en el informe.\\
+\archivo{experimentos/gob_metric_grid.m} & Malla de información del dominio declarado.\\
+\archivo{experimentos/gob_boundary_positions.m} & Fronteras, ejes y centro, separados de Monte Carlo.\\
+\archivo{experimentos/gob_bound_summary.m} & Estadísticas de información que no ocultan infinitos.\\
+\archivo{experimentos/gob_design_sweep.m} & Barridos de parámetros y candidatos de diseño.\\
+\archivo{experimentos/gob_controls.m} & Repetición, ganancia, inclinación, área y ambigüedad radial.\\
+\archivo{experimentos/gob_robustness.m} & Errores sistemáticos de calibración y geometría.\\
+\archivo{experimentos/gob_ray_validation.m} & Quince comparaciones de rayos, tablas y ejemplos.\\
+\archivo{validacion/gob_trace_beam.m} & Propagación geométrica independiente de las fórmulas ABCD.\\
+\archivo{validacion/gob_verify_results.m} & Recalcula estadísticas, comprueba coordenadas de mapas, medias, tablas y conservación de Python.\\
+\archivo{validacion/gob_rebuild_maps.m} & Regenera mapas y columnas de información desde el manifiesto sin alterar observaciones ni estimaciones guardadas.\\
+\archivo{validacion/gob_audit_solver.m} & Reajusta el peor ensayo guardado con tres combinaciones de malla y arranques, conservando explícito el error original.\\
+\archivo{validacion/gob_export_python_reference.m} & Extracción opcional de referencias Python, solo para auditar la migración.\\
+\archivo{validacion/gob_python_snapshot.m} & Inventario de hashes para verificar la conservación del trabajo anterior.\\
+\archivo{pruebas/} & Pruebas de modelo, estimador, referencias y convenciones de importación.\\
+\archivo{graficas/gob_plot_optics.m} & Geometría, huellas, evolución Gaussian y superficies de coste.\\
+\archivo{graficas/gob_plot_results.m} & Mapas, CDF, sensibilidad, rayos y compromiso de adquisición.\\
+\archivo{graficas/gob_plot_design.m} & Comparaciones de pitch, repetición de estados e inclinación.\\
+\archivo{graficas/gob_save_figure.m} & Exportación PNG, PDF vectorial y FIG editable.\\
+\archivo{utilidades/gob_grid.m} & Orden cartesiano compatible con el catálogo de canales y tratamiento de una única muestra.\\
+\archivo{utilidades/gob_quantile.m} & Convenciones explícitas de percentiles y cuantiles ordenados.\\
+\archivo{utilidades/gob_error_summary.m} & RMSE, percentiles y Wilson.\\
+\archivo{utilidades/gob_read_table.m} & Importación tipada: una lista de radios no se interpreta como separador de miles.\\
+\archivo{utilidades/gob_update.m}, \archivo{utilidades/gob_merge.m} & Configuración validada y combinación de resultados.\\
+\archivo{utilidades/gob_report_tables.m} & Genera tablas y cifras LaTeX directamente desde los resultados MATLAB verificados.\\
+\archivo{compilar_informe.m} & Regenera tablas y compila el PDF desde MATLAB.\\
+\archivo{informe/} & Fuente LaTeX organizada por capítulos, tablas generadas y PDF compilado.\\
+\archivo{referencias/} & Referencias deterministas de migración; no resultados nuevos atribuidos a MATLAB.\\
+\archivo{resultados/} & Ejecuciones fechadas, con datos y figuras de MATLAB.\\\bottomrule
+\end{longtable}
+
+\subsection{Estructura interna de una ejecución}
+\begin{itemize}
+\item \archivo{manifest.mat}: casos, opciones, entorno y estado de finalización.
+\item \archivo{tablas/summary.csv}: resultados completos de todos los casos; las otras tablas corresponden a controles, diseño, rayos y sensibilidad.
+\item \archivo{ensayos/<caso>.mat}: verdad, medias sin ruido, medidas, estimaciones, ganancias, costes, banderas de convergencia y mínimos alternativos.
+\item \archivo{ensayos/<caso>_auditoria.mat}: recuperación sin ruido y distancias de firmas a candidatos lejanos.
+\item \archivo{mapas/<caso>.mat}: puntos, PEB, desviaciones por eje, valores singulares, rango, número de señales detectables y configuración.
+\item \archivo{datos/}: realizaciones completas de sensibilidad, configuraciones de diseño y ejemplos del trazador.
+\item \archivo{figuras/}: quince familias de figuras en PNG, PDF y FIG.
+\item \archivo{verification.mat}: comprobación de consistencia de la ejecución final.
+\end{itemize}
+El archivo \archivo{resultados/ultimo_completo.mat} indica la última ejecución completa verificada. Las ejecuciones quick son controles de integración, no resultados de precisión publicables. La documentación no utiliza sus tablas en lugar de las del estudio completo.
+
+\subsection{Cómo ejecutar y depurar en MATLAB}
+Desde la raíz del repositorio:
+\begin{lstlisting}
+addpath('Grid_of_Beams/simulation_MATLAB');
+gob_paths;
+run_gob('test');
+run('Grid_of_Beams/simulation_MATLAB/demo_localizacion.m');
+resultado = run_gob('quick');
+resultado = run_gob('full');
+\end{lstlisting}
+Para recorrer la óptica y el ajuste paso a paso:
+\begin{lstlisting}
+dbstop in gob_power
+dbstop in gob_fit
+dbstop in gob_residual
+\end{lstlisting}
+En el script de demostración pueden inspeccionarse \archivo{modelo_optico.origins}, \archivo{modelo_optico.directions}, \archivo{modelo_optico.q}, \archivo{geometria_haces}, \archivo{potencias_medidas_W} y \archivo{resultado.candidate_states}. El modelo no depende de un módulo Python oculto.
+
+Un experimento seleccionado, sin ejecutar el resto:
+\begin{lstlisting}
+opciones = struct('case_filter',string('tile_convex_core_3d'), ...
+    'trials',50,'resolution',21,'sweeps',false,'controls',false, ...
+    'rays',false,'robustness',false,'export_figures',false);
+resultado = run_gob('full',opciones);
+\end{lstlisting}
+Se crea otra carpeta fechada. El argumento \archivo{output_directory} permite elegir una ruta nueva explícita, pero se rechaza una carpeta ya existente. Para volver a dibujar y verificar el estudio de referencia:
+\begin{lstlisting}
+run_gob('plots');
+run_gob('verify');
+run_gob('report');
+\end{lstlisting}
+El modo report regenera las tablas LaTeX desde los datos MATLAB, sin recalcular Monte Carlo. Para abrir una figura editable:
+\begin{lstlisting}
+s = load('Grid_of_Beams/simulation_MATLAB/resultados/ultimo_completo.mat');
+openfig(fullfile(s.output_directory,'figuras','06_cdf_tile.fig'));
+\end{lstlisting}
+
+Para medidas propias, todas las potencias deben estar en W, identificadas y con el fondo sustraído:
+\begin{lstlisting}
+y_W = readmatrix('medidas_nW.csv')*1e-9;
+solucion = gob_localize('tile_baseline_core_3d',y_W);
+\end{lstlisting}
+Se deben suministrar 25, 50, 225 o el número que corresponda al caso, en el orden estado/tile/VCSEL. Una potencia agregada no es equivalente. La salida no es fiable automáticamente por el mero hecho de converger.
+
+\subsection{Verificación de la migración y peculiaridades MATLAB}
+El entorno verificado es MATLAB R2026a con Optimization Toolbox para \archivo{lsqnonlin}. Los cálculos no requieren Statistics ni Parallel Computing Toolbox. Se emplea \archivo{pagesvd}, por lo que no se afirma compatibilidad con versiones anteriores a su disponibilidad.
+
+Se han aprobado \NumeroPruebas{} pruebas automáticas. Entre ellas se incluyen Snell, normalización de potencia, expresiones cerradas de ABCD, Jacobiano por diferencias finitas, FoV, orden de canales, ganancia nuisance, regiones oscuras, comparación determinista Python y la regresión del inicializador. La comprobación de resultados vuelve a calcular estadísticas desde archivos MAT y comprueba las coordenadas de los mapas, no solo su número de filas.
+
+Dos diferencias de lenguaje requirieron atención explícita:
+\begin{enumerate}
+\item \archivo{linspace(a,b,1)} devuelve el extremo final en MATLAB, mientras que NumPy devuelve el inicial. Se añadió una prueba de regresión que exige que un mapa 2D esté realmente en $z=0$ y se regeneraron los mapas afectados. Las observaciones y estimaciones 2D, que ya fijaban $z=0$ explícitamente, no dependían de ese error de malla.
+\item La inferencia automática de tipos de CSV puede interpretar ``12,15'' como un número con separador de miles. Se fuerza el tipo texto de las listas de radios y se comprueba con una prueba de ida y vuelta.
+\end{enumerate}
+También se adaptaron los índices desde cero a uno, el orden de almacenamiento por columnas y la definición de percentiles. Estas comprobaciones son parte de una migración científica, no únicamente una traducción literal de operadores.
+
+\subsection{Compilar el informe}
+Con TeX Live y desde \archivo{simulation_MATLAB/informe}, después de regenerar tablas:
+\begin{lstlisting}[language={}]
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=compilado INFORME.tex
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=compilado INFORME.tex
+\end{lstlisting}
+Después de cambios de paginación o tablas largas puede ser necesario repetir un tercer pase. La función MATLAB \archivo{compilar_informe} realiza tres pasadas y devuelve la ruta del PDF. Las figuras se leen de la ejecución indicada en \archivo{generado/macros.tex}. La fuente principal está dividida en siete capítulos para que las demostraciones y el relato puedan revisarse independientemente del código.
+
+\subsection{Lista final de interpretación correcta}
+\begin{itemize}
+\item Un PD no implica una observación escalar si los emisores y estados se identifican por separado.
+\item La altura del caso calibrado procede en gran medida de escala radiométrica, no de una firma axial independiente creada necesariamente por la focal.
+\item Una PEB pequeña, rango completo y convergencia son comprobaciones diferentes; ninguna sustituye por sí sola la validación completa.
+\item Los éxitos locales no son cobertura uniforme del noveno nominal ni de todo el prisma de la habitación.
+\item Las mejores CDF del modelo circular no autorizan ignorar aberraciones, calibración ni seguridad ocular.
+\end{itemize}

@@ -1,0 +1,16 @@
+raiz_del_estudio = gob_paths();
+parametros_opticos = gob_config(struct('radii',[.012,.015]));
+parametros_ruido = gob_noise(struct('bandwidth',200));
+modelo_optico = gob_model(parametros_opticos);
+posicion_verdadera_m = [.213;-.147;.436];
+[potencias_sin_ruido_W,jacobiano_W_por_m,geometria_haces] = gob_power(modelo_optico,posicion_verdadera_m);
+generador = RandStream('mt19937ar','Seed',20260913);
+desviacion_ruido_W = gob_sigma(potencias_sin_ruido_W,parametros_ruido);
+potencias_medidas_W = potencias_sin_ruido_W+desviacion_ruido_W.*randn(generador,size(potencias_sin_ruido_W));
+limites_busqueda_m = [-.6,.6;-.6,.6;0,1];
+estimador = gob_estimator(modelo_optico,limites_busqueda_m,parametros_ruido);
+resultado = gob_fit(estimador,potencias_medidas_W);
+informacion_local = gob_information(modelo_optico,resultado.position,parametros_ruido);
+error_posicion_m = norm(resultado.position-posicion_verdadera_m);
+disp(table(posicion_verdadera_m,resultado.position,'VariableNames',{'Verdad_m','Estimacion_m'}));
+fprintf('Error 3D: %.3f mm. PEB local: %.3f mm.\n',1000*error_posicion_m,1000*informacion_local.peb);

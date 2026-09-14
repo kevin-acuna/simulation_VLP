@@ -1,0 +1,140 @@
+\section{Modelo óptico: de los parámetros a las potencias}
+\subsection{Parámetros, hipótesis y convenciones}
+\begin{table}[H]\centering
+\begin{tabular}{ll}\toprule
+Parámetro & Valor inicial\\\midrule
+Array por tile y pitch & $5\times5$, $\delta=2$ mm\\
+Longitud de onda y waist & $\lambda=950$ nm, $w_0=5\,\mu$m\\
+Separación array--cara plana & $d_{VL}=5$ mm\\
+Índice, diámetro y curvatura & $n=1.55$, $L=16$ mm, $R=15$ mm\\
+Focal efectiva & $f=R/(n-1)=27.2727$ mm\\
+Potencia óptica por VCSEL activo & $P_t=10$ mW\\
+Espesor de borde supuesto & $t_e=2$ mm\\
+Área del único PD y transmisión & $A_{PD}=1$ mm$^2$, $\eta=0.90$\\
+Normal y semicampo de visión del PD & $[0,0,1]^T$, $70^\circ$\\
+Centro del array central & altura global $H=3$ m\\
+AP completo & nueve tiles, separación 20 mm, inclinación $21^\circ$\\\bottomrule
+\end{tabular}
+\caption{Configuración nominal. $t_e$, el PD único, su FoV, $\eta$ y la electrónica receptora son hipótesis de este estudio, no parámetros inferidos del ADR de Kazemi.}
+\end{table}
+
+Las unidades internas son SI. Las posiciones MATLAB son columnas $3\times N$, las potencias son $M\times N$ y los Jacobianos son $M\times3\times N$, con $M=25K$ o $225K$. El orden de canal es estado, tile, VCSEL. El tile central es el número 5 y el VCSEL central el 13, usando índices MATLAB desde uno. Python utilizaba índices 4 y 12; esta diferencia se prueba explícitamente.
+
+Se suponen LoS, VCSELs monomodo TEM$_{00}$ con $M^2=1$, potencia identificable, geometría calibrada y receptor inmóvil durante el barrido. No se incluyen reflexiones, oclusiones, saturación, cuantización ni interferencia de pilotos. Se trabaja con un PD sin CPC, sin concentración y sin diversidad angular receptora. Su área no es una apertura óptica ficticiamente amplificada.
+
+El manuscrito no fija numéricamente el espesor de la lente. Se adopta un borde conocido y se deduce el espesor central por la sagita. Así se define una familia de superficies al variar $R$; no se impone que un actuador comercial cambie su volumen y forma exactamente de ese modo.
+
+\subsection{Posición de emisores y superficie curva}
+Se numeran los emisores como $i=5(m-1)+n_c$, para $m,n_c\in\{1,\ldots,5\}$:
+\begin{equation}
+x_i=(n_c-3)\delta,\qquad y_i=(3-m)\delta,\qquad \rho_i^2=x_i^2+y_i^2.
+\end{equation}
+El cuadrado entre centros extremos tiene lado 8 mm, distinto de la implantación aproximada de 1 cm$^2$ mencionada en el artículo. Para un estado convexo $R_k>0$:
+\begin{align}
+t_{c,k}&=t_e+R_k-\sqrt{R_k^2-(L/2)^2},\\
+\tau_{i,k}&=\sqrt{R_k^2-\rho_i^2}+t_{c,k}-R_k,\\
+\vect o_{i,k}^{loc}&=[x_i,y_i,d_{VL}+\tau_{i,k}]^T.
+\end{align}
+En el estado inicial se obtiene $t_c=4.3114$ mm. Cada emisor recorre un espesor diferente. El origen posterior a la lente se sitúa en su salida real, no en un origen común aproximado del tile.
+
+\subsection{Demostración de la dirección refractada}
+La normal exterior de la superficie convexa es
+\begin{equation}
+\vect n_{i,k}=\frac{[x_i,y_i,\sqrt{R_k^2-\rho_i^2}]^T}{R_k}.
+\end{equation}
+Sea $\vect v_1$ unitario, $c=\vect n^T\vect v_1$ y $\mu=n_1/n_2$. Se descompone la dirección en componente normal $c\vect n$ y tangencial $\vect v_1-c\vect n$. Snell multiplica la tangencial por $\mu$. Para que el resultado siga siendo unitario, su componente normal de transmisión debe tener longitud $\sqrt{1-\mu^2(1-c^2)}$. Por tanto,
+\begin{equation}\label{eq:snell}
+\vect v_2=\mu\vect v_1+
+\left[\sqrt{1-\mu^2(1-c^2)}-\mu c\right]\vect n.
+\end{equation}
+Esto demuestra simultáneamente que la tangencial cumple Snell y que $\|\vect v_2\|=1$, siempre que el discriminante no sea negativo y se elija la rama transmitida.
+
+La incidencia principal sobre la cara plana es normal: no cambia su eje. En la cara curva se toma $\mu=n$, $\vect v_1=\vect e_z$. Reordenando \eqref{eq:snell} se recupera el coeficiente de Kazemi:
+\begin{align}
+Q_{i,k}&=\frac{\sqrt{R_k^2-n^2\rho_i^2}-n\sqrt{R_k^2-\rho_i^2}}{R_k^2},\\
+\vect v_{i,k}^{loc}&=[Q_{i,k}x_i,Q_{i,k}y_i,n+Q_{i,k}\sqrt{R_k^2-\rho_i^2}]^T.
+\end{align}
+La dependencia de $R_k$ aparece explícitamente en la dirección. No se sustituye esta física por un conjunto de divergencias elegidas arbitrariamente.
+
+Se rechazan superficies imposibles, espesores no positivos, rayos principales fuera de apertura y reflexión interna total del rayo principal. También se calcula una cota de clipping del haz en la apertura. Estas verificaciones no excluyen TIR de las colas; se examina posteriormente mediante ray tracing.
+
+\subsection{Demostración de la transformación del parámetro complejo}
+El waist inicial define
+\begin{equation}
+z_R=\frac{\pi w_0^2}{\lambda},\qquad q_{in}=d_{VL}+jz_R.
+\end{equation}
+La traslación equivalente dentro del vidrio y la potencia refractiva dan la matriz
+\begin{equation}
+\begin{bmatrix}A&B\\C&D\end{bmatrix}
+=\begin{bmatrix}1&0\\-1/f_k&1\end{bmatrix}
+ \begin{bmatrix}1&\tau_{i,k}/n\\0&1\end{bmatrix}
+=\begin{bmatrix}1&\tau_{i,k}/n\\-1/f_k&1-\tau_{i,k}/(nf_k)\end{bmatrix},
+\qquad f_k=\frac{R_k}{n-1}.
+\end{equation}
+Su determinante es uno. Aplicando la ley ABCD:
+\begin{equation}
+q^{out}_{i,k}=\frac{Aq_{in}+B}{Cq_{in}+D}=a_{i,k}+jb_{i,k}.
+\end{equation}
+Para ver qué se transforma, se define $u=d_{VL}+\tau_{i,k}/n$. Entonces $q^{out}=(u+jz_R)/(1-u/f_k-jz_R/f_k)$. Multiplicar numerador y denominador por el conjugado conduce a
+\begin{align}
+D_q&=(1-u/f_k)^2+(z_R/f_k)^2,\\
+a_{i,k}&=\frac{u(1-u/f_k)-z_R^2/f_k}{D_q},&
+b_{i,k}&=\frac{z_R}{D_q}>0.
+\end{align}
+Tras una distancia axial $s$ desde la salida,
+\begin{equation}\label{eq:width}
+q_{i,k}(s)=s+a_{i,k}+jb_{i,k},\qquad
+W_{i,k}(s)=w_{i,k}^2(s)=\frac{\lambda}{\pi}\frac{(s+a_{i,k})^2+b_{i,k}^2}{b_{i,k}}.
+\end{equation}
+El waist equivalente está en $\vect o-a\vect v$, su Rayleigh es $b$ y su radio es $\sqrt{\lambda b/\pi}$. No se reinicia artificialmente el waist en la superficie de salida. Las pruebas comprueban las expresiones cerradas, el determinante y el ancho en la salida.
+
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{03_evolucion_gaussian.png}
+\caption{La focal modifica el tamaño y la evolución del haz, además de su dirección. El espesor off-axis hace que el mismo estado común no imponga idéntico $q$ a todos los emisores.}
+\end{figure}
+
+\subsection{Coordenadas globales y los nueve tiles}
+Se aplica a cada tile una rotación
+\begin{equation}
+\mathcal R_v=R_y(\pi+\beta_v)R_x(\alpha_v),
+\quad
+\begin{bmatrix}\alpha_v\\\beta_v\end{bmatrix}
+=\theta_t\begin{bmatrix}-1&-1&-1&0&0&0&1&1&1\\-1&0&1&1&0&-1&-1&0&1\end{bmatrix}_{:,v}.
+\end{equation}
+Los desplazamientos de montaje siguen las matrices del artículo. El montaje se mantiene fijo durante el barrido de estados. Las salidas y direcciones se transforman con la misma rotación: $\vect o=\vect r_v+\mathcal R_v\vect o^{loc}$ y $\vect v=\mathcal R_v\vect v^{loc}$.
+
+La expansión escalar de una coordenada en el manuscrito contiene una inconsistencia: el primer componente del término rotado $[0,0,d_c]^T$ es $-d_c\cos\alpha\sin\beta$, no $-d_c\sin\alpha\cos\beta$. Se emplea el producto matricial directamente. También se utilizan las distancias completas entre salidas y PD, no una altura común aproximada en todas las distancias.
+
+El AP completo conserva \textbf{nueve lentes comunes a sus respectivos tiles}, sincronizadas al mismo estado $k$, no una sola lente que abarque los 225 emisores. Esta distinción evita cambiar inadvertidamente la arquitectura al extenderla.
+
+\subsection{De irradiancia a potencia del PD}
+Para cada salida y dirección globales,
+\begin{equation}
+\vect d=\vect p-\vect o,\quad s=\vect v^T\vect d,\quad
+\vect t=\vect d-s\vect v,\quad r^2=\|\vect t\|^2.
+\end{equation}
+El perfil Gaussian es $I=2P_t\exp(-2r^2/W)/(\pi W)$. Su normalización se verifica analíticamente:
+\begin{equation}
+\int_0^\infty\frac{2P_t}{\pi W}e^{-2r^2/W}2\pi r\,dr=P_t,
+\end{equation}
+pues el cambio $u=2r^2/W$ reduce la integral a $P_t\int_0^\infty e^{-u}du$.
+
+Con un PD pequeño respecto de la mancha,
+\begin{equation}\label{eq:power}
+P_{i,k}(\vect p)=\frac{2P_t\eta A_{PD}}{\pi W_{i,k}(s)}
+ e^{-2r^2/W_{i,k}(s)}\max(0,-\vect n_{PD}^T\vect v_{i,k})
+ \mathbf 1_{FoV}\mathbf 1_{s>0}.
+\end{equation}
+La unidad es W: irradiancia W/m$^2$ por área m$^2$. El signo menos es necesario porque $\vect v$ apunta hacia el receptor y la normal del PD hacia el techo. Con esas convenciones, usar el signo positivo daría incidencia inválida incluso al haz central.
+
+Se conserva la aproximación del artículo de utilizar el eje del haz para la incidencia. La dirección local del flujo de un frente curvo puede diferir de él. Tampoco se modela aquí la astigmatización mediante dos parámetros $q$ distintos. Las validaciones posteriores delimitan estas aproximaciones. Una prueba integra sobre un cuadrado receptor de $1\times1$ mm$^2$ y contrasta el modelo puntual en un punto representativo.
+
+\subsection{Extensión exploratoria de curvatura negativa}
+Para estudiar si un mayor solapamiento ayuda, se permite una superficie plano-cóncava con $R<0$. No se obtiene cambiando solamente el signo de una divergencia:
+\begin{align}
+t_c&=t_e+\operatorname{sign}(R)\left(|R|-\sqrt{R^2-(L/2)^2}\right),\\
+\tau_i&=t_c+\operatorname{sign}(R)\left(\sqrt{R^2-\rho_i^2}-|R|\right),\\
+\vect n_i&=[x_i/R,y_i/R,\sqrt{1-\rho_i^2/R^2}]^T.
+\end{align}
+Se vuelve a aplicar Snell y la transformación ABCD con focal negativa. Los estados exploratorios usan borde de 6 mm para mantener espesor positivo. Es una modificación adicional del diseño de Kazemi, cuya validez se debe comprobar; sus resultados Gaussian favorables no bastan para recomendar hardware.
+
+\textbf{Archivos del capítulo:} \archivo{configuracion/gob_config.m}, \archivo{modelo/gob_model.m}, \archivo{modelo/gob_rotation.m}, \archivo{modelo/gob_power.m}, \archivo{modelo/gob_diagnostics.m} y \archivo{pruebas/test_gob_model.m}.
