@@ -1,0 +1,18 @@
+
+============================================================
+CAMBRIDGE | K_INFORMATION
+BASE SYSTEM (swept quantities are explicitly listed below)
+Room [m]: [2.4 2.4 2]; LED position [m]: [0 0 2]; LED normal: [0 0 -1]
+P_t = 0.65 W; reference A_PD = 75.4 mm^2; R_p = 0.4 A/W; T_s = 1; g = 1
+Reference sigma^2 = 3e-14 W^2/sample; N_i = 1000; fixed-total option M = 9000
+Grid: x=[-1.2 -1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 1.2]; y=[-1.2 -1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 1.2]; z=[0 0.2 0.4 0.6 0.8 1 1.2] m (1183 positions)
+SVD relative tolerance = 1e-10; boundary cosine tolerance = 1e-12
+Target PEB = 2 cm. This is a theoretical bound, not achieved estimator error.
+SWEPT VARIABLES AND FROZEN GEOMETRY
+Fixed tilt = 30 deg; half-power = 60 deg; A_PD stays fixed.
+K: [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]; FOV [deg]: [45 60 85]; patterns: uniform_cone, golden_prefix, repeat_triplet
+Budgets: per_orientation, fixed_total; reference position [m]: [0 0 0.6]
+Golden prefixes and repeated triplets are nested; regenerated uniform cones are NOT nested.
+Regular 3D coverage, one-visible-ray coverage and target-PEB coverage are different quantities.
+LOS, calibrated gain, known global normals, stationary PD, constant optical noise.
+============================================================

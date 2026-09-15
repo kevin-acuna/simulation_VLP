@@ -4,8 +4,10 @@ if nargin < 4
     output_parent = fullfile(root, 'Design of the Parameters (CRLB design)', 'results');
 end
 assert(isfolder(output_parent), 'cambridge:OutputDirectory', 'The output parent must already exist.');
-calculators = struct('inclination', @study_inclination, 'K', @study_K, 'area', @study_area, 'heatmap', @study_heatmap);
-assert(isfield(calculators, kind), 'cambridge:ExperimentKind', 'Choose inclination, K, area or heatmap.');
+calculators = struct('inclination', @study_inclination, 'K', @study_K, 'area', @study_area, 'heatmap', @study_heatmap, ...
+    'tilt_feasibility', @study_tilt_feasibility, 'K_information', @study_K_information, ...
+    'link_budget', @study_link_budget, 'coverage_geometry', @study_coverage_geometry);
+assert(isfield(calculators, kind), 'cambridge:ExperimentKind', 'Unknown experiment: %s.', kind);
 transcript = evalc('rx_print_experiment(kind, p, experiment);');
 transcript = regexprep(transcript, '</?strong>', '');
 fprintf('%s', transcript);
@@ -23,6 +25,17 @@ save(fullfile(result.output_directory, 'experiment_results.mat'), 'result', '-v7
 writetable(result.table, fullfile(result.output_directory, 'metrics.csv'));
 if isfield(experiment, 'cases')
     writetable(rx_case_table(experiment.cases, kind), fullfile(result.output_directory, 'cases.csv'));
+end
+if isfield(result, 'extra_tables')
+    names = fieldnames(result.extra_tables);
+    for i = 1:numel(names)
+        writetable(result.extra_tables.(names{i}), fullfile(result.output_directory, [names{i} '.csv']));
+    end
+end
+if isfield(result, 'selected') && ~isempty(result.selected)
+    fprintf('%s\n', result.selected.policy);
+    disp(result.extra_tables.selected_configuration);
+    disp(result.extra_tables.selected_validation);
 end
 fid = fopen(fullfile(result.output_directory, 'parameters.txt'), 'wt');
 assert(fid>=0, 'cambridge:Manifest', 'Cannot write the parameter manifest.');

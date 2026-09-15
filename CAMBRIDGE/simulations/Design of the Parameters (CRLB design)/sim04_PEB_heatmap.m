@@ -8,7 +8,7 @@ p.receiver.area_m2 = 75.4e-6;
 p.acquisition.samples_per_orientation = 1000;
 p.noise.variance_W2 = 3e-14;
 fixed_K = 9;
-fixed_tilt_deg = 3;
+fixed_tilt_deg = 20;
 half_angles_deg = 60;
 
 experiment = struct();

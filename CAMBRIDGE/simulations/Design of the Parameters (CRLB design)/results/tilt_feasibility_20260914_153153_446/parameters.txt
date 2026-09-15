@@ -1,0 +1,21 @@
+
+============================================================
+CAMBRIDGE | TILT_FEASIBILITY
+BASE SYSTEM (swept quantities are explicitly listed below)
+Room [m]: [2.4 2.4 2]; LED position [m]: [0 0 2]; LED normal: [0 0 -1]
+P_t = 0.65 W; reference A_PD = 75.4 mm^2; R_p = 0.4 A/W; T_s = 1; g = 1
+Reference sigma^2 = 3e-14 W^2/sample; N_i = 1000; fixed-total option M = 9000
+Grid: x=[-1.2 -1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 1.2]; y=[-1.2 -1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 1.2]; z=[0 0.2 0.4 0.6 0.8 1 1.2] m (1183 positions)
+SVD relative tolerance = 1e-10; boundary cosine tolerance = 1e-12
+Target PEB = 2 cm. This is a theoretical bound, not achieved estimator error.
+SWEPT VARIABLES AND FROZEN GEOMETRY
+Tilt constraint = maximum; tilt = 3 deg; no normal may exceed this angle.
+Half-power [deg]: [15 30 45 60 75]; FOV [deg]: [45 60 65 70 75 85]; K: [3 5 9 15 25 49 81]
+Area [mm^2]: [25 50 75.4 100 150]; patterns: uniform_cone, golden_prefix, center_ring, two_rings
+Budgets: per_orientation, fixed_total; azimuth offset = 0 deg
+Feasible means 100% regular coverage, RMS<=target, and at least 95.0% of positions with PEB<=target.
+Area scaling is exact ONLY under the fixed optical noise model.
+Selected-pattern refinement enabled: 1. Selection minimizes samples, then area, then K, then RMS.
+Regular 3D coverage, one-visible-ray coverage and target-PEB coverage are different quantities.
+LOS, calibrated gain, known global normals, stationary PD, constant optical noise.
+============================================================

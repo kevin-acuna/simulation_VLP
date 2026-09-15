@@ -7,7 +7,7 @@
 \geometry{margin=23mm}
 \newcommand{\PEB}{\operatorname{PEB}}
 \newcommand{\tr}{\operatorname{tr}}
-\graphicspath{{../../Design of the Parameters (CRLB design)/results/full_20260914_104329_971/replot_20260914_105421_998/}}
+\graphicspath{{../../Design of the Parameters (CRLB design)/results/full_20260914_160535_105/}{../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/}{../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/}{../../Design of the Parameters (CRLB design)/results/link_budget_20260914_153744_379/}{../../Design of the Parameters (CRLB design)/results/coverage_geometry_20260914_153744_802/replot_20260914_154554_977/}}
 \title{Informe del proyecto Cambridge\\Posicionamiento 3D con un LED fijo y un PD reorientable\\\large Modelo, cotas y laboratorio de experimentos MATLAB}
 \author{Proyecto de investigación Cambridge}
 \date{14 de septiembre de 2026}
@@ -44,28 +44,37 @@ El proyecto activo está en \path{CAMBRIDGE/simulations}. La aplicación \path{C
 \end{enumerate}
 Los errores de IMU, calibración, patrón angular, ruido dependiente de señal y asentamiento mecánico quedan fuera de esta cota. No se deben extrapolar sus valores directamente a un prototipo.
 
-\subsection{Parámetros nominales}
+\subsection{Historical benchmark parameters}
+
+Table~\ref{tab:historical_benchmark} summarizes the parameters of the original benchmark retained in this report. These values should not be confused with the active parameters used in the new tilt-constrained experiments.
+
 \begin{center}
 \begin{tabular}{ll}
 \toprule
-Magnitud & Valor nominal \\
+Parameter & Nominal value \\
 \midrule
-Recinto & $3\times3\times2\ \mathrm m^3$ \\
-Posición y eje del LED & $(0,0,2)\ \mathrm m$, $(0,0,-1)$ \\
-Potencia óptica & $0.405\ \mathrm W$ \\
-Semiángulos a mitad de potencia & $30,45,60,75$ grados \\
-Área nominal del PD & $26.4\ \mathrm{mm}^2$ \\
-Responsividad & $0.63\ \mathrm{A/W}$ \\
-FOV, semiapertura & $30,45,60,75,85$ grados \\
-Varianza por muestra & $3\times10^{-14}\ \mathrm W^2$ \\
-Muestras por orientación & $N_i=1000$ \\
-Presupuesto alternativo & $M=9000$ muestras totales \\
-Rejilla de diseño & $x,y\in[-1.5,1.5]$, $z\in[0,1.2]$, paso $0.2\ \mathrm m$ \\
-Comprobación densa & Mismo dominio, paso $0.1\ \mathrm m$ \\
+Room dimensions & $2.4\times2.4\times2\ \mathrm{m}^3$ \\
+LED position and $n_t$ & $(0,0,2)\ \mathrm{m}$, $(0,0,-1)$ \\
+Optical transmit power & $0.65\ \mathrm{W}$ \\
+LED half-power semi-angle & $30^\circ,45^\circ,60^\circ$ \\
+Nominal PD area & $75.4\ \mathrm{mm}^2$ \\
+Responsivity & $0.4\ \mathrm{A/W}$ \\
+FOV half-angle & $45^\circ,60^\circ,75^\circ,85^\circ$ \\
+Per-sample noise variance & $3\times10^{-14}\ \mathrm{W}^2$ \\
+Samples per orientation & $N_i=1000$ \\
+Alternative sampling budget & $M=9000$ total samples \\
+Design grid & $x,y\in[-1.2,1.2]$, $z\in[0,1.2]$, step $0.2\ \mathrm{m}$ \\
+Dense validation grid & Same domain, step $0.1\ \mathrm{m}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-La rejilla original tiene 1792 puntos; la densa, 12493. No tienen el mismo peso relativo de bordes y esquinas, por lo que sus promedios no deben coincidir necesariamente. Las unidades internas son SI; los sufijos de los campos MATLAB distinguen grados, metros, metros cuadrados y vatios. La responsividad no se multiplica otra vez cuando las potencias y la varianza ya están en dominio óptico.
+
+The original design grid contains 1,792 points, whereas the dense validation grid contains 12,493 points. Because the two grids assign different relative weights to boundary and corner regions, their spatial averages are not expected to coincide exactly. All internal computations use SI units; MATLAB field-name suffixes are used to distinguish quantities expressed in degrees, metres, square metres, and watts. When both the received powers and the noise variance are already expressed in the optical-power domain, the photodiode responsivity is not applied a second time.
+
+\subsection{Configuración activa para los experimentos 05--08}
+Los nuevos scripts heredan los valores actuales de \path{system_parameters.m}: recinto de $2.4\times2.4\times2$ m, LED en $(0,0,2)$ m, $P_t=0.65$ W, área de referencia $75.4\ \mathrm{mm}^2$, responsividad $0.4\ \mathrm{A/W}$ y varianza óptica $3\times10^{-14}\ \mathrm W^2$ por muestra. La rejilla $x,y\in[-1.2,1.2]$, $z\in[0,1.2]$ con paso $0.2$ m tiene 1183 puntos; la validación con paso $0.1$ m tiene 8125. Se conservan $N_i=1000$ y la alternativa $M=9000$ muestras totales.
+
+El diseño con tilt limitado compara $\Phi_{1/2}\in\{15,30,45,60,75\}^\circ$, FOV entre $45^\circ$ y $85^\circ$, $K\in\{3,5,9,15,25,49,81,121\}$ y áreas $25,50,75.4,100,125,150\ \mathrm{mm}^2$. Estos son límites explícitos de la búsqueda, no valores físicos automáticamente óptimos. Como la varianza se mantiene en dominio óptico, cambiar la responsividad no modifica por sí solo el PEB; si se conserva una varianza eléctrica, se debe convertir mediante $\sigma^2=\sigma_w^2/R_p^2$.
 
 \section{Principales derivaciones}
 La demostración extendida permanece en \path{PEB_derivation.tex}. Se resumen aquí las expresiones necesarias para interpretar los experimentos.
@@ -155,19 +164,23 @@ La ley en $K$ exige la geometría uniforme totalmente visible. Con presupuesto $
 
 \section{Experimentos independientes y trazabilidad}
 \subsection{Qué se modifica y qué permanece fijo}
-Los cuatro scripts se encuentran directamente en \path{Design of the Parameters (CRLB design)}. Sus bloques iniciales son el lugar habitual de edición.
+Los scripts están en \path{Design of the Parameters (CRLB design)}. Sus bloques iniciales son el lugar habitual de edición. Los cuatro primeros experimentos son los barridos básicos; los experimentos 05--08 añaden búsqueda conjunta, diagnóstico de información y límites de cobertura.
 \begin{longtable}{>{\raggedright\arraybackslash}p{0.39\linewidth}>{\raggedright\arraybackslash}p{0.55\linewidth}}
 \toprule
 Script & Variables y controles \\
 \midrule
 \endhead
 \path{sim01_PEB_vs_inclination.m} & Barre inclinación y FOV, con una figura por semiángulo LED. Fija $K$, área, potencia, ruido, muestras y azimut inicial. No selecciona automáticamente valores para otro experimento. \\
-\path{sim02_PEB_vs_K.m} & Barre $K$ con conos de inclinación congelada. Compara presupuesto por orientación y presupuesto total. La inclinación común por defecto es $40^\circ$; se pueden definir inclinaciones diferentes por caso. \\
+\path{sim02_PEB_vs_K.m} & Barre $K$ con conos de inclinación congelada. Compara presupuesto por orientación y presupuesto total. La configuración activa usa inclinación $30^\circ$; se pueden definir inclinaciones diferentes por caso. \\
 \path{sim03_PEB_vs_A_PD.m} & Barre el área, fijando normales, $K$, FOV, potencia y ruido. Por defecto compara los cuatro semiángulos con $K=14$ y cono de $40^\circ$, no con los patrones refinados. \\
-\path{sim04_PEB_heatmap.m} & Evalúa una rejilla $x,y$ en alturas elegidas. Por defecto utiliza $75^\circ$, FOV $85^\circ$, $K=14$ y cono de $40^\circ$. Puede comparar varios casos y matrices explícitas. \\
+\path{sim04_PEB_heatmap.m} & Evalúa una rejilla $x,y$ en alturas elegidas. La configuración activa utiliza $\Phi_{1/2}=60^\circ$, FOV $85^\circ$, $K=9$ y cono de $3^\circ$. Puede comparar varios casos y matrices explícitas. \\
+\path{sim05_tilt_limited_feasibility.m} & Búsqueda conjunta con tilt fijo o máximo: semiángulo LED, FOV, $K$, área, patrón y presupuesto. Incluye refinamiento local opcional dentro del límite, validación densa y alternativas de área frente a muestras. \\
+\path{sim06_K_information_and_coverage.m} & Separa la ganancia de nuevas direcciones de la ganancia de muestras. Compara conos regenerados, prefijos dorados anidados y repetición de tres direcciones, con PEB normalizado y tres coberturas. \\
+\path{sim07_power_noise_and_samples.m} & Relación potencia--ruido--muestras a geometría congelada. Calcula el presupuesto necesario para RMS y cobertura de PEB objetivo; no introduce ruido de disparo dependiente de señal. \\
+\path{sim08_tilt_FOV_coverage_limits.m} & Compara cobertura 3D real del barrido con el límite geométrico optimista impuesto por tilt y FOV. Identifica zonas que ningún aumento de $K$ puede recuperar. \\
 \bottomrule
 \end{longtable}
-No es necesario ejecutar \texttt{sim01} antes de \texttt{sim02}, ni completar una optimización antes de dibujar un mapa. Cambiar el bloque \texttt{p} modifica condiciones físicas; cambiar \texttt{experiment} modifica el barrido; cambiar \texttt{style} modifica solamente la representación. Los scripts no borran el workspace ni cierran figuras ajenas.
+No es necesario ejecutar \texttt{sim01} antes de \texttt{sim02}, ni completar una optimización antes de dibujar un mapa. Cambiar el bloque \texttt{p} modifica condiciones físicas; cambiar \texttt{experiment} modifica el barrido; cambiar \texttt{style} modifica solamente la representación. Los nuevos scripts 05--08 y las funciones de dibujo no borran el workspace ni cierran figuras ajenas. Los primeros scripts conservan las personalizaciones del investigador, incluidas las órdenes de limpieza de ventanas que haya añadido.
 
 En Command Window aparecen: geometría, posición/eje del LED, potencia, responsividad, ganancia/filtro, ruido, tolerancias, rejilla, muestras y presupuestos, parámetros ópticos por caso y variables barridas. Para patrones explícitos se imprimen las normales. Un \texttt{NaN} en la tabla de parámetros indica una cantidad barrida o una inclinación común no aplicable; no es un fallo del cálculo.
 
@@ -180,16 +193,88 @@ Cada ejecución crea un directorio con fecha y hora y conserva:
 \end{itemize}
 El MAT contiene los parámetros efectivos, el experimento, los PEB por posición, la geometría y las métricas. Las medias ópticas individuales no se guardan en esos barridos; se obtienen si se solicitan los diagnósticos de \texttt{rx\_peb}. Los PDF/PNG/FIG se generan después, desde ese resultado. Así un fallo de dibujo no obliga a repetir el cálculo.
 
-\subsection{Cobertura y promedios}
-Si $\mathcal R_f$ es el conjunto de posiciones con PEB finito y regular, se reporta:
+\subsection{Cómo se define y calcula la cobertura 3D}
+La cobertura utilizada en las figuras no es la fracción de puntos que reciben alguna luz. Es la fracción de la rejilla en la que la posición de \emph{tres coordenadas} tiene una cota local finita y regular bajo los parámetros conocidos del modelo. En cada posición se forma el Jacobiano blanqueado $\widetilde J=W^{1/2}J$, se calculan sus valores singulares $s_1\geq s_2\geq s_3\geq0$ y se define:
 \begin{equation}
-\rho=\frac{|\mathcal R_f|}{|\mathcal R|},\quad
-F_{\mathrm{cond}}=\sqrt{\frac1{|\mathcal R_f|}\sum_{r\in\mathcal R_f}\PEB^2(r)},\quad
-F_{\mathrm{full}}=\begin{cases}F_{\mathrm{cond}},&\rho=1,\\+\infty,&\rho<1.\end{cases}
+\chi_3(\mathbf r)=\mathbf1\left\{\mathbf r\notin\mathcal B,\ s_1>0,\ \frac{s_3}{s_1}>\epsilon_{\rm rank}\right\},\qquad
+\rho_{3D}=\frac{1}{|\mathcal R|}\sum_{\mathbf r\in\mathcal R}\chi_3(\mathbf r).
+\label{eq:coverage_3d_exact}
 \end{equation}
-Las líneas continuas representan la rejilla completa; las punteadas, sólo el subconjunto finito. La cobertura se muestra separadamente. En los experimentos independientes una configuración inviable se conserva como dato: no se aborta sólo porque su cobertura sea baja. En cambio, la selección del flujo completo exige cobertura regular completa.
+Aquí $\mathcal B$ es el conjunto de fronteras no regulares del modelo, detectadas con tolerancia $10^{-12}$ en coseno, y $\epsilon_{\rm rank}=10^{-10}$. En MATLAB, esta condición equivale a contar los valores finitos de la salida de \texttt{rx\_peb}; en las figuras se representa $100\rho_{3D}$ en porcentaje. No se añade regularización para hacer finita una FIM singular.
 
-Un ejemplo importante ocurre con el cono no optimizado de $40^\circ$: en algunas rejillas cartesianas, ciertas incidencias son exactamente $85^\circ$. En la ejecución independiente del mapa, las alturas $0.6$ y $1.2$ m contienen dos puntos no regulares cada una entre 3721 puntos, por lo que la cobertura regular es aproximadamente $99.946\%$ y el RMS completo es infinito. Esto no equivale a que una región extensa carezca de señal; refleja una frontera del modelo de corte duro. Se conserva la distinción en vez de desplazar artificialmente la rejilla u omitir esos puntos.
+La implementación sigue cuatro pasos: (1) determinar el conjunto visible en la geometría verdadera de evaluación; (2) calcular los gradientes, poniendo a cero las filas localmente invisibles; (3) comprobar el rango numérico por SVD; (4) excluir de la cobertura regular tanto los PEB infinitos por rango insuficiente como los \texttt{NaN} de frontera. La máscara se utiliza para evaluar una cota, no como un detector perfecto entregado a un estimador. Todas las adquisiciones consumen muestras, sean visibles o no.
+
+Se distinguen tres coberturas:
+\begin{align}
+\rho_{\rm LOS}&=\frac1{|\mathcal R|}\sum_{\mathbf r\in\mathcal R}\mathbf1\{|\mathcal V(\mathbf r)|\geq1\},\\
+\rho_{3D}&=\frac1{|\mathcal R|}\sum_{\mathbf r\in\mathcal R}\mathbf1\{\PEB(\mathbf r)\text{ finito y regular}\},\\
+\rho_{\tau}&=\frac1{|\mathcal R|}\sum_{\mathbf r\in\mathcal R}\chi_3(\mathbf r)\mathbf1\{\PEB(\mathbf r)\leq\tau\}.
+\label{eq:coverage_target}
+\end{align}
+Siempre $\rho_\tau\leq\rho_{3D}\leq\rho_{\rm LOS}$. La cobertura LOS es geométrica, sin umbral de detección de RSS; recibir una señal teóricamente positiva no demuestra recepción fiable sobre el ruido. La cobertura $\rho_{3D}=100\%$ tampoco implica una precisión útil: una FIM muy pequeña puede tener rango tres y producir un PEB enorme. Por ello los nuevos experimentos incluyen $\rho_\tau$, por defecto con $\tau=2$ cm. Esta última sigue siendo una cobertura de \emph{cota}, no la probabilidad de que un estimador real tenga error menor que $\tau$.
+
+Con $\mathcal R_f$ el conjunto de puntos regulares con PEB finito, los promedios son:
+\begin{equation}
+F_{\rm cond}=\sqrt{\frac1{|\mathcal R_f|}\sum_{\mathbf r\in\mathcal R_f}\PEB^2(\mathbf r)},\qquad
+F_{\rm full}=\begin{cases}F_{\rm cond},&\rho_{3D}=1,\\+\infty,&\rho_{3D}<1.\end{cases}
+\end{equation}
+Las líneas continuas representan el RMS de toda la rejilla y las punteadas el del subconjunto finito. No se deben comparar promedios condicionales de dominios diferentes como si fueran mejoras a cobertura fija. El porcentaje es un promedio discreto con igual peso por punto, no una certificación de volumen continuo ni un prior de posición.
+
+Como ejemplo histórico, con el recinto original de $3\times3$ m y el cono no optimizado de $40^\circ$, algunos puntos de los mapas a $z=0.6$ y $1.2$ m tenían incidencia exactamente $85^\circ$: dos puntos no regulares entre 3721 en cada plano. Su cobertura regular era aproximadamente $99.946\%$, aunque no existía una región extensa sin luz. Los resultados nuevos con otro recinto o patrón no deben confundirse con ese ejemplo. Se mantiene la distinción sin desplazar artificialmente las rejillas para evitar las fronteras.
+
+\subsection{Por qué aumentar K puede aumentar la cobertura, y cuándo no}
+En una región regular, la condición de identificabilidad es que las normales \emph{visibles} abarquen $\mathbb R^3$. Con más direcciones se puede pasar de una o dos normales visibles a tres independientes, especialmente cerca del borde de FOV. Para un conjunto anidado que conserva las observaciones y muestras anteriores:
+\begin{equation}
+\mathcal I_{K+1}(\mathbf r)=\mathcal I_K(\mathbf r)+\frac{N_{K+1}}{\sigma^2}\mathbf g_{K+1}\mathbf g_{K+1}^{\mathsf T}\succeq\mathcal I_K(\mathbf r).
+\label{eq:K_nested_psd}
+\end{equation}
+El rango no disminuye y, cuando ambas FIM son invertibles, el PEB no aumenta. Eso permite aumentar cobertura, pero \emph{no lo garantiza estrictamente}. Hay cuatro matices esenciales:
+\begin{enumerate}
+\item Si ya hay tres normales independientes en todos los puntos, $\rho_{3D}$ ya vale uno y no puede seguir creciendo; aún puede mejorar $\rho_\tau$.
+\item Repetir las mismas tres direcciones aporta muestras, pero no amplía su espacio generado ni su cobertura geométrica. Si un punto sólo ve dos de ellas, seguirá sin ser identificable.
+\item Los conos uniformes regenerados para cada $K$ no son anidados: al cambiar $K$ se reemplazan azimuts anteriores. Puede haber variaciones no monótonas de cobertura y PEB. El experimento 06 compara esta política con prefijos dorados anidados y con repeticiones de un triplete.
+\item Ningún $K$ puede recuperar puntos fuera de la unión de todas las direcciones físicamente admisibles. Además, los puntos exactamente sobre una nueva frontera FOV quedan fuera de la CRLB regular; la monotonía anterior se refiere a puntos regulares para ambos conjuntos.
+\end{enumerate}
+
+Si las normales están limitadas a una inclinación $\theta_{\max}$ desde $+z$, y $\alpha(\mathbf r)=\arccos(u_z)$, la menor incidencia alcanzable es:
+\begin{equation}
+\psi_{\min}(\mathbf r)=\max\{\alpha(\mathbf r)-\theta_{\max},0\}.
+\end{equation}
+Para $\theta_{\max}>0$, una cota geométrica optimista de cobertura regular potencial es:
+\begin{equation}
+\rho_{\rm potencial}=\frac1{|\mathcal R|}\sum_{\mathbf r\in\mathcal R}
+\mathbf1\{c(\mathbf r)>0,\ \alpha(\mathbf r)<\Psi+\theta_{\max}\}.
+\end{equation}
+Es un límite superior, no la cobertura de un barrido finito predeterminado. Para $\theta_{\max}=0$ sólo hay una normal posible y la cobertura 3D se fija a cero. Si $\alpha_{\max}$ es el máximo sobre la rejilla iluminada, las condiciones para el dominio completo son:
+\begin{equation}
+\begin{aligned}
+\Psi&>\alpha_{\max}-\theta_{\max} &&\text{(necesaria para visibilidad admisible)},\\
+\Psi&>\alpha_{\max}+\theta_{\max} &&\text{(suficiente para ver todas las normales del cono)}.
+\end{aligned}
+\label{eq:FOV_tilt_limits}
+\end{equation}
+La condición suficiente también necesita un cono no degenerado y $K\geq3$ para concluir identificabilidad 3D. En la geometría activa, $\alpha_{\max}\simeq64.761^\circ$. Con tilt máximo $3^\circ$, FOV $60^\circ$ no puede cubrir todo el dominio, independientemente del área, potencia o número de muestras. FOV superior a $67.761^\circ$ hace visibles todas las normales de un cono de $3^\circ$; por eso $70^\circ$, $75^\circ$ y $85^\circ$ tienen resultados iguales en ese caso ideal de ruido y ganancia constantes.
+
+\subsection{Por qué PEB frente a K puede parecer casi constante}
+La disminución depende del recurso que se mantenga fijo. Para un cono uniforme completamente visible:
+\begin{equation}
+H_K^{\mathsf T}H_K=K D(\theta),\qquad
+D(\theta)=\operatorname{diag}\left(\frac{\sin^2\theta}{2},\frac{\sin^2\theta}{2},\cos^2\theta\right),\quad K\geq3.
+\end{equation}
+Como $B$ no depende de $K$, se obtiene:
+\begin{equation}
+\mathcal I_K=\frac{NK}{\sigma^2}B^{\mathsf T}D(\theta)B,
+\quad
+\frac{\PEB(K)}{\PEB(K_0)}=\sqrt{\frac{K_0}{K}}\ \ (N\text{ fijo}),
+\quad
+\PEB(K)=\text{constante}\ \ (NK=M\text{ fijo}).
+\label{eq:K_plateau}
+\end{equation}
+Con $M=9000$ se reparte la misma cantidad de información de muestreo entre más orientaciones. Una vez que el conjunto angular está suficientemente equilibrado, aumentar $K$ aporta muy poco; las diferencias residuales proceden de clipping FOV, distribución angular y redondeo de las asignaciones enteras. No es un fallo del cálculo. La mejora por $1/\sqrt K$ corresponde a adquirir más muestras totales al mantener $N$ constante, no a una ganancia gratuita por llamar ``orientaciones'' a más intervalos de adquisición.
+
+Se reprodujo la configuración activa de \texttt{sim02}, con tilt $30^\circ$, FOV $85^\circ$, $P_t=0.65$ W y $A_{\rm PD}=75.4\ \mathrm{mm}^2$. Para $\Phi_{1/2}=60^\circ$, el RMS-PEB pasa de $0.6128$ cm en $K=5$ a $0.3468$ cm en $K=15$ con $N_i=1000$, una disminución del $43.4\%$. Con $M=9000$ fijo pasa sólo de $0.4568$ a $0.4477$ cm, una disminución del $2.0\%$. Por tanto, la curva de presupuesto fijo debe ser casi plana.
+
+Hay además un efecto visual: con $\Phi_{1/2}=15^\circ$ el emisor fijo ilumina muy débilmente las esquinas y el RMS-PEB llega a millones de centímetros en esta geometría. Compartir esa escala logarítmica con curvas subcentimétricas comprime visualmente las mejoras de los LED más anchos. El experimento 06 presenta curvas normalizadas, mientras que el 05 separa los semiángulos en paneles con ejes verticales identificados. No se omiten los casos adversos ni se usan sus bajos promedios condicionales para declararlos viables.
 
 \section{Organización y descripción de archivos}
 \subsection{Núcleo físico, no dependiente de las figuras}
@@ -238,6 +323,16 @@ Archivo o grupo & Responsabilidad \\
 \path{support/rx_print_experiment.m}, \path{support/rx_case_table.m} & Resumen verificable de parámetros y casos. \\
 \path{support/rx_study_from_design.m} & Compatibilidad con los MAT del diseño anterior; sólo adapta datos guardados. \\
 \path{support/rx_design_summary.m}, \path{support/rx_write_design_tables.m}, \path{support/rx_design_heatmaps.m} & Tablas, exportación y mapas del benchmark completo. \\
+\path{studies/study_tilt_feasibility.m} & Evalúa perfiles ópticos con límite angular; reutiliza exactamente la ley $1/A$ y conserva todos los candidatos, incluidos los inviables. \\
+\path{studies/study_K_information.m} & Guarda PEB espacial, cobertura LOS/3D/objetivo y FIM de la posición de referencia para estudiar el efecto causal de $K$. \\
+\path{studies/study_link_budget.m} & Barrido conjunto de potencia, varianza óptica y muestras, con reescalado homoscedástico comprobado frente a la FIM directa. \\
+\path{studies/study_coverage_geometry.m} & Calcula el ángulo polar de cada punto y la cobertura potencial del dominio admisible. \\
+\path{support/rx_capped_pattern.m} & Genera anillo uniforme, prefijo dorado, centro más anillo, dos anillos y triplete repetido, sin violar el tilt permitido. \\
+\path{support/rx_bound_quality.m} & Define cobertura regular, cobertura de PEB objetivo, RMS, peor punto, cuantil empírico y factor necesario de ganancia. \\
+\path{support/rx_select_tilt_design.m}, \path{support/rx_refine_capped_pattern.m} & Selección explícita de candidato y búsqueda local en ángulos admisibles; el modo de tilt fijo sólo ajusta azimuts. \\
+\path{support/rx_feasible_tradeoffs.m}, \path{support/rx_validate_tradeoffs.m} & Frontera no dominada de recursos entre candidatos viables y comprobación en la rejilla densa. \\
+\path{plotting/plot_tilt_feasibility.m}, \path{plotting/plot_K_information.m} & Agrupan las figuras de búsqueda conjunta y diagnóstico de información; cada componente gráfico está en un archivo corto separado. \\
+\path{plotting/plot_link_budget.m}, \path{plotting/plot_coverage_geometry.m} & Figuras de presupuesto óptico y límites geométricos. Los porcentajes parciales se anotan para distinguir $99\%$ de $100\%$. \\
 \path{cambridge_setup.m} (raíz) & Añade únicamente las rutas de este proyecto; funciona tras mover la carpeta. \\
 \path{run_cambridge.m} (raíz) & Modos \texttt{full}, \texttt{quick} y \texttt{test}. \\
 \path{tests/test_rx_bounds.m}, \path{tests/test_rx_experiments.m} (raíz) & Verificación física, numérica, independencia, persistencia y redibujado. \\
@@ -287,9 +382,9 @@ El ancho nominal de dos columnas es $7.16$ pulgadas, con tipografía Times New R
 
 Las leyendas se sitúan fuera de los datos; los mapas comparten límites cromáticos y barra de color. Los paneles de cobertura evitan interpretar una reducción del conjunto evaluado como una mejora. Los títulos internos pueden suprimirse para trasladar al pie de figura los detalles experimentales, pero el pie debe indicar al menos dominio, $N$ o $M$, $K$, patrón, FOV, potencia, área, ruido y convención para fallos. Los límites manuales de ejes no deben utilizarse para ocultar resultados adversos.
 
-\section{Resultados del benchmark y su interpretación}
+\section{Resultados del benchmark histórico y su interpretación}
 \subsection{Trazabilidad de los resultados}
-El diseño completo se volvió a ejecutar tras separar los módulos. Sus cuatro RMS-PEB refinados coinciden con la ejecución original del 11 de septiembre con diferencia relativa inferior a $10^{-10}$. Los datos utilizados aquí están en el directorio \path{results/full_20260914_104329_971}; las figuras se regeneraron desde ese MAT, sin repetir física, en \path{replot_20260914_105421_998}. Las cifras siguientes son estadísticas de cotas, no RMSE medidos en hardware.
+El benchmark histórico se volvió a ejecutar con sus parámetros nominales explícitos, sin modificar la configuración activa. Sus cuatro RMS-PEB refinados coinciden con los valores de referencia originales con diferencia relativa inferior a $10^{-10}$. Los datos y figuras de esta reproducción están en \path{results/full_20260914_160535_105}. Las cifras siguientes son estadísticas de cotas, no RMSE medidos en hardware.
 
 \subsection{Inclinación, FOV y orden Lambertiano}
 Con $K=9$, el barrido del benchmark selecciona los conos de $17,31,35,40$ grados para semiángulos LED de $30,45,60,75$ grados, respectivamente. En todos los casos se selecciona FOV $85^\circ$. La diferencia con el óptimo axial de $63.435^\circ$ es esperable: el objetivo considera todo el volumen y el corte de visibilidad.
@@ -364,8 +459,140 @@ Los mapas comparan PEB 3D con una escala común; los menores valores aparecen ce
 \end{figure}
 \clearpage
 
+\section{Viabilidad con tilt limitado y nuevos experimentos}
+\subsection{Qué significa fijar el tilt en tres grados}
+El experimento 05 toma por defecto $\theta_{\max}=3^\circ$ respecto a $+z$ global. Todos los candidatos y movimientos del refinamiento respetan ese límite; no se apunta hacia el LED utilizando la posición verdadera ni se permiten inclinaciones mayores para mejorar artificialmente la cota. Se comparan cuatro familias: cono uniforme a $3^\circ$, prefijo de azimuts dorados a $3^\circ$, una normal vertical más un anillo, y dos anillos a $1.5^\circ$ y $3^\circ$.
+
+Si se desea que \emph{todas} las normales tengan exactamente $3^\circ$, se configura:
+\begin{verbatim}
+experiment.tilt_constraint = 'fixed';
+experiment.patterns = {'uniform_cone', 'golden_prefix'};
+\end{verbatim}
+En ese modo el refinamiento sólo modifica azimuts. Las familias con centro o dos inclinaciones no cumplen la igualdad y se rechazan explícitamente.
+
+Para un cono delgado y completamente visible, el término transversal del PEB crece aproximadamente como:
+\begin{equation}
+\PEB\ \propto\ \frac{\sigma}{P_t A_{\rm PD}\,\theta\sqrt{NK}},\qquad \theta\to0^+,\quad\theta\text{ en radianes}.
+\end{equation}
+Un tilt pequeño puede conservar rango tres, pero produce poca sensibilidad transversal. Por ello cobertura completa y precisión útil son cuestiones diferentes. En $\theta=0$ todas las normales coinciden y la identificación 3D deja de ser posible, independientemente de la cantidad de muestras.
+
+\subsection{Criterio de viabilidad y búsqueda conjunta}
+La búsqueda enumera semiángulo LED, FOV, $K$, patrón y presupuesto, conservando los parámetros activos indicados al principio del informe. Por defecto una configuración se considera viable \emph{en términos de CRLB} cuando:
+\begin{equation}
+\rho_{3D}=1,\qquad F_{\rm full}\leq\tau,\qquad\rho_\tau\geq p_\star,
+\qquad \tau=2\ \mathrm{cm},\quad p_\star=0.95.
+\label{eq:viability}
+\end{equation}
+El usuario puede cambiar \texttt{target\_peb\_m} y \texttt{min\_target\_coverage}. Si se fija este último a uno, el requisito de PEB se aplica a \emph{todos} los puntos, no sólo al 95\%. Cumplir \eqref{eq:viability} no demuestra que un estimador real alcance esos errores.
+
+Para cada perfil angular se evalúa el PEB en el área de referencia $A_0$. El ruido óptico permanece constante, por lo que el barrido de área se obtiene exactamente por reescalado. Si $Q_{p_\star}$ es el cuantil empírico de orden $\lceil p_\star|\mathcal R|\rceil$, el área continua necesaria para ese perfil es:
+\begin{equation}
+A_{\rm req}=A_0\,\frac{\max\{F_{\rm full}(A_0),Q_{p_\star}(A_0)\}}{\tau},\qquad \rho_{3D}=1.
+\label{eq:required_area}
+\end{equation}
+En perfiles sin cobertura completa se asigna $A_{\rm req}=+\infty$: aumentar área no recupera una dirección no visible o un rango insuficiente. Para $p_\star=0$ se toma $Q_0=0$. La fórmula evita repetir miles de FIM idénticas salvo por su escala; fue contrastada con evaluaciones directas a diferentes áreas, potencias, ruidos y muestras.
+
+La configuración de menor RMS dentro de la rejilla y la configuración recomendada son resultados diferentes. La recomendación elige, entre los candidatos que ya cumplen \eqref{eq:viability}, el menor total de muestras, luego la menor área, luego el menor $K$ y finalmente el menor RMS. Se exporta además una frontera no dominada de área frente a muestras, sin asignar un coste físico universal a ambos recursos. El refinamiento local posterior conserva $K$, área, FOV y presupuesto del candidato seleccionado y sólo ajusta ángulos admisibles. No certifica optimalidad global ni vuelve a optimizar cada candidato descartado.
+
+\subsection{Resultados con el hardware nominal activo}
+La ejecución completa del estudio limitado a $3^\circ$ evaluó 11520 configuraciones discretas. Se exigió un RMS no mayor de 2 cm, cobertura regular del 100\% y PEB no mayor de 2 cm en al menos el 95\% de los puntos. Las siguientes alternativas no dominadas usan $\Phi_{1/2}=60^\circ$, cono uniforme de $3^\circ$, FOV $70^\circ$ y $N_i=1000$:
+\begin{center}
+\begin{tabular}{rrrrrr}
+\toprule
+$K$ & $A_{\rm PD}$ [mm$^2$] & Muestras & RMS [cm] & Peor PEB [cm] & $100\rho_\tau$ \\
+\midrule
+49 & 125 & 49000 & 1.0558 & 2.7367 & 96.619\% \\
+81 & 100 & 81000 & 1.0265 & 2.6607 & 96.619\% \\
+121 & 75.4 & 121000 & 1.1138 & 2.8872 & 95.604\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+Así, el PD de referencia de $75.4\ \mathrm{mm}^2$ puede mantenerse en una alternativa con más adquisiciones. El criterio de menor coste de muestreo selecciona $K=49$ y $A=125\ \mathrm{mm}^2$. Su área continua requerida por \eqref{eq:required_area} es aproximadamente $114.94\ \mathrm{mm}^2$; el valor 125 procede de la rejilla ensayada, no de un óptimo interior físico. El mínimo RMS de todos los candidatos ensayados es aproximadamente 0.5599 cm, pero utiliza más recursos y no es la recomendación de menor coste.
+
+Las tres alternativas mantienen cobertura regular completa en la rejilla densa de 8125 puntos. Sus RMS de validación son aproximadamente 0.9829, 0.9556 y 1.0370 cm, y sus coberturas de PEB objetivo son 98.129\%, 98.277\% y 97.095\%, respectivamente. El peor PEB del diseño seleccionado supera 2 cm, lo cual es compatible con un requisito del 95\%, pero no con un requisito de error máximo en todos los puntos.
+
+No apareció ningún candidato viable con $M=9000$ fijo y $A\leq150\ \mathrm{mm}^2$ dentro de las familias y semiángulos evaluados. Para el cono de $3^\circ$, $\Phi_{1/2}=60^\circ$, $K=9$ y área $75.4\ \mathrm{mm}^2$, se obtiene RMS cercano a 4.084 cm y cuantil 95 cercano a 7.114 cm: el área requerida supera 260 mm$^2$. Esta ausencia de candidatos no es una prueba global sobre cualquier patrón óptico o receptor posible, pero muestra que incrementar $K$ sin incrementar las muestras no resuelve por sí solo la escasez de información.
+
+Los valores FOV $70^\circ$, $75^\circ$ y $85^\circ$ son equivalentes para el cono de $3^\circ$ sobre esta rejilla porque todas sus orientaciones son visibles. No es necesario reemplazar un receptor con FOV $85^\circ$ por uno de $70^\circ$ para obtener esta cota. Una penalización real por ruido ambiente o concentrador exigiría un modelo diferente.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{Tilt_FOV_K_feasibility.pdf}
+\caption{Búsqueda conjunta con tilt máximo $3^\circ$: área requerida mínima entre los semiángulos y patrones ensayados. Gris: ningún perfil tiene cobertura 3D completa. Cruces: el área requerida excede 150 mm$^2$. Los ejes representan candidatos discretos, no una interpolación continua de FOV o $K$.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{Tilt_feasible_tradeoffs.pdf}
+\caption{Alternativas no dominadas de recursos entre configuraciones que cumplen el objetivo de RMS y cobertura de PEB. Las líneas sólo conectan los candidatos discretos; no representan una optimización continua ni un coste económico del detector.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{Tilt_orientation_patterns.pdf}
+\caption{Comparación de patrones dentro del límite de $3^\circ$, con el semiángulo y FOV del diseño seleccionado. Reducir las inclinaciones de parte de las normales no mejora aquí la sensibilidad transversal. Las curvas corresponden a perfiles antes del refinamiento local.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{Tilt_selected_PEB_heatmap.pdf}
+\caption{Mapas de la configuración seleccionada, con $K=49$, $A=125\ \mathrm{mm}^2$, $\Phi_{1/2}=60^\circ$ y todas las normales limitadas a $3^\circ$. Los mapas evalúan PEB de tres coordenadas, no una cota 2D con altura conocida.}
+\end{figure}
+
+\subsection{Qué aportan otros patrones, potencia y muestras}
+En el ejemplo nominal, los patrones con centro o dos anillos no reducen el área requerida respecto al anillo uniforme de inclinación máxima. El refinamiento local no produjo una mejora apreciable del candidato uniforme seleccionado. Esto no demuestra optimalidad global; bajo visibilidad completa, la matriz de momentos de un cono uniforme ya está equilibrada y una inclinación menor reduce la diversidad transversal.
+
+El experimento 06 separa tres mecanismos. Un prefijo dorado conserva todas las direcciones anteriores, un cono uniforme se regenera al cambiar $K$, y el control de triplete repite sólo tres direcciones distintas. En este control, $K$ cuenta \emph{intervalos de adquisición}, no $K$ normales diferentes. Repetir direcciones puede reducir ruido con presupuesto creciente, pero no amplía la región de identificabilidad. La gráfica normalizada hace visible la diferencia entre muestras adicionales y presupuesto total fijo:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{K_normalized_information.pdf}
+\caption{PEB en la posición de referencia normalizado respecto al cono uniforme con $K_0=3$, usando el mismo denominador para todos los patrones. Las líneas ideales sólo se definen para $K\geq3$ y asumen visibilidad completa. En presupuesto fijo, los pequeños cambios de los patrones no uniformes reflejan equilibrio angular y asignación, no nuevas muestras totales.}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{K_coverage_mechanisms.pdf}
+\caption{Cobertura de luz, cobertura 3D y cobertura de PEB objetivo. El triplete repetido demuestra por qué más adquisiciones no necesariamente amplían la cobertura geométrica. Una curva saturada al 100\% puede seguir mejorando el PEB aunque ya no mejore identificabilidad.}
+\end{figure}
+
+El experimento 07 mantiene área y geometría angular y varía potencia, ruido óptico y muestras. Bajo su modelo homoscedástico:
+\begin{equation}
+\PEB(P_t,N,\gamma_\sigma)=\PEB(P_{t,0},N_0,1)
+\frac{P_{t,0}}{P_t}\,\gamma_\sigma\sqrt{\frac{N_0}{N}}.
+\end{equation}
+$\gamma_\sigma$ multiplica la desviación estándar; la varianza se multiplica por $\gamma_\sigma^2$. Para el ejemplo de $K=9$, tilt $3^\circ$ y $\Phi_{1/2}=60^\circ$, el orden de presupuesto necesario con el PD nominal y potencia de 0.65 W es $1.27\times10^4$ muestras por orientación para satisfacer también el requisito del cuantil 95. Esta alternativa permite explorar menos movimientos mecánicos con promedios más largos. Si las muestras están correlacionadas, $N$ debe representar información independiente efectiva; no basta aumentar la frecuencia de muestreo.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{Power_samples_required_budget.pdf}
+\caption{Presupuesto de muestras requerido frente a potencia para el objetivo de 2 cm y cobertura objetivo del 95\%, con el PD nominal, $K=9$ y tilt $3^\circ$. Las curvas son predicciones homoscedásticas; el ruido de disparo dependiente de potencia cambiaría esta ley.}
+\end{figure}
+
+El experimento 08 muestra el límite que ni más área ni más muestras pueden reparar. Con tilt muy pequeño, aumentar FOV puede ser imprescindible para hacer visible el LED en toda la región. Sus porcentajes parciales están anotados para no confundir visualmente 99\% con 100\%:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{Tilt_FOV_coverage_geometry.pdf}
+\caption{Cobertura 3D del conjunto de $K=9$ normales y límite geométrico optimista con los mismos límites angulares. La diferencia muestra cuánto queda por perder debido a un conjunto finito de orientaciones. Con tilt cero ninguna cantidad de muestras identifica tres coordenadas.}
+\end{figure}
+
+\subsection{Uso de los nuevos archivos y límites de la recomendación}
+Para repetir la búsqueda basta ejecutar \path{sim05_tilt_limited_feasibility}. Los campos principales se agrupan así:
+\begin{itemize}
+\item Límite angular: \path{tilt_deg} y \path{tilt_constraint}.
+\item Barrido óptico y angular: \path{half_angles_deg}, \path{fov_values_deg} y \path{K_values}.
+\item Recursos y patrones: \path{area_values_mm2}, \path{patterns} y \path{budgets}.
+\item Objetivo de cota: \path{target_peb_m} y \path{min_target_coverage}.
+\end{itemize}
+El resto define refinamiento y validación. No se modifican los valores centrales ni se heredan decisiones de otro experimento de forma implícita.
+
+Se guardan \path{base_profiles.csv}, \path{feasible_tradeoffs.csv}, \path{selected_configuration.csv}, \path{selected_validation.csv} y \path{selected_orientations.csv}, además del MAT y de todas las métricas. Este último archivo contiene las normales y el número real de muestras por orientación. El MAT guarda el PEB en el área de referencia y los índices que permiten reconstruir cualquier área por reescalado, evitando replicar matrices grandes. El mínimo de error y las alternativas de recursos se consultan, respectivamente, con:
+\begin{verbatim}
+result.table(result.minimum_error_row, :)
+result.extra_tables.feasible_tradeoffs
+\end{verbatim}
+
+La viabilidad sigue condicionada por hipótesis fuertes. Con tilt de $3^\circ$, los errores de orientación y de ganancia adquieren especial importancia. Más muestras no eliminan sesgos sistemáticos. Si el fondo aditivo común no se conoce, un cono de inclinación única no permite separar las tres componentes del vector óptico y ese fondo: variar inclinaciones puede ser necesario para identificabilidad en ese \emph{otro} modelo, aunque no gane en la cota actual con fondo calibrado. También deben medirse la capacitancia y el ruido de un PD de mayor área antes de interpretar las alternativas como diseños electrónicos realizables.
+
+Los nuevos resultados proceden de las ejecuciones fechadas en sus MAT y CSV. La cobertura densa valida otra rejilla, no el continuo espacial. Ningún resultado reportado sustituye la prueba del estimador con ruido, errores de pose y movimiento reales.
+\clearpage
+
 \section{Verificación y siguientes pasos científicos}
-El entorno se verificó en MATLAB R2026a, sin requerir Optimization, Statistics ni Parallel Computing Toolbox. Las 21 pruebas cubren gradientes por diferencias centrales, fórmula axial, rango mínimo, FOV y sus fronteras, invariancias de coordenadas, escalado de área/potencia/ruido/muestras, ambigüedad de ganancia, reconstrucción sin ruido y covarianza Monte Carlo a alta SNR. También verifican que los estudios no dependen de barridos anteriores, que editar un cono afecta a sus normales efectivas, que se guardan parámetros y que redibujar no altera los datos ni cierra figuras ajenas. Los cuatro scripts se ejecutaron en sesiones independientes.
+El entorno se verificó en MATLAB R2026a, sin requerir Optimization, Statistics ni Parallel Computing Toolbox. Las 28 pruebas cubren gradientes por diferencias centrales, fórmula axial, rango mínimo, FOV y sus fronteras, invariancias de coordenadas, escalado de área/potencia/ruido/muestras, ambigüedad de ganancia, reconstrucción sin ruido y covarianza Monte Carlo a alta SNR. También verifican que los estudios no dependen de barridos anteriores, que editar un cono afecta a sus normales efectivas, que se guardan parámetros y que redibujar no altera los datos ni cierra figuras ajenas. Los cuatro nuevos scripts 05--08 se ejecutaron en sesiones independientes, además de las verificaciones previas de los cuatro experimentos básicos. Las nuevas pruebas contrastan además el límite angular de cada familia, la distinción entre coberturas, el escalado frente a FIM directa, la conservación de muestras, la meseta con presupuesto fijo, los límites geométricos y la validación de las alternativas de recursos.
 
 La representación lineal permite un estimador GLS del vector óptico en una región de visibilidad conocida:
 \begin{equation}

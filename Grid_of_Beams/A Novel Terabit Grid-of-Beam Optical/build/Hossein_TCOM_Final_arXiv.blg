@@ -1,0 +1,62 @@
+This is BibTeX, Version 0.99e (TeX Live 2026)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: build/Hossein_TCOM_Final_arXiv.aux
+The style file: IEEEtran.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: IEEEabrv.bib
+Database file #2: references.bib
+Warning--entry type for "Zemax" isn't style-file defined
+--line 214 of file references.bib
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Warning--empty year in Lens_EdmundOptics
+Warning--missing institution in RJain1984
+
+Done.
+You've used 40 entries,
+            4087 wiz_defined-function locations,
+            1628 strings with 26359 characters,
+and the built_in function-call counts, 32044 in all, are:
+= -- 2537
+> -- 878
+< -- 289
++ -- 491
+- -- 163
+* -- 1573
+:= -- 4629
+add.period$ -- 79
+call.type$ -- 40
+change.case$ -- 36
+chr.to.int$ -- 645
+cite$ -- 42
+duplicate$ -- 2280
+empty$ -- 2468
+format.name$ -- 189
+if$ -- 7508
+int.to.chr$ -- 0
+int.to.str$ -- 40
+missing$ -- 412
+newline$ -- 147
+num.names$ -- 37
+pop$ -- 927
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 2
+skip$ -- 2458
+stack$ -- 0
+substring$ -- 1522
+swap$ -- 1951
+text.length$ -- 74
+text.prefix$ -- 0
+top$ -- 5
+type$ -- 40
+warning$ -- 2
+while$ -- 127
+width$ -- 42
+write$ -- 410
+(There were 3 warnings)

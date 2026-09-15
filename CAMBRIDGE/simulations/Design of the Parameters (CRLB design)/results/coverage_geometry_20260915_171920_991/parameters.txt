@@ -1,0 +1,17 @@
+
+============================================================
+CAMBRIDGE | COVERAGE_GEOMETRY
+BASE SYSTEM (swept quantities are explicitly listed below)
+Room [m]: [2.4 2.4 2]; LED position [m]: [0 0 2]; LED normal: [0 0 -1]
+P_t = 0.65 W; reference A_PD = 75.4 mm^2; R_p = 0.4 A/W; T_s = 1; g = 1
+Reference sigma^2 = 3e-14 W^2/sample; N_i = 1000; fixed-total option M = 9000
+Grid: x=[-1.2 -1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 1.2]; y=[-1.2 -1 -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 1.2]; z=[0 0.2 0.4 0.6 0.8 1 1.2] m (1183 positions)
+SVD relative tolerance = 1e-10; boundary cosine tolerance = 1e-12
+Target PEB = 2 cm. This is a theoretical bound, not achieved estimator error.
+SWEPT VARIABLES AND FROZEN GEOMETRY
+Fixed K=4, half-power=60 deg, A_PD=75.4 mm^2.
+Tilt [deg]: [0 0.5 1 2 3 5 10 20 30 40]; FOV [deg]: [30 45 60 65 70 75 85]
+The geometric envelope is an optimistic upper bound, not the coverage of a finite codebook.
+Regular 3D coverage, one-visible-ray coverage and target-PEB coverage are different quantities.
+LOS, calibrated gain, known global normals, stationary PD, constant optical noise.
+============================================================

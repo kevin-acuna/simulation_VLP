@@ -7,8 +7,7 @@
 \providecommand{\BIBentrySTDinterwordspacing}{\spaceskip=0pt\relax}
 \providecommand{\BIBentryALTinterwordstretchfactor}{4}
 \providecommand{\BIBentryALTinterwordspacing}{\spaceskip=\fontdimen2\font plus
-\BIBentryALTinterwordstretchfactor\fontdimen3\font minus
-  \fontdimen4\font\relax}
+\BIBentryALTinterwordstretchfactor\fontdimen3\font minus \fontdimen4\font\relax}
 \providecommand{\BIBforeignlanguage}[2]{{%
 \expandafter\ifx\csname l@#1\endcsname\relax
 \typeout{** WARNING: IEEEtran.bst: No hyphenation pattern has been}%
@@ -22,18 +21,12 @@
 \BIBdecl
 
 \bibitem{tcom}
-K.~Acuna-Condori, B.~B{\'e}chadergue, H.~Guan, and L.~Chassagne, ``{Model-Based
-  Beam-Steered Optical Wireless Positioning with Single-LED Single-Photodiode
-  for 3D Localization},'' manuscrito TCOM RV3. Copia local:
-  \path{TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/main.tex}.
+K.~Acuna-Condori, B.~B{\'e}chadergue, H.~Guan, and L.~Chassagne, ``{Model-Based Beam-Steered Optical Wireless Positioning with Single-LED Single-Photodiode for 3D Localization},'' manuscrito TCOM RV3. Copia local: \path{TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/main.tex}.
 
 \bibitem{broadcast}
-------, ``{Broadcast 3D Indoor Positioning with a Single Beam-Steered LED},''
-  manuscrito local: \path{F_broadcast_Konly/paper/main.tex}.
+------, ``{Broadcast 3D Indoor Positioning with a Single Beam-Steered LED},'' manuscrito local: \path{F_broadcast_Konly/paper/main.tex}.
 
 \bibitem{kay}
-S.~M. Kay, \emph{{Fundamentals of Statistical Signal Processing, Volume I:
-  Estimation Theory}}.\hskip 1em plus 0.5em minus 0.4em\relax Prentice Hall,
-  1993.
+S.~M. Kay, \emph{{Fundamentals of Statistical Signal Processing, Volume I: Estimation Theory}}.\hskip 1em plus 0.5em minus 0.4em\relax Prentice Hall, 1993.
 
 \end{thebibliography}

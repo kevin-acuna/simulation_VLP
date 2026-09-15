@@ -1,0 +1,3 @@
+Grid,RMS_full_cm,TargetQuantile_cm,RegularCoverage_percent,TargetCoverage_percent,Feasible
+Design after refinement,0.879824792396148,1.53256336929121,100,99.323753169907,1
+Dense validation,0.81909248044252,1.45212340199817,100,99.7538461538462,1

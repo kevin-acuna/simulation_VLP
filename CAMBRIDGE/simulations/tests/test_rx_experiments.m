@@ -79,7 +79,7 @@ existing_figures = findall(groot, 'Type', 'figure');
 log = evalc('r = run_rx_experiment(''area'', p, e, parent);');
 verifyTrue(testCase, contains(log, 'FIXED SYSTEM'));
 verifyTrue(testCase, contains(log, 'SWEPT VARIABLES'));
-verifyTrue(testCase, contains(log, '0.405'));
+verifyTrue(testCase, contains(log, sprintf('P_t = %.6g W', p.transmitter.power_W)));
 verifyTrue(testCase, contains(log, '10 20'));
 verifyTrue(testCase, isfile(fullfile(r.output_directory, 'experiment_results.mat')));
 verifyTrue(testCase, isfile(fullfile(r.output_directory, 'parameters.txt')));
@@ -93,7 +93,7 @@ function testEditedConeTiltIsActuallyUsed(testCase)
 p = testCase.TestData.p;
 e.cases = rx_cone_cases(p, 75, 35, 5);
 e.cases.tilt_deg = 50;
-e.area_values_mm2 = 26.4;
+e.area_values_mm2 = p.receiver.area_m2*1e6;
 r = study_area(p, e);
 verifyEqual(testCase, r.spec.cases.normals, rx_cone_normals(5, 50));
 p.transmitter.half_angle_power_deg = 75;

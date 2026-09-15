@@ -1,0 +1,2 @@
+BaseIndex,HalfAngle_deg,FOV_deg,K,Pattern,Budget,RequiredArea_mm2,TotalSamples,Area_mm2,RMS_full_cm,RMS_conditional_cm,Worst_cm,RegularCoverage_percent,TargetCoverage_percent,Feasible
+169,60,70,49,uniform_cone,per_orientation,114.942252696843,49000,125,1.05578975087539,1.05578975087539,2.73671711324562,100,96.6187658495351,1

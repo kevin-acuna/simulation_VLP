@@ -1,3 +1,4 @@
+clc, close all
 addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
@@ -7,9 +8,9 @@ p.receiver.fov_deg = 85;
 p.acquisition.samples_per_orientation = 1000;
 p.noise.variance_W2 = 3e-14;
 p.design.target_rms_peb_m = 0.02;
-fixed_K = 14;
-fixed_tilt_deg = 40;
-half_angles_deg = [30 45 60 75];
+fixed_K = 9;
+fixed_tilt_deg = 10;
+half_angles_deg = [30 45 60];
 
 experiment = struct();
 experiment.cases = rx_cone_cases(p, half_angles_deg, fixed_tilt_deg, fixed_K);

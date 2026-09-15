@@ -31,7 +31,8 @@ else
     error('cambridge:DatasetFormat', 'Expected result (experiment) or results (complete design).');
 end
 plotters = struct('inclination', @plot_PEB_vs_inclination, 'K', @plot_PEB_vs_K, ...
-    'area', @plot_PEB_vs_area, 'heatmap', @plot_PEB_heatmap);
+    'area', @plot_PEB_vs_area, 'heatmap', @plot_PEB_heatmap, 'tilt_feasibility', @plot_tilt_feasibility, ...
+    'K_information', @plot_K_information, 'link_budget', @plot_link_budget, 'coverage_geometry', @plot_coverage_geometry);
 plotter = plotters.(r.kind);
 figures = plotter(r, style);
 rx_export_figures(figures, output_dir, style);

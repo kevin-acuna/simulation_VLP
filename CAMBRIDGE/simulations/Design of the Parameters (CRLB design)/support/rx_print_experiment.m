@@ -1,4 +1,8 @@
 function rx_print_experiment(kind, p, e)
+if any(strcmp(kind, {'tilt_feasibility', 'K_information', 'link_budget', 'coverage_geometry'}))
+    rx_print_design_study(kind, p, e);
+    return;
+end
 fprintf('\n============================================================\n');
 fprintf('CAMBRIDGE | %s | %s\n', upper(kind), char(datetime('now')));
 fprintf('FIXED SYSTEM (case-specific optical parameters follow)\n');

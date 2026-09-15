@@ -22,9 +22,9 @@ results = run_cambridge('full');
 
 Calculations live in `studies/study_*.m` and never plot or optimize implicitly. Rendering lives in `plotting/plot_PEB_*.m`; appearance is controlled by a separate `style = ieee_plot_style()` struct. Use `replot_experiment(mat_file, style)` to redraw saved data without recomputing physics, or pass a third argument (`inclination`, `K`, `area`, `heatmap`, `heatmap_best`) to select part of a complete-design dataset. Replots use new sibling directories and resolve paths from the supplied MAT file, not stale paths stored before the project was moved.
 
-`rx_cone_cases` creates editable cases. Cone normals are regenerated from K/tilt/azimuth before evaluation. For arbitrary or optimized normals use `family='explicit'`; these are frozen, printed, and cannot be silently resized by the K sweep. `rx_cases_from_design` imports a complete design only when explicitly requested. The default independent K/area/map experiments use a common 40-degree cone, not the optimized patterns; keep their results distinct from the full-design benchmark.
+`rx_cone_cases` creates editable cases. Cone normals are regenerated from K/tilt/azimuth before evaluation. For arbitrary or optimized normals use `family='explicit'`; these are frozen, printed, and cannot be silently resized by the K sweep. `rx_cases_from_design` imports a complete design only when explicitly requested. The investigator edits the independent scripts directly; do not assume they all use the same tilt or historical optical parameters. Keep their explicit settings and results distinct from the saved full-design benchmark.
 
-The complete workflow remains available as `run_cambridge('full', p)`, with its own `p.output.export_figures` and `p.output.visible` controls. Independent scripts use `style.export`, `style.visible`, and `style.keep_open`. Neither scripts nor renderers clear the workspace, close unrelated figures, or overwrite existing exports.
+The complete workflow remains available as `run_cambridge('full', p)`, with its own `p.output.export_figures` and `p.output.visible` controls. Independent scripts use `style.export`, `style.visible`, and `style.keep_open`. New entry points and renderers do not clear the workspace, close unrelated figures, or overwrite existing exports. Preserve any explicit `clc`/`close all` commands the investigator has added to their earlier scripts.
 
 Compile the mathematical derivation from `Bounds (3D)/Position Error Bound` after ensuring the `build` directory exists:
 
@@ -38,6 +38,16 @@ pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build PEB_der
 The derivation uses `PEB_references.bib` and the TeX Live `IEEEtran.bst` style. Run BibTeX from the source directory as above so it can locate the bibliography while writing its outputs into `build`.
 
 The full project report is `Bounds (3D)/Position Error Bound/Project_report.tex`. Compile it with the same four-command sequence, replacing `PEB_derivation` by `Project_report`. It includes the derivation summary, assumptions, file responsibilities, experiment/replot examples, and the verified benchmark figures. Its result and figure paths deliberately point to a particular saved run, not whichever run happens to be newest. Journal export uses the `exportgraphics` Padding option, verified in R2026a; the full graphics workflow is not claimed to support older releases.
+
+## Constrained-design experiments
+
+- `sim05_tilt_limited_feasibility.m`: joint tilt-constrained search over FOV, LED half-angle, K, area and patterns, with both sample budgets. `tilt_constraint='maximum'` allows tilt up to the cap; `'fixed'` only permits fixed-tilt families and azimuth refinement. Every actual normal must satisfy the cap. `refine_selected` explicitly controls local refinement.
+- Feasibility is bound-based: complete regular 3D coverage, full-grid RMS below `target_peb_m`, and `min_target_coverage` of points with PEB below that target. Target coverage is not a probability of achieved estimator error. The selected row minimizes samples, then area, then K, then RMS among feasible grid candidates; `minimum_error_row` and `feasible_tradeoffs.csv` provide other choices. Every resource-frontier candidate is checked on the dense validation grid.
+- `sim06_K_information_and_coverage.m`: regenerated cones, nested golden prefixes and repeated triplets distinguish angular diversity from extra observations. K counts acquisition slots for the repeated-triplet control. Do not claim monotonic coverage for nonnested codebooks, or 1/sqrt(K) gain with fixed total samples.
+- `sim07_power_noise_and_samples.m`: exact scaling under fixed optical Gaussian noise; the input noise factors multiply standard deviation, not variance. The base sample count is scalar and the sweep sets equal counts per orientation.
+- `sim08_tilt_FOV_coverage_limits.m`: finite-codebook coverage versus the optimistic spherical-cap visibility envelope. Increasing area, power or samples cannot repair a point outside all admissible FOV cones.
+- Joint area sweeps store base PEB arrays plus scale/index metadata rather than repeating identical physics for every area. This shortcut is only valid for the declared position-independent optical noise model.
+- Tests must not hard-code old default power or area into assertions that use current `system_parameters`; the researcher changes these values frequently.
 
 ## Scientific conventions
 

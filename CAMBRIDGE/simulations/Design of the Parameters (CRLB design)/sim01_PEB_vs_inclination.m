@@ -9,8 +9,8 @@ p.acquisition.samples_per_orientation = 1000;
 p.noise.variance_W2 = 3e-14;
 
 experiment = struct();
-experiment.K = 9;
-experiment.half_angles_deg = [15 30 45 60];
+experiment.K = 3;
+experiment.half_angles_deg = [30 45 60];
 experiment.fov_values_deg = [45 60 75 85];
 experiment.tilt_values_deg = 0:1:85;
 experiment.azimuth_offset_deg = 0;
