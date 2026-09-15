@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  15 SEP 2026 15:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  15 SEP 2026 18:02
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -490,43 +490,43 @@ Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/fu
 <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_FOV_K_feasibility.pdf, id=579, 480.79625pt x 264.99pt>
 File: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_FOV_K_feasibility.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_FOV_K_feasibility.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_FOV_K_feasibility.pdf  used on input line 520.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_FOV_K_feasibility.pdf  used on input line 523.
 (pdftex.def)             Requested size: 447.96333pt x 246.8991pt.
 <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_feasible_tradeoffs.pdf, id=580, 450.68375pt x 254.9525pt>
 File: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_feasible_tradeoffs.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_feasible_tradeoffs.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_feasible_tradeoffs.pdf  used on input line 525.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_feasible_tradeoffs.pdf  used on input line 528.
 (pdftex.def)             Requested size: 447.96333pt x 253.42686pt.
 <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_orientation_patterns.pdf, id=581, 448.67625pt x 270.00874pt>
 File: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_orientation_patterns.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_orientation_patterns.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_orientation_patterns.pdf  used on input line 530.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_orientation_patterns.pdf  used on input line 533.
 (pdftex.def)             Requested size: 447.96333pt x 269.58783pt.
 <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_selected_PEB_heatmap.pdf, id=582, 482.80376pt x 182.6825pt>
 File: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_selected_PEB_heatmap.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_selected_PEB_heatmap.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_selected_PEB_heatmap.pdf  used on input line 535.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_selected_PEB_heatmap.pdf  used on input line 538.
 (pdftex.def)             Requested size: 447.96333pt x 169.5055pt.
 <../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_normalized_information.pdf, id=583, 444.66125pt x 251.94125pt>
 File: ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_normalized_information.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_normalized_information.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_normalized_information.pdf  used on input line 545.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_normalized_information.pdf  used on input line 548.
 (pdftex.def)             Requested size: 447.96333pt x 253.8128pt.
 <../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_coverage_mechanisms.pdf, id=584, 444.66125pt x 359.3425pt>
 File: ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_coverage_mechanisms.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_coverage_mechanisms.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_coverage_mechanisms.pdf  used on input line 550.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_coverage_mechanisms.pdf  used on input line 553.
 (pdftex.def)             Requested size: 447.96333pt x 362.01189pt.
 <../../Design of the Parameters (CRLB design)/results/link_budget_20260914_153744_379/Power_samples_required_budget.pdf, id=585, 446.66875pt x 257.96375pt>
 File: ../../Design of the Parameters (CRLB design)/results/link_budget_20260914_153744_379/Power_samples_required_budget.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/link_budget_20260914_153744_379/Power_samples_required_budget.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/link_budget_20260914_153744_379/Power_samples_required_budget.pdf  used on input line 562.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/link_budget_20260914_153744_379/Power_samples_required_budget.pdf  used on input line 565.
 (pdftex.def)             Requested size: 447.96333pt x 258.7149pt.
  [21] [22 <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_FOV_K_feasibility.pdf> <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_feasible_tradeoffs.pdf>] [23 <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_orientation_patterns.pdf> <../../Design of the Parameters (CRLB design)/results/tilt_feasibility_20260914_154531_981/Tilt_selected_PEB_heatmap.pdf>]
 <../../Design of the Parameters (CRLB design)/results/coverage_geometry_20260914_153744_802/replot_20260914_154554_977/Tilt_FOV_coverage_geometry.pdf, id=712, 480.79625pt x 259.97125pt>
 File: ../../Design of the Parameters (CRLB design)/results/coverage_geometry_20260914_153744_802/replot_20260914_154554_977/Tilt_FOV_coverage_geometry.pdf Graphic file (type pdf)
 <use ../../Design of the Parameters (CRLB design)/results/coverage_geometry_20260914_153744_802/replot_20260914_154554_977/Tilt_FOV_coverage_geometry.pdf>
-Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/coverage_geometry_20260914_153744_802/replot_20260914_154554_977/Tilt_FOV_coverage_geometry.pdf  used on input line 569.
+Package pdftex.def Info: ../../Design of the Parameters (CRLB design)/results/coverage_geometry_20260914_153744_802/replot_20260914_154554_977/Tilt_FOV_coverage_geometry.pdf  used on input line 572.
 (pdftex.def)             Requested size: 447.96333pt x 242.22298pt.
  [24 <../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_normalized_information.pdf>] [25 <../../Design of the Parameters (CRLB design)/results/K_information_20260914_153150_303/replot_20260914_160625_637/K_coverage_mechanisms.pdf>] [26 <../../Design of the Parameters (CRLB design)/results/link_budget_20260914_153744_379/Power_samples_required_budget.pdf> <../../Design of the Parameters (CRLB design)/results/coverage_geometry_20260914_153744_802/replot_20260914_154554_977/Tilt_FOV_coverage_geometry.pdf>] [27] (c:/Users/Owner/Documents/UVSQ/simulation_VLP/CAMBRIDGE/simulations/Bounds (3D)/Position Error Bound/build/Project_report.bbl) [28
 
@@ -543,18 +543,18 @@ L3 programming layer <2026-01-19>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `Project_report.out' has not changed.
-(rerunfilecheck)             Checksum: 0B2636F515FB91AEF3089A3E75B4A6D4;9021.
+(rerunfilecheck)             Checksum: 6ED0E84A56F7D77886078169C0E50293;9089.
  ) 
 Here is how much of TeX's memory you used:
- 12600 strings out of 467525
- 205545 string characters out of 5423209
+ 12601 strings out of 467525
+ 205560 string characters out of 5423209
  642822 words of memory out of 5000000
- 41198 multiletter control sequences out of 15000+600000
+ 41199 multiletter control sequences out of 15000+600000
  647984 words of font info for 92 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,10n,79p,1162b,787s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb>
-Output written on "c:/Users/Owner/Documents/UVSQ/simulation_VLP/CAMBRIDGE/simulations/Bounds (3D)/Position Error Bound/build/Project_report.pdf" (28 pages, 892997 bytes).
+Output written on "c:/Users/Owner/Documents/UVSQ/simulation_VLP/CAMBRIDGE/simulations/Bounds (3D)/Position Error Bound/build/Project_report.pdf" (28 pages, 893592 bytes).
 PDF statistics:
  958 PDF objects out of 1000 (max. 8388607)
  708 compressed objects within 8 object streams

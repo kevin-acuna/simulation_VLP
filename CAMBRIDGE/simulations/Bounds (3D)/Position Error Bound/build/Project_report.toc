@@ -31,7 +31,7 @@
 \contentsline {section}{\numberline {8}Viabilidad con tilt limitado y nuevos experimentos}{20}{section.8}%
 \contentsline {subsection}{\numberline {8.1}Qué significa fijar el tilt en tres grados}{20}{subsection.8.1}%
 \contentsline {subsection}{\numberline {8.2}Criterio de viabilidad y búsqueda conjunta}{20}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Resultados con el hardware nominal activo}{21}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.3}Results with the Active Nominal Hardware Configuration}{21}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Qué aportan otros patrones, potencia y muestras}{21}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}Uso de los nuevos archivos y límites de la recomendación}{24}{subsection.8.5}%
 \contentsline {section}{\numberline {9}Verificación y siguientes pasos científicos}{28}{section.9}%

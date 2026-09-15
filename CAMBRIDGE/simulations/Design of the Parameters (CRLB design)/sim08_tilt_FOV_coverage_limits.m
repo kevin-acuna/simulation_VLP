@@ -9,7 +9,7 @@ experiment.fov_values_deg = [30 45 60 65 70 75 85];
 experiment.K = 3;
 experiment.half_angle_deg = 60;
 experiment.azimuth_offset_deg = 0;
-experiment.target_peb_m = 0.05;
+experiment.target_peb_m = 0.05; %No se usa!!
 
 style = ieee_plot_style();
 style.font_size = 8;

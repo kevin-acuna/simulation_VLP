@@ -494,20 +494,23 @@ En perfiles sin cobertura completa se asigna $A_{\rm req}=+\infty$: aumentar ár
 
 La configuración de menor RMS dentro de la rejilla y la configuración recomendada son resultados diferentes. La recomendación elige, entre los candidatos que ya cumplen \eqref{eq:viability}, el menor total de muestras, luego la menor área, luego el menor $K$ y finalmente el menor RMS. Se exporta además una frontera no dominada de área frente a muestras, sin asignar un coste físico universal a ambos recursos. El refinamiento local posterior conserva $K$, área, FOV y presupuesto del candidato seleccionado y sólo ajusta ángulos admisibles. No certifica optimalidad global ni vuelve a optimizar cada candidato descartado.
 
-\subsection{Resultados con el hardware nominal activo}
-La ejecución completa del estudio limitado a $3^\circ$ evaluó 11520 configuraciones discretas. Se exigió un RMS no mayor de 2 cm, cobertura regular del 100\% y PEB no mayor de 2 cm en al menos el 95\% de los puntos. Las siguientes alternativas no dominadas usan $\Phi_{1/2}=60^\circ$, cono uniforme de $3^\circ$, FOV $70^\circ$ y $N_i=1000$:
+\subsection{Results with the Active Nominal Hardware Configuration}
+
+The complete study under the $3^\circ$ tilt constraint evaluated 11,520 discrete configurations. A configuration was considered feasible if it achieved an RMS PEB not exceeding 2~cm, 100\% regular 3D coverage, and a PEB below 2~cm over at least 95\% of the evaluation points. The following non-dominated configurations use $\Phi_{1/2}=60^\circ$, a uniform $3^\circ$ cone, a $70^\circ$ FOV, and $N_i=1000$ samples per orientation:
+
 \begin{center}
 \begin{tabular}{rrrrrr}
 \toprule
-$K$ & $A_{\rm PD}$ [mm$^2$] & Muestras & RMS [cm] & Peor PEB [cm] & $100\rho_\tau$ \\
+$K$ & $A_{\rm PD}$ [mm$^2$] & Samples & RMS PEB [cm] & Worst-case PEB [cm] & $100\rho_\tau$ \\
 \midrule
-49 & 125 & 49000 & 1.0558 & 2.7367 & 96.619\% \\
-81 & 100 & 81000 & 1.0265 & 2.6607 & 96.619\% \\
+49  & 125  & 49000  & 1.0558 & 2.7367 & 96.619\% \\
+81  & 100  & 81000  & 1.0265 & 2.6607 & 96.619\% \\
 121 & 75.4 & 121000 & 1.1138 & 2.8872 & 95.604\% \\
 \bottomrule
 \end{tabular}
 \end{center}
-Así, el PD de referencia de $75.4\ \mathrm{mm}^2$ puede mantenerse en una alternativa con más adquisiciones. El criterio de menor coste de muestreo selecciona $K=49$ y $A=125\ \mathrm{mm}^2$. Su área continua requerida por \eqref{eq:required_area} es aproximadamente $114.94\ \mathrm{mm}^2$; el valor 125 procede de la rejilla ensayada, no de un óptimo interior físico. El mínimo RMS de todos los candidatos ensayados es aproximadamente 0.5599 cm, pero utiliza más recursos y no es la recomendación de menor coste.
+
+These results show that the reference PD area of $75.4\ \mathrm{mm}^2$ can be retained at the cost of a larger number of acquisitions. According to the minimum-sampling-cost criterion, the selected configuration is $K=49$ with $A_{\rm PD}=125\ \mathrm{mm}^2$. The continuous-valued area required by \eqref{eq:required_area} is approximately $114.94\ \mathrm{mm}^2$; the value of $125\ \mathrm{mm}^2$ results from the discrete area grid considered in the search and should not be interpreted as a physical interior optimum. The minimum RMS PEB among all evaluated candidates is approximately 0.5599~cm, but it requires additional resources and is therefore not selected by the minimum-cost criterion.
 
 Las tres alternativas mantienen cobertura regular completa en la rejilla densa de 8125 puntos. Sus RMS de validación son aproximadamente 0.9829, 0.9556 y 1.0370 cm, y sus coberturas de PEB objetivo son 98.129\%, 98.277\% y 97.095\%, respectivamente. El peor PEB del diseño seleccionado supera 2 cm, lo cual es compatible con un requisito del 95\%, pero no con un requisito de error máximo en todos los puntos.
 
