@@ -3,13 +3,13 @@ cambridge_setup();
 p = system_parameters();
 
 p.transmitter.power_W = 0.65;
-p.receiver.fov_deg = 85;
+p.receiver.fov_deg = 46;
 p.receiver.area_m2 = 75.4e-6;
 p.acquisition.samples_per_orientation = 1000;
 p.noise.variance_W2 = 3e-14;
-fixed_K = 9;
-fixed_tilt_deg = 20;
-half_angles_deg = 60;
+fixed_K = 8;
+fixed_tilt_deg = 10;
+half_angles_deg = 45;
 
 experiment = struct();
 experiment.cases = rx_cone_cases(p, half_angles_deg, fixed_tilt_deg, fixed_K);

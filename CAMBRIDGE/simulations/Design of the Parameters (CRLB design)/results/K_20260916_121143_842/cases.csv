@@ -1,0 +1,3 @@
+Case,Label,HalfAngle_deg,LambertianOrder,FOV_deg,K,Area_mm2,ConeTilt_deg,AzimuthOffset_deg,Pattern
+1,\Phi_{1/2} = 45 deg,45,2,46,NaN,75.4,10,0,uniform_cone
+2,\Phi_{1/2} = 60 deg,60,1,46,NaN,75.4,10,0,uniform_cone
