@@ -1,6 +1,7 @@
 function rx_print_design_study(kind, p, e)
 fprintf('\n============================================================\nCAMBRIDGE | %s\n', upper(kind));
 fprintf('BASE SYSTEM (swept quantities are explicitly listed below)\n');
+fprintf('Receiver angular order m_R = %.6g\n', rx_receiver_order(p));
 fprintf('Room [m]: %s; LED position [m]: %s; LED normal: %s\n', ...
     mat2str(p.environment.room_size_m'), mat2str(p.transmitter.position_m'), mat2str(p.transmitter.normal'));
 fprintf('P_t = %.6g W; reference A_PD = %.6g mm^2; R_p = %.6g A/W; T_s = %g; g = %g\n', ...
@@ -30,7 +31,7 @@ switch kind
         fprintf('Budgets: %s; reference position [m]: %s\n', strjoin(e.budgets, ', '), mat2str(e.reference_position_m'));
         fprintf('Golden prefixes and repeated triplets are nested; regenerated uniform cones are NOT nested.\n');
     case 'link_budget'
-        disp(rx_case_table(e.cases, kind));
+        disp(rx_case_table(e.cases, kind, p));
         fprintf('Power [W]: %s; samples/orientation: %s; noise STANDARD-DEVIATION multipliers: %s\n', ...
             mat2str(e.power_values_W), mat2str(e.sample_values), mat2str(e.noise_std_scales));
         fprintf('Area, FOV and normal matrices stay fixed. Variance multipliers are the squares of the listed noise scales.\n');

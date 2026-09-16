@@ -2,6 +2,9 @@ function [p, normals] = rx_case_parameters(p, c)
 p.transmitter.half_angle_power_deg = c.half_angle_deg;
 p.receiver.fov_deg = c.fov_deg;
 p.receiver.area_m2 = c.area_m2;
+if isfield(c, 'm_R')
+    p.receiver.m_R = c.m_R;
+end
 switch c.family
     case 'uniform_cone'
         normals = rx_cone_normals(c.K, c.tilt_deg, c.azimuth_offset_deg);

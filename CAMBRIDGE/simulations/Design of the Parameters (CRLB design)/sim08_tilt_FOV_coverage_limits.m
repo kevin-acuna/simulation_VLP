@@ -2,6 +2,7 @@ clc, close all
 addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
+p.receiver.m_R = 1;
 
 experiment = struct();
 experiment.tilt_values_deg = [0 0.5 1 2 3 5 10 20 30 40];

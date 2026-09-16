@@ -1,6 +1,7 @@
 addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
+p.receiver.m_R = 1;
 
 experiment = struct();
 experiment.cases = rx_cone_cases(p, [45 60 75], 3, 9);

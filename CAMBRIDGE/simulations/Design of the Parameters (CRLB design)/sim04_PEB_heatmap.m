@@ -1,6 +1,7 @@
 addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
+p.receiver.m_R = 1;
 
 p.transmitter.power_W = 0.65;
 p.receiver.fov_deg = 46;

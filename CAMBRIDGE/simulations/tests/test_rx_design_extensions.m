@@ -5,7 +5,7 @@ end
 function setupOnce(testCase)
 addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
-p = system_parameters();
+p = rx_test_parameters();
 p.environment.x_m = [-0.2 0.2];
 p.environment.y_m = [-0.2 0.2];
 p.environment.z_m = [0.4 0.8];

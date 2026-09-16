@@ -1,0 +1,19 @@
+function p = rx_test_parameters()
+p = system_parameters();
+p.environment.room_size_m = [3; 3; 2];
+p.transmitter.position_m = [0; 0; 2];
+p.transmitter.normal = [0; 0; -1];
+p.transmitter.power_W = 0.65;
+p.transmitter.pattern_asymmetry = 0;
+p.transmitter.pattern_reference = [1; 0; 0];
+p.receiver.area_m2 = 75.4e-6;
+p.receiver.m_R = 1;
+p.receiver.fov_deg = 85;
+p.receiver.max_tilt_deg = 85;
+p.receiver.filter_transmission = 1;
+p.receiver.optical_gain = 1;
+p.noise.variance_W2 = 3e-14;
+p.acquisition.samples_per_orientation = 1000;
+p.acquisition.total_samples = 9000;
+p.design.half_angles_deg = [30 45 60 75];
+end

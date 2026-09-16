@@ -1,0 +1,15 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Modelo y alcance de los algoritmos}{2}{section.1}%
+\contentsline {section}{\numberline {2}Una parametrización que evita dos estimaciones separadas}{2}{section.2}%
+\contentsline {section}{\numberline {3}LS directo}{3}{section.3}%
+\contentsline {section}{\numberline {4}GLS y WLS basados en cocientes}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}GLS de cocientes}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}WLS de cocientes}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Amplitud y distancia sin una medición adicional}{4}{subsection.4.3}%
+\contentsline {section}{\numberline {5}NLS conjunto en las potencias originales}{4}{section.5}%
+\contentsline {section}{\numberline {6}Comparación con la cota y tratamiento de fallos}{5}{section.6}%
+\contentsline {section}{\numberline {7}Resultados verificados}{5}{section.7}%
+\contentsline {section}{\numberline {8}Importancia del patrón de irradiación del LED}{5}{section.8}%
+\contentsline {section}{\numberline {9}Calibración necesaria}{8}{section.9}%
+\contentsline {section}{\numberline {10}Archivos, uso y límites de la comparación}{9}{section.10}%
+\contentsline {section}{\numberline {11}Respuesta a la pregunta de una o dos etapas}{10}{section.11}%

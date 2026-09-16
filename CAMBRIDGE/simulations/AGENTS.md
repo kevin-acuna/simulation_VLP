@@ -49,6 +49,19 @@ The full project report is `Bounds (3D)/Position Error Bound/Project_report.tex`
 - Joint area sweeps store base PEB arrays plus scale/index metadata rather than repeating identical physics for every area. This shortcut is only valid for the declared position-independent optical noise model.
 - Tests must not hard-code old default power or area into assertions that use current `system_parameters`; the researcher changes these values frequently.
 
+## Generalized receiver, estimators and sensitivity
+
+- `p.receiver.m_R` is the effective total receiver cosine exponent, positive and defaulting to 1. It replaces the original single cosine, not an extra factor on top of it. Missing fields in historical MAT files default to 1. The eight original design scripts expose this parameter without changing their plots.
+- Preserve `PEB_derivation.tex` as the original m_R=1 derivation. The generalized derivation is `Bounds (3D)/Position Error Bound/PEB_derivation_mR.tex` and uses the same BibTeX sequence with the new basename.
+- Optional `transmitter.pattern_asymmetry` defaults to 0. A nonzero value activates a calibrated positive quadrupolar perturbation with zero azimuthal average, not a measured commercial LED model. `pattern_reference` sets its transverse direction. `rx_emission_pattern` supplies the corresponding derivative.
+- `Estimators/rx_estimate` accepts K-by-trial matrices of optical power means, unit normal columns, parameters, optional sample counts, and solver options. LS is a direct root-linear fit; GLS/WLS are explicitly ratio-based first-order methods; NLS fits all three optical coordinates jointly in raw power. For m_R=1 with equal variances, LS and NLS legitimately coincide. The old `System/rx_position_gls` is restricted to m_R=1.
+- `Estimator comparisons/sim01_estimators_vs_PEB.m`, `sim02_estimators_vs_mR.m` and `sim03_LED_pattern_calibration.m` are independent comparisons. Their small ROI guarantees complete visibility for all four methods; do not supply a truth mask or claim that these algorithms solve arbitrary unknown clipped masks. Use `replot_estimator_results` to change figures without recomputing estimates.
+- Negative Gaussian observations are not clipped. For m_R != 1, root-based methods report invalid roots as failures; NLS uses raw signed observations. CDFs retain failure mass, and conditional RMSE is reported separately. Graphical CDFs may be rank-thinned, while complete observations and errors are saved.
+- `Estimators/Algorithms_report.tex` uses local `estimator_references.bib`; compile with pdflatex, bibtex build/Algorithms_report, and two pdflatex passes from that directory.
+- `Reorientation sensitivity` was implemented after completing the generalized model and algorithm report. Its three scripts distinguish independent pose-measurement errors, unobserved independent actuation errors, and a common attitude-measurement rotation. Angular inputs are variances per local component in deg^2, not raw azimuth variances, and persist over all optical samples of an orientation.
+- `rx_pose_error_peb` is the local joint RSS/pose-measurement nuisance CRLB (full correlated covariance for common attitude). `rx_actuation_peb` is explicitly a small-angle Gaussian-moment approximation, including variance derivatives, not the exact marginalized CRLB. Do not label either as the perfect-known-perturbed-pose oracle bound. See `Reorientation sensitivity/Sensitivity_report.tex`.
+- `rx_test_parameters` fixes the physical fixture for analytic tests independently of editable research defaults. Verify with `run_cambridge('test')`.
+
 ## Scientific conventions
 
 - Positions and normals are columns: receiver positions `3 x P`, commanded normals `3 x K`; optical means are `K x P`, position Jacobians `K x 3 x P`.

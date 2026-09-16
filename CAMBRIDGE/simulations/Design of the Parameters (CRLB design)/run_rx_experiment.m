@@ -24,7 +24,7 @@ mkdir(result.output_directory);
 save(fullfile(result.output_directory, 'experiment_results.mat'), 'result', '-v7.3');
 writetable(result.table, fullfile(result.output_directory, 'metrics.csv'));
 if isfield(experiment, 'cases')
-    writetable(rx_case_table(experiment.cases, kind), fullfile(result.output_directory, 'cases.csv'));
+    writetable(rx_case_table(experiment.cases, kind, p), fullfile(result.output_directory, 'cases.csv'));
 end
 if isfield(result, 'extra_tables')
     names = fieldnames(result.extra_tables);

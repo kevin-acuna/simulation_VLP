@@ -1,0 +1,151 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,amsthm,bm,geometry}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\geometry{margin=25mm}
+\newtheorem{proposition}{Proposición}
+\newcommand{\PEB}{\operatorname{PEB}}
+\title{PEB tridimensional con receptor de respuesta angular generalizada\\\large LED fijo y PD reorientable con $\cos^{m_R}\psi$}
+\author{Proyecto Cambridge}
+\date{16 de septiembre de 2026}
+\begin{document}
+\maketitle
+
+\section{Alcance y convenciones}
+Esta derivación amplía, sin reemplazar, \path{PEB_derivation.tex}. Se mantiene la arquitectura de un LED fijo y un único PD reorientable. Se conocen la posición y orientación del LED, la potencia, la calibración óptica, el patrón emisor y todas las normales globales del PD. El centro óptico permanece fijo durante el barrido. Se supone propagación LOS y ruido Gaussiano independiente con varianza óptica conocida, constante respecto a posición y señal.
+
+La familia empírica de respuesta del receptor se normaliza respecto a incidencia normal. El nuevo exponente $\nu=m_R>0$ es conocido y calibrado. No es la responsividad espectral en A/W ni un segundo orden de emisión Lambertiana: no se introduce un factor $(m_R+1)$ en la ganancia del detector. La FOV sigue siendo un semiángulo de corte independiente de $m_R$. El valor por defecto es $m_R=1$.
+
+Sean $\mathbf t$ y $\mathbf r$ las posiciones del LED y del PD; el LED tiene normal fija $\mathbf n_t$ y el PD utiliza normales unitarias conocidas $\mathbf n_i$. Definimos:
+\begin{equation}
+ d=\|\mathbf t-\mathbf r\|,\quad \mathbf u=(\mathbf t-\mathbf r)/d,\quad
+ \mathbf q=-\mathbf n_t,\quad c=\mathbf q^{\mathsf T}\mathbf u,\quad s_i=\mathbf n_i^{\mathsf T}\mathbf u.
+\end{equation}
+La dirección $\mathbf u$ apunta del receptor al transmisor. El orden del emisor y la constante radiométrica son:
+\begin{equation}
+ m_T=-\frac{\ln2}{\ln(\cos\Phi_{1/2})},\qquad
+ C=\frac{P_t(m_T+1)A_{\rm PD}T_s g}{2\pi}.
+\end{equation}
+En el interior visible $c>0$, $s_i>\cos\Psi$ y $s_i>0$, el modelo y las medias observadas son:
+\begin{equation}
+ \mu_i=C d^{-2}c^{m_T}s_i^\nu=\beta s_i^\nu,\qquad
+ \beta=Cc^{m_T}/d^2,\qquad
+ \bar Y_i\sim\mathcal N(\mu_i,\sigma^2/N_i).
+\label{eq:model}
+\end{equation}
+Fuera de aceptación la señal LOS se anula. Todas las muestras siguen consumiendo presupuesto; no se seleccionan observaciones mediante un oráculo de posición.
+
+\section{Gradiente cartesiano}
+Las identidades geométricas son:
+\begin{equation}
+ \nabla d=-\mathbf u,\qquad
+ \frac{\partial\mathbf u}{\partial\mathbf r^{\mathsf T}}=-\frac{I-\mathbf u\mathbf u^{\mathsf T}}{d},\qquad
+ \nabla c=-\frac{\mathbf q-c\mathbf u}{d},\qquad
+ \nabla s_i=-\frac{\mathbf n_i-s_i\mathbf u}{d}.
+\end{equation}
+La derivada de la amplitud común es:
+\begin{equation}
+ \nabla\beta=\frac{\beta}{d}\left[(m_T+2)\mathbf u-\frac{m_T}{c}\mathbf q\right].
+\end{equation}
+La regla del producto aplicada a \eqref{eq:model} proporciona:
+\begin{align}
+ \nabla\mu_i&=s_i^\nu\nabla\beta+\nu\beta s_i^{\nu-1}\nabla s_i,\\
+ &=\frac{Cc^{m_T}}{d^3}\left[-\nu s_i^{\nu-1}\mathbf n_i
+ -\frac{m_T}{c}s_i^\nu\mathbf q+(m_T+\nu+2)s_i^\nu\mathbf u\right].
+\label{eq:gradient}
+\end{align}
+Al sustituir $\nu=1$ se recupera exactamente el gradiente anterior con coeficiente radial $(m_T+3)$. Las potencias fraccionarias se evalúan sólo con cosenos positivos en el interior visible, evitando valores complejos fuera de aceptación.
+
+\section{FIM y cota de posición}
+Con $J$ formado por las filas $\nabla\mu_i^{\mathsf T}$ y $W=\operatorname{diag}(N_i/\sigma^2)$, la log-verosimilitud y la puntuación son:
+\begin{equation}
+ \ell=-\frac12\sum_i\left[\ln(2\pi\sigma^2/N_i)+\frac{N_i}{\sigma^2}(\bar Y_i-\mu_i)^2\right],\qquad
+ \nabla\ell=J^{\mathsf T}W(\bar{\mathbf Y}-\bm\mu).
+\end{equation}
+Su segundo momento da la información de Fisher \cite{kay}:
+\begin{equation}
+ \mathcal I(\mathbf r)=J^{\mathsf T}WJ=\sum_{i\in\mathcal V}\frac{N_i}{\sigma^2}\nabla\mu_i\nabla\mu_i^{\mathsf T},\qquad
+ \PEB(\mathbf r)=\sqrt{\operatorname{tr}(\mathcal I^{-1})}.
+\label{eq:peb}
+\end{equation}
+Es una cota local para estimadores regulares localmente insesgados, no un límite universal para estimadores sesgados ni una probabilidad de éxito. La FIM tiene unidades $\mathrm m^{-2}$ y el PEB, metros. En los mapas a una altura dada se conserva la FIM de tres coordenadas; no se supone que la altura es conocida.
+
+Se usa SVD del Jacobiano blanqueado. Si sus valores singulares son $\lambda_j$, se tiene:
+\begin{equation}
+ \PEB^2=\sum_{j=1}^3\lambda_j^{-2},\qquad
+ \mathcal I^{-1}=V\operatorname{diag}(\lambda_j^{-2})V^{\mathsf T}.
+\end{equation}
+La implementación devuelve infinito si el rango numérico es menor que tres, con tolerancia relativa $10^{-10}$. Conserva la exclusión de fronteras mediante \texttt{NaN} y tolerancia $10^{-12}$ en coseno. Con FOV menor que $90^\circ$ hay un salto de potencia en el corte. En incidencia rasante a $90^\circ$, la suavidad depende de $m_R$; para órdenes suficientemente altos puede existir una extensión diferenciable. Excluir también esos casos límite es una convención conservadora del código, no afirmar que toda frontera sea siempre matemáticamente no regular.
+
+\section{Identificabilidad y transformación de una sola etapa}
+En una región visible fija definimos el vector óptico:
+\begin{equation}
+ \mathbf v=\beta^{1/\nu}\mathbf u,\quad a=\|\mathbf v\|=\beta^{1/\nu},\qquad
+ \mu_i^{1/\nu}=\mathbf n_i^{\mathsf T}\mathbf v.
+\label{eq:rootlinear}
+\end{equation}
+Si las normales visibles tienen rango tres, las potencias sin ruido determinan $\mathbf v$. La conversión a posición es algebraica:
+\begin{equation}
+ \mathbf u=\mathbf v/a,\qquad \beta=a^\nu,\qquad
+ d=\sqrt{Cc^{m_T}/a^\nu},\qquad \mathbf r=\mathbf t-d\mathbf u.
+\label{eq:inverse}
+\end{equation}
+No hace falta una adquisición de distancia adicional ni dos optimizaciones independientes.
+
+El Jacobiano de esa transformación es:
+\begin{equation}
+ B_\nu=\frac{\partial\mathbf v}{\partial\mathbf r^{\mathsf T}}
+ =-\frac{a}{d}\left[I+\mathbf u\left(\frac{m_T}{\nu c}\mathbf q^{\mathsf T}
+ -\frac{m_T+\nu+2}{\nu}\mathbf u^{\mathsf T}\right)\right].
+\end{equation}
+Por el lema del determinante:
+\begin{equation}
+ \det B_\nu=\left(-\frac ad\right)^3\left[1+\frac{m_T}{\nu}-\frac{m_T+\nu+2}{\nu}\right]
+ =\frac{2a^3}{\nu d^3}>0.
+\end{equation}
+Como:
+\begin{equation}
+ J_{\mathcal V}=\nu\operatorname{diag}\left[(H_{\mathcal V}\mathbf v)^{\nu-1}\right]H_{\mathcal V}B_\nu,
+\end{equation}
+los factores laterales son invertibles en el interior visible y el rango es exactamente el de $H_{\mathcal V}$. Para cualquier $m_R>0$ conocido, siguen siendo necesarias y suficientes tres normales visibles linealmente independientes para identificación local 3D. El orden cambia las magnitudes, la ponderación de filas y el condicionamiento, aunque no el rango matemático. Los órdenes extremos pueden afectar al rango numérico efectivo. El caso $m_R=0$ es diferente: la respuesta es constante dentro de FOV y la diversidad angular regular desaparece; por ello no está incluido en la familia implementada.
+
+\section{Caso axial y leyes de escala}
+En el eje de un LED vertical, con cono uniforme, $K\geq3$, $N_i=N$ y todas las orientaciones visibles:
+\begin{equation}
+ \mathcal I=\frac{NKC^2}{\sigma^2d^6}\operatorname{diag}\left(
+ \frac{\nu^2\sin^2\theta\cos^{2\nu-2}\theta}{2},
+ \frac{\nu^2\sin^2\theta\cos^{2\nu-2}\theta}{2},
+ 4\cos^{2\nu}\theta\right).
+\end{equation}
+De ahí:
+\begin{equation}
+ \PEB^2=\frac{\sigma^2d^6}{NKC^2}\left[
+ \frac4{\nu^2\sin^2\theta\cos^{2\nu-2}\theta}+\frac1{4\cos^{2\nu}\theta}\right].
+\label{eq:axial}
+\end{equation}
+Para $\nu=1$ se recupera el caso anterior y su óptimo axial de $\arctan2$. Ese ángulo no es universal para otros órdenes. En el interior visible se mantienen las leyes $\PEB\propto1/A_{\rm PD}$, $1/P_t$ y $1/\sqrt N$ bajo ruido óptico constante. No debe suponerse que aumentar $m_R$ siempre mejora: aumenta la pendiente angular pero también atenúa la señal a incidencias oblicuas.
+
+\section{Patrón del LED conocido, pero no exactamente Lambertiano}
+Sea $f_T(\mathbf u)>0$ una respuesta angular calibrada. Basta sustituir $c^{m_T}$ por $f_T$ y definir $\beta=Cf_T/d^2$. La derivada general, usando el gradiente tangente $\nabla_S f_T=(I-\mathbf u\mathbf u^{\mathsf T})\nabla_{\mathbf u}f_T$, es:
+\begin{equation}
+ \nabla\mu_i=\frac{\beta}{d}\left[-\nu s_i^{\nu-1}\mathbf n_i
+ +(\nu+2)s_i^\nu\mathbf u-s_i^\nu\nabla_S\ln f_T\right].
+\end{equation}
+La transformación \eqref{eq:rootlinear} y su determinante $2a^3/(\nu d^3)$ siguen siendo válidos. El patrón emisor entra en la amplitud y en la conversión a distancia; los cocientes entre orientaciones cancelan ese factor común. Esto no hace innecesaria su calibración para posición 3D.
+
+Para ensayos controlados se implementa una perturbación azimutal explícita, no un ajuste universal de LEDs reales:
+\begin{equation}
+ f_T(\mathbf u)=c^{m_T}\left[1+\epsilon\left((\mathbf e_1^{\mathsf T}\mathbf u)^2-(\mathbf e_2^{\mathsf T}\mathbf u)^2\right)\right],\qquad |\epsilon|<1.
+\end{equation}
+$\mathbf e_1,\mathbf e_2$ son ejes transversales conocidos del LED. La corrección es positiva y su promedio azimutal es cero, por lo que mantiene la normalización de potencia total del patrón Lambertiano. Por defecto $\epsilon=0$. El código utiliza el gradiente completo de este patrón cuando se activa, no el gradiente Lambertiano aplicado a una media distinta.
+
+\section{Supuestos de calibración y verificación}
+Si $C$ es desconocido, la transformación $d\mapsto kd$, $C\mapsto k^2C$ sigue conservando todas las medias. Si $m_R$ es incierto, debe tratarse como parámetro auxiliar; su derivada es $\partial\mu_i/\partial m_R=\mu_i\ln s_i$. La cota anterior presupone que ya se ha calibrado. A incidencia normal en un cono uniforme, ese parámetro puede confundirse con amplitud, por lo que no debe inferirse de un único barrido simétrico sin análisis de rango.
+
+Se comprueban: coincidencia de medias, gradientes y PEB con la fórmula anterior cuando $m_R=1$; diferencias centrales para órdenes fraccionarios y enteros; expresión axial \eqref{eq:axial}; rango y máscara FOV; ausencia de valores complejos fuera de aceptación; y derivadas del patrón emisor no Lambertiano. Los scripts de diseño conservan sus gráficas y añaden únicamente el parámetro físico y su registro. Los MAT anteriores sin ese campo se interpretan como $m_R=1$.
+
+\bibliographystyle{IEEEtran}
+\bibliography{PEB_references}
+\end{document}

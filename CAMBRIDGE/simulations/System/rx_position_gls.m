@@ -1,4 +1,6 @@
 function [position_m, valid, optical_vector_W] = rx_position_gls(mean_W, normals, p, sample_counts)
+assert(rx_receiver_order(p)==1, 'cambridge:LegacyGLSRequiresMR1', ...
+    'This legacy direct-linear helper requires m_R=1. Use the Estimators methods for general m_R.');
 K = size(normals, 2);
 if nargin < 4
     sample_counts = p.acquisition.samples_per_orientation;
@@ -24,6 +26,7 @@ position_m = nan(3, size(mean_W, 2));
 m = -log(2)/log(cosd(p.transmitter.half_angle_power_deg));
 C = p.transmitter.power_W*(m+1)*p.receiver.area_m2 ...
     *p.receiver.filter_transmission*p.receiver.optical_gain/(2*pi);
-d = sqrt(C*c(valid).^m./beta(valid));
+emission_gain = rx_emission_pattern(p, u(:, valid));
+d = sqrt(C*emission_gain./beta(valid));
 position_m(:, valid) = p.transmitter.position_m-u(:, valid).*d;
 end

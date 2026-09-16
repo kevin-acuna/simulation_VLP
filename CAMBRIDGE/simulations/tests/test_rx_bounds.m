@@ -6,7 +6,7 @@ function setupOnce(testCase)
 root = fileparts(fileparts(mfilename('fullpath')));
 addpath(root);
 cambridge_setup();
-testCase.TestData.p = system_parameters();
+testCase.TestData.p = rx_test_parameters();
 end
 
 function testGradientCentralDifferences(testCase)

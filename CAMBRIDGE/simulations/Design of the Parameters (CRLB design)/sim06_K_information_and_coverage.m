@@ -1,6 +1,7 @@
 addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
+p.receiver.m_R = 1;
 
 experiment = struct();
 experiment.tilt_deg = 30;

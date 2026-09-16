@@ -2,6 +2,7 @@ clc, close all
 addpath(fileparts(fileparts(mfilename('fullpath'))));
 cambridge_setup();
 p = system_parameters();
+p.receiver.m_R = 1;
 
 p.transmitter.power_W = 0.65;
 p.receiver.area_m2 = 75.4e-6;

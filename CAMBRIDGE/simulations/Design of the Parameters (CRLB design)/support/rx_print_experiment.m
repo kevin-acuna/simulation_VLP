@@ -6,6 +6,7 @@ end
 fprintf('\n============================================================\n');
 fprintf('CAMBRIDGE | %s | %s\n', upper(kind), char(datetime('now')));
 fprintf('FIXED SYSTEM (case-specific optical parameters follow)\n');
+fprintf('Receiver angular order m_R = %.6g\n', rx_receiver_order(p));
 fprintf('Room [m]: %s | LED position [m]: %s | LED normal: %s\n', ...
     mat2str(p.environment.room_size_m'), mat2str(p.transmitter.position_m'), mat2str(p.transmitter.normal'));
 fprintf('P_t = %.6g W | R_p = %.6g A/W | T_s = %.6g | optical gain = %.6g\n', ...
@@ -39,7 +40,7 @@ if strcmp(kind, 'inclination')
         e.K, p.receiver.area_m2*1e6, e.azimuth_offset_deg);
 else
     fprintf('CASE SETTINGS (NaN = swept quantity or not applicable to an explicit pattern)\n');
-    disp(rx_case_table(e.cases, kind));
+    disp(rx_case_table(e.cases, kind, p));
     for i = 1:numel(e.cases)
         if strcmp(e.cases(i).family, 'explicit')
             n = e.cases(i).normals;
