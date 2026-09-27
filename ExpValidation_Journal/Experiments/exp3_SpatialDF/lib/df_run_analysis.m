@@ -17,7 +17,12 @@ function R = df_run_analysis(cfg)
 %   .saveFigures  save PNG (300 dpi) + PDF. Default true
 %   .outDir       output folder. Default <dataFile dir>/figures_<scanKind>
 %   .fontName/.fontSize   plot styling
-%   .addNLS        include the NLS-LM estimator (vlp_nls_lm). Default true
+%   .addNLS        include the NLS-LM estimator (vlp_nls_lm). Default true.
+%                  Ignored when cfg.estimators is provided.
+%   .estimators    (optional) cell/string array with the subset of estimators
+%                  to compute AND plot. Any of {'GLS','WLS','NLS'} in any order,
+%                  e.g. {'NLS','GLS'} or {'GLS'}. When set, it overrides
+%                  cfg.addNLS. Case-insensitive. Order defines plot order.
 %   .nlsUseProfile NLS direction finding uses the measured LED profile R(theta)
 %                  instead of cos^m(theta). Default true (needs the sub0 axis
 %                  sweep). Every other stage (GLS, WLS, distance recovery and C)
@@ -54,6 +59,29 @@ if ~isfield(cfg,'addNLS')       || isempty(cfg.addNLS),       cfg.addNLS        
 if ~isfield(cfg,'nlsUseProfile')|| isempty(cfg.nlsUseProfile),cfg.nlsUseProfile = true;  end
 if ~isfield(cfg,'profileDir'),                                cfg.profileDir    = '';    end
 if ~isfield(cfg,'profileVdark'),                              cfg.profileVdark  = [];    end
+if ~isfield(cfg,'estimators'),                                cfg.estimators    = [];    end
+
+% ------------------------------ estimator selection --------------------
+% cfg.estimators (optional): subset of {'GLS','WLS','NLS'} to compute AND plot.
+% Order in the array determines plot order. When empty, falls back to the old
+% behaviour: GLS + WLS + (NLS iff cfg.addNLS).
+allEst = {'GLS','WLS','NLS'};
+if ~isempty(cfg.estimators)
+    sel = cfg.estimators;
+    if ischar(sel),   sel = {sel}; end
+    if isstring(sel), sel = cellstr(sel(:).'); end
+    sel = upper(strtrim(sel(:).'));
+    unknown = setdiff(sel, allEst);
+    assert(isempty(unknown), ['cfg.estimators has unknown methods: %s. ' ...
+        'Allowed values: GLS, WLS, NLS.'], strjoin(unknown, ', '));
+    assert(~isempty(sel), 'cfg.estimators is empty. Select at least one method.');
+    est_sel = sel;
+else
+    est_sel = {'GLS','WLS'};
+    if cfg.addNLS, est_sel{end+1} = 'NLS'; end
+end
+useNLS = any(strcmp(est_sel,'NLS'));
+cfg.addNLS = useNLS;   % keep downstream profile loading consistent
 % ---------------------------------------------- resolve data source(s)
 % The dataset may be specified via either field (dataDirs wins if both set):
 %   cfg.dataDirs : session folder name(s) under data/ (or absolute paths),
@@ -199,7 +227,10 @@ nlsProfile = cfg.addNLS && cfg.nlsUseProfile && ~isempty(prof);
 if cfg.addNLS && ~exist('lsqnonlin', 'file')
     warning('df_run_analysis:nls', ...
         'lsqnonlin not found (Optimization Toolbox). Disabling NLS.');
-    cfg.addNLS = false; nlsProfile = false;
+    cfg.addNLS = false; useNLS = false; nlsProfile = false;
+    est_sel = est_sel(~strcmp(est_sel,'NLS'));
+    assert(~isempty(est_sel), ['NLS was disabled (no lsqnonlin) and no other ' ...
+        'estimator is enabled. Add GLS/WLS to cfg.estimators.']);
 end
 
 % ------------------------------------------------- radiometric constant C
@@ -221,11 +252,18 @@ else
 end
 
 % ----------------------------------------------------------- estimation
-% Method table: {name, color, marker}. GLS & WLS always; NLS optional.
-methodDefs = {'GLS', cGLS, '^'; 'WLS', cWLS, 's'};
-if cfg.addNLS
-    if nlsProfile, nlsName = 'NLS (profile)'; else, nlsName = 'NLS (Lamb.)'; end
-    methodDefs = [methodDefs; {nlsName, cNLS, 'd'}];
+% Method table: {name, color, marker}, ordered by cfg.estimators / defaults.
+methodDefs = cell(0,3);
+for k = 1:numel(est_sel)
+    switch est_sel{k}
+        case 'GLS'
+            methodDefs(end+1,:) = {'GLS', cGLS, '^'}; %#ok<AGROW>
+        case 'WLS'
+            methodDefs(end+1,:) = {'WLS', cWLS, 's'}; %#ok<AGROW>
+        case 'NLS'
+            if nlsProfile, nlsName = 'NLS (profile)'; else, nlsName = 'NLS (Lamb.)'; end
+            methodDefs(end+1,:) = {nlsName, cNLS, 'd'}; %#ok<AGROW>
+    end
 end
 mName  = methodDefs(:,1);
 mCol   = methodDefs(:,2);
@@ -245,13 +283,18 @@ for j = 1:nI
     sigma2 = max(mean(s.vstd.^2), eps);     % scale cancels in GLS direction
 
     nd = cell(nM,1);
-    nd{1} = colvec(vlp_gls(nt, mu, m, sigma2));
-    nd{2} = colvec(vlp_wls(nt, mu, m));
-    if cfg.addNLS
-        if nlsProfile
-            nd{3} = colvec(vlp_nls_lm_profile(nt, mu, prof.Rfun));
-        else
-            nd{3} = colvec(vlp_nls_lm(nt, mu, m));
+    for k = 1:nM
+        switch est_sel{k}
+            case 'GLS'
+                nd{k} = colvec(vlp_gls(nt, mu, m, sigma2));
+            case 'WLS'
+                nd{k} = colvec(vlp_wls(nt, mu, m));
+            case 'NLS'
+                if nlsProfile
+                    nd{k} = colvec(vlp_nls_lm_profile(nt, mu, prof.Rfun));
+                else
+                    nd{k} = colvec(vlp_nls_lm(nt, mu, m));
+                end
         end
     end
 
@@ -275,7 +318,7 @@ avg  = @(v) mean(v(isfinite(v)));
 p90  = @(v) local_pct(v, 90);          % 90th percentile (base MATLAB, no toolbox)
 R = struct();
 R.cfg=cfg; R.C_opt=C_opt; R.Cmode=Cmode; R.C_all=C_all; R.K_id=K_id;
-R.methods=mName; R.labels=labels; R.pos_true=posT; R.est=est;
+R.methods=mName; R.estimators=est_sel; R.labels=labels; R.pos_true=posT; R.est=est;
 R.ang=ang; R.pos=posE; R.d=dEst; R.d_true=dTrue;
 R.profile=prof; R.m=m; R.nInstances=nI; R.nSkipped=nSkipped;
 R.data=Tall; R.nSessions=nSessions;
