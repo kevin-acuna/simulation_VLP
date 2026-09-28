@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  16 SEP 2026 14:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  27 SEP 2026 13:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -570,8 +570,8 @@ Package pdftex.def Info: ../Estimator comparisons/results/LED_calibration_20260
  [8 <../Estimator comparisons/results/LED_calibration_20260916_141804_298/LED_p
 attern_calibration.pdf>]
 ignored: Infinite glue shrinkage found in box being split [9] (b
-uild/Algorithms_report.bbl)
-[10] (build/Algorithms_report.aux
+uild/Algorithms_report.bbl
+[10]) [11] (build/Algorithms_report.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 )
@@ -583,8 +583,8 @@ Package rerunfilecheck Info: File `Algorithms_report.out' has not changed.
 (rerunfilecheck)             Checksum: 9805F5B44FE535472E14C2ACD80B8129;3198.
  ) 
 Here is how much of TeX's memory you used:
- 12397 strings out of 467525
- 191797 string characters out of 5423209
+ 12398 strings out of 467525
+ 191804 string characters out of 5423209
  626168 words of memory out of 5000000
  41070 multiletter control sequences out of 15000+600000
  650221 words of font info for 106 fonts, out of 8000000 for 9000
@@ -612,10 +612,10 @@ type1/public/cm-super/sfrm1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/publ
 ic/cm-super/sfrm1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-supe
 r/sfrm1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1728
 .pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb>
-Output written on build/Algorithms_report.pdf (10 pages, 553701 bytes).
+Output written on build/Algorithms_report.pdf (11 pages, 555898 bytes).
 PDF statistics:
- 379 PDF objects out of 1000 (max. 8388607)
- 291 compressed objects within 3 object streams
- 58 named destinations out of 1000 (max. 500000)
+ 383 PDF objects out of 1000 (max. 8388607)
+ 294 compressed objects within 3 object streams
+ 59 named destinations out of 1000 (max. 500000)
  138 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -10,7 +10,7 @@ rx_discrete_map(ax, e.tilt_values_deg, e.fov_values_deg, 100*r.coverage', [0 100
 annotate_partial_coverage(ax, 100*r.coverage', style);
 xlabel(ax, 'Tilt (deg)');
 ylabel(ax, 'FOV half-angle (deg)');
-title(ax, sprintf('Regular 3D coverage, K=%d', e.K));
+title(ax, sprintf('%s, K=%d', rx_coverage_label(r, 'Regular 3D coverage'), e.K));
 ax = nexttile(layout);
 rx_discrete_map(ax, e.tilt_values_deg, e.fov_values_deg, 100*r.potential_coverage', [0 100], 'linear', style);
 annotate_partial_coverage(ax, 100*r.potential_coverage', style);

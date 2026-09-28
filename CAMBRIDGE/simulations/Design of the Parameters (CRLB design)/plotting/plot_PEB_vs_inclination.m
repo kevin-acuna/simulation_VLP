@@ -25,7 +25,7 @@ for ih = 1:numel(e.half_angles_deg)
     end
     rx_ieee_axes(ax, style, true);
     ax = nexttile(layout);
-    rx_plot_coverage(ax, e.tilt_values_deg, r.coverage(:, :, ih), style);
+    rx_plot_coverage(ax, e.tilt_values_deg, r.coverage(:, :, ih), style, r);
     xlabel(ax, 'PD inclination from +z (deg)');
     if style.show_titles
         title(ax, '(b) Coverage on the same evaluation grid');

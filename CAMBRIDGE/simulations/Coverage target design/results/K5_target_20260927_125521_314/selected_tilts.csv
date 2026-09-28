@@ -1,0 +1,5 @@
+Grid,Positions,OrientationStd_deg,MaximumCoverage_percent,OptimalTilt_deg,MinimumAcceptableTilt_deg,MinimumNearPeakTilt_deg,RequiredCoverage_percent,NearPeakLoss_pp,CoverageThreshold_cm
+design,968,0,97.5206611570248,3.5,2.25,2.75,95,1,10
+validation,6615,0,98.5789871504157,4.25,2,2.25,95,1,10
+design,968,1,86.3636363636364,25.75,NaN,24.25,95,1,10
+validation,6615,1,89.750566893424,25.5,NaN,23,95,1,10

@@ -24,10 +24,12 @@ a.identifiable = numel(s)==3 && s(3)>p.numerics.rank_relative_tolerance*s(1);
 a.max_iterations = 60;
 a.step_tolerance = 1e-10;
 a.gradient_tolerance = 1e-10;
+a.reference_index = 0;
 fields = fieldnames(options);
 for i = 1:numel(fields)
-    assert(any(strcmp(fields{i}, {'max_iterations', 'step_tolerance', 'gradient_tolerance'})), ...
+    assert(any(strcmp(fields{i}, {'max_iterations', 'step_tolerance', 'gradient_tolerance', 'reference_index'})), ...
         'cambridge:EstimatorOption', 'Unknown estimator option: %s.', fields{i});
     a.(fields{i}) = options.(fields{i});
 end
+validateattributes(a.reference_index, {'numeric'}, {'scalar', 'integer', '>=', 0, '<=', K});
 end

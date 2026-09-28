@@ -20,4 +20,5 @@ r = rx_summarize_study(r);
 [A, C] = ndgrid(e.area_values_mm2, 1:nc);
 r.table = table(C(:), A(:), 100*r.rms_full_m(:), 100*r.rms_conditional_m(:), 100*r.coverage(:), ...
     'VariableNames', {'Case', 'Area_mm2', 'RMS_full_cm', 'RMS_conditional_cm', 'Coverage_percent'});
+r = rx_coverage_columns(r);
 end

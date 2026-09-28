@@ -1,0 +1,16 @@
+addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));
+cambridge_setup();
+base=system_parameters();
+experiment=struct();
+experiment.devices={'PDA100A2'};
+experiment.families={'cosine_1','cosine','SQ'};
+experiment.cosine_fov_deg=64;
+experiment.outer_fov_deg=90;
+experiment.m_R=[];
+experiment.angles_deg=0:0.1:90;
+style=ieee_plot_style();
+result=study_pd_responses(base,experiment);
+transcript=evalc('pd_print_settings(base,experiment); disp(result.model_table);'); fprintf('%s',transcript);
+result=pd_paper_save(result,'responses',transcript);
+figures=plot_pd_responses(result,style);
+rx_export_figures(figures,result.output_directory,style);

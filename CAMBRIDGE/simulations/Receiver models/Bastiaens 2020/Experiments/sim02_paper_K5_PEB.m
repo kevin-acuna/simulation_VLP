@@ -1,0 +1,32 @@
+addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));
+simulations_root=cambridge_setup();
+base=system_parameters();
+base.design.coverage_threshold_cm=10;
+experiment=struct();
+experiment.device='PDA100A2';
+experiment.families={'cosine_1','cosine','SQ'};
+experiment.cosine_fov_deg=64;
+experiment.outer_fov_deg=90;
+experiment.m_R=[];
+experiment.peb_reference_cosine_1=fullfile(simulations_root,'Bounds (3D)', ...
+    'Position Error Bound','PEB_derivation.tex');
+experiment.orientation_peb_reference=fullfile(simulations_root, ...
+    'Reorientation sensitivity','Sensitivity_report.tex');
+experiment.K=5;
+experiment.tilt_values_deg=0:0.25:base.receiver.max_tilt_deg;
+experiment.azimuth_offset_deg=0;
+experiment.budget='per_orientation';
+experiment.orientation_std_deg=1;
+experiment.orientation_structure='independent';
+experiment.minimum_coverage_percent=95;
+experiment.near_peak_loss_pp=1;
+experiment.plot_max_tilt_deg=90;
+experiment.map_heights_m=[0 0.7 1.4];
+style=ieee_plot_style();
+fprintf('All models use the SAME Pt, active area, optical noise and sample budget. Published device gains are metadata, not multipliers.\n');
+transcript=evalc('pd_print_settings(base,experiment);'); fprintf('%s',transcript);
+result=study_pd_K5(base,experiment);
+transcript=[transcript evalc('disp(result.model_table); disp(result.selection_table);')];
+result=pd_paper_save(result,'K5_models',transcript);
+figures=plot_pd_K5(result,style);
+rx_export_figures(figures,result.output_directory,style);

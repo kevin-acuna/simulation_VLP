@@ -1,0 +1,22 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}La pregunta central y la respuesta obtenida}{2}{section.1}%
+\contentsline {section}{\numberline {2}Modelo físico vigente}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}FOV, semiángulo LED y orden receptor}{2}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Elegir una rama: coseno general o modelo del artículo}{2}{section.3}%
+\contentsline {section}{\numberline {4}Qué significa la cota y qué significa cobertura}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Nuevo control de cobertura en centímetros}{4}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Mapa del proyecto}{4}{section.5}%
+\contentsline {section}{\numberline {6}Qué experimento responde a cada pregunta}{5}{section.6}%
+\contentsline {section}{\numberline {7}Preguntas que ya tienen respuesta}{6}{section.7}%
+\contentsline {subsection}{\numberline {7.1}¿Aumentar K siempre mejora?}{6}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}¿Por qué inclinar puede ganar o perder cobertura?}{6}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}¿El área o la FOV tienen siempre un óptimo interior?}{6}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}¿Son los mismos GLS/WLS/NLS de TCOM?}{6}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}¿Por qué LS y NLS pueden dibujarse superpuestos?}{6}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}¿Qué se comprobó sobre el patrón del LED?}{6}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}¿Qué significa la sensibilidad angular de un grado?}{7}{subsection.7.7}%
+\contentsline {section}{\numberline {8}Resultado focalizado: K=5, $m_R=1.9$ y 10 cm}{7}{section.8}%
+\contentsline {section}{\numberline {9}Resultado K=5 de la rama SQ del PDA100A2}{7}{section.9}%
+\contentsline {section}{\numberline {10}Cómo empezar a trabajar}{8}{section.10}%
+\contentsline {section}{\numberline {11}Ruta de lectura recomendada}{8}{section.11}%
+\contentsline {section}{\numberline {12}Qué falta para una afirmación experimental}{9}{section.12}%

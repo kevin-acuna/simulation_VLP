@@ -12,6 +12,10 @@ else
     derivative = y.^(1/a.order-1)/a.order;
 end
 [reference_power, ref] = max(z);
+if a.reference_index>0
+    ref = a.reference_index;
+    reference_power = z(ref);
+end
 if reference_power<=0
     detail.status = "nonpositive_reference";
     return;

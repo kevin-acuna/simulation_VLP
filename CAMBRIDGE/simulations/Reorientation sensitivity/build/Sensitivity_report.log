@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  16 SEP 2026 15:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  27 SEP 2026 13:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -474,7 +474,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 {c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/
 texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}] [2] [3]
 <results/pose_measurement_independent_20260916_145207_467/Orientation_sensitivi
-ty_pose_measurement_independent.pdf, id=80, 440.64626pt x 271.0125pt>
+ty_pose_measurement_independent.pdf, id=84, 440.64626pt x 271.0125pt>
 File: results/pose_measurement_independent_20260916_145207_467/Orientation_sens
 itivity_pose_measurement_independent.pdf Graphic file (type pdf)
 <use results/pose_measurement_independent_20260916_145207_467/Orientation_sensi
@@ -484,7 +484,7 @@ Package pdftex.def Info: results/pose_measurement_independent_20260916_145207_4
  130.
 (pdftex.def)             Requested size: 437.0374pt x 268.80356pt.
 <results/pose_measurement_common_rotation_20260916_145855_607/Orientation_sensi
-tivity_pose_measurement_common_rotation.pdf, id=81, 442.65375pt x 271.0125pt>
+tivity_pose_measurement_common_rotation.pdf, id=85, 442.65375pt x 271.0125pt>
 File: results/pose_measurement_common_rotation_20260916_145855_607/Orientation_
 sensitivity_pose_measurement_common_rotation.pdf Graphic file (type pdf)
 <use results/pose_measurement_common_rotation_20260916_145855_607/Orientation_s
@@ -494,7 +494,7 @@ Package pdftex.def Info: results/pose_measurement_common_rotation_20260916_1458
 put line 134.
 (pdftex.def)             Requested size: 437.0374pt x 267.58778pt.
 <results/actuation_independent_20260916_145900_208/Orientation_sensitivity_actu
-ation_independent.pdf, id=82, 440.64626pt x 271.0125pt>
+ation_independent.pdf, id=86, 440.64626pt x 271.0125pt>
 File: results/actuation_independent_20260916_145900_208/Orientation_sensitivity
 _actuation_independent.pdf Graphic file (type pdf)
 <use results/actuation_independent_20260916_145900_208/Orientation_sensitivity_
@@ -516,37 +516,39 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `Sensitivity_report.out' has not changed.
-(rerunfilecheck)             Checksum: 52C2FF5B7FB2FEB005143D6CF7677262;1343.
+(rerunfilecheck)             Checksum: 034818806B196667FCA733E4FA247352;1586.
  ) 
 Here is how much of TeX's memory you used:
- 12126 strings out of 467525
- 186731 string characters out of 5423209
+ 12155 strings out of 467525
+ 187113 string characters out of 5423209
  621906 words of memory out of 5000000
- 40841 multiletter control sequences out of 15000+600000
- 644139 words of font info for 87 fonts, out of 8000000 for 9000
+ 40865 multiletter control sequences out of 15000+600000
+ 650411 words of font info for 110 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,79p,616b,481s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,79p,726b,481s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
 live/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmr6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.
-pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb><c:/te
-xlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/202
-6/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-di
-st/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/f
-onts/type1/public/cm-super/sfbx1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1
-/public/cm-super/sfbx1440.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm
--super/sfrm1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfr
-m1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb>
-<c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb><c:/texliv
-e/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb>
-Output written on build/Sensitivity_report.pdf (6 pages, 336661 bytes).
+st/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2026/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmmib10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
+12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/
+texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/202
+6/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb><c:/texlive/2026/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/publ
+ic/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/c
+m-super/sfbx1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sf
+bx1440.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb
+><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><c:/texli
+ve/2026/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb><c:/texlive/2026/te
+xmf-dist/fonts/type1/public/cm-super/sfti1095.pfb><c:/texlive/2026/texmf-dist/f
+onts/type1/public/cm-super/sftt1095.pfb>
+Output written on build/Sensitivity_report.pdf (6 pages, 355940 bytes).
 PDF statistics:
- 228 PDF objects out of 1000 (max. 8388607)
- 168 compressed objects within 2 object streams
- 33 named destinations out of 1000 (max. 500000)
- 64 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 243 PDF objects out of 1000 (max. 8388607)
+ 179 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
+ 72 words of extra memory for PDF output out of 10000 (max. 10000000)
 

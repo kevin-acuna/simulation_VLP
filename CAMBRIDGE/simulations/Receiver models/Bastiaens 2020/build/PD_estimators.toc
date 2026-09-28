@@ -1,0 +1,8 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Modelo, datos y variables}{2}{section.1}%
+\contentsline {section}{\numberline {2}Qué deja de ser válido de TCOM}{2}{section.2}%
+\contentsline {section}{\numberline {3}NLS conjunto de dirección y amplitud}{2}{section.3}%
+\contentsline {section}{\numberline {4}NLS con amplitud perfilada}{3}{section.4}%
+\contentsline {section}{\numberline {5}Cocientes no lineales: GLS y WLS generalizados}{4}{section.5}%
+\contentsline {section}{\numberline {6}Solución algebraica especial: SQapprox sobre un cono}{5}{section.6}%
+\contentsline {section}{\numberline {7}Implementación, inicialización y límites}{5}{section.7}%

@@ -1,0 +1,23 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Qué investigó realmente el artículo}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Lo que no elimina la propuesta}{3}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Dispositivos, parámetros y trazabilidad}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Tres niveles distintos de afirmación}{4}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Funciones de respuesta y significado de FOV}{4}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Familia general coseno-potencia}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}SQ, ecuación (5) del artículo}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}SQapprox, ecuación (6)}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Exp, ecuación (3)}{5}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Modelos no reproducidos como presets}{5}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Canal general del sistema Cambridge}{5}{section.4}%
+\contentsline {section}{\numberline {5}Derivación del Jacobiano y la FIM}{5}{section.5}%
+\contentsline {section}{\numberline {6}Identificabilidad: lo que sí es general}{6}{section.6}%
+\contentsline {section}{\numberline {7}Comprobación axial independiente}{6}{section.7}%
+\contentsline {section}{\numberline {8}Pose y parámetros de ajuste inciertos}{7}{section.8}%
+\contentsline {section}{\numberline {9}Valor para un journal y limitaciones}{7}{section.9}%
+\contentsline {section}{\numberline {10}Selección de modelos y lectura de los experimentos}{7}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Tres familias por defecto y cortes elegidos por el usuario}{7}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Referencia explícita para el coseno simple}{8}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Qué representan los ejes}{8}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Incertidumbre de orientación y actitud de referencia}{9}{subsection.10.4}%
+\contentsline {section}{\numberline {11}Separación en el software}{9}{section.11}%

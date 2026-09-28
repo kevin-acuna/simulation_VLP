@@ -62,6 +62,19 @@ end
 verifyTrue(testCase, all(r.extra_tables.feasible_tradeoffs.ValidationFeasible));
 end
 
+function testDisplayThresholdDoesNotChangeFeasibility(testCase)
+p = testCase.TestData.p;
+e = small_feasibility(); e.refine_selected = false;
+a = study_tilt_feasibility(p, e);
+p.design.coverage_threshold_cm = 0;
+b = study_tilt_feasibility(p, e);
+verifyEqual(testCase, b.table.Feasible, a.table.Feasible);
+verifyEqual(testCase, b.rms_full_m, a.rms_full_m);
+verifyEqual(testCase, b.regular_coverage, a.regular_coverage);
+verifyEqual(testCase, b.coverage, zeros(size(b.coverage)));
+verifyTrue(testCase, any(b.table.Feasible));
+end
+
 function testNoFeasibleSearchDoesNotInventAnOptimum(testCase)
 p = testCase.TestData.p;
 e = small_feasibility();

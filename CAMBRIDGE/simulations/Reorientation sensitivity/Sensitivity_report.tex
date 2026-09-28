@@ -149,6 +149,9 @@ Los campos \texttt{orientation\_variances\_deg2}, \texttt{cases}, \texttt{trials
 
 Para un sistema real se debe medir qué errores son independientes por orientación, cuáles son sesgos comunes y cuáles varían durante la adquisición. No se identifica una tolerancia de hardware universal a partir de estas curvas: depende de geometría, patrón, SNR, calibración y modelo estadístico. Una matriz de covarianza de encoders o IMU debe convertirse a la parametrización utilizada. Las simulaciones no incluyen traslación del pivote, deriva de ganancia ni movimiento del receptor.
 
+\section{Lectura del nuevo estudio K=5, \texorpdfstring{$m_R=1.9$}{mR=1.9}}
+El estudio independiente \path{../Coverage target design/sim01_K5_tilt_coverage.m} usa el parámetro \texttt{orientation\_std\_deg}, no una varianza: al núcleo se pasa su cuadrado. Su curva de cobertura con $1^\circ$ utiliza explícitamente el PEB de pose auxiliar de \eqref{eq:posebound}, mientras que los errores de los métodos se obtienen en otro bloque Monte Carlo sobre puntos de visibilidad completa. No se confunde esa cobertura de cota con una probabilidad de error observado menor que el objetivo. El informe \path{../Coverage target design/K5_tilt_report.tex} detalla el protocolo y compara máxima cobertura con mínima inclinación aceptable.
+
 \bibliographystyle{IEEEtran}
 \bibliography{../Estimators/estimator_references}
 \end{document}

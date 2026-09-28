@@ -1,0 +1,9 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Respuesta corta y alcance}{1}{section.1}%
+\contentsline {section}{\numberline {2}Cinco modelos comparados sin cambiar radiometría}{2}{section.2}%
+\contentsline {section}{\numberline {3}Geometría, cobertura y protocolo de pose}{3}{section.3}%
+\contentsline {section}{\numberline {4}Resultado principal para PDA100A2 SQ}{3}{section.4}%
+\contentsline {section}{\numberline {5}Qué parte cambia por el soporte y qué parte por la función}{4}{section.5}%
+\contentsline {section}{\numberline {6}Estimadores: modelo correcto y desajuste}{4}{section.6}%
+\contentsline {section}{\numberline {7}Carpetas y uso sin mezclar modelos}{6}{section.7}%
+\contentsline {section}{\numberline {8}Conclusiones para el artículo de revista}{8}{section.8}%

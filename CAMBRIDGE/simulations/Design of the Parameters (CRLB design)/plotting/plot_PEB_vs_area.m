@@ -24,7 +24,7 @@ if style.show_titles
 end
 rx_ieee_axes(ax, style, true);
 ax = nexttile(layout);
-rx_plot_coverage(ax, e.area_values_mm2, r.coverage, style);
+rx_plot_coverage(ax, e.area_values_mm2, r.coverage, style, r);
 set(ax, 'XScale', 'log');
 xlabel(ax, 'Photodiode area, A_{PD} (mm^2)');
 if style.show_titles

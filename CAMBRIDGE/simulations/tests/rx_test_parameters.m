@@ -7,6 +7,7 @@ p.transmitter.power_W = 0.65;
 p.transmitter.pattern_asymmetry = 0;
 p.transmitter.pattern_reference = [1; 0; 0];
 p.receiver.area_m2 = 75.4e-6;
+p.receiver.response_model = 'cosine_power';
 p.receiver.m_R = 1;
 p.receiver.fov_deg = 85;
 p.receiver.max_tilt_deg = 85;
@@ -16,4 +17,5 @@ p.noise.variance_W2 = 3e-14;
 p.acquisition.samples_per_orientation = 1000;
 p.acquisition.total_samples = 9000;
 p.design.half_angles_deg = [30 45 60 75];
+p.design.coverage_threshold_cm = Inf;
 end

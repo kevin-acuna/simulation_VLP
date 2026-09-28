@@ -46,12 +46,12 @@ for ih = 1:nh
     b.refinement = rx_refine_orientations(positions, ph, b.K_recommended, b.cone_tilt_deg);
     b.normals = b.refinement.normals;
     [b.peb_m, info] = rx_peb(positions, b.normals, ph);
-    b.metrics = rx_design_metrics(b.peb_m);
+    b.metrics = rx_design_metrics(b.peb_m, rx_coverage_threshold(p));
     b.axis_bound_m = info.axis_bound_m;
     b.visible_count = info.visible_count;
     b.condition_fim = info.condition_fim;
     b.validation_peb_m = rx_peb(validation_positions, b.normals, ph);
-    b.validation_metrics = rx_design_metrics(b.validation_peb_m);
+    b.validation_metrics = rx_design_metrics(b.validation_peb_m, rx_coverage_threshold(p));
     fprintf('Refined Phi=%g deg, K=%d: RMS %.4f cm; validation coverage %.3f%%.\n', ...
         b.half_angle_deg, b.K_recommended, b.metrics.rms_full_m*100, b.validation_metrics.coverage*100);
     best_configurations{ih} = b;

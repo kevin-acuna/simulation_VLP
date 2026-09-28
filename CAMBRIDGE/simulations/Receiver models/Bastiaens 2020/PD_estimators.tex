@@ -1,0 +1,233 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,bm,booktabs,geometry}
+\usepackage{algorithm,algpseudocode}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\geometry{margin=24mm}
+\floatname{algorithm}{Algoritmo}
+\algrenewcommand\algorithmicrequire{\textbf{Entrada:}}
+\algrenewcommand\algorithmicensure{\textbf{Salida:}}
+\title{Estimadores para una respuesta angular calibrada\\\large SQ, Exp y la solución especial de SQapprox}
+\author{Proyecto Cambridge}
+\date{27 de septiembre de 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Se derivan estimadores para un único LED fijo y un PD reorientable con respuesta angular conocida general $h(s)$. La raíz de cocientes que linealiza TCOM sólo es válida para una ley coseno-potencia; no se traslada directamente al modelo SQ. Se implementan NLS conjunto dirección--amplitud, NLS de amplitud perfilada y ajustes no lineales de cocientes con covarianza completa o diagonal. Para SQapprox se obtiene una solución algebraica adicional de conos uniformes, con restricciones explícitas. Los estimadores de esta carpeta no se confunden con los algoritmos históricos del modelo $\cos^{m_R}\psi$.
+\end{abstract}
+\tableofcontents
+\clearpage
+
+\section{Modelo, datos y variables}
+Las medias ópticas equivalentes son $\mathbf y\in\mathbb R^K$, con covarianza conocida $\Sigma=\operatorname{diag}(\sigma^2/N_i)$. Se mantienen potencias negativas generadas por ruido Gaussiano. El modelo es:
+\begin{equation}
+ y_i=\beta h(s_i)+\epsilon_i,\quad s_i=\mathbf n_i^{\mathsf T}\mathbf u,\quad
+ \|\mathbf u\|=1,\quad \beta>0,\quad \mathbf u=(\mathbf t-\mathbf r)/d.
+\end{equation}
+La dirección apunta del receptor al LED; $h$ incluye su soporte angular, y $\beta=Cf_T(\mathbf u)/d^2$ es común a las orientaciones de un barrido estacionario. La posición se reconstruye mediante:
+\begin{equation}
+ \hat d=\sqrt{Cf_T(\hat{\mathbf u})/\hat\beta},\qquad
+ \hat{\mathbf r}=\mathbf t-\hat d\hat{\mathbf u}.
+\label{eq:range}
+\end{equation}
+No es necesaria una medición adicional de potencia para esa conversión, pero sí calibración absoluta y un patrón emisor conocido para distancia. El patrón del LED se cancela como amplitud común en el ajuste de dirección; su influencia sobre SNR permanece.
+
+\section{Qué deja de ser válido de TCOM}
+Para $h(s)=s^{m_R}$:
+\begin{equation}
+ \left(\frac{\mu_i}{\mu_j}\right)^{1/m_R}=\frac{s_i}{s_j},\qquad
+ (\mathbf n_i-t_i\mathbf n_j)^{\mathsf T}\mathbf u=0.
+\end{equation}
+La homogeneidad permite el autovector GLS/WLS de TCOM \cite{tcom}. Con SQ:
+\begin{equation}
+ \frac{\mu_i}{\mu_j}=\frac{1-a(\arccos s_i)^2}{1-a(\arccos s_j)^2},
+\end{equation}
+y no existe un exponente constante que lo convierta en $s_i/s_j$ para todas las incidencias. Para Exp ocurre lo mismo. Aunque la función SQ puede invertirse respecto a ángulo dentro de su tramo monótono si se conoce amplitud, esa amplitud es desconocida; no se obtiene automáticamente un sistema lineal de normales.
+
+La expresión ``SQ no invertible'' del artículo \cite{bastiaens2020} se refiere a la dificultad de una inversión elemental RSS--distancia para su geometría de trilateración. No debe interpretarse como que $1-a\psi^2$ nunca puede invertirse en un intervalo positivo, ni como una prueba de imposibilidad de estimar en la arquitectura reorientable.
+
+El principio de mínimos cuadrados de potencias \emph{sí} continúa siendo válido. Cambian la función directa, el Jacobiano, el soporte y el análisis de unicidad, no la verosimilitud Gaussiana de partida. Por eso los métodos nuevos se nombran \texttt{joint\_nls}, \texttt{profile\_nls}, \texttt{ratio\_gls} y \texttt{ratio\_wls}; estos dos últimos son no lineales y no se presentan como los autovectores TCOM.
+
+\section{NLS conjunto de dirección y amplitud}
+Sea $W=\Sigma^{-1}$. El estimador Gaussiano se define por:
+\begin{equation}
+ (\hat{\mathbf u},\hat\beta)=\arg\min_{\|\mathbf u\|=1,\,\beta>0}
+ (\beta\mathbf h(\mathbf u)-\mathbf y)^{\mathsf T}W(\beta\mathbf h(\mathbf u)-\mathbf y).
+\label{eq:joint}
+\end{equation}
+Se exige iluminación del emisor, al menos alguna señal modelada y solución física. El modelo evalúa los ceros de soporte sin recibir una máscara verdadera. La optimización atraviesa regiones de soporte posibles mediante evaluación del coste real; el Jacobiano se usa dentro de cada región suave. No se afirma optimalidad global de esa búsqueda por partes.
+
+Para la dirección actual se construye una base tangente $E\in\mathbb R^{3\times2}$. Con log-amplitud $b=\ln\beta$, los residuales y sus derivadas son:
+\begin{equation}
+ \mathbf e=W^{1/2}(\beta\mathbf h-\mathbf y),\qquad
+ J=W^{1/2}\beta[\operatorname{diag}(\mathbf h')HE,\ \mathbf h],
+\end{equation}
+donde $H_i=\mathbf n_i^{\mathsf T}$. Se evita una singularidad artificial de azimut en el eje. El paso LM satisface:
+\begin{equation}
+ (J^{\mathsf T}J+\lambda D)\Delta=-J^{\mathsf T}\mathbf e.
+\end{equation}
+La actualización es:
+\begin{equation}
+ \mathbf u^+=\cos\rho\,\mathbf u+\frac{\sin\rho}{\rho}E\Delta\boldsymbol\omega,
+ \quad \rho=\|\Delta\boldsymbol\omega\|,\qquad \beta^+=\beta e^{\Delta b}.
+\end{equation}
+Se normalizan observaciones por una escala positiva y se conserva esa escala para recuperar vatios. El objetivo no cambia salvo por un factor constante. Se aceptan pasos físicos con coste no creciente, con control de gradiente, tamaño de paso y precisión numérica.
+
+También sería posible usar un vector óptico $\mathbf w=\beta\mathbf u$, con:
+\begin{equation}
+ \mu_i=\|\mathbf w\|h\left(\frac{\mathbf n_i^{\mathsf T}\mathbf w}{\|\mathbf w\|}\right),\qquad
+ \frac{\partial\mu_i}{\partial\mathbf w^{\mathsf T}}=h'_i\mathbf n_i^{\mathsf T}+(h_i-s_i h'_i)\mathbf u^{\mathsf T}.
+\end{equation}
+Eso sigue siendo un ajuste de tres incógnitas, pero ya no es lineal en general ni la transformación de raíces del coseno. La implementación principal utiliza dirección tangente y log-amplitud por claridad.
+
+\begin{algorithm}[htbp]\caption{NLS conjunto para respuesta calibrada}\begin{algorithmic}[1]
+\Require $\mathbf y$, normales, $h,h'$, varianzas y calibración $C,f_T,\mathbf t$.
+\State Normalizar los datos sin recortar signos y preparar semillas de dirección independientes de la posición verdadera.
+\For{cada semilla física seleccionada}
+\State Inicializar amplitud positiva por ajuste condicional.
+\State Iterar LM de dos incrementos tangentes y uno de log-amplitud.
+\State Evaluar el soporte de $h$ en cada propuesta; rechazar costes no finitos o incrementos de coste.
+\EndFor
+\State Comparar mínimos encontrados; señalar soluciones competidoras si son diferentes y de coste indistinguible.
+\State Verificar rango del Jacobiano completo y ausencia de frontera activa excluida.
+\State Recuperar amplitud física y aplicar \eqref{eq:range}.
+\State \Return posición, estado, coste y advertencia de ambigüedad.
+\end{algorithmic}\end{algorithm}
+
+\section{NLS con amplitud perfilada}
+Para una dirección dada, $\mathbf h$ es conocido. Derivando \eqref{eq:joint} respecto a $\beta$:
+\begin{equation}
+ \hat\beta(\mathbf u)=\frac{\mathbf h^{\mathsf T}W\mathbf y}{\mathbf h^{\mathsf T}W\mathbf h},
+\end{equation}
+si el numerador es positivo. En otro caso el óptimo restringido está en amplitud cero y no se entrega una distancia finita. Sustituyendo la amplitud interior:
+\begin{equation}
+ F_p(\mathbf u)=\mathbf y^{\mathsf T}W\mathbf y-
+ \frac{(\mathbf h^{\mathsf T}W\mathbf y)^2}{\mathbf h^{\mathsf T}W\mathbf h}.
+\label{eq:profilecost}
+\end{equation}
+Se optimizan únicamente dos coordenadas de dirección. Perfilado no significa integrar un prior de amplitud: es minimizar analíticamente sobre ella. Un mínimo global de este problema corresponde al del NLS conjunto con el mismo dominio, aunque solvers locales pueden llegar a puntos diferentes.
+
+Para derivar el Jacobiano exacto del residual perfilado, defina $\mathbf a=W^{1/2}\mathbf h$, $\mathbf z=W^{1/2}\mathbf y$, $B=\partial\mathbf a/\partial\boldsymbol\omega^{\mathsf T}$ y $A=\mathbf a^{\mathsf T}\mathbf a$. Entonces:
+\begin{equation}
+ \beta=\frac{\mathbf a^{\mathsf T}\mathbf z}{A},\qquad
+ \frac{\partial\beta}{\partial\boldsymbol\omega^{\mathsf T}}
+ =\frac{(\mathbf z-2\beta\mathbf a)^{\mathsf T}B}{A},
+\end{equation}
+\begin{equation}
+ \mathbf e_p=\beta\mathbf a-\mathbf z,\qquad
+ J_p=\beta B+\mathbf a\frac{\partial\beta}{\partial\boldsymbol\omega^{\mathsf T}}.
+\label{eq:profilejac}
+\end{equation}
+Omitir la derivada de amplitud en el Jacobiano de residuales no sería la misma linealización Gauss--Newton. El código utiliza \eqref{eq:profilejac} y la verifica por diferencias finitas.
+
+\begin{algorithm}[htbp]\caption{NLS perfilado}\begin{algorithmic}[1]
+\Require Las mismas entradas que NLS conjunto.
+\State Formar una malla fija de semillas angulares y ordenarlas por \eqref{eq:profilecost}.
+\For{cada semilla elegida}
+\State En cada iteración calcular $\mathbf h$, $\hat\beta(\mathbf u)$, residual y Jacobiano \eqref{eq:profilejac}.
+\State Resolver LM de dimensión dos y actualizar dirección sobre la esfera.
+\State Rechazar amplitudes no positivas, propuestas no físicas o coste creciente.
+\EndFor
+\State Seleccionar el menor coste encontrado, comprobar rango y ambigüedades.
+\State Calcular amplitud final desde las potencias originales y aplicar \eqref{eq:range}.
+\end{algorithmic}\end{algorithm}
+
+\section{Cocientes no lineales: GLS y WLS generalizados}
+Sea $j$ una referencia con potencia observada positiva, escogida por máximo observado. Se forman cocientes \emph{sin una raíz ficticia}:
+\begin{equation}
+ z_i=y_i/y_j,\qquad q_i(\mathbf u)=h(s_i)/h(s_j),\quad i\ne j.
+\end{equation}
+A primer orden delta, evaluando las medias en las observaciones:
+\begin{align}
+ [C_z]_{ii}&\simeq\frac{\sigma_i^2}{y_j^2}+\frac{\sigma_j^2y_i^2}{y_j^4},\\
+ [C_z]_{ik}&\simeq\frac{\sigma_j^2y_i y_k}{y_j^4},\qquad i\ne k.
+\end{align}
+La covarianza completa conserva la referencia compartida. Un factor escalar común puede suprimirse del objetivo. El método \texttt{ratio\_gls} minimiza:
+\begin{equation}
+ F_G(\mathbf u)=(\mathbf q(\mathbf u)-\mathbf z)^{\mathsf T}C_z^{-1}(\mathbf q(\mathbf u)-\mathbf z),
+\end{equation}
+y \texttt{ratio\_wls} sustituye $C_z$ por su diagonal. Ninguno se resuelve como un autovector lineal para SQ/Exp. La referencia candidata debe tener $h(s_j)>0$.
+
+El Jacobiano de cada cociente respecto a dos coordenadas tangentes es:
+\begin{equation}
+ Q_i=\frac{h'_i\mathbf n_i^{\mathsf T}E\,h_j-h_i h'_j\mathbf n_j^{\mathsf T}E}{h_j^2}.
+\end{equation}
+Se blanquea el residual y $Q$ mediante Cholesky o pesos diagonales y se optimiza por LM en dos variables. Después se perfila la amplitud con \emph{todas} las potencias originales para recuperar distancia. Son estimadores aproximados de cocientes; no se atribuye a la razón de Gaussianas una distribución Gaussiana exacta ni eficiencia universal.
+
+\begin{algorithm}[htbp]\caption{GLS no lineal de cocientes}\begin{algorithmic}[1]
+\State Elegir referencia positiva $j$ y calcular $z_i=y_i/y_j$.
+\State Construir la covarianza delta completa y su factor de Cholesky $L$.
+\State Minimizar $\|L^{-1}(\mathbf q(\mathbf u)-\mathbf z)\|^2$ usando el Jacobiano $L^{-1}Q$ y varias semillas.
+\State Mantener $h_j>0$; no recibir una máscara verdadera ni recortar potencias observadas.
+\State Recuperar amplitud positiva por perfilado RSS y convertir a posición.
+\State Comunicar estados de fallo, rango insuficiente y mínimos competidores.
+\end{algorithmic}\end{algorithm}
+\begin{algorithm}[htbp]\caption{WLS no lineal de cocientes}\begin{algorithmic}[1]
+\State Formar los mismos cocientes y predicciones que el GLS no lineal.
+\State Conservar sólo $v_i=[C_z]_{ii}$.
+\State Minimizar $\sum_i(q_i-z_i)^2/v_i$ con derivadas $Q_i/\sqrt{v_i}$.
+\State Recuperar amplitud/distancia desde las potencias originales y verificar la solución física.
+\end{algorithmic}\end{algorithm}
+
+\section{Solución algebraica especial: SQapprox sobre un cono}
+Para SQapprox, $h(s)=c_0+bs$, con $c_0=1-b$. Suponiendo todas las orientaciones dentro del soporte y una inclinación común $\theta$:
+\begin{equation}
+ \mu_i=A+B_x\cos\alpha_i+B_y\sin\alpha_i,
+\end{equation}
+\begin{equation}
+ A=\beta(c_0+b\cos\theta\,u_z),\quad
+ B_x=\beta b\sin\theta\,u_x,\quad B_y=\beta b\sin\theta\,u_y.
+\end{equation}
+Se estiman las tres componentes armónicas por LS ponderado. La fila $i$ de su matriz es:
+\begin{equation}
+ X_i=[\cos\alpha_i,\sin\alpha_i,1].
+\end{equation}
+Defina:
+\begin{equation}
+ w_x=B_x/(b\sin\theta),\quad w_y=B_y/(b\sin\theta),\quad
+ k=b\cos\theta,\quad \rho^2=w_x^2+w_y^2.
+\end{equation}
+Usando $\|\mathbf u\|=1$ y $w_z=(A-c_0\beta)/k$:
+\begin{equation}
+ (k^2-c_0^2)\beta^2+2Ac_0\beta-(A^2+k^2\rho^2)=0.
+\end{equation}
+En la rama implementada $k>0$ y $\Delta=k^2-c_0^2>0$, la raíz positiva es:
+\begin{equation}
+ \boxed{\hat\beta=\frac{-Ac_0+k\sqrt{A^2+\Delta\rho^2}}{\Delta}},\qquad
+ \hat{\mathbf u}=\frac1{\hat\beta}\begin{bmatrix}w_x\\w_y\\(A-c_0\hat\beta)/k\end{bmatrix}.
+\end{equation}
+Se comprueban amplitud, hemisferio y visibilidad completa antes de usar \eqref{eq:range}. Para PDA100A2, la restricción de rama es compatible con los conos moderados de visibilidad completa ensayados. No se extrapola a conos degenerados, otras ramas cuadráticas o subconjuntos desconocidos de orientaciones.
+
+\textbf{No se puede ajustar linealmente cuatro parámetros libres} $[\beta u_x,\beta u_y,\beta u_z,\beta]$ y olvidar la restricción de norma: en un cono común, la columna constante y la columna $n_z$ son dependientes. El método utiliza tres armónicos y la restricción física para cerrar el problema. Cuando la solución ponderada pertenece a esta rama física, representa el mínimo RSS de SQapprox dentro de ella. Se verificó su coincidencia numérica con NLS perfilado. No es un estimador SQ exacto.
+
+\begin{algorithm}[htbp]\caption{LS armónico para SQapprox}\begin{algorithmic}[1]
+\Require Respuesta SQapprox, cono común no degenerado, visibilidad completa.
+\State Comprobar $k^2-c_0^2>0$ y rango tres de la matriz armónica.
+\State Ajustar $B_x,B_y,A$ mediante QR blanqueado.
+\State Calcular $w_x,w_y$ y la raíz positiva de la ecuación cuadrática.
+\State Recuperar dirección, verificar soporte y aplicar \eqref{eq:range}.
+\State Rechazar el uso con SQ, Exp, una familia distinta o geometría no admitida.
+\end{algorithmic}\end{algorithm}
+
+\section{Implementación, inicialización y límites}
+La entrada común es \path{Estimators/pd_fit_estimate.m} dentro de esta carpeta del artículo. Recibe matrices $K\times T$ de potencias y devuelve posiciones, estados, direcciones, amplitudes y costes. Las semillas usan una malla angular fija en el hemisferio iluminado y las normales disponibles; se seleccionan mediante el coste observado. No se suministran posiciones verdaderas ni máscaras verdaderas.
+
+Los métodos generales evalúan las regiones de soporte del modelo, incluyendo ceros. Aun así, una búsqueda multisemilla no certifica el mínimo global ni descubre todas las ambigüedades. El rango final se comprueba con $[\mathbf h,\operatorname{diag}(\mathbf h')HE]$, no únicamente con $H$. Puntos de corte se rechazan como soluciones no regulares. Los ensayos comparativos principales se hacen en una región explícita de visibilidad completa para que el modelo coseno usado como control de desajuste tenga también un dominio admisible.
+
+En todo caso se mantienen observaciones Gaussianas negativas, masa de fallos en las métricas y separación de RMSE condicionado y total. Cambiar la función de dibujo no recalcula física. Los experimentos de esta carpeta guardan identidad del modelo verdadero y del supuesto; usar datos SQ con NLS coseno es un \emph{experimento de desajuste}, no el estimador SQ.
+
+\begin{verbatim}
+p = bastiaens2020_parameters(system_parameters(), ...
+    'PDA100A2', 'SQ', 90);
+[r, info] = pd_fit_estimate('profile_nls', y, normals, p, N);
+[r, info] = pd_fit_estimate('joint_nls', y, normals, p, N);
+[r, info] = pd_fit_estimate('ratio_gls', y, normals, p, N);
+[r, info] = pd_fit_estimate('ratio_wls', y, normals, p, N);
+\end{verbatim}
+Los estimadores históricos \path{../../Estimators/rx_estimate.m} se reservan al coseno-potencia y rechazan estos parámetros. Esa protección evita producir posiciones aparentemente válidas con una derivación que no corresponde al modelo seleccionado.
+
+\bibliographystyle{IEEEtran}
+\bibliography{bastiaens2020_references}
+\end{document}

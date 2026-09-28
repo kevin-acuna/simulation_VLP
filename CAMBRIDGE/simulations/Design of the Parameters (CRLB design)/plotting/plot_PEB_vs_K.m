@@ -30,10 +30,20 @@ for ib = 1:nb
     rx_ieee_axes(ax, style, true);
 end
 ax = nexttile(layout);
-rx_plot_coverage(ax, e.K_values, r.coverage(:, :, 1), style);
+rx_plot_coverage(ax, e.K_values, r.coverage(:, :, 1), style, r);
+thresholded = isfield(r, 'coverage_threshold_cm') && isfinite(r.coverage_threshold_cm);
+if thresholded
+    for ib = 2:nb
+        rx_plot_coverage(ax, e.K_values, r.coverage(:, :, ib), style, r, '--');
+    end
+end
 xticks(ax, e.K_values);
 xlabel(ax, 'Number of orientations, K');
 if style.show_titles
-    title(ax, sprintf('(%c) Fixed cone tilts; solid PEB: full grid, dotted PEB: finite subset', 'a'+nb));
+    if thresholded && nb>1
+        title(ax, sprintf('Coverage: solid %s; dashed %s', strrep(e.budgets{1}, '_', ' '), strrep(e.budgets{2}, '_', ' ')));
+    else
+        title(ax, sprintf('(%c) Fixed cone tilts; solid PEB: full grid, dotted PEB: finite subset', 'a'+nb));
+    end
 end
 end

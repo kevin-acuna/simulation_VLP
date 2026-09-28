@@ -1,0 +1,197 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,booktabs,array,graphicx,geometry}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\geometry{margin=24mm}
+\graphicspath{{results/responses_20260927_144247_890/}{results/K5_models_20260927_144407_520/figures_20260927_144550_375/}{results/estimators_20260927_150150_021/}}
+\title{Leer primero para el modelo del artículo\\\large PDA100A2, K=5: resultados, comparaciones y guía de uso}
+\author{Proyecto Cambridge}
+\date{27 de septiembre de 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Se presenta un estudio independiente de cinco orientaciones para el modelo SQ de Bastiaens et al. y controles que separan la forma angular de la apertura de aceptación. El documento identifica claramente qué cifras corresponden al coseno-potencia, al modelo específico publicado y a simulaciones de desajuste. Con los parámetros de Cambridge, SQ permite un PEB no mayor que 10 cm en todos los puntos de las rejillas ensayadas para ciertas inclinaciones; eso no certifica cobertura continua ni precisión experimental. Se acompañan estimadores dedicados y una comparación de datos SQ procesados con el modelo correcto o con un coseno inadecuado.
+\end{abstract}
+\tableofcontents
+
+\section{Respuesta corta y alcance}
+El artículo \cite{bastiaens2020} sí aporta una alternativa pertinente para comprender el PDA100A2. Su función SQ describe mejor sus medidas que el coseno simple y algo mejor que el coseno ajustado de orden 1.9 en ese montaje. Pero \textbf{SQ conserva un límite angular}: alcanza cero a un ángulo finito. Para $\psi_{3\mathrm{dB}}=0.61$ rad, ese ángulo es aproximadamente $64.58^\circ$.
+
+El estudio anterior de Cambridge era $K=5$, $m_R=1.9$ y FOV dura de $46^\circ$, no $m_R=5$. Aquí K continúa siendo cinco; $m_R$ sólo existe en los controles coseno-potencia. SQ no se representa mediante un exponente ficticio. La etiqueta de cada curva y las tablas guardadas indican la familia exacta.
+
+La teoría general, lectura crítica del artículo y derivación de FIM están en \path{PD_models_and_PEB.tex}. Los estimadores, sus Jacobianos y pseudocódigos están en \path{PD_estimators.tex}. Este informe se centra en los resultados K=5 y en cómo ejecutar cada rama del proyecto.
+
+\section{Cinco modelos comparados sin cambiar radiometría}
+\begin{center}\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.31\linewidth}rr>{\raggedright\arraybackslash}p{0.25\linewidth}}
+\toprule Modelo & Apertura externa & Soporte efectivo & Propósito \\
+\midrule
+Coseno $m_R=1.9$ histórico & $46^\circ$ & $46^\circ$ & Reproducir comparación anterior \\
+Coseno $m_R=1.9$ amplio & $90^\circ$ & $90^\circ$ & Aislar el efecto de quitar el corte a 46 grados \\
+PDA100A2 SQ & $90^\circ$ & $64.58^\circ$ & Modelo principal del artículo \\
+PDA100A2 SQapprox & $90^\circ$ & $68.606^\circ$ & Aproximación afín, con estimador algebraico especial \\
+PDA100A2 Exp & $90^\circ$ & $90^\circ$ & Ajuste exponencial alternativo publicado \\
+\bottomrule
+\end{tabular}
+\end{center}
+No se atribuye toda la mejora frente al modelo histórico a la superioridad del ajuste SQ: una parte importante procede de no imponer el corte anterior a $46^\circ$. El control coseno amplio permite separar ambas causas. La aceptación externa de $90^\circ$ significa aquí que no se agrega una apertura antes del hemisferio frontal; no es una medida nueva del fabricante.
+
+Se mantienen $P_t=0.65$ W, área $75.4\ \mathrm{mm}^2$, LED en $(0,0,2.5)$ m con semiángulo de media potencia $45^\circ$, ruido $3\times10^{-14}\ \mathrm W^2$ por muestra y $N_i=1000$. La comparación de modelos es de forma angular a igual ganancia normal y ruido, no una comparación de electrónica diferente.
+
+La Figura~\ref{fig:response} muestra las familias para ambos dispositivos. Para PDA36A2, la curva coseno del artículo usa orden 0.98; SQ usa $\psi_{3\mathrm{dB}}=0.79$ rad. La línea horizontal $1/\sqrt2$ corresponde al parámetro SQ; la línea $1/2$ al parámetro de media respuesta de Exp. No son la misma referencia.
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.97\linewidth]{PD_normalized_responses.pdf}
+\caption{Funciones analíticas con coeficientes publicados; no se presentan como digitalización de datos experimentales.}\label{fig:response}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.97\linewidth]{PD_response_derivatives.pdf}
+\caption{Las derivadas son distintas aunque las curvas de respuesta puedan parecer cercanas. La FIM depende de ellas; un mejor $R^2$ de amplitud no valida automáticamente una cota.}
+\end{figure}
+
+\section{Geometría, cobertura y protocolo de pose}
+Se evalúa el dominio $[-1,1]\times[-1,1]\times[0,1.4]$ m. La rejilla de diseño tiene 968 puntos y la de comprobación 6615. Las cinco normales forman un cono de inclinación común $\theta$, azimuts separados $72^\circ$ y offset cero. Se barre $\theta=0:0.25:85$ grados usando el mismo codebook para todas las posiciones.
+
+La cobertura objetivo es la fracción de \emph{todos} los puntos con PEB regular finito no mayor que 0.10 m. Se conservan separadamente cobertura regular, RMS del dominio completo, RMS condicionado al subconjunto finito y fracción no regular. No se usa pseudoinversa para fabricar cotas finitas.
+
+Se comparan orientaciones exactas con una desviación estándar $\sigma_\theta=1^\circ$ \emph{por componente tangente} del conocimiento de cada normal. La cota con pose incierta elimina parámetros auxiliares mediante:
+\begin{equation}
+ I_e=J^{\mathsf T}(\Sigma_y+D\Sigma_\theta D^{\mathsf T})^{-1}J,\qquad
+ D_i=\beta h'(s_i)\mathbf u^{\mathsf T}E_i.
+\end{equation}
+Es una CRLB local del modelo conjunto RSS--medida de pose, con errores independientes por orientación. No es el PEB de normales perturbadas entregadas como perfectamente conocidas, ni la CRLB marginal exacta de un actuador aleatorio sin medidas de pose. La incertidumbre persiste durante las muestras ópticas de una orientación y no se divide por $N_i$.
+
+\section{Resultado principal para PDA100A2 SQ}
+En la rejilla densa:
+\begin{center}
+\begin{tabular}{lrr}
+\toprule Decisión & Pose exacta & $\sigma_\theta=1^\circ$ \\
+\midrule
+Máxima cobertura de PEB de 10 cm & 100\% & 100\% \\
+Primera inclinación que logra el máximo & $2.5^\circ$ & $15.5^\circ$ \\
+Menor inclinación con cobertura de al menos 95\% & $1.75^\circ$ & $11.5^\circ$ \\
+Menor inclinación a un punto porcentual del máximo & $2^\circ$ & $12.5^\circ$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+En la rejilla de diseño, SQ alcanza 100\% desde $2.5^\circ$ sin error y desde $15.25^\circ$ con un grado. El requisito de 95\% se alcanza desde $1.75^\circ$ y $12^\circ$, respectivamente. Por tanto, una recomendación pequeña que satisfaga 95\% en \emph{las dos rejillas} es $1.75^\circ$ para pose exacta y $12^\circ$ con la incertidumbre especificada. Son decisiones discretas condicionadas al modelo, no tolerancias experimentales certificadas.
+
+El criterio ``primer máximo'' no minimiza el PEB una vez saturada la cobertura al 100\%: muchas inclinaciones pueden empatar. El investigador puede preferir otro compromiso de recursos, peor punto o robustez; las curvas completas están guardadas.
+
+\section{Qué parte cambia por el soporte y qué parte por la función}
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule Modelo, rejilla densa & $\sigma_\theta$ & Máxima cobertura & Primer máximo \\
+\midrule
+Coseno 1.9, corte 46 grados & $0^\circ$ & 98.579\% & $4.25^\circ$ \\
+Coseno 1.9, corte 46 grados & $1^\circ$ & 89.751\% & $25.5^\circ$ \\
+Coseno 1.9, externo 90 grados & $0^\circ$ & 100\% & $2.75^\circ$ \\
+Coseno 1.9, externo 90 grados & $1^\circ$ & 100\% & $18^\circ$ \\
+SQ & $0^\circ$ & 100\% & $2.5^\circ$ \\
+SQ & $1^\circ$ & 100\% & $15.5^\circ$ \\
+SQapprox & $0^\circ$ & 100\% & $2.5^\circ$ \\
+SQapprox & $1^\circ$ & 100\% & $13.75^\circ$ \\
+Exp & $0^\circ$ & 100\% & $2.75^\circ$ \\
+Exp & $1^\circ$ & 100\% & $22^\circ$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+La comparación histórica con corte a 46 grados era más restrictiva geométricamente. Un coseno 1.9 amplio ya recupera 100\% de cobertura de cota en estas rejillas; no sería correcto atribuir ese salto completo a SQ. La forma también importa: cambia la inclinación que alcanza una precisión útil bajo error angular.
+
+SQapprox alcanza el umbral completo con menor tilt que SQ en el caso de un grado, aunque no es el mejor ajuste experimental del artículo. Eso muestra por qué no se debe escoger el modelo real del PD simplemente por la cota más baja que predice sobre sí mismo. El modelo debe determinarse con medidas; el diseño se optimiza después.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.97\linewidth]{K5_PD_model_coverage.pdf}
+\caption{Cobertura objetivo en la rejilla densa por modelo identificado. Cada modelo incluye su propio soporte; el control coseno amplio separa soporte de forma.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.97\linewidth]{K5_PD_model_conditional_PEB.pdf}
+\caption{RMS condicionado a puntos finitos. No debe compararse sin la cobertura anterior: curvas pequeñas pueden excluir posiciones difíciles. El CSV conserva también RMS completo.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.97\linewidth]{Selected_tilt_spatial_coverage.pdf}
+\caption{Clases de cobertura para SQ en las primeras inclinaciones de máximo denso. El 100\% de una rejilla finita no certifica todo el volumen continuo.}
+\end{figure}
+
+\section{Estimadores: modelo correcto y desajuste}
+El experimento independiente de estimadores genera datos con \emph{SQ como verdad sintética} y utiliza $K=5$, tilt $20^\circ$, nueve posiciones con $x\in\{-0.4,0,0.4\}$ m, $y=0$ y $z\in\{0.2,0.8,1.4\}$ m. Todas las orientaciones son visibles en esa región, lo cual permite una comparación justa con el estimador histórico coseno, que exige visibilidad completa.
+
+Se contrastan:
+\begin{itemize}
+\item NLS conjunto de dirección y escala para SQ.
+\item NLS perfilado, que elimina amplitud analíticamente y optimiza dos coordenadas angulares.
+\item GLS y WLS \emph{no lineales} de cocientes $h(s_i)/h(s_j)$.
+\item NLS coseno 1.9 aplicado deliberadamente a datos SQ, como control de desajuste.
+\end{itemize}
+El método algebraico \texttt{sqapprox\_ls} está reservado a SQapprox y a conos de visibilidad completa; su coincidencia con NLS se comprueba en las pruebas. No se usa ni se etiqueta como solución exacta de SQ.
+
+Se barre $N_i\in\{100,1000,10000\}$ con 500 ensayos por posición y se conservan las mismas realizaciones de ruido para todos los métodos de cada caso. Las métricas incluyen fallos, RMSE condicionado y completo, sesgo empírico, error angular y error de distancia. La curva PEB corresponde al modelo verdadero conocido y no es una cota universal del MSE del estimador que usa un modelo incorrecto.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.97\linewidth]{PD_estimators_vs_samples.pdf}
+\caption{Estimación bajo verdad sintética SQ y control de desajuste coseno. El error de modelo puede producir un suelo que más muestras no elimina; el panel de fallos evita ocultar estimaciones no válidas.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.97\linewidth]{PD_estimator_error_CDF.pdf}
+\caption{CDF empírico de errores de estimadores, distinto de la cobertura espacial de la cota. La masa de fallos permanece en el denominador.}
+\end{figure}
+
+Con $N_i=1000$, el RMS-PEB es 0.3105 cm. NLS conjunto y perfilado obtienen 0.3050 cm; GLS no lineal de cocientes, 0.3051 cm; WLS no lineal de cocientes, 0.3571 cm. Usar el NLS coseno sobre esas mismas observaciones da 2.987 cm. Al aumentar a $N_i=10000$, el NLS correcto baja a 0.09645 cm, mientras el control con modelo incorrecto permanece en 2.976 cm. No se registraron fallos en esta ejecución. La proximidad o pequeñas diferencias respecto a la cota se interpretan con la incertidumbre Monte Carlo y el carácter local de la CRLB, sin forzar una desigualdad numérica por ensayo.
+
+El experimento demuestra las consecuencias de usar un canal incorrecto \emph{si SQ fuera la verdad}; no sustituye una validación con datos reales del PDA100A2 propio. Tampoco garantiza convergencia global de los estimadores multisemilla. La FIM verifica rango local; la ausencia de una segunda solución no está certificada globalmente.
+
+\section{Carpetas y uso sin mezclar modelos}
+\begin{verbatim}
+Receiver models/
+  rx_receiver_model.m
+  rx_receiver_response.m
+  rx_receiver_description.m
+  Bastiaens 2020/
+    Parameters/bastiaens2020_parameters.m
+    Estimators/pd_fit_estimate.m
+    Experiments/sim01_paper_PD_responses.m
+    Experiments/sim02_paper_K5_PEB.m
+    Experiments/sim03_paper_PD_estimators.m
+    Studies/, Plotting/, results/, build/
+\end{verbatim}
+La rama histórica conserva sus carpetas de parámetros, estimadores y diseño:
+\begin{itemize}
+\item \path{System/Parameters} y \path{Estimators}.
+\item \path{Design of the Parameters (CRLB design)}.
+\item \path{Coverage target design}.
+\end{itemize}
+Su selector por defecto es coseno-potencia. Los programas anteriores continúan con $m_R=1$ o con el valor que el investigador indique.
+
+Para el modelo publicado, seleccionar explícitamente dispositivo, familia y apertura externa:
+\begin{verbatim}
+addpath('CAMBRIDGE/simulations');
+cambridge_setup();
+base = system_parameters();
+p = bastiaens2020_parameters(base, 'PDA100A2', 'SQ', 90);
+[peb, info] = rx_peb(positions, normals, p, N);
+[rhat, status] = pd_fit_estimate('profile_nls', y, normals, p, N);
+\end{verbatim}
+Para SQapprox y su algoritmo particular:
+\begin{verbatim}
+pa = bastiaens2020_parameters(base, 'PDA100A2', 'SQapprox', 90);
+[rhat, status] = pd_fit_estimate('sqapprox_ls', y_approx, ...
+    cone_normals, pa, N);
+\end{verbatim}
+No se cambian automáticamente potencia, área o varianza al elegir un preset: para comparar hardware completo hay que modificar esos recursos explícitamente. Las tablas \texttt{models.csv} indican el área usada y la de referencia del dispositivo, además de los parámetros activos y el soporte efectivo.
+
+Los tres scripts independientes pueden ejecutarse por su nombre después de \texttt{cambridge\_setup}. Se puede cambiar \texttt{device}, \texttt{truth\_family}, apertura externa, K, tilt, incertidumbre angular, número de ensayos y umbral. Para redibujar sin recalcular:
+\begin{verbatim}
+replot_paper_PD(fullfile(result.output_directory, ...
+    'paper_results.mat'), ieee_plot_style());
+\end{verbatim}
+La interfaz histórica \texttt{rx\_estimate} rechaza parámetros SQ/Exp. Ese rechazo es intencional: evita reutilizar una raíz de potencia que ya no tiene la justificación de TCOM.
+
+\section{Conclusiones para el artículo de revista}
+La formulación útil para un journal es la FIM y el diseño con respuesta angular general $h(s)$, ilustrados con un modelo publicado y con verificaciones de desajuste. La fidelidad experimental de SQ corresponde al artículo citado y al dispositivo estudiado allí. Una contribución de Cambridge necesitaría validar sus propias normales, respuesta, ruido y calibración.
+
+En este ejercicio, el resultado principal K=5 es que SQ alcanza 100\% de cobertura de PEB de 10 cm en las rejillas a $2.5^\circ$ con pose exacta y a $15.5^\circ$ con la incertidumbre indicada. Para al menos 95\% en ambas rejillas, las inclinaciones pequeñas son $1.75^\circ$ y $12^\circ$. La comparación con el coseno amplio muestra que retirar el corte a 46 grados explica una parte importante del cambio. Ninguno de esos números debe presentarse como precisión experimental garantizada ni como óptimo global de todos los patrones de orientación.
+
+\bibliographystyle{IEEEtran}
+\bibliography{bastiaens2020_references}
+\end{document}

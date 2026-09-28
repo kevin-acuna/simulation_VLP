@@ -1,4 +1,6 @@
 function [mean_W, variance_W2, mean_gradient, variance_gradient, info] = rx_actuation_moments(positions, normals, p, counts, variance_deg2)
+assert(strcmp(rx_receiver_model(p),'cosine_power'), 'cambridge:CosineModelRequired', ...
+    'These actuation moment formulas require a cosine-power response.');
 validateattributes(variance_deg2, {'numeric'}, {'scalar', 'real', 'finite', 'nonnegative'});
 validateattributes(p.noise.variance_W2, {'numeric'}, {'scalar', 'real', 'finite', 'positive'});
 K = size(normals, 2);

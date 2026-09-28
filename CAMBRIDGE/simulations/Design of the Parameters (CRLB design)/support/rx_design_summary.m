@@ -8,4 +8,6 @@ summary = table([b.half_angle_deg]', [b.fov_deg]', [b.cone_tilt_deg]', [b.K_mini
     'VariableNames', {'HalfAngle_deg', 'FOV_deg', 'ConeTilt_deg', 'K_minPEB', 'K_recommended', 'K_fixedBudget', ...
     'ConeRMS_cm', 'RefinedRMS_cm', 'ValidationCoverage_percent', 'ValidationRMS_cm', ...
     'Area_minPEB_mm2', 'Area_target_mm2', 'Area_minRMS_cm'});
+summary.CoverageThreshold_cm = repmat(rx_coverage_threshold(r.parameters), numel(b), 1);
+summary.ValidationRegularCoverage_percent = 100*arrayfun(@(x) mean(isfinite(x.validation_peb_m)), b)';
 end

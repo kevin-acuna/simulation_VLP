@@ -42,8 +42,10 @@ assert(fid>=0, 'cambridge:Manifest', 'Cannot write the parameter manifest.');
 cleanup = onCleanup(@() fclose(fid));
 fprintf(fid, '%s', transcript);
 finite = result.rms_full_m(isfinite(result.rms_full_m));
-fprintf('Completed %d configurations; regular coverage range %.2f--%.2f%%.\n', ...
+fprintf('Completed %d configurations; selected coverage range %.2f--%.2f%%.\n', ...
     height(result.table), 100*min(result.coverage(:)), 100*max(result.coverage(:)));
+fprintf('Regular finite-PEB coverage range %.2f--%.2f%%; selected threshold = %g cm (Inf means finite).\n', ...
+    100*min(result.regular_coverage(:)), 100*max(result.regular_coverage(:)), result.coverage_threshold_cm);
 if isempty(finite)
     fprintf('No configuration has a finite full-domain RMS. Inspect coverage, not only conditional PEB.\n');
 else

@@ -10,10 +10,26 @@ validateattributes(counts, {'numeric'}, {'integer', 'positive', 'numel', K});
 [~, J, info] = rx_channel(positions, normals, p);
 P = size(positions, 2);
 peb = inf(1, P);
+variance = variance_deg2*(pi/180)^2;
+if nargout<2 && strcmp(structure, 'independent')
+    active = info.visible & ~info.boundary;
+    angular_factor = zeros(K, P);
+    s = min(1, info.incidence_cosine(active));
+    angular_factor(active) = info.response_derivative_s(active).^2.*max(0, 1-s.^2);
+    effective_variance = p.noise.variance_W2./counts+variance*info.beta_W.^2.*angular_factor;
+    G = J./reshape(sqrt(effective_variance), K, 1, P);
+    G(:, :, info.boundary) = 0;
+    singular = zeros(3, P);
+    S = pagesvd(G, 'econ', 'vector');
+    singular(1:min(K, 3), :) = reshape(S, min(K, 3), P);
+    valid = sum(singular>p.numerics.rank_relative_tolerance*singular(1, :), 1)==3 & ~info.boundary;
+    peb(valid) = sqrt(sum(singular(:, valid).^(-2), 1));
+    peb(info.boundary) = NaN;
+    return;
+end
 detail.pose_jacobian = cell(1, P);
 detail.effective_covariance_W2 = nan(K, K, P);
 detail.fim_per_m2 = nan(3, 3, P);
-variance = variance_deg2*(pi/180)^2;
 for ip = 1:P
     if strcmp(structure, 'independent')
         D = zeros(K, 2*K);
@@ -26,8 +42,7 @@ for ip = 1:P
         if ~info.visible(i, ip)
             continue;
         end
-        s = info.incidence_cosine(i, ip);
-        factor = info.beta_W(ip)*info.receiver_order*s^(info.receiver_order-1);
+        factor = info.beta_W(ip)*info.response_derivative_s(i, ip);
         if strcmp(structure, 'independent')
             E = rx_tangent_basis(normals(:, i));
             D(i, 2*i-1:2*i) = factor*info.direction_rx_to_tx(:, ip)'*E;

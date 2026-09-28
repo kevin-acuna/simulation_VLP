@@ -1,0 +1,86 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx,booktabs,array}
+\usepackage{cite}
+\usepackage{placeins}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{figures/}}
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\trans}{^{\mathsf T}}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\R}{\mathbb R}
+\newcommand{\draftsubsection}[1]{\subsection{#1}\par\penalty0\relax}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\begin{document}
+\title{Calibration-Aware Three-Dimensional Optical Positioning With a Fixed LED and a Tilt-Constrained Reorientable Photodiode}
+\author{Author names and affiliations to be confirmed}
+\markboth{IEEE Transactions on Instrumentation and Measurement --- Working Manuscript}{Fixed-LED Positioning With a Reorientable Photodiode}
+\maketitle
+\begin{abstract}
+\end{abstract}
+\begin{IEEEkeywords}
+\end{IEEEkeywords}
+
+\section{Introduction}
+\label{sec:introduction}
+\draftsubsection{Background and Motivation}
+\draftsubsection{Related Work and Research Gap}
+\draftsubsection{Contributions and Organization}
+
+\section{System and Measurement Model}
+\label{sec:model}
+\input{sections/02_system_measurement_model}
+\FloatBarrier
+
+\section{Calibration and Uncertainty Characterization}
+\label{sec:calibration}
+\draftsubsection{Radiometric Scale and Transmitter Pattern}
+\draftsubsection{Receiver Angular Response and Model Selection}
+\draftsubsection{Orientation Reference and Optical-Center Calibration}
+\draftsubsection{Noise Statistics, Correlation, and Repeatability}
+
+\section{Identifiability and Position Error Bounds}
+\label{sec:bounds}
+\draftsubsection{Local Identifiability and Global Ambiguities}
+\draftsubsection{Fisher Information With Known Orientations}
+\draftsubsection{Effective Information With Orientation Uncertainty}
+\draftsubsection{Position Error Bound and Coverage Criteria}
+
+\section{Estimation and Tilt-Constrained Orientation Design}
+\label{sec:estimation}
+\draftsubsection{Estimation With a Calibrated Angular Response}
+\draftsubsection{Cosine-Power Reference Estimators}
+\draftsubsection{Initialization, Model Support, and Failure Detection}
+\draftsubsection{Orientation-Set and Sample-Budget Design}
+
+\section{Experimental Platform and Evaluation Protocol}
+\label{sec:experiments}
+\draftsubsection{Optical and Electromechanical Instrumentation}
+\draftsubsection{Position Reference and Its Measurement Uncertainty}
+\draftsubsection{Calibration and Independent Validation Datasets}
+\draftsubsection{Acquisition Procedure, Baselines, and Performance Metrics}
+
+\section{Numerical and Experimental Results}
+\label{sec:results}
+\draftsubsection{Three-Dimensional Position Error and Information Bounds}
+\draftsubsection{Inclination, Orientation Count, and Spatial Coverage}
+\draftsubsection{Angular-Response Mismatch and Calibration Sensitivity}
+\draftsubsection{Orientation Errors, Reflections, and Acquisition Time}
+\draftsubsection{Limitations and Transferability}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\appendices
+\section{Channel Derivatives for the Considered Response Families}
+\label{app:derivatives}
+\section{Estimation and Orientation-Design Procedures}
+\label{app:algorithms}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}

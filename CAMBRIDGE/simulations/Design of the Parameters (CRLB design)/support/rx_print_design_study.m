@@ -2,6 +2,8 @@ function rx_print_design_study(kind, p, e)
 fprintf('\n============================================================\nCAMBRIDGE | %s\n', upper(kind));
 fprintf('BASE SYSTEM (swept quantities are explicitly listed below)\n');
 fprintf('Receiver angular order m_R = %.6g\n', rx_receiver_order(p));
+fprintf('Selected coverage threshold = %g cm; Inf counts all finite regular PEBs.\n', rx_coverage_threshold(p));
+fprintf('Feasibility and target-coverage objectives retain their separate experiment.target_peb_m setting.\n');
 fprintf('Room [m]: %s; LED position [m]: %s; LED normal: %s\n', ...
     mat2str(p.environment.room_size_m'), mat2str(p.transmitter.position_m'), mat2str(p.transmitter.normal'));
 fprintf('P_t = %.6g W; reference A_PD = %.6g mm^2; R_p = %.6g A/W; T_s = %g; g = %g\n', ...

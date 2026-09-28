@@ -7,6 +7,7 @@ fprintf('\n============================================================\n');
 fprintf('CAMBRIDGE | %s | %s\n', upper(kind), char(datetime('now')));
 fprintf('FIXED SYSTEM (case-specific optical parameters follow)\n');
 fprintf('Receiver angular order m_R = %.6g\n', rx_receiver_order(p));
+fprintf('Selected coverage threshold = %g cm; Inf counts all finite regular PEBs.\n', rx_coverage_threshold(p));
 fprintf('Room [m]: %s | LED position [m]: %s | LED normal: %s\n', ...
     mat2str(p.environment.room_size_m'), mat2str(p.transmitter.position_m'), mat2str(p.transmitter.normal'));
 fprintf('P_t = %.6g W | R_p = %.6g A/W | T_s = %.6g | optical gain = %.6g\n', ...

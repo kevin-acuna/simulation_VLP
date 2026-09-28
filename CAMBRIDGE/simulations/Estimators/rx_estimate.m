@@ -6,7 +6,8 @@ if nargin < 6
     options = struct();
 end
 method = upper(char(method));
-assert(any(strcmp(method, {'LS', 'GLS', 'WLS', 'NLS'})), 'cambridge:EstimatorMethod', 'Choose LS, GLS, WLS or NLS.');
+assert(any(strcmp(method, {'LS', 'GLS', 'WLS', 'NLS', 'NLS_JOINT', 'NLS_TCOM'})), ...
+    'cambridge:EstimatorMethod', 'Choose LS, GLS, WLS, NLS_joint or NLS_TCOM. NLS remains an alias for NLS_joint.');
 validateattributes(mean_W, {'numeric'}, {'real', 'finite', '2d', 'nrows', size(normals, 2)});
 a = rx_estimator_context(normals, p, counts, options);
 trials = size(mean_W, 2);
@@ -40,8 +41,19 @@ for j = 1:trials
                     status = "nonpositive_amplitude";
                 end
             end
-        case 'NLS'
+        case {'NLS', 'NLS_JOINT'}
             [v, status, info.iterations(j)] = rx_optical_nls(y, a);
+        case 'NLS_TCOM'
+            [u, ~, status, info.iterations(j)] = rx_tcom_nls_direction(y, a);
+            v = nan(3, 1);
+            if status=="success"
+                beta = rx_profile_amplitude(y, u, a);
+                if isfinite(beta)
+                    v = beta^(1/a.order)*u;
+                else
+                    status = "nonpositive_amplitude";
+                end
+            end
     end
     info.status(j) = status;
     if status~="success" || ~rx_optical_domain(v, a)

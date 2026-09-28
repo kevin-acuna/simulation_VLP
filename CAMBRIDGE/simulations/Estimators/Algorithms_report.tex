@@ -243,7 +243,9 @@ replot_estimator_results(fullfile(result.output_directory, ...
 \end{verbatim}
 
 \section{Respuesta a la pregunta de una o dos etapas}
-\textbf{No se requieren necesariamente dos etapas.} LS directo estima tres componentes ópticas simultáneamente y NLS ajusta conjuntamente esas mismas tres incógnitas a las potencias originales. La transformación final a coordenadas espaciales es algebraica. GLS/WLS de cocientes sí son alternativas de dirección y amplitud, útiles para contrastar estrategias, pero no una imposición física de la arquitectura.
+\textbf{Aclaración de nomenclatura (27 de septiembre de 2026).} El protocolo completo de TCOM sí separa dirección y distancia, y su función NLS original devuelve sólo dirección. En este informe, NLS designa el ajuste conjunto en coordenadas ópticas, seguido de conversión algebraica: no significa una ejecución literal del código TCOM. Actualmente \texttt{NLS} conserva su comportamiento como alias de \texttt{NLS\_joint}, y \texttt{NLS\_TCOM} implementa explícitamente dirección--escala y recuperación posterior con las mismas potencias. La equivalencia de objetivos, sus restricciones, las diferencias de implementación y los pseudocódigos completos están en \path{Estimators_derivation_TCOM.tex}.
+
+\textbf{No se requieren necesariamente dos problemas independientes de ajuste.} LS directo estima tres componentes ópticas simultáneamente y NLS ajusta conjuntamente esas mismas tres incógnitas a las potencias originales. La transformación final a coordenadas espaciales es algebraica. GLS/WLS de cocientes sí son alternativas de dirección y amplitud, útiles para contrastar estrategias, pero no una imposición física de la arquitectura.
 
 \textbf{El patrón del LED es esencial para distancia, no para la forma determinista de la dirección.} Un LED cuasi-Lambertiano no invalida la arquitectura si su patrón se conoce y se calibra, pero utilizar un patrón incorrecto introduce el sesgo de \eqref{eq:pattern_bias}.
 

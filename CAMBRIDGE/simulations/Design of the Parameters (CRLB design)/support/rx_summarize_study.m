@@ -12,6 +12,8 @@ full = conditional;
 full(count<size(raw, 1)) = Inf;
 result.rms_full_m = reshape(full, shape);
 result.rms_conditional_m = reshape(conditional, shape);
-result.coverage = reshape(count/size(raw, 1), shape);
+result.regular_coverage = reshape(count/size(raw, 1), shape);
+result.coverage_threshold_cm = rx_coverage_threshold(result.parameters);
+result.coverage = reshape(sum(valid & raw<=result.coverage_threshold_cm/100, 1)/size(raw, 1), shape);
 result.nonregular_fraction = reshape(sum(isnan(raw), 1)/size(raw, 1), shape);
 end

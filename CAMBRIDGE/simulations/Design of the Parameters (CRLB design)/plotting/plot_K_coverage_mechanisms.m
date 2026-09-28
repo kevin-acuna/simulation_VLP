@@ -11,8 +11,8 @@ for jf = 1:numel(e.fov_values_deg)
         h.HandleVisibility = 'off';
     end
     ylim(ax, [0 103]);
-    ylabel(ax, 'Grid coverage (%)');
-    title(ax, sprintf('FOV=%g deg: solid 3D, dotted LOS', e.fov_values_deg(jf)));
+    ylabel(ax, rx_coverage_label(r, 'Grid coverage (%)'));
+    title(ax, sprintf('FOV=%g deg: solid selected coverage, dotted LOS', e.fov_values_deg(jf)));
     rx_ieee_axes(ax, style);
     if jf==1
         lg = legend(ax, handles, strrep(e.patterns, '_', ' '), 'NumColumns', 3, 'Box', 'off');

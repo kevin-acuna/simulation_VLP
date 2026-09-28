@@ -45,10 +45,13 @@ area = repmat(e.area_values_mm2(:), nb, 1);
 scale = p.receiver.area_m2*1e6./area;
 r.rms_full_m = quality(base, 1).*scale;
 r.rms_conditional_m = quality(base, 2).*scale;
-r.coverage = quality(base, 3);
+r.regular_coverage = quality(base, 3);
+r.coverage_threshold_cm = rx_coverage_threshold(p);
+r.coverage = zeros(numel(base), 1);
 r.target_coverage = zeros(numel(base), 1);
 for i = 1:numel(base)
     peb = r.base_peb_m(:, base(i))*scale(i);
+    r.coverage(i) = mean(isfinite(peb) & peb<=r.coverage_threshold_cm/100);
     r.target_coverage(i) = mean(isfinite(peb) & peb<=e.target_peb_m);
 end
 r.table = r.base_table(base, :);
@@ -56,9 +59,9 @@ r.table.Area_mm2 = area;
 r.table.RMS_full_cm = 100*r.rms_full_m;
 r.table.RMS_conditional_cm = 100*r.rms_conditional_m;
 r.table.Worst_cm = 100*quality(base, 4).*scale;
-r.table.RegularCoverage_percent = 100*r.coverage;
 r.table.TargetCoverage_percent = 100*r.target_coverage;
-r.table.Feasible = r.coverage==1 & r.rms_full_m<=e.target_peb_m & r.target_coverage>=e.min_target_coverage;
+r = rx_coverage_columns(r);
+r.table.Feasible = r.regular_coverage==1 & r.rms_full_m<=e.target_peb_m & r.target_coverage>=e.min_target_coverage;
 r.extra_tables.base_profiles = r.base_table;
 r = rx_select_tilt_design(r);
 end

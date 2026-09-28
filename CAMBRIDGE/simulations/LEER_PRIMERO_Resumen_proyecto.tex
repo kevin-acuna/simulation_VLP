@@ -1,0 +1,276 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,booktabs,array,longtable,graphicx,geometry}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\geometry{margin=24mm}
+\title{Leer primero: proyecto Cambridge\\\large Qué contiene, qué preguntas responde y cómo utilizarlo}
+\author{Laboratorio MATLAB de posicionamiento óptico}
+\date{27 de septiembre de 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Esta guía reúne el modelo físico, las cotas, los experimentos de diseño, los estimadores y los estudios de sensibilidad del proyecto Cambridge. Su objetivo es servir de entrada antes de leer las derivaciones especializadas. Se distinguen los resultados históricos de las configuraciones actuales, el diseño basado en cotas de la precisión de estimadores, la cobertura regular de la cobertura de error objetivo y el ajuste conjunto de un protocolo con varias etapas. Los resultados son simulados y dependen de hipótesis de calibración y geometría; no equivalen a una validación experimental del hardware.
+\end{abstract}
+\tableofcontents
+\clearpage
+
+\section{La pregunta central y la respuesta obtenida}
+El problema es el dual de la arquitectura de reorientación del transmisor: un único LED permanece fijo y un único PD modifica su normal mediante dos grados de libertad, idealmente sin desplazar su centro óptico. Se desea estimar la posición tridimensional del PD a partir de las potencias RSS de $K$ orientaciones conocidas.
+
+\textbf{Sí es posible identificar localmente la posición 3D}. Para la familia coseno-potencia, la condición regular equivale a que las normales visibles tengan rango tres, con ganancia calibrada y normales conocidas globalmente. Para una respuesta calibrada general como SQ, debe comprobarse el Jacobiano completo: la equivalencia con rango de normales no se traslada automáticamente. $K\geq3$ es necesario bajo el ruido constante declarado, pero no suficiente. Repetir una normal no crea dimensiones de información. Identificabilidad local tampoco garantiza unicidad global. La altura forma parte de las tres incógnitas; mostrar mapas a una altura dada no significa que el algoritmo la conozca.
+
+Si se desconoce una escala óptica global, existe una ambigüedad distancia--ganancia. Reorientar el receptor no elimina esa ambigüedad. Tampoco sustituye una referencia global de actitud: comandos relativos del gimbal no equivalen automáticamente a normales globales conocidas.
+
+\section{Modelo físico vigente}
+Con $\mathbf t$ y $\mathbf r$ como posiciones del LED y del PD:
+\begin{equation}
+ d=\|\mathbf t-\mathbf r\|,\quad \mathbf u=(\mathbf t-\mathbf r)/d,\quad
+ c=(-\mathbf n_t)^{\mathsf T}\mathbf u,\quad s_i=\mathbf n_i^{\mathsf T}\mathbf u.
+\end{equation}
+En el interior visible:
+\begin{equation}
+ \mu_i=\frac{C f_T(\mathbf u)}{d^2}\,h(s_i),\qquad
+ C=\frac{P_t(m_T+1)A_{\rm PD}T_sg}{2\pi}.
+\end{equation}
+La emisión Lambertiana corresponde a $f_T=c^{m_T}$, con $m_T=-\ln2/\ln(\cos\Phi_{1/2})$. La rama general coseno usa $h(s)=s^{m_R}$, con valor por defecto $m_R=1$; su estudio focalizado K=5 usa $m_R=1.9$. La rama de respuesta calibrada sustituye $h$ y su derivada por SQ, SQapprox o Exp, sin multiplicar otro coseno ni convertir esos modelos en un exponente ficticio.
+
+Las hipótesis de base son LOS, centro del PD estacionario, parámetros ópticos calibrados y ruido Gaussiano independiente de varianza óptica constante. Las medias tienen varianza $\sigma^2/N_i$. La responsividad nominal en A/W sirve para la conversión de medidas eléctricas; no se duplica como otro factor en una potencia ya expresada en vatios ópticos.
+
+\subsection{FOV, semiángulo LED y orden receptor}
+La FOV configurada es el \textbf{semiángulo} de aceptación desde la normal del PD. FOV $46^\circ$ significa un cono completo de $92^\circ$ en el modelo de corte duro. No es el semiángulo LED de media potencia ni necesariamente el ángulo de media sensibilidad del receptor.
+
+Esta distinción importa especialmente para $m_R=1.9$: $\arccos(2^{-1/1.9})$ está cerca de $46^\circ$, pero allí la respuesta de coseno todavía vale la mitad, no cero. Si un valor de hoja de datos representa media sensibilidad, no debe introducirse automáticamente como corte de FOV. El proyecto mantiene por ahora el valor configurado, sin ampliar aceptación para mejorar artificialmente cobertura.
+
+\section{Elegir una rama: coseno general o modelo del artículo}
+\textbf{No hay un único modelo de PD implícito.} La familia histórica es coseno-potencia. La carpeta nueva \path{Receiver models/Bastiaens 2020} contiene presets de respuesta específicos del artículo \emph{Impact of a Photodiode's Angular Characteristics on RSS-Based VLP Accuracy}, DOI 10.1109/ACCESS.2020.2991298.
+\begin{itemize}
+\item \textbf{Coseno general}: se usa \path{system_parameters}, se cambia \path{receiver.m_R} y se mantienen los estimadores \path{rx_estimate}. Los scripts históricos siguen en sus carpetas anteriores.
+\item \textbf{PDA100A2/PDA36A2 del artículo}: se crea un preset con \path{bastiaens2020_parameters}, especificando dispositivo, SQ/SQapprox/Exp y apertura externa. Se usan los estimadores \path{pd_fit_estimate} y los scripts de la carpeta del artículo.
+\end{itemize}
+\begin{verbatim}
+pcos = system_parameters();
+pcos.receiver.m_R = 1.9;
+psq = bastiaens2020_parameters(pcos, 'PDA100A2', 'SQ', 90);
+\end{verbatim}
+El segundo objeto no conserva un parámetro $m_R$ activo. Su parámetro SQ es $\psi_{3\mathrm{dB}}=0.61$ rad, definido por respuesta $1/\sqrt2$ (3 dB eléctricos), no por respuesta $1/2$. SQ alcanza cero naturalmente a $64.58^\circ$; por tanto no elimina todo corte angular. Un límite externo anterior puede recortar más la curva. El caso de 90 grados declara que no se añade una apertura antes del hemisferio frontal, no una FOV medida nuevamente.
+
+Los coeficientes son datos publicados redondeados, no mediciones de nuestra unidad. Se verificó el PDF original y se conservan sus hipótesis y limitaciones. El PDA100A2 coincide con los $75.4\ \mathrm{mm}^2$ utilizados; el PDA36A2 tiene 13 mm$^2$. Elegir una curva no cambia silenciosamente área, ganancia electrónica ni ruido: las comparaciones de forma mantienen esos recursos constantes y guardan el área nominal bibliográfica aparte.
+
+\textbf{Lectura rápida de esta rama.} Los tres documentos y sus PDF están en la carpeta del artículo:
+\begin{itemize}
+\item \path{PD_K5_results.tex}: resultados K=5 y guía de uso.
+\item \path{PD_models_and_PEB.tex}: lectura del artículo y derivación de FIM.
+\item \path{PD_estimators.tex}: métodos nuevos y pseudocódigos.
+\end{itemize}
+Los algoritmos históricos rechazan un preset SQ/Exp, evitando una linealización TCOM que ya no corresponde.
+
+\section{Qué significa la cota y qué significa cobertura}
+El gradiente del canal proporciona la FIM de posición:
+\begin{equation}
+ I=J^{\mathsf T}\operatorname{diag}(N_i/\sigma^2)J,\qquad
+ \mathrm{PEB}=\sqrt{\operatorname{tr}(I^{-1})}.
+\end{equation}
+Se calcula mediante SVD del Jacobiano blanqueado. Rango menor que tres da \texttt{Inf}; las fronteras excluidas del modelo regular dan \texttt{NaN}. No se utiliza pseudoinversa para fabricar una cota finita en coordenadas no observables.
+
+Hay cuatro cantidades diferentes:
+\begin{enumerate}
+\item \textbf{Cobertura de luz}: al menos una orientación recibe señal aceptada.
+\item \textbf{Cobertura regular 3D}: PEB finito, fuera de fronteras excluidas y con FIM de rango tres.
+\item \textbf{Cobertura de PEB objetivo}: fracción de todas las posiciones con PEB finito y no mayor que un umbral.
+\item \textbf{Probabilidad empírica de error}: fracción de ensayos de un estimador cuyo error real está por debajo del umbral. No es la cantidad anterior.
+\end{enumerate}
+Una cota inferior al objetivo no garantiza que un estimador lo alcance. La CRLB es local y requiere regularidad e insesgadez local; un estimador sesgado o con desajuste de modelo no está sujeto a una desigualdad universal simple del mismo MSE.
+
+\subsection{Nuevo control de cobertura en centímetros}
+En \path{System/Parameters/system_parameters.m}:
+\begin{verbatim}
+p.design.coverage_threshold_cm = Inf;
+\end{verbatim}
+Con \texttt{Inf} se conserva el criterio histórico: contar sólo PEB finito y regular. Para contar posiciones con PEB de hasta 10 cm:
+\begin{verbatim}
+p.design.coverage_threshold_cm = 10;
+\end{verbatim}
+Se puede cambiar centralmente o añadir esa asignación después de crear \texttt{p} en un script concreto. Los ocho experimentos de diseño heredan el parámetro. El umbral está en centímetros; internamente se convierte a metros. Los puntos \texttt{Inf}/\texttt{NaN} nunca entran como cubiertos y permanecen en el denominador.
+
+Los campos se distinguen de forma explícita:
+\begin{itemize}
+\item \path{regular_coverage} y \path{RegularCoverage_percent}: cobertura regular.
+\item \path{coverage} y \path{Coverage_percent}: criterio de cobertura seleccionado.
+\item \path{CoverageThreshold_cm}: umbral utilizado, expresado en centímetros.
+\end{itemize}
+Las etiquetas reflejan el umbral cuando es finito. Con presupuesto total fijo, la cobertura de precisión puede diferir de la de muestras fijas y se dibuja por separado.
+
+El umbral no recorta valores del PEB ni modifica el cálculo de RMS. Si alguna posición no es identificable, el RMS del dominio completo continúa siendo infinito. El RMS condicionado a puntos finitos se guarda aparte. Los experimentos de viabilidad sim05 y sim07 mantienen además su objetivo declarado \texttt{experiment.target\_peb\_m}: el color de un mapa de área requerida no es una cobertura y no debe interpretarse como tal.
+
+\section{Mapa del proyecto}
+Todas las rutas siguientes son relativas a \path{CAMBRIDGE/simulations}. La aplicación \path{digital_twin_ows} es independiente y no forma parte de este laboratorio MATLAB.
+\begin{verbatim}
+System/
+  Parameters/system_parameters.m
+  rx_channel.m, rx_emission_pattern.m, rx_receiver_order.m
+Bounds (3D)/Position Error Bound/
+  rx_peb.m, PEB_derivation.tex, PEB_derivation_mR.tex
+Design of the Parameters (CRLB design)/
+  sim01_... hasta sim08_...
+  studies/, support/, plotting/
+Estimators/
+  rx_estimate.m, rx_estimate_* y nucleos matematicos
+Estimator comparisons/
+  tres scripts independientes, Monte Carlo y CDF
+Reorientation sensitivity/
+  tres protocolos de error angular, cotas y simulaciones
+Coverage target design/
+  sim01_K5_tilt_coverage.m y seleccion de inclinacion
+Receiver models/Bastiaens 2020/
+  Parameters/, Estimators/, Experiments/, Studies/, Plotting/
+  PD_models_and_PEB.tex, PD_estimators.tex, PD_K5_results.tex
+tests/
+\end{verbatim}
+Los scripts editables crean parámetros y especificaciones; las funciones de estudio calculan; las funciones de dibujo renderizan. Cada ejecución guarda un directorio con fecha, sin sobrescribir resultados anteriores. Se guardan parámetros, datos, métricas CSV y figuras PDF vectoriales, PNG y FIG editables. Los archivos MAT permiten redibujar sin volver a calcular.
+
+\section{Qué experimento responde a cada pregunta}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.40\linewidth}>{\raggedright\arraybackslash}p{0.52\linewidth}}
+\toprule Entrada & Pregunta principal \\
+\midrule\endhead
+\path{sim01_PEB_vs_inclination} & ¿Cómo cambia el PEB con tilt, FOV y semiángulo del LED? \\
+\path{sim02_PEB_vs_K} & ¿Qué aporta aumentar K con muestras por orientación o total fijo? \\
+\path{sim03_PEB_vs_A_PD} & ¿Qué mejora ofrece el área si el ruido se mantiene fijo? \\
+\path{sim04_PEB_heatmap} & ¿Dónde están las zonas favorables, malas o no identificables? \\
+\path{sim05_tilt_limited_feasibility} & ¿Qué combinaciones de FOV, área, K, patrón y LED son viables con tilt limitado? \\
+\path{sim06_K_information_and_coverage} & ¿La ganancia procede de nuevas direcciones, repetición o más muestras? \\
+\path{sim07_power_noise_and_samples} & ¿Cuánta potencia/promediado hace falta bajo el ruido declarado? \\
+\path{sim08_tilt_FOV_coverage_limits} & ¿Qué limita la geometría y qué cobertura seleccionada ofrece el codebook? \\
+\path{sim01_estimators_vs_PEB} & ¿Cómo se comparan LS/GLS/WLS/NLS con la cota y los CDF? \\
+\path{sim02_estimators_vs_mR} & ¿Cómo afecta el orden receptor y el ruido a los métodos? \\
+\path{sim03_LED_pattern_calibration} & ¿Qué sesgo introduce un LED cuasi-Lambertiano modelado incorrectamente? \\
+\path{sim01_pose_measurement_error} & ¿Cómo perjudican errores independientes de conocimiento de las normales? \\
+\path{sim02_actuation_error} & ¿Qué ocurre cuando la orientación real se desvía del comando sin medirlo? \\
+\path{sim03_common_attitude_error} & ¿Qué cambia con un error global correlacionado de actitud? \\
+\path{sim01_K5_tilt_coverage} & Con K=5 y $m_R=1.9$, ¿qué tilt maximiza cobertura bajo 10 cm y cuál es el menor aceptable? \\
+\path{sim01_paper_PD_responses} & ¿Qué curvas y pendientes publicadas corresponden al PDA100A2 y al PDA36A2? \\
+\path{sim02_paper_K5_PEB} & ¿Qué cambia en K=5 al usar SQ, SQapprox o Exp, separando forma y apertura? \\
+\path{sim03_paper_PD_estimators} & ¿Qué ocurre al estimar datos SQ con un modelo correcto o con coseno 1.9? \\
+\bottomrule
+\end{longtable}
+Los prefijos sim01/sim02 se repiten por familia, pero los nombres completos de los scripts son distintos. La configuración de un experimento no es automáticamente la de otro: deben leerse sus bloques iniciales y el registro de consola.
+
+\section{Preguntas que ya tienen respuesta}
+\subsection{¿Aumentar K siempre mejora?}
+No necesariamente. Para un conjunto anidado con pesos existentes fijos, añadir información no negativa no empeora la FIM. Pero los conos uniformes regenerados al cambiar K no son conjuntos anidados, y con muestras totales fijas cada orientación recibe menos muestras. En ese caso puede aparecer una meseta. Repetir direcciones no crea rango adicional; orientaciones fuera de FOV tampoco crean información útil regular.
+
+\subsection{¿Por qué inclinar puede ganar o perder cobertura?}
+Algunas normales se acercan a la dirección del LED y otras se alejan. El primer efecto recupera aceptación; el segundo puede quitar normales visibles. Con K pequeño, perder una normal puede destruir el rango tres. La incidencia, el rango y la precisión deben evaluarse por separado. No basta con afirmar que hay LOS geométrica.
+
+\subsection{¿El área o la FOV tienen siempre un óptimo interior?}
+No bajo el modelo ideal declarado. Con ruido óptico constante, el PEB escala como $1/A_{\rm PD}$ y $1/P_t$. Ampliar la FOV sin introducir pérdidas/ruido adicionales no penaliza por sí solo. En hardware, capacitancia, ruido, filtros y concentración pueden cambiar ese resultado; no se simula un óptimo físico que el modelo no contiene.
+
+\subsection{¿Son los mismos GLS/WLS/NLS de TCOM?}
+GLS y WLS mantienen el principio de cocientes, covarianzas y autovector del manuscrito, adaptando el exponente a $m_R$. NLS-TCOM ajusta dirección unitaria y escala, seguido de recuperación de amplitud/distancia. NLS conjunto ajusta un vector óptico tridimensional equivalente mediante cambio de variables en la misma región visible. El código histórico \texttt{NLS} se conserva como alias de \texttt{NLS\_joint}; existe una entrada explícita \texttt{NLS\_TCOM}.
+
+La equivalencia es del objetivo, no de cada iteración o decisión de un solver. El NLS original del paper devuelve dirección y su protocolo completo utiliza distancia después, en TCOM con una medición cooperativa adicional. Cambridge recupera amplitud y distancia del mismo barrido con calibración. La denominación anterior de ``un paso'' significa un ajuste conjunto y una conversión algebraica, no identidad literal con todo el protocolo TCOM.
+
+GLS de cocientes utiliza una aproximación delta con pesos congelados. No se hereda una afirmación de MLE/MVU exacto para cocientes de Gaussianas a cualquier SNR. La covarianza común de referencia no se omite en GLS y sí se aproxima por una diagonal en WLS.
+
+\subsection{¿Por qué LS y NLS pueden dibujarse superpuestos?}
+Con $m_R=1$ el vector óptico se relaciona linealmente con las potencias. Con varianzas iguales y solución física, LS directo y NLS conjunto resuelven exactamente el mismo problema. Separar artificialmente sus curvas sería incorrecto. Para $m_R\ne1$, el ruido de las raíces es heteroscedástico y aproximadamente sesgado; LS transformado no coincide en general con el MLE de potencias.
+
+\subsection{¿Qué se comprobó sobre el patrón del LED?}
+Durante un barrido receptor estacionario, el patrón del LED aparece como un factor común: puede cancelarse para dirección. La distancia requiere irradiancia angular absoluta calibrada. Un desajuste produce, sin ruido:
+\begin{equation}
+ \frac{\hat d}{d}=\sqrt{\frac{C_{\rm asumido}f_{T,\rm asumido}(\mathbf u)}{C_{\rm real}f_{T,\rm real}(\mathbf u)}}.
+\end{equation}
+Más muestras o cambiar de estimador no elimina ese sesgo. El ejemplo cuasi-Lambertiano implementado es un patrón controlado positivo, no una curva medida de un LED comercial.
+
+\subsection{¿Qué significa la sensibilidad angular de un grado?}
+En el modelo de medición de pose, un grado es la desviación estándar por componente tangente de la normal. La FIM conjunta usa RSS y mediciones auxiliares de pose; su complemento de Schur produce un PEB de posición con incertidumbre. En el modelo de actuación sin medidas de pose, la referencia actual es una aproximación Gaussiana de momentos, no una CRLB marginal exacta. Los gráficos de error de estimadores provienen además de Monte Carlo, con normales verdaderas y entregadas al algoritmo distintas.
+
+Estas perturbaciones no se promedian como si fueran independientes entre las mil muestras ópticas de una orientación. Un error común de actitud tampoco equivale a errores independientes para cada normal. Las varianzas de inclinación/azimut de encoders deben transformarse a la parametrización de error de normal.
+
+\section{Resultado focalizado: K=5, \texorpdfstring{$m_R=1.9$}{mR=1.9} y 10 cm}
+El estudio actual mantiene LED $(0,0,2.5)$ m, $P_t=0.65$ W, $\Phi_{1/2}=45^\circ$, área $75.4\ \mathrm{mm}^2$, FOV $46^\circ$, cinco azimuts uniformes y 1000 muestras por orientación. Evalúa un cono común entre $0^\circ$ y $85^\circ$ en pasos de $0.25^\circ$ sobre 968 y 6615 posiciones.
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Resultado en rejilla densa & Pose exacta & $\sigma_\theta=1^\circ$ \\
+\midrule
+Máxima cobertura bajo 10 cm & 98.579\% & 89.751\% \\
+Primer tilt que logra el máximo & $4.25^\circ$ & $25.5^\circ$ \\
+Menor tilt con al menos 95\% & $2^\circ$ & No existe \\
+Menor tilt a 1 punto del máximo & $2.25^\circ$ & $23^\circ$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Para cumplir 95\% en \emph{ambas} rejillas, la recomendación ideal de menor inclinación es $2.25^\circ$. Con incertidumbre de un grado no se alcanza ese requisito en ningún tilt ensayado. Si se acepta quedar a un punto porcentual del mejor caso de ambas rejillas, el menor tilt es $24.25^\circ$, sin presentarlo como cumplimiento de 95\%.
+
+La incertidumbre cambia radicalmente el diseño: el tilt ideal de $2.25^\circ$ sólo da aproximadamente 4.641\% de cobertura objetivo en la rejilla densa cuando se incluye ese error angular. No es suficiente elegir parámetros usando únicamente el PEB de pose perfecta.
+
+La comprobación de estimadores se hace en tres puntos explícitos de visibilidad completa y no estima el error de todos los puntos del volumen. La diferencia de cobertura entre rejillas y la resolución angular permanecen como límites de la conclusión. El óptimo es de un barrido de conos, no de todos los patrones posibles.
+
+\section{Resultado K=5 de la rama SQ del PDA100A2}
+El modelo SQ del artículo cambia tanto la pendiente como el soporte: la respuesta alcanza cero a unos $64.58^\circ$, en lugar del corte histórico a $46^\circ$. Por eso se añade un control coseno 1.9 con apertura externa de 90 grados, a igual potencia, área y ruido, para no atribuir todo el cambio al ajuste SQ.
+
+Con SQ, la primera inclinación de cobertura completa de PEB de 10 cm en la rejilla densa es $2.5^\circ$ para pose exacta y $15.5^\circ$ con desviación angular de un grado por componente. Para alcanzar al menos 95\% en ambas rejillas bastan $1.75^\circ$ y $12^\circ$, respectivamente. El coseno 1.9 amplio también alcanza 100\%, pero desde $2.75^\circ$ y $18^\circ$. La comparación distingue el efecto de soporte del efecto de forma angular.
+
+Esto es una predicción condicionada a coeficientes conocidos y ruido declarado, no una garantía experimental del PDA100A2. Una función que ajusta mejor amplitudes no valida automáticamente sus derivadas ni una cota cerca del corte. El artículo aporta evidencia experimental en su montaje de cuatro LEDs y un receptor móvil, no en el nuestro de un LED y un PD reorientable.
+
+Para SQ/Exp se implementan NLS conjunto, NLS con amplitud perfilada y GLS/WLS \emph{no lineales} de cocientes. La raíz que producía ecuaciones lineales en TCOM no es válida en general. SQapprox admite además una solución algebraica específica de conos uniformes, separada y protegida para impedir su aplicación a SQ.
+
+\section{Cómo empezar a trabajar}
+Desde la raíz del repositorio:
+\begin{verbatim}
+addpath('CAMBRIDGE/simulations');
+cambridge_setup();
+run_cambridge('test');
+sim01_K5_tilt_coverage;
+\end{verbatim}
+Para explorar otro objetivo, editar el bloque inicial del script:
+\begin{verbatim}
+p.receiver.m_R = 1.9;
+p.design.coverage_threshold_cm = 10;
+experiment.K = 5;
+experiment.orientation_std_deg = 1;
+experiment.minimum_coverage_percent = 95;
+experiment.near_peak_loss_pp = 1;
+\end{verbatim}
+Si sólo cambia la presentación, usar el MAT de la ejecución elegida:
+\begin{verbatim}
+style = ieee_plot_style();
+style.font_size = 9;
+replot_K5_target_results(fullfile(result.output_directory, ...
+    'target_design_results.mat'), style);
+\end{verbatim}
+Las otras familias disponen de estas funciones de redibujado:
+\begin{itemize}
+\item \path{replot_experiment}: estudios originales de diseño por cotas.
+\item \path{replot_estimator_results}: comparaciones de estimadores.
+\item \path{replot_sensitivity_results}: estudios de error angular.
+\item \path{replot_paper_PD}: nueva familia de respuestas, cotas y estimadores del artículo.
+\end{itemize}
+No se debe asumir que el directorio más reciente corresponde al benchmark que se desea citar. Cada informe referencia una ejecución concreta.
+
+\section{Ruta de lectura recomendada}
+\begin{enumerate}
+\item \textbf{Esta guía}: arquitectura, conceptos, preguntas respondidas y forma de ejecución.
+\item \path{Receiver models/Bastiaens 2020/PD_K5_results.tex}: entrada a la rama del artículo; contiene resultados K=5 y separa los modelos. En la misma carpeta, \path{PD_models_and_PEB.tex} deriva la FIM general y \path{PD_estimators.tex} los nuevos estimadores.
+\item \path{Estimators/Estimators_derivation_TCOM.tex} y su PDF en \path{Estimators/build}: derivaciones detalladas de todos los métodos y pseudocódigos, con la aclaración de nomenclatura.
+\item \path{Coverage target design/K5_tilt_report.tex} y su PDF en el \path{build} de esa carpeta: resultados actuales, mínima inclinación y protocolo CRLB de un grado.
+\item \path{Bounds (3D)/Position Error Bound/PEB_derivation_mR.tex}: gradiente, FIM, identificabilidad y caso axial generalizados. \path{PEB_derivation.tex} conserva el documento original.
+\item \path{Estimators/Algorithms_report.tex}: implementación, resultados Monte Carlo anteriores, patrón del LED y calibración.
+\item \path{Reorientation sensitivity/Sensitivity_report.tex}: distinción entre errores independientes, comunes y actuación no observada.
+\item \path{Bounds (3D)/Position Error Bound/Project_report.tex}: informe histórico del diseño por cotas y de la reorganización del laboratorio.
+\end{enumerate}
+El informe histórico conserva benchmarks con parámetros diferentes. No deben trasladarse sus cifras de error a la configuración actual sin comprobar potencia, área, recinto, ruido, presupuesto y patrón utilizados.
+
+\section{Qué falta para una afirmación experimental}
+\begin{itemize}
+\item Calibrar posición/eje del LED y la transformación global de las normales; medir holgura, errores comunes y traslación del centro óptico respecto al pivote.
+\item Medir la respuesta angular efectiva del PD y distinguir FOV real de media sensibilidad; estimar $m_R$ con residuos de ajuste y posible dependencia de azimut.
+\item Calibrar ganancia óptica/electrónica de extremo a extremo, espectro, patrón angular del LED y su deriva térmica/de potencia.
+\item Caracterizar fondo, saturación, ruido y correlación temporal; el número efectivo de muestras puede ser menor que el nominal.
+\item Extender/validar estimadores para máscaras FOV desconocidas antes de afirmar rendimiento de estimación en todo el volumen. Las cotas actuales sí evalúan máscaras locales, pero la comparación común de estimadores exige visibilidad completa.
+\item Comparar cota, RMSE, sesgo, fallos y probabilidad de cumplir un objetivo con datos reales; una cobertura de PEB no basta por sí sola.
+\end{itemize}
+\textbf{Resumen:} existe una base matemática verificable, un laboratorio de diseño modular, estimadores derivados y comparados, y estudios de calibración y sensibilidad. Las decisiones actuales están fundamentadas en modelos explícitos. El paso siguiente hacia hardware es validar esas hipótesis y calibraciones, no convertir automáticamente la mejor cota simulada en una promesa de precisión real.
+\end{document}

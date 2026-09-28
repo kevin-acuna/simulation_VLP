@@ -1,0 +1,346 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,bm,booktabs,array,longtable,geometry}
+\usepackage{algorithm,algpseudocode}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\geometry{margin=24mm}
+\floatname{algorithm}{Algoritmo}
+\algrenewcommand\algorithmicrequire{\textbf{Entrada:}}
+\algrenewcommand\algorithmicensure{\textbf{Salida:}}
+\newcommand{\tr}{\operatorname{tr}}
+\title{Derivación de los estimadores y correspondencia con TCOM\\\large LED fijo, fotodiodo reorientable y respuesta angular $\cos^{m_R}\psi$}
+\author{Proyecto Cambridge}
+\date{27 de septiembre de 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Este documento establece qué se conserva de los estimadores GLS, WLS y NLS del manuscrito TCOM RV3 y qué cambia al trasladar la diversidad angular al receptor. Se derivan LS directo, GLS y WLS de cocientes, NLS-TCOM adaptado y NLS conjunto en coordenadas ópticas. Se diferencia rigurosamente el número de adquisiciones, el número de problemas de ajuste y la conversión algebraica a posición. Se proporcionan pseudocódigos completos, condiciones de validez y advertencias sobre las aproximaciones estadísticas. El NLS histórico de Cambridge se conserva como alias de la variante conjunta; no se reinterpreta silenciosamente como una ejecución literal del código TCOM.
+\end{abstract}
+\tableofcontents
+\clearpage
+
+\section{Auditoría del manuscrito y de los códigos}
+Se contrastaron las secciones \texttt{sec:NoLineal} y \texttt{sec:Lineal} de \path{TCOM/Reviewed_submission_RV3/IEEE_TCOM_RV3/main.tex}, las funciones \path{fundamentals/core/vlp_nls_lm.m}, \path{vlp_gls_max.m}, \path{vlp_wls_max.m}, y los núcleos actuales de Cambridge. La recuperación sin adquisición adicional se contrastó con \path{F_broadcast_Konly/core/broadcast_distance.m}.
+
+\textbf{Conclusión sobre las dos etapas.} El protocolo completo del manuscrito TCOM \cite{tcom} tiene búsqueda de dirección con $K$ observaciones y recuperación de distancia con una observación cooperativa adicional $K+1$. La rutina \texttt{vlp\_nls\_lm} ajusta conjuntamente dos coordenadas angulares y una escala, pero devuelve solamente la dirección. Por tanto, sí necesita un procedimiento posterior de distancia para entregar posición 3D. Decir que ese protocolo es literalmente de una sola etapa sería incorrecto.
+
+En Cambridge se conoce la ganancia radiométrica y se recupera la amplitud del mismo barrido. Puede hablarse de \emph{un único ajuste conjunto seguido de una transformación algebraica}, pero esa expresión no significa que no exista una conversión dirección--distancia ni que se ejecute exactamente la misma rutina. La reformulación cartesiana y el NLS angular comparten un objetivo bajo condiciones precisas, no necesariamente la trayectoria numérica del solver.
+
+\begin{center}\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.19\linewidth}>{\raggedright\arraybackslash}p{0.35\linewidth}>{\raggedright\arraybackslash}p{0.36\linewidth}}
+\toprule Nombre & Principio & Implementación Cambridge \\
+\midrule
+LS directo & Raíces de potencia y ajuste lineal de un vector óptico & Referencia adicional; no es uno de los tres estimadores DF de TCOM. \\
+GLS & Cocientes, covarianza completa y autovector mínimo & Mismo principio que TCOM; cambia el exponente y el sentido del vector. \\
+WLS & Diagonal de la covarianza de cocientes & Misma aproximación que TCOM. \\
+NLS-TCOM & Dirección unitaria y escala libre sobre potencias normalizadas & Objetivo TCOM adaptado al PD; ajuste tangente y recuperación posterior de amplitud/distancia. \\
+NLS conjunto & Tres componentes ópticas, ajuste de potencias & Reparametrización del mismo objetivo en una región visible común. \\
+\bottomrule
+\end{tabular}\end{center}
+
+Las cadenas de programa son \texttt{LS}, \texttt{GLS}, \texttt{WLS}, \texttt{NLS\_TCOM} y \texttt{NLS\_joint}. \texttt{NLS} sigue siendo un alias de \texttt{NLS\_joint} para no modificar resultados ni scripts anteriores.
+
+\subsection{Diferencias deliberadas respecto al prototipo}
+El manuscrito usa una referencia arbitraria, escrita como orientación 1; las versiones \texttt{\_max} de MATLAB eligen la potencia mayor. Cambridge utiliza esa selección por defecto y permite fijar \texttt{reference\_index=1}; cero significa selección automática. Con pesos diagonales la elección de referencia puede cambiar el resultado.
+
+Los códigos de referencia de GLS/WLS recortan potencias a un intervalo positivo y utilizan una inversa explícita. Cambridge no recorta observaciones: comunica fallo si una raíz necesaria no es válida y usa blanqueo por Cholesky. También admite $N_i$ distintos. El código NLS de referencia usa coordenadas esféricas y \texttt{lsqnonlin}; su escala no está acotada explícitamente aunque el manuscrito exige positividad, y usa $\max(0,Q_i)$. Cambridge trabaja en una rama de visibilidad completa, exige escala positiva y emplea LM con derivadas analíticas. Estos detalles impiden afirmar identidad literal para cualquier dato o inicialización.
+
+\section{Modelo dual, unidades y dominio}
+Con LED fijo en $\mathbf t$, normal $\mathbf n_t$, PD en $\mathbf r$ y normales conocidas $\mathbf n_i$:
+\begin{equation}
+ d=\|\mathbf t-\mathbf r\|,\quad \mathbf u=\frac{\mathbf t-\mathbf r}{d},\quad
+ \mathbf q=-\mathbf n_t,\quad c=\mathbf q^{\mathsf T}\mathbf u,\quad s_i=\mathbf n_i^{\mathsf T}\mathbf u.
+\end{equation}
+$\mathbf u$ apunta del PD al LED, opuesto al vector LED--PD de TCOM. Definimos $\nu=m_R>0$ y:
+\begin{equation}
+ \mu_i=\beta s_i^\nu,\qquad \beta=\frac{Cf_T(\mathbf u)}{d^2},\quad
+ C=\frac{P_t(m_T+1)A_{\rm PD}T_sg}{2\pi}.
+\label{eq:dual}
+\end{equation}
+Para emisión Lambertiana $f_T=c^{m_T}$; un patrón positivo conocido puede sustituirlo. $m_T=-\ln2/\ln(\cos\Phi_{1/2})$. El exponente $m_R$ sustituye el coseno efectivo total del receptor; no se añade otro coseno de proyección ni un factor $(m_R+1)$ a $C$.
+
+Los algoritmos aquí comparados suponen $c>0$ y $s_i>\cos\Psi$, $s_i>0$ para todas las orientaciones utilizadas. La FOV $\Psi$ es un semiángulo de corte, no necesariamente el ángulo de media sensibilidad. Las medias de potencia y su covarianza son:
+\begin{equation}
+ y_i=\frac1{N_i}\sum_{k=1}^{N_i}Y_{ik},\qquad
+ \mathbf y\sim\mathcal N(\bm\mu,\Sigma),\quad
+ \Sigma=\operatorname{diag}(\sigma_i^2),\quad \sigma_i^2=\sigma^2/N_i.
+\end{equation}
+El ruido es óptico, Gaussiano, independiente y de varianza constante respecto a posición. Se conocen las normales globales, no sólo comandos relativos. La posición no cambia durante el barrido. No se entrega la posición verdadera ni su máscara FOV al estimador.
+
+\section{Transformación óptica e identificabilidad}
+Sea $H\in\mathbb R^{K\times3}$ con filas $\mathbf n_i^{\mathsf T}$. Introducimos un vector no unitario:
+\begin{equation}
+ \mathbf b=\beta^{1/\nu}\mathbf u,\qquad \mu_i^{1/\nu}=\mathbf n_i^{\mathsf T}\mathbf b.
+\label{eq:optical}
+\end{equation}
+Si $\operatorname{rank}H=3$, las raíces de las potencias sin ruido determinan $\mathbf b$. Es necesario $K\geq3$, pero repetir normales no basta. La inversa física es:
+\begin{align}
+ a&=\|\mathbf b\|, & \mathbf u&=\mathbf b/a, & \beta&=a^\nu,\\
+ d&=\sqrt{Cf_T(\mathbf u)/\beta}, &&\mathbf r=\mathbf t-d\mathbf u.
+\label{eq:inverse}
+\end{align}
+Equivalentemente:
+\begin{equation}
+ \mathbf r=\mathbf t-\sqrt{Cf_T(\mathbf b/\|\mathbf b\|)}\,
+ \|\mathbf b\|^{-(\nu/2+1)}\mathbf b.
+\end{equation}
+El Jacobiano de $\mathbf b$ respecto a posición tiene determinante $2a^3/(\nu d^3)>0$ en el dominio iluminado; la derivación completa aparece en \path{../Bounds (3D)/Position Error Bound/PEB_derivation_mR.tex}. La transformación es localmente regular e invertible. Si $C$ es desconocido, $d\mapsto kd$, $C\mapsto k^2C$ conserva las potencias: no hay recuperación absoluta de distancia sin calibración adicional.
+
+\section{Derivación de LS directo}
+Formamos $z_i=y_i^{1/\nu}$ y resolvemos:
+\begin{equation}
+ \hat{\mathbf b}_{\rm LS}=\arg\min_{\mathbf b}\|H\mathbf b-\mathbf z\|^2.
+\end{equation}
+Derivando el criterio:
+\begin{equation}
+ \nabla_{\mathbf b}\|H\mathbf b-\mathbf z\|^2=2H^{\mathsf T}(H\mathbf b-\mathbf z)=0.
+\end{equation}
+Con rango tres, la solución única es $(H^{\mathsf T}H)^{-1}H^{\mathsf T}\mathbf z$, calculada mediante QR/barra invertida, no mediante inversión de las ecuaciones normales. Se aplica \eqref{eq:inverse} y se comprueba el dominio físico.
+
+Para $\nu=1$, $\mathbf z=\mathbf y$ y el modelo es lineal Gaussiano. Con varianzas iguales, LS es el MLE si la solución está en el dominio admisible. Con $N_i$ diferentes, el MLE directo es:
+\begin{equation}
+ \hat{\mathbf b}_{\rm directo,ponderado}
+ =(H^{\mathsf T}\Sigma^{-1}H)^{-1}H^{\mathsf T}\Sigma^{-1}\mathbf y.
+\end{equation}
+No se le cambia el nombre a WLS en las tablas de cocientes: allí WLS designa otro procedimiento.
+
+Para $\nu\ne1$, una expansión delta de alta SNR da:
+\begin{align}
+ z_i&\simeq\mu_i^{1/\nu}+\frac1\nu\mu_i^{1/\nu-1}\epsilon_i,\\
+ \operatorname{Var}(z_i)&\simeq\frac{\sigma_i^2}{\nu^2}\mu_i^{2/\nu-2}.
+\end{align}
+El término de sesgo de segundo orden es formalmente
+$\tfrac12\nu^{-1}(\nu^{-1}-1)\mu_i^{1/\nu-2}\sigma_i^2$.
+Esta aproximación local no convierte raíces de Gaussianas en observaciones Gaussianas exactas. Si $y_i\leq0$ y $\nu\ne1$, esta implementación declara fallo de transformación; no sustituye $y_i$ por un piso positivo.
+
+\begin{algorithm}[htbp]\caption{LS directo y posición 3D}\begin{algorithmic}[1]
+\Require Medias $y_i$, normales $\mathbf n_i$, $\nu$, calibración $C,f_T,\mathbf t,\Psi$.
+\Ensure Posición estimada o estado de fallo.
+\State Comprobar rango tres de $H$ y entradas finitas.
+\State Fijar $S=\max_i|y_i|$; si $S=0$, declarar fallo.
+\State Si $\nu\ne1$ y alguna potencia no es positiva, declarar fallo.
+\State $z_i\gets(y_i/S)^{1/\nu}$; resolver $H\mathbf w\simeq\mathbf z$ por QR.
+\State $\hat{\mathbf u}\gets\mathbf w/\|\mathbf w\|$; $\hat\beta\gets S\|\mathbf w\|^\nu$.
+\State Verificar escala positiva, hemisferio emisor y FOV de todas las normales.
+\State $\hat d\gets\sqrt{Cf_T(\hat{\mathbf u})/\hat\beta}$.
+\State \Return $\hat{\mathbf r}\gets\mathbf t-\hat d\hat{\mathbf u}$.
+\end{algorithmic}\end{algorithm}
+
+\section{Derivación de GLS de cocientes}
+\subsection{Cancelación de amplitud}
+Con referencia $j$ y $i\ne j$:
+\begin{equation}
+ t_i=\left(\frac{\mu_i}{\mu_j}\right)^{1/\nu}=\frac{s_i}{s_j},\qquad
+ (\mathbf n_i-t_i\mathbf n_j)^{\mathsf T}\mathbf u=0.
+\end{equation}
+Se cancela $\beta$, incluido el patrón del LED fijo. La adaptación esencial de TCOM es:
+\begin{equation}
+ (\mathbf n_{t,i},m_T,\mathbf n_d)\ \longrightarrow\ (\mathbf n_i,m_R,\mathbf u).
+\end{equation}
+No se debe utilizar el orden emisor en la raíz de cocientes del receptor reorientable.
+
+\subsection{Derivadas y covarianza compartida}
+Para $g(y_j,y_i)=(y_i/y_j)^{1/\nu}$:
+\begin{equation}
+ \frac{\partial g}{\partial y_i}=\frac{t_i}{\nu\mu_i},\qquad
+ \frac{\partial g}{\partial y_j}=-\frac{t_i}{\nu\mu_j}.
+\end{equation}
+Por tanto:
+\begin{equation}
+ \hat t_i-t_i\simeq\frac{t_i}{\nu}\left(\frac{\epsilon_i}{\mu_i}-\frac{\epsilon_j}{\mu_j}\right),
+\end{equation}
+\begin{align}
+ [\Sigma_t]_{ii}&\simeq\frac{t_i^2}{\nu^2}\left(\frac{\sigma_i^2}{\mu_i^2}+\frac{\sigma_j^2}{\mu_j^2}\right),\\
+ [\Sigma_t]_{ik}&\simeq\frac{t_it_k}{\nu^2}\frac{\sigma_j^2}{\mu_j^2},\quad i\ne k.
+\label{eq:ratio_covariance}
+\end{align}
+Éstas son las ecuaciones de TCOM generalizadas a $N_i$ diferentes y $m_R$. Los términos cruzados no desaparecen por ser independientes las potencias originales: comparten el denominador.
+
+\subsection{Equivalencia con la matriz usada en el código}
+Sean $z_i=y_i^{1/\nu}$, $D_z=\operatorname{diag}(\nu^{-1}y_i^{1/\nu-1})$ y $L$ con filas $\mathbf e_i^{\mathsf T}-\hat t_i\mathbf e_j^{\mathsf T}$. El código usa, salvo escala común:
+\begin{equation}
+ C_z=LD_z\Sigma D_zL^{\mathsf T},\qquad \Sigma_t\simeq C_z/z_j^2.
+\end{equation}
+Esto demuestra que no se introdujo otro tipo de ponderación. Dividir $C_z$ por su diagonal máxima o suprimir el factor común $z_j^{-2}$ no cambia los autovectores del criterio ponderado. La sustitución de medias verdaderas por observadas es explícita y aproximada.
+
+\subsection{Criterio homogéneo y solución}
+Sea $A=LH\in\mathbb R^{(K-1)\times3}$. En la dirección verdadera, el residual es:
+\begin{equation}
+ \mathbf e=A\mathbf u=-s_j\,\Delta\mathbf t,\qquad
+ \operatorname{Cov}(\mathbf e)\simeq s_j^2\Sigma_t.
+\end{equation}
+Congelando la ponderación de primer orden, el estimador de TCOM se define por:
+\begin{equation}
+ \hat{\mathbf u}_{\rm GLS}=\arg\min_{\|\mathbf u\|=1}\mathbf u^{\mathsf T}M\mathbf u,
+ \qquad M=A^{\mathsf T}\widehat\Sigma_t^{-1}A.
+\end{equation}
+Con multiplicador de Lagrange $\lambda$, la estacionariedad da $M\mathbf u=\lambda\mathbf u$. El mínimo del cociente de Rayleigh es el autovector del menor autovalor. Se fija el signo por el hemisferio físico y se verifica FOV.
+
+\textbf{Precisión de la afirmación estadística.} Se conserva el estimador operativo del manuscrito, pero la covarianza deriva de una aproximación delta y $A$ contiene errores. Además, $s_j$ depende de la dirección candidata si se reevalúa durante una optimización. No puede cancelarse como constante de un supuesto MLE exacto que incluya esa dependencia. Tampoco una razón de Gaussianas es Gaussiana exacta. La denominación GLS aquí significa el ajuste homogéneo ponderado de primer orden; no se afirma MVU ni optimalidad exacta universal a cualquier SNR. Esta salvedad no cambia el algoritmo de autovector reproducido.
+
+\begin{algorithm}[htbp]\caption{GLS adaptado al receptor}\begin{algorithmic}[1]
+\Require $\mathbf y,H,\nu,\sigma_i^2$ y calibración óptica.
+\Ensure Dirección y posición, o fallo.
+\State Comprobar rango, signo válido de las potencias transformadas y referencia positiva.
+\State Elegir $j=\arg\max_i y_i$ o la referencia fijada por el investigador.
+\State Calcular $\hat t_i=(y_i/y_j)^{1/\nu}$ y las filas $A_i=\mathbf n_i^{\mathsf T}-\hat t_i\mathbf n_j^{\mathsf T}$.
+\State Construir $\widehat\Sigma_t$ usando \eqref{eq:ratio_covariance}, con $\mu_i\gets y_i$.
+\State Factorizar $\widehat\Sigma_t=LL^{\mathsf T}$; resolver $G=L^{-1}A$.
+\State $\hat{\mathbf u}\gets$ autovector unitario de menor autovalor de $G^{\mathsf T}G$.
+\State Fijar signo y comprobar hemisferio/FOV; declarar fallo si no es físico.
+\State Recuperar amplitud y distancia con el Algoritmo~\ref{alg:range}.
+\State \Return $\hat{\mathbf r}=\mathbf t-\hat d\hat{\mathbf u}$.
+\end{algorithmic}\end{algorithm}
+
+\section{Derivación de WLS de cocientes}
+WLS sustituye $\widehat\Sigma_t$ por su diagonal. Así:
+\begin{equation}
+ w_i=\frac1{[\widehat\Sigma_t]_{ii}},\qquad
+ M_{\rm WLS}=\sum_{i\ne j}w_i(\mathbf n_i-\hat t_i\mathbf n_j)(\mathbf n_i-\hat t_i\mathbf n_j)^{\mathsf T}.
+\end{equation}
+Se minimiza el mismo tipo de cociente de Rayleigh y se toma su menor autovector. Es la aproximación diagonal de TCOM. No debe confundirse con WLS directo de potencias: ignorar correlaciones en cocientes no equivale a blanquear óptimamente las observaciones originales. En particular, con potencias parecidas la correlación de cocientes puede ser importante; no se presupone débil.
+
+\begin{algorithm}[htbp]\caption{WLS adaptado al receptor}\begin{algorithmic}[1]
+\Require Las mismas entradas que GLS.
+\State Elegir referencia y formar cocientes/filas $A_i$ como en GLS.
+\State Calcular $v_i=\hat t_i^2\nu^{-2}(\sigma_i^2/y_i^2+\sigma_j^2/y_j^2)$.
+\State $M\gets\sum_i A_i^{\mathsf T}A_i/v_i$; se permite normalizar todos los pesos por una constante común.
+\State Obtener el menor autovector unitario, fijar su signo y verificar dominio físico.
+\State Recuperar amplitud/distancia mediante el Algoritmo~\ref{alg:range}.
+\State \Return posición y estado de validez.
+\end{algorithmic}\end{algorithm}
+
+\section{Recuperación de amplitud y distancia con las mismas potencias}
+Para una dirección estimada, $h_i=(\mathbf n_i^{\mathsf T}\hat{\mathbf u})^\nu$. La log-verosimilitud condicional es proporcional a $-\tfrac12(\mathbf y-\beta\mathbf h)^{\mathsf T}\Sigma^{-1}(\mathbf y-\beta\mathbf h)$. Derivando:
+\begin{equation}
+ \frac{\partial}{\partial\beta}(\mathbf y-\beta\mathbf h)^{\mathsf T}\Sigma^{-1}(\mathbf y-\beta\mathbf h)
+ =-2\mathbf h^{\mathsf T}\Sigma^{-1}\mathbf y+2\beta\mathbf h^{\mathsf T}\Sigma^{-1}\mathbf h.
+\end{equation}
+El minimizador interior y la distancia son:
+\begin{equation}
+ \hat\beta=\frac{\mathbf h^{\mathsf T}\Sigma^{-1}\mathbf y}{\mathbf h^{\mathsf T}\Sigma^{-1}\mathbf h},\qquad
+ \hat d=\sqrt{\frac{Cf_T(\hat{\mathbf u})}{\hat\beta}}.
+\label{eq:range}
+\end{equation}
+Si $\hat\beta\leq0$, no se produce una distancia finita física. Este paso adapta la amplitud perfilada de broadcast \cite{broadcast}, no la medición cooperativa $K+1$ del TCOM. Para un LED fijo no se puede sustituir arbitrariamente $f_T(\hat{\mathbf u})$ por uno. La dirección y la distancia usan datos compartidos y sus errores no deben tratarse como independientes.
+
+\begin{algorithm}[htbp]\caption{Amplitud perfilada y distancia dual}\label{alg:range}\begin{algorithmic}[1]
+\Require Dirección unitaria $\hat{\mathbf u}$, $\mathbf y,H,\nu,\Sigma,C,f_T$.
+\State $\mathbf h\gets(H\hat{\mathbf u})^{\odot\nu}$ dentro del dominio visible.
+\State Calcular numerador $b=\mathbf h^{\mathsf T}\Sigma^{-1}\mathbf y$ y denominador $a=\mathbf h^{\mathsf T}\Sigma^{-1}\mathbf h$.
+\State Si $a\leq0$ o $b\leq0$, declarar fallo; no imponer un piso de potencia.
+\State $\hat\beta\gets b/a$; $\hat d\gets\sqrt{Cf_T(\hat{\mathbf u})/\hat\beta}$.
+\State \Return $\hat d,\hat\beta$.
+\end{algorithmic}\end{algorithm}
+
+\section{NLS-TCOM adaptado: dirección y escala}
+\subsection{Objetivo y normalización}
+Con $S>0$, normalmente $S=\max_i y_i$ para datos positivos, definimos $p_i=y_i/S$ y $\gamma=\beta/S$. La adaptación de \texttt{eq:NLS\_cost} es:
+\begin{equation}
+ (\hat{\mathbf u},\hat\gamma)=\arg\min_{\|\mathbf u\|=1,\,\gamma>0}
+ F(\mathbf u,\gamma),\quad
+ F=\sum_i w_i\left[\gamma(\mathbf n_i^{\mathsf T}\mathbf u)^\nu-p_i\right]^2,
+\label{eq:nls}
+\end{equation}
+con dominio visible y $w_i\propto N_i$. Con muestras iguales se recupera la suma no ponderada del manuscrito. La relación exacta, para los datos observados, es:
+\begin{equation}
+ F(\mathbf u,\beta/S)=S^{-2}\sum_iw_i[\beta s_i^\nu-y_i]^2.
+\end{equation}
+La normalización no convierte mágicamente el ruido en independiente ni elimina su efecto en SNR. La equivalencia del minimizador se debe a la escala libre y al factor positivo común de la función objetivo. Se trata de estimación conjunta/perfilado de amplitud, no de integración marginal Bayesiana.
+
+\subsection{Derivadas esféricas y tratamiento del polo}
+En el receptor, usando referencia $+z$:
+\begin{align}
+ \mathbf u(\theta,\alpha)&=[\sin\theta\cos\alpha,\sin\theta\sin\alpha,\cos\theta]^{\mathsf T},\\
+ \mathbf u_\theta&=[\cos\theta\cos\alpha,\cos\theta\sin\alpha,-\sin\theta]^{\mathsf T},\\
+ \mathbf u_\alpha&=[-\sin\theta\sin\alpha,\sin\theta\cos\alpha,0]^{\mathsf T}.
+\end{align}
+Para $a=\ln\gamma$ y residual $e_i=\sqrt{w_i}(\gamma s_i^\nu-p_i)$, las tres derivadas son:
+\begin{equation}
+ \nabla e_i=\sqrt{w_i}\,[\gamma\nu s_i^{\nu-1}\mathbf n_i^{\mathsf T}\mathbf u_\theta,
+ \gamma\nu s_i^{\nu-1}\mathbf n_i^{\mathsf T}\mathbf u_\alpha,\gamma s_i^\nu]^{\mathsf T}.
+\end{equation}
+En el polo $\mathbf u_\alpha=0$: es una singularidad de coordenadas, no necesariamente falta de información física. Cambridge utiliza dos coordenadas tangentes ortonormales $E=[\mathbf e_1,\mathbf e_2]$ en lugar de azimut/inclinación durante la iteración. El Jacobiano angular pasa a $\gamma\nu s_i^{\nu-1}\mathbf n_i^{\mathsf T}E$. La actualización conserva la norma:
+\begin{equation}
+ \mathbf u^+=\cos\rho\,\mathbf u+\frac{\sin\rho}{\rho}E\Delta\boldsymbol\omega,\quad
+ \rho=\|\Delta\boldsymbol\omega\|,\qquad \gamma^+=\gamma\exp(\Delta a).
+\end{equation}
+
+\subsection{Levenberg--Marquardt}
+Con $J$ de residuales blanqueados, se resuelve:
+\begin{equation}
+ (J^{\mathsf T}J+\lambda D)\Delta=-J^{\mathsf T}\mathbf e,
+\end{equation}
+con $D$ diagonal de escala positiva. Se acepta una propuesta sólo si permanece en el dominio y no incrementa el coste; en otro caso se aumenta $\lambda$. Se emplean tolerancias de gradiente, paso y número de iteraciones. No se garantiza convergencia global ni convergencia cuadrática incondicional a residual no nulo.
+
+La implementación usa como semilla LS cuando es físico; si no, prueba una normal de alta potencia y la dirección del eje emisor. Esto difiere de la inicialización literal del prototipo. Al finalizar entrega la dirección a la recuperación \eqref{eq:range}: hay dos bloques de programa, aunque la amplitud ya participó como incógnita auxiliar en el primer ajuste.
+
+\begin{algorithm}[htbp]\caption{NLS-TCOM adaptado y recuperación posterior}\begin{algorithmic}[1]
+\Require Medias, normales, $\nu$, varianzas y calibración.
+\State Normalizar $\mathbf p\gets\mathbf y/S$ y obtener una semilla física $\mathbf u,\gamma>0$.
+\For{cada iteración LM}
+\State Construir una base tangente $E$ y los residuales/Jacobiano de \eqref{eq:nls}.
+\State Resolver el sistema LM para dos incrementos angulares y uno de log-escala.
+\State Actualizar $\mathbf u$ sobre la esfera y $\gamma$ mediante exponencial.
+\State Aceptar sólo propuestas físicas de coste no creciente; ajustar amortiguación.
+\State Comprobar convergencia o comunicar fallo del solver.
+\EndFor
+\State Con $\hat{\mathbf u}$, recuperar $\hat\beta,\hat d$ de las potencias originales usando el Algoritmo~\ref{alg:range}.
+\State \Return $\hat{\mathbf r}=\mathbf t-\hat d\hat{\mathbf u}$ y diagnósticos.
+\end{algorithmic}\end{algorithm}
+
+\section{NLS conjunto y equivalencia precisa}
+Sea $\mathbf w=\gamma^{1/\nu}\mathbf u$. Entonces:
+\begin{equation}
+ \gamma(\mathbf n_i^{\mathsf T}\mathbf u)^\nu=(\mathbf n_i^{\mathsf T}\mathbf w)^\nu.
+\end{equation}
+Por ello \eqref{eq:nls} es algebraicamente idéntico a:
+\begin{equation}
+ \min_{\mathbf w\in\mathcal D}\sum_iw_i[(\mathbf n_i^{\mathsf T}\mathbf w)^\nu-p_i]^2,
+\end{equation}
+\begin{equation}
+ \mathcal D=\{\mathbf w\ne0:\mathbf q^{\mathsf T}\mathbf w>0,
+ \ \mathbf n_i^{\mathsf T}\mathbf w>\|\mathbf w\|\cos\Psi,\ \mathbf n_i^{\mathsf T}\mathbf w>0\quad\forall i\}.
+\end{equation}
+La correspondencia $(\mathbf u,\gamma)\leftrightarrow\mathbf w$ es biyectiva en ese dominio. Se mantiene el mismo número de incógnitas, los mismos datos y la misma verosimilitud de potencias. El Jacobiano de residual es:
+\begin{equation}
+ J_i=\sqrt{w_i}\,\nu(\mathbf n_i^{\mathsf T}\mathbf w)^{\nu-1}\mathbf n_i^{\mathsf T}.
+\end{equation}
+La amplitud física es $\hat\beta=S\|\hat{\mathbf w}\|^\nu$. No se precisa un segundo ajuste de amplitud. Para $\nu=1$, el objetivo es cuadrático y la implementación usa directamente el LS ponderado si es físico. De ahí la coincidencia con LS para varianzas iguales.
+
+La equivalencia es de objetivos y soluciones correspondientes: no exige idénticas iteraciones, inicializaciones, restricciones prácticas o mínimos alcanzados por solvers locales. No se extiende automáticamente a regiones donde alguna orientación se corta por FOV. Tampoco significa que se haya eliminado la dependencia de distancia respecto a la calibración óptica.
+
+\begin{algorithm}[htbp]\caption{NLS conjunto en coordenadas ópticas}\begin{algorithmic}[1]
+\Require Las mismas entradas físicas y estadísticas.
+\State $S\gets\max_i|y_i|>0$; $\mathbf p\gets\mathbf y/S$.
+\If{$\nu=1$ y el LS ponderado pertenece a $\mathcal D$}
+\State Resolver directamente $\hat{\mathbf w}$ por QR blanqueado.
+\Else
+\State Inicializar $\mathbf w$ físicamente; iterar LM con Jacobiano analítico en tres coordenadas ópticas.
+\State Rechazar pasos no físicos; devolver fallo si no converge.
+\EndIf
+\State $\hat{\mathbf u}\gets\hat{\mathbf w}/\|\hat{\mathbf w}\|$; $\hat\beta\gets S\|\hat{\mathbf w}\|^\nu$.
+\State Aplicar \eqref{eq:inverse}, sin otra adquisición ni otro ajuste de dirección.
+\State \Return posición y diagnósticos.
+\end{algorithmic}\end{algorithm}
+
+\section{Verificación y guía de uso}
+Se verifican la matriz de covarianza frente a las expresiones de TCOM, la igualdad algebraica de objetivos, la equivalencia del alias histórico, la reconstrucción sin ruido incluida dirección axial y la proximidad de ambas soluciones NLS con observaciones perturbadas. Las funciones originales se contrastan en datos positivos de alta SNR; no se atribuye equivalencia al recorte artificial de datos ni a modelos de FOV distintos. En el contraste ejecutado, las diferencias de dirección fueron $1.38\times10^{-16}$ para GLS, $7.08\times10^{-17}$ para WLS y $1.87\times10^{-11}$ para el NLS de referencia. En los 210 registros por método/caso del estudio K=5, la máxima diferencia de RMSE entre NLS conjunto y NLS-TCOM fue $2.45\times10^{-7}$ cm. Son verificaciones concretas, no una garantía de que dos solvers locales coincidan para cualquier observación.
+
+\begin{verbatim}
+[position, info] = rx_estimate('GLS', mean_W, normals, p, N);
+[position, info] = rx_estimate('WLS', mean_W, normals, p, N);
+[position, info] = rx_estimate('NLS_TCOM', mean_W, normals, p, N);
+[position, info] = rx_estimate('NLS_joint', mean_W, normals, p, N);
+opts.reference_index = 1;
+[position, info] = rx_estimate('GLS', mean_W, normals, p, N, opts);
+\end{verbatim}
+Las medias son $K\times T$ y las posiciones devueltas $3\times T$. Se conservan estados de fallo, dirección, distancia, amplitud y valor de coste. Para $m_R\ne1$ los métodos de raíces no recortan potencias no positivas; NLS sí puede utilizar observaciones negativas en el residual original.
+
+\textbf{Respuesta final de nomenclatura:} GLS/WLS conservan el principio derivativo de TCOM; NLS-TCOM conserva su formulación dirección--escala con solver adaptado; NLS conjunto es una reparametrización equivalente en el dominio compartido. El protocolo de distancia de Cambridge utiliza las mismas $K$ observaciones y calibración, no reproduce la cooperación $K+1$ de TCOM. Deben distinguirse esas afirmaciones para evitar confundir física, estimación y programación.
+
+\bibliographystyle{IEEEtran}
+\bibliography{estimator_references}
+\end{document}
