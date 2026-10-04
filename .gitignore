@@ -7,3 +7,4 @@ ExpValidation_Journal/IEEE_JLT/build
 CAMBRIDGE/simulations/Receiver models/Bastiaens 2020/results/
 *.venv
 **/.latex-build/
+*-eps-converted-to.pdf

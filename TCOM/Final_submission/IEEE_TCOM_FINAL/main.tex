@@ -155,7 +155,7 @@ where \(m\) is the Lambertian order of the LED, related to the semi-angle at hal
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{Figures/II. System/Figure1.png}
+    \includegraphics[width=\linewidth]{Figures/Fig1.png}
     \caption{Single beam-steered LED / single-PD OWP geometry. A beam-steered LED at $\mathbf t=[0,0,H]^{\mathsf T}$ (e.g., mechanical steering) points along $\{\mathbf n_{t,i}\}_{i=1}^{K}$; the PD is at $\mathbf r=[x,y,z]^{\mathsf T}$.}
     \label{fig:system}
 \end{figure}
@@ -442,7 +442,7 @@ Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the DEB acros
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/IV. Optimization/DEB_violin_comparison}
+    \includegraphics[width=\linewidth]{Figures/Fig2.eps}
     \caption{Distribution of the DEB [$^\circ$] across all receiver locations in the $3\times3\times2\,\mathrm{m^3}$ testbed for $K\in\{3,\ldots,9\}$, with $\Phi_{1/2} = 45^{\circ}$. Green: GA-optimized orientation set; orange: 50 independently drawn random orientation sets per~$K$. Box-and-whisker plots summarize the sample distribution; shaded profiles depict the estimated PDF. The GA-optimized sets consistently achieve lower DEB and tighter distributions across all~$K$.}
     \label{fig:Optimized_vs_Random}
 \end{figure}
@@ -450,7 +450,7 @@ Figure~\ref{fig:optimo_vs_random_3D} presents spatial heat maps of the DEB acros
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=\columnwidth]{Figures/IV. Optimization/DEB_heatmap_K5}
+  \includegraphics[width=\columnwidth]{Figures/Fig3.eps}
   \caption{Spatial distribution of the DEB across the $3\times3\,\mathrm{m^2}$ floor at $z=0.8$\,m for $K=5$ orientations, and with $\Phi_{1/2} = 45^{\circ}$. (a)~GA-optimized set; (b)~a single random set with tilt--azimuth pairs drawn uniformly from the GA search range. The color scale is shared and clipped at $3^\circ$.}
   \label{fig:optimo_vs_random_3D}
 \end{figure}
@@ -511,14 +511,14 @@ Since $\mathbf{n}_r$ does not appear in~\eqref{eq:p_target}--\eqref{eq:NLS_cost}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/IV. Optimization/Bound_vs_K_vs_Phi_rms}
+    \includegraphics[width=\linewidth]{Figures/Fig4.eps}
     \caption{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus the number of orientations~$K$ for the DEB-optimized sets and three LED semi-angles at half power $\Phi_{1/2}\in\{45^\circ,60^\circ,75^\circ\}$. Values are computed over all receiver positions in the $3\times3\times2~\mathrm{m}^3$ testbed. Both bounds decrease monotonically with~$K$; the operating point $K=5$ offers a favourable accuracy--latency trade-off for both direction finding and 3D positioning.}
     \label{fig:PEB_vs_K}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/IV. Optimization/Bound_vs_SNR_envelope_rms}
+    \includegraphics[width=\linewidth]{Figures/Fig5.eps}
     \caption{RMS-DEB (solid, left axis) and RMS-PEB (dashed, right axis) versus SNR for the DEB-optimized orientation sets ($\Phi_{1/2}=45^\circ$). Bold curves: $K=5$; shaded bands: range over $K\in\{3,\ldots,9\}$; dotted edges: $K=3$ (upper) and $K=9$ (lower). Both bounds decrease as $1/\sqrt{\mathrm{SNR}}$, with the band width reflecting the diminishing incremental gain from additional orientations at high SNR.}
     \label{fig:PEB_vs_noise}
 \end{figure}
@@ -855,7 +855,7 @@ DEB & 0.518 & 0.527 & $+1.69\%$ \\ \hline
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/VII.Simulations/NR_robust_CDF_K5_M1000_Ntilt100_sig5_max30}
+    \includegraphics[width=\linewidth]{Figures/Fig6.eps}
     \caption{Empirical CDF of the per-position angular RMSE for $K=5$ orientations ($M=1{,}000$ noise trials, $1{,}792$ positions). Solid curves: vertical receiver ($\mathbf{n}_r=[0,0,1]^{\mathsf T}$); dashed curves: random receiver tilt ($N_{\mathrm{tilt}}=100$ realizations per position). Each estimator uses its GA-optimized orientation set. Inset: truncated half-normal tilt distribution ($\sigma=5^{\circ}$, $\theta_{\max}=30^{\circ}$). The near-perfect overlap between solid and dashed curves confirms that receiver-orientation variations have negligible impact on direction-finding accuracy (Section~\ref{subsec:nr_independence}).}
     \label{fig:NR_robust_CDF}
 \end{figure}
@@ -878,7 +878,7 @@ Figure~\ref{fig:latency} reports the measured computation latency per direction 
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_Time.png}
+    \includegraphics[width=\linewidth]{Figures/Fig7.png}
     \caption{Computation latency of the GLS, WLS, and NLS direction-finding estimators for $K=5$. Markers denote the median and mean over all testbed positions; whiskers span the 90\% interval (p5--p95). The dashed line marks the $0.1$\,ms threshold.}
     \label{fig:latency}
 \end{figure}
@@ -893,7 +893,7 @@ This subsection extends the evaluation to the full two-stage pipeline (direction
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_CDF_3D_position_K9_M1000.png}
+    \includegraphics[width=\linewidth]{Figures/Fig8.eps}
     \caption{Empirical CDF of the 3D positioning error for $K\in\{3,5,9\}$ ($M=1{,}000$ Monte Carlo trials, $1{,}792$ testbed positions). Solid lines: $K=5$; dashed lines: $K=9$; dash-dotted: $K=3$ SVD baseline~\cite{Chassagne2025}. Each estimator uses its respective GA-optimized orientation set.}
     \label{fig:CDF}
 \end{figure}
@@ -929,7 +929,7 @@ Figure~\ref{fig:estimation} depicts the 3D position estimates produced by GLS fo
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/VII.Simulations/Fig_Comparison_3D.png}
+    \includegraphics[width=\linewidth]{Figures/Fig9.eps}
     \caption{3D position estimates produced by GLS ($K=5$) at receiver heights $z\in\{0,\,0.6,\,1.2\}\,\mathrm{m}$ in the $3\times3\times2\,\mathrm{m^3}$ room. The LED transmitter is at the ceiling ($z=2\,\mathrm{m}$); segments connect each reference position to the corresponding estimate.}
     \label{fig:estimation}
 \end{figure}
@@ -946,9 +946,9 @@ These results highlight a practical trade-off: NLS achieves the best accuracy (n
 
 \begin{figure}[tb]
     \centering
-    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/VII.Simulations/Fig_DF_RMSE_vs_SNR_K5.png}%
+    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/Fig10a.png}%
     \label{fig:rmse_vs_snr_DF}}\\
-    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/VII.Simulations/Fig_3D_RMSE_vs_SNR_K5.png}%
+    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/Fig10b.png}%
     \label{fig:rmse_vs_snr_3D}}
     \caption{Realized estimator performance vs.\ SNR for $K=5$ ($M=1{,}000$ Monte Carlo trials, $1,792$ testbed positions). (a)~RMS angular error (direction finding): NLS coincides with the DEB; GLS and WLS remain at constant factors ${\approx}1.3{\times}$ and ${\approx}1.6{\times}$. (b)~RMS 3D positioning error: all estimators track the PEB with the same constant-factor offsets. All curves follow the $1/\sqrt{\mathrm{SNR}}$ slope.}
     \label{fig:rmse_vs_snr}
