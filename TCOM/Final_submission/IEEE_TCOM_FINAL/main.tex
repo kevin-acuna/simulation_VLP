@@ -155,7 +155,7 @@ where \(m\) is the Lambertian order of the LED, related to the semi-angle at hal
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{Figures/Fig1.png}
+    \includegraphics[width=\linewidth]{Figures/Fig1.eps}
     \caption{Single beam-steered LED / single-PD OWP geometry. A beam-steered LED at $\mathbf t=[0,0,H]^{\mathsf T}$ (e.g., mechanical steering) points along $\{\mathbf n_{t,i}\}_{i=1}^{K}$; the PD is at $\mathbf r=[x,y,z]^{\mathsf T}$.}
     \label{fig:system}
 \end{figure}
@@ -878,7 +878,7 @@ Figure~\ref{fig:latency} reports the measured computation latency per direction 
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{Figures/Fig7.png}
+    \includegraphics[width=\linewidth]{Figures/Fig7.eps}
     \caption{Computation latency of the GLS, WLS, and NLS direction-finding estimators for $K=5$. Markers denote the median and mean over all testbed positions; whiskers span the 90\% interval (p5--p95). The dashed line marks the $0.1$\,ms threshold.}
     \label{fig:latency}
 \end{figure}
@@ -946,9 +946,9 @@ These results highlight a practical trade-off: NLS achieves the best accuracy (n
 
 \begin{figure}[tb]
     \centering
-    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/Fig10a.png}%
+    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/Fig10a.eps}%
     \label{fig:rmse_vs_snr_DF}}\\
-    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/Fig10b.png}%
+    \subfloat[]{\includegraphics[width=0.9\linewidth]{Figures/Fig10b.eps}%
     \label{fig:rmse_vs_snr_3D}}
     \caption{Realized estimator performance vs.\ SNR for $K=5$ ($M=1{,}000$ Monte Carlo trials, $1,792$ testbed positions). (a)~RMS angular error (direction finding): NLS coincides with the DEB; GLS and WLS remain at constant factors ${\approx}1.3{\times}$ and ${\approx}1.6{\times}$. (b)~RMS 3D positioning error: all estimators track the PEB with the same constant-factor offsets. All curves follow the $1/\sqrt{\mathrm{SNR}}$ slope.}
     \label{fig:rmse_vs_snr}

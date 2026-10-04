@@ -105,6 +105,8 @@ if SAVE_FIGURE
         'ContentType', 'vector', 'BackgroundColor', 'white');
     exportgraphics(fig_DF, fullfile(OUT_DIR, [fname_DF, '.png']), ...
         'Resolution', 600, 'BackgroundColor', 'white');
+    exportgraphics(fig_DF, fullfile(OUT_DIR, [fname_DF, '.eps']), ...
+        'ContentType', 'vector', 'BackgroundColor', 'white');
     fprintf('DF figure saved: %s\n', fullfile(OUT_DIR, fname_DF));
     
     % 3D Positioning figure
@@ -113,6 +115,8 @@ if SAVE_FIGURE
         'ContentType', 'vector', 'BackgroundColor', 'white');
     exportgraphics(fig_3D, fullfile(OUT_DIR, [fname_3D, '.png']), ...
         'Resolution', 600, 'BackgroundColor', 'white');
+    exportgraphics(fig_3D, fullfile(OUT_DIR, [fname_3D, '.eps']), ...
+        'ContentType', 'vector', 'BackgroundColor', 'white');
     fprintf('3D figure saved: %s\n', fullfile(OUT_DIR, fname_3D));
 end
 

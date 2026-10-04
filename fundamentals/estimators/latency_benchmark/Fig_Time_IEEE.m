@@ -120,14 +120,16 @@ set(ax, 'Position', [0.155, 0.155, 0.815, 0.810]);
 
 % ── EXPORT ────────────────────────────────────────────────────────────────
 script_dir = fileparts(mfilename('fullpath'));
-fig_dir = fullfile(script_dir, '..', '..', '..', ...
-    'TCOM', 'Reviewed_submission', 'TCOM_paper', ...
-    'Figures', 'VII.Simulations');
+fig_dir = fullfile(script_dir, 'figures');
+if ~exist(fig_dir, 'dir'), mkdir(fig_dir); end
 
 out_png = fullfile(fig_dir, 'Fig_Time.png');
 out_pdf = fullfile(fig_dir, 'Fig_Time.pdf');
+out_eps = fullfile(fig_dir, 'Fig_Time.eps');
 
 exportgraphics(fig, out_png, 'Resolution', 600, 'BackgroundColor', 'white');
 exportgraphics(fig, out_pdf, 'ContentType', 'vector', 'BackgroundColor', 'white');
+exportgraphics(fig, out_eps, 'ContentType', 'vector', 'BackgroundColor', 'white');
 fprintf('PNG -> %s\n', out_png);
 fprintf('PDF -> %s\n', out_pdf);
+fprintf('EPS -> %s\n', out_eps);
