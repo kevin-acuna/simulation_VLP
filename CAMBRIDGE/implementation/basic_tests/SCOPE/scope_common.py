@@ -1,7 +1,8 @@
 """
 scope_common.py
 
-Funciones comunes para el Keysight MSOX6004A (InfiniiVision 6000 X) via pyvisa.
+Funciones comunes para el osciloscopio Keysight/Agilent InfiniiVision
+(en el laboratorio: MSO-X 4154A; mismo juego de comandos que el MSOX6004A) via pyvisa.
 
 IMPORTANTE: nunca se envia *RST ni :AUToscale, porque el generador interno
 (WGEN) del mismo osciloscopio alimenta el LED y se perderia su configuracion.
@@ -10,14 +11,19 @@ IMPORTANTE: nunca se envia *RST ni :AUToscale, porque el generador interno
 import numpy as np
 import pyvisa
 
-MODEL_HINT = "6004A"             # texto que debe aparecer en *IDN?
+# Modelos aceptados (texto en *IDN?). En el laboratorio: MSO-X 4154A.
+MODEL_HINTS = ("4154A", "6004A")
+
+
+def is_known_model(idn):
+    return any(hint in idn for hint in MODEL_HINTS)
 
 
 # ============================================================
 # CONEXION
 # ============================================================
 
-def find_scope(rm, model_hint=MODEL_HINT):
+def find_scope(rm):
     """Busca el osciloscopio entre los recursos VISA (USB/LAN/GPIB, no COM)."""
     for resource in rm.list_resources("?*::INSTR"):
         if resource.startswith("ASRL"):
@@ -26,12 +32,12 @@ def find_scope(rm, model_hint=MODEL_HINT):
             with rm.open_resource(resource) as inst:
                 inst.timeout = 2000
                 idn = inst.query("*IDN?")
-            if model_hint in idn:
+            if is_known_model(idn):
                 return resource
         except pyvisa.VisaIOError:
             pass
     raise RuntimeError(
-        f"No se encontro ningun osciloscopio '{model_hint}'. Revisa el cable, "
+        f"No se encontro ningun osciloscopio {MODEL_HINTS}. Revisa el cable, "
         f"Keysight Connection Expert, o define VISA_ADDRESS manualmente."
     )
 
@@ -46,8 +52,8 @@ def connect(address=None, timeout_ms=10000):
     inst.write_termination = "\n"
     inst.chunk_size = 4 * 1024 * 1024
     idn = inst.query("*IDN?").strip()
-    if MODEL_HINT not in idn:
-        print(f"AVISO: el instrumento no parece un MSOX6004A: {idn}")
+    if not is_known_model(idn):
+        print(f"AVISO: modelo no reconocido {MODEL_HINTS}: {idn}")
     inst.write("*CLS")
     print(f"Conectado a {address}\n  {idn}")
     return rm, inst, idn
