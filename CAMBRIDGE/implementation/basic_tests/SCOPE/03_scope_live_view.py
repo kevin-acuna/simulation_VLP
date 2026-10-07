@@ -24,7 +24,7 @@ from scope_common import (
 # HIPERPARAMETROS
 # ============================================================
 
-VISA_ADDRESS = None              # None -> autodetectar por *IDN?
+VISA_ADDRESS = "USB0::0x0957::0x17BC::MY64080105::0::INSTR"         # EL OSCILOSCOPIO QUE TENEMOS
 CHANNEL = 1                      # canal del osciloscopio conectado al PDA100A2
 POINTS = 2000                    # puntos por captura (mas = mas lento)
 HISTORY_S = 30.0                 # ventana de la grafica de historia
