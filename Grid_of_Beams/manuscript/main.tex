@@ -43,8 +43,22 @@ The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Vi
 \maketitle
 
 \begin{abstract}
-Use beam control first as a sensing mechanism and then reconfigure the same beam for communication.
+Narrow-beam optical wireless communication (OWC) links based on
+vertical-cavity surface-emitting lasers (VCSELs) can deliver very high
+data rates, but only if the transmitter knows where to point. We propose
+an integrated sensing and communication (ISAC) scheme in which a single
+steerable VCSEL, with controllable orientation and divergence, first
+senses the direction of the user equipment (UE) and then uses the same
+beam to serve it. The transmitter probes the room with a few wide beams,
+refines the estimate with narrower ones, and finally points a narrow beam
+at the UE, relying only on the received signal strength (RSS) reported by
+a single photodiode. We derive the Cram\'er--Rao lower bound for this
+direction-finding problem and use it to design the probing beams, jointly
+selecting their orientations and divergences to balance sensing time,
+pointing accuracy, and the throughput of the subsequent link.
+% TODO: añadir una frase con el resultado principal cuando esté disponible.
 \end{abstract}
+
 
 \begin{IEEEkeywords} 
     3D indoor localization, beam steering, Cramér-Rao bounds, optical wireless communications, optical wireless positioning
