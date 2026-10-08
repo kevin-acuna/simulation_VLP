@@ -15,6 +15,7 @@ accesible y el espacio de trabajo libre.
 """
 
 import math
+import re
 import time
 
 try:
@@ -23,6 +24,7 @@ except ImportError:
     msvcrt = None
 
 from cri_lib.cri_controller import CRIController
+from cri_lib.cri_errors import CRIConnectionError
 from cri_lib.robot_state import KinematicsState, ReferencingAxisState
 
 
@@ -34,7 +36,13 @@ from cri_lib.robot_state import KinematicsState, ReferencingAxisState
 ROBOT_IP = "192.168.3.11"        # robot real. Simulacion iRC: "127.0.0.1"
 ROBOT_PORT = 3920                # robot real. Simulacion iRC: 3921
 EXPECTED_ROBOT = "DLE-RG-0012-BLDC"
-EXPECTED_VERSION = "V980-14-004-4"
+# Versiones del controlador aceptadas: robot real del laboratorio (14-003-3)
+# y simulador iRC (14-004-4).
+EXPECTED_VERSIONS = ("V980-14-003-3", "V980-14-004-4")
+# cri_lib fija un timeout de conexion de solo 0.1 s; el primer intento contra el
+# robot real puede tardar ~1 s, asi que se reintenta.
+CONNECT_ATTEMPTS = 5
+CONNECT_RETRY_PAUSE_S = 1.0
 
 # --- Espacio de trabajo permitido (filtro de seguridad de ESTE script) ---
 # Cualquier objetivo fuera de esta caja se rechaza antes de enviarlo al robot.
@@ -293,23 +301,46 @@ def print_state(robot):
     s = snapshot(robot)
     print(f"  Posicion:   {fmt_pos(s['pos'])}   (A,B,C = {s['abc']})")
     print(f"  Velocidad:  {s['speed']:.2f} mm/s    v comando = {velocity:g} mm/s   "
-          f"override = {OVERRIDE_PCT:g} %   acel = {ACCELERATION_PCT:g} %")
+          f"override = {OVERRIDE_PCT:g} %   acel = "
+          f"{'controlador' if ACCELERATION_PCT is None else f'{ACCELERATION_PCT:g} %'}")
     print(f"  Kinematics: {s['kin'].name}   ejes: {s['axes_error']}   E-stop OK: {s['estop_ok']}")
     print(f"  Referencia: {s['ref'].global_state.name} (obligatoria: {s['ref'].mandatory})")
     out = outside_workspace(s["pos"])
     print(f"  Workspace:  {'DENTRO' if not out else 'FUERA -> ' + '; '.join(out)}")
 
 
+def connect_robot():
+    """Conecta con reintentos (un CRIController nuevo por intento)."""
+    for attempt in range(1, CONNECT_ATTEMPTS + 1):
+        print(f"Conectando a {ROBOT_IP}:{ROBOT_PORT} (intento {attempt}/{CONNECT_ATTEMPTS})...")
+        r = CRIController()
+        try:
+            r.connect(ROBOT_IP, ROBOT_PORT,
+                      application_name="Kevin-Gantry-Move", application_version="1-0-0")
+            return r
+        except CRIConnectionError as e:
+            print(f"  fallo: {e.__cause__ or e}")
+            time.sleep(CONNECT_RETRY_PAUSE_S)
+    raise RuntimeError(
+        f"No se pudo conectar a {ROBOT_IP}:{ROBOT_PORT}. Revisa el cable/IP del PC "
+        f"(192.168.3.x) y que el controlador este encendido."
+    )
+
+
+def version_tuple(version):
+    """'V980-14-003-3' -> (14, 3, 3)."""
+    m = re.match(r"V\d+-(\d+)-(\d+)-(\d+)", version)
+    return tuple(int(x) for x in m.groups()) if m else (0, 0, 0)
+
+
 velocity = VELOCITY_MM_S
-robot = CRIController()
+robot = None
 
 try:
     print("=" * 70)
     print("IGUS GANTRY - CONTROL DE POSICION")
     print("=" * 70)
-    print(f"Conectando a {ROBOT_IP}:{ROBOT_PORT}...")
-    robot.connect(ROBOT_IP, ROBOT_PORT,
-                  application_name="Kevin-Gantry-Move", application_version="1-0-0")
+    robot = connect_robot()
     robot.wait_for_status_update(timeout=5)
     time.sleep(0.5)
     try:
@@ -321,9 +352,14 @@ try:
     print(f"Robot:   {st.robot_type}\nVersion: {st.robot_control_version}")
     if EXPECTED_ROBOT not in st.robot_type:
         raise RuntimeError(f"El robot conectado no es {EXPECTED_ROBOT}.")
-    if st.robot_control_version != EXPECTED_VERSION:
-        if input(f"AVISO: version distinta de {EXPECTED_VERSION}. Continuar? [s/N]: ").lower() != "s":
+    if st.robot_control_version not in EXPECTED_VERSIONS:
+        if input(f"AVISO: version no esperada {EXPECTED_VERSIONS}. Continuar? [s/N]: ").lower() != "s":
             raise SystemExit
+    # El parametro de aceleracion de Move Cart requiere RobotControl >= V14-004-1
+    if version_tuple(st.robot_control_version) < (14, 4, 1):
+        ACCELERATION_PCT = None
+        print("AVISO: esta version no admite aceleracion por movimiento; "
+              "se usa la del controlador (40 % por defecto).")
     if not st.emergency_stop_ok:
         if ROBOT_IP not in ("127.0.0.1", "localhost"):
             raise RuntimeError("El circuito de E-stop no esta OK.")
@@ -398,7 +434,7 @@ except ConnectionLost as e:
 
 finally:
     print("\nCerrando...")
-    if robot.connected:
+    if robot is not None and robot.connected:
         try:
             if snapshot(robot)["speed"] >= STILL_SPEED_MM_S:
                 robot.stop_move()
@@ -407,5 +443,6 @@ finally:
             robot.set_active_control(False)
         except Exception as e:
             print(f"  Aviso al cerrar: {e}")
-    robot.close()
+    if robot is not None:
+        robot.close()
     print("Conexion cerrada.")
