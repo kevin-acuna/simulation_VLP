@@ -1,0 +1,145 @@
+{
+  "start": "2026-10-08T16:37:12.354272",
+  "experiment": {
+    "ROOT": "c:\\Users\\lisvuser\\Documents\\Kevin\\Software\\simulation_VLP\\CAMBRIDGE\\implementation\\tests",
+    "DEVICE_MODE_OVERRIDE": {},
+    "SETTLE_TIME_S": 1.0,
+    "N_ACQUISITIONS": 3,
+    "TIME_POINTS": 100000,
+    "SAVE_WAVEFORMS": true,
+    "GUI_REFRESH_MS": 100,
+    "TELEMETRY_RATE_HZ": 10.0,
+    "OUTPUT_ROOT": "c:\\Users\\lisvuser\\Documents\\Kevin\\Software\\simulation_VLP\\CAMBRIDGE\\implementation\\tests\\data\\exp01"
+  },
+  "led_freq_Hz": 700000.0,
+  "testbed": {
+    "config_file": "c:\\Users\\lisvuser\\Documents\\Kevin\\Software\\simulation_VLP\\CAMBRIDGE\\implementation\\tests\\config\\testbed.toml",
+    "modes": {
+      "gantry": "real",
+      "mtrs": "real",
+      "scope": "real",
+      "sim_speedup": 4.0
+    },
+    "config": {
+      "modes": {
+        "gantry": "real",
+        "mtrs": "real",
+        "scope": "real",
+        "sim_speedup": 4.0
+      },
+      "gantry": {
+        "ip": "192.168.3.11",
+        "port": 3920,
+        "workspace_min_mm": [
+          0.0,
+          0.0,
+          -700.0
+        ],
+        "workspace_max_mm": [
+          1400.0,
+          1400.0,
+          0.0
+        ],
+        "velocity_mm_s": 50.0,
+        "override_pct": 100.0,
+        "acceleration_pct": 20.0,
+        "tolerance_mm": 1.0,
+        "still_speed_mm_s": 0.5,
+        "connect_attempts": 5,
+        "disable_on_exit": false,
+        "expected_robot": "DLE-RG-0012-BLDC",
+        "expected_versions": [
+          "V980-14-003-3",
+          "V980-14-004-4"
+        ]
+      },
+      "mtrs": {
+        "rot_serial": "",
+        "tilt_serial": "",
+        "velocity_deg_s": 1.5,
+        "acceleration_deg_s2": 1.5,
+        "rotation_mode": "LinearRange",
+        "rotation_direction": "Quickest",
+        "tilt_target_deg": 0.0,
+        "tolerance_deg": 0.05,
+        "polling_ms": 50,
+        "kinesis_path": "C:\\Program Files\\Thorlabs\\Kinesis"
+      },
+      "scope": {
+        "address": "USB0::0x0957::0x17BC::MY64080105::0::INSTR",
+        "channel": 1,
+        "fft_function": 0,
+        "fft_points": "MAX",
+        "timeout_ms": 20000,
+        "led_freq_hz": "wgen",
+        "led_freq_band_hz": 50.0,
+        "fft_peak_min_hz": 1.0
+      },
+      "motion": {
+        "arrival_hold_s": 0.3,
+        "stall_time_s": 5.0,
+        "timeout_margin_s": 30.0,
+        "poll_s": 0.05
+      },
+      "view": {
+        "mtrs_zero_location": "N",
+        "mtrs_clockwise": false
+      }
+    },
+    "gantry": {
+      "robot_type": "drylin-gantry/RoomGantry/DLE-RG-0012-BLDC",
+      "robot_control_version": "V980-14-003-3",
+      "ip": "192.168.3.11",
+      "port": 3920,
+      "simulated_irc": false,
+      "velocity_mm_s": 50.0,
+      "override_pct": 100.0,
+      "acceleration_pct": null,
+      "workspace_min_mm": [
+        0.0,
+        0.0,
+        -700.0
+      ],
+      "workspace_max_mm": [
+        1400.0,
+        1400.0,
+        0.0
+      ]
+    },
+    "mtrs": {
+      "rot_serial": "117000096",
+      "rot_channel": 2,
+      "tilt_serial": "117000096",
+      "tilt_channel": 1,
+      "velocity_deg_s": 1.5,
+      "acceleration_deg_s2": 1.5,
+      "rotation_mode": "LinearRange",
+      "rotation_direction": "Quickest",
+      "tilt_target_deg": 0.0
+    },
+    "scope": {
+      "idn": "AGILENT TECHNOLOGIES,MSO-X 4154A,MY64080105,07.65.2024120521",
+      "address": "USB0::0x0957::0x17BC::MY64080105::0::INSTR",
+      "channel": 1,
+      "fft_function": 1,
+      "fft_source": "CHAN1",
+      "fft_vtype": "VRMS",
+      "fft_window": "HANN",
+      "fft_center_Hz": 700000.0,
+      "fft_span_Hz": 200000.0,
+      "timebase_s_div": 5.1e-05,
+      "sample_rate_Sa_s": 20000000.0,
+      "acquire_type": "NORM",
+      "ch_scale_V_div": 0.088,
+      "ch_offset_V": 0.0,
+      "ch_coupling": "AC",
+      "ch_impedance": "ONEM",
+      "fft_units": "Vrms",
+      "wgen_output": "1",
+      "wgen_function": "SIN",
+      "wgen_frequency_Hz": 700000.0,
+      "wgen_vpp_V": 2.0,
+      "wgen_offset_V": 0.0
+    }
+  }
+}

@@ -1,0 +1,79 @@
+# ==========================================================================
+# Configuracion del testbed OWP (Cambridge)
+#
+# Se configura UNA vez y queda fija. Todos los experimentos la leen a traves de
+# hardware.testbed.Testbed; no repitas estos parametros en los experimentos.
+# Unidades: mm, deg, s, Hz.  "" = autodetectar (donde se indica).
+# ==========================================================================
+
+# "real" = equipo real ; "sim" = simulado (probar sin hardware).
+# Un experimento puede sobrescribirlos puntualmente (Testbed(modes={...})).
+[modes]
+gantry = "real"
+mtrs = "real"
+scope = "real"
+sim_speedup = 4.0            # los equipos simulados se mueven este factor mas rapido
+
+# --------------------------------------------------------------------------
+# Gantry igus DLE-RG-0012-BLDC (CRI)
+# --------------------------------------------------------------------------
+[gantry]
+ip = "192.168.3.11"          # simulador iRC: "127.0.0.1"
+port = 3920                  # simulador iRC: 3921
+# Caja permitida (filtro de seguridad). Z cartesiana = -A3: Z = 0 arriba, negativa hacia abajo.
+workspace_min_mm = [0.0, 0.0, -700.0]      # X, Y, Z
+workspace_max_mm = [1400.0, 1400.0, 0.0]
+velocity_mm_s = 50.0         # velocidad cartesiana de los movimientos
+override_pct = 100.0         # % global del controlador (velocidad real = velocity * override / 100)
+acceleration_pct = 20.0      # % de la aceleracion maxima; ignorado con firmware < V14-004-1 (usa 40 %)
+tolerance_mm = 1.0           # llegada: distancia al destino (repetibilidad +/-0.5 mm)
+still_speed_mm_s = 0.5       # por debajo de esta velocidad se considera quieto
+connect_attempts = 5         # cri_lib usa un timeout de 0.1 s; el primer intento puede fallar
+disable_on_exit = false      # false: motores quedan habilitados (eje Z sin freno podria caer)
+expected_robot = "DLE-RG-0012-BLDC"
+expected_versions = ["V980-14-003-3", "V980-14-004-4"]   # robot real / simulador iRC
+
+# --------------------------------------------------------------------------
+# Thorlabs MTRS (Kinesis). Homing en Kinesis y cerrar Kinesis antes de conectar.
+# --------------------------------------------------------------------------
+[mtrs]
+rot_serial = ""              # "" = autodetectar canal "MTRS Rotate" (p.ej. "117000001")
+tilt_serial = ""             # "" = autodetectar canal "MTRS Tilt"
+velocity_deg_s = 1.5         # maximo del MTRS
+acceleration_deg_s2 = 1.5
+# LinearRange: rotacion en [0, 360] sin cruzar 360 -> el cable del PD no se enrolla.
+rotation_mode = "LinearRange"          # LinearRange | RotationalRange | RotationalUnlimited
+rotation_direction = "Quickest"        # solo modos rotacionales: Quickest | Forwards | Reverse
+tilt_target_deg = 0.0        # el tilt se mantiene siempre aqui (inclinacion mecanica de 15 deg aparte)
+tolerance_deg = 0.05         # llegada: error angular (repetibilidad +/-0.05 deg)
+polling_ms = 50              # refresco interno de Kinesis
+kinesis_path = 'C:\Program Files\Thorlabs\Kinesis'
+
+# --------------------------------------------------------------------------
+# Osciloscopio Agilent MSO-X 4154A (pyvisa). Su generador (WGEN) alimenta el LED.
+# --------------------------------------------------------------------------
+[scope]
+address = "USB0::0x0957::0x17BC::MY64080105::0::INSTR"
+channel = 1                  # canal del PDA100A2
+fft_function = 0             # funcion Math con la FFT; 0 = primera con FFT visible
+fft_points = "MAX"           # puntos de la traza FFT a descargar
+timeout_ms = 20000
+led_freq_hz = "wgen"         # frecuencia del LED: "wgen" (leer del generador), un numero, o "" (pico global)
+led_freq_band_hz = 50.0      # el pico del LED se busca en led_freq_hz +/- esta banda
+fft_peak_min_hz = 1.0        # ignora DC al buscar el pico global
+
+# --------------------------------------------------------------------------
+# Movimiento conjunto gantry + MTRS (Testbed.wait_pose)
+# --------------------------------------------------------------------------
+[motion]
+arrival_hold_s = 0.3         # ambos dentro de tolerancia este tiempo = llego
+stall_time_s = 5.0           # ambos quietos sin llegar este tiempo -> error
+timeout_margin_s = 30.0      # margen sobre el tiempo estimado del movimiento
+poll_s = 0.05                # periodo de comprobacion de llegada
+
+# --------------------------------------------------------------------------
+# Orientacion de las vistas (coincidir con el montaje fisico)
+# --------------------------------------------------------------------------
+[view]
+mtrs_zero_location = "N"     # donde se dibuja 0 deg del MTRS: N, E, S, W
+mtrs_clockwise = false       # sentido de giro del MTRS visto desde arriba
