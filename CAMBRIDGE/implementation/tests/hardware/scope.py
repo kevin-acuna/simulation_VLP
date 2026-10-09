@@ -44,6 +44,14 @@ def tone_amplitude(t, v, f0):
     return float(2.0 * abs(np.mean(x * np.exp(-2j * np.pi * f0 * t))))
 
 
+def clipped_fraction(v, low, high, margin=0.005):
+    """Fraccion de muestras pegadas al borde de pantalla (senal saturada). NaN si no hay rango."""
+    if low is None or high is None:
+        return math.nan
+    m = margin * (high - low)
+    return float(np.mean((v >= high - m) | (v <= low + m)))
+
+
 def frequency_features(acqs, freqs_hz, band_hz=50.0):
     """Resumen por frecuencia de un conjunto de adquisiciones (salida de Scope.record).
 
@@ -88,6 +96,14 @@ class ScopeBase:
     def fft_units(self):
         return self.info.get("fft_units", "")
 
+    def refresh_info(self):
+        return self.info
+
+    def channel_limits(self):
+        """Rango vertical visible del canal (8 divisiones) segun la ultima info leida."""
+        scale, offset = self.info.get("ch_scale_V_div"), self.info.get("ch_offset_V", 0.0)
+        return (None, None) if scale is None else (offset - 4 * scale, offset + 4 * scale)
+
 
 class Scope(ScopeBase):
     def __init__(self, address, channel=1, fft_function=None, fft_points="MAX", timeout_ms=20000,
@@ -124,9 +140,16 @@ class Scope(ScopeBase):
         self._saved = {":TRIGger:SWEep": i.query(":TRIGger:SWEep?").strip()}
         i.write(":TRIGger:SWEep AUTO")          # :DIGitize no se cuelga sin senal
         self.m = self.m or self._find_fft()
+        self.refresh_info(idn)
+        print(f"[Scope] {idn}\n[Scope] FFT = FUNCtion{self.m} ({self.info['fft_source']}, "
+              f"{self.fft_units}); LED = {self.led_frequency()} Hz")
 
+    def refresh_info(self, idn=None):
+        """Relee la configuracion actual (canal, base de tiempo, FFT, WGEN) del osciloscopio."""
+        i = self.inst
         q = lambda c: i.query(c).strip()
         f = f":FUNCtion{self.m}"
+        idn = idn or self.info.get("idn") or q("*IDN?")
         self.info = {
             "idn": idn, "address": self.address, "channel": self.channel,
             "fft_function": self.m, "fft_source": q(f"{f}:SOURce1?"),
@@ -150,8 +173,7 @@ class Scope(ScopeBase):
         except Exception:
             pass
         self._errors()
-        print(f"[Scope] {idn}\n[Scope] FFT = FUNCtion{self.m} ({self.info['fft_source']}, "
-              f"{self.fft_units}); LED = {self.led_frequency()} Hz")
+        return self.info
 
     def _errors(self):
         errs = []

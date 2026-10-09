@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Database Acquisition Tool</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="appbar">
+    <button class="cfg-toggle" id="btnConfig" aria-expanded="true" title="Show / hide the configuration">
+      <span class="burger"><i></i><i></i><i></i></span>Configuration
+    </button>
+    <h1>Database Acquisition Tool</h1>
+    <div class="devices" id="devices"></div>
+    <div class="run">
+      <span class="state" id="stateLabel">Connecting</span>
+      <button class="btn go" id="btnStart">Start</button>
+      <button class="btn" id="btnPause">Pause</button>
+      <button class="btn stop" id="btnStop">Stop</button>
+    </div>
+  </header>
+
+  <div class="body cfg-open" id="body">
+    <!-- ===================== CONFIGURATION (plegable) ===================== -->
+    <aside class="cfg-panel" id="cfgPanel">
+      <section class="group">
+        <h2>Grid <span class="aside" id="gridCount"></span></h2>
+        <table class="grid-table">
+          <thead><tr><th></th><th>Start</th><th>End</th><th>Step</th><th>n</th></tr></thead>
+          <tbody>
+            <tr><th>X [mm]</th><td><input type="number" step="any" id="x0"></td><td><input type="number" step="any" id="x1"></td>
+              <td><input type="number" step="any" id="xs"></td><td class="n" id="xn"></td></tr>
+            <tr><th>Y [mm]</th><td><input type="number" step="any" id="y0"></td><td><input type="number" step="any" id="y1"></td>
+              <td><input type="number" step="any" id="ys"></td><td class="n" id="yn"></td></tr>
+            <tr><th>Z [mm]</th><td><input type="number" step="any" id="z0"></td><td><input type="number" step="any" id="z1"></td>
+              <td><input type="number" step="any" id="zs"></td><td class="n" id="zn"></td></tr>
+          </tbody>
+        </table>
+        <p class="note" id="wsNote"></p>
+      </section>
+
+      <section class="group">
+        <h2>Orientation</h2>
+        <div class="row2">
+          <label>K (MTRS angles)<input type="number" min="1" max="360" step="1" id="kAngles"></label>
+          <label>PD tilt [deg]<input type="number" step="any" id="pdTilt"></label>
+        </div>
+        <p class="note">Angles: <span id="angleList">–</span></p>
+        <p class="note boxed">The PD tilt is the inclination of the 3D-printed mount and is only written to the
+          database. The MTRS tilt is not moved (it stays at <span id="mtrsTiltTarget">0</span>°).</p>
+      </section>
+
+      <section class="group">
+        <h2>Acquisition</h2>
+        <div class="row2">
+          <label>Samples per orientation<input type="number" min="1" step="1" id="nSamples"></label>
+          <label>Settle time [s]<input type="number" min="0" step="any" id="settle"></label>
+        </div>
+        <label>Frequencies of interest [kHz]<input type="text" id="freqs"></label>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="serpXY">Serpentine XY path</label>
+          <label class="check"><input type="checkbox" id="serpAng">Alternate angle order (avoids cable winding)</label>
+          <label class="check"><input type="checkbox" id="saveWave">Save raw waveforms</label>
+        </div>
+        <label>Session label (optional)<input type="text" id="label" placeholder="e.g. tilt15_z300"></label>
+      </section>
+
+      <section class="group">
+        <div class="buttons">
+          <button class="btn primary" id="btnPreview">Preview plan</button>
+          <button class="btn" id="btnReconfig">Reconfigure</button>
+        </div>
+        <div id="planSummary" class="plan-summary"></div>
+      </section>
+
+      <section class="group">
+        <h2>Oscilloscope settings <button class="btn small" id="btnScope">Re-read</button></h2>
+        <table class="kv" id="scopeInfo"></table>
+      </section>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <main class="main">
+      <section class="panel progress">
+        <div class="progress-row">
+          <span class="count"><b id="pDone">0</b> / <span id="pTotal">0</span> measurements</span>
+          <div class="bar"><div id="bar"></div></div>
+          <span class="pct" id="pPct">0 %</span>
+        </div>
+        <div class="progress-info">
+          <span>Elapsed <b id="pElapsed">–</b></span>
+          <span>Remaining <b id="pEta">–</b></span>
+          <span>Finish at <b id="pFinish">–</b></span>
+          <span>Current <b id="pCurrent">–</b></span>
+          <span>Phase <b id="phase">–</b></span>
+        </div>
+        <div class="message" id="message"></div>
+      </section>
+
+      <div class="main-grid">
+        <section class="panel view">
+          <div class="panel-head">
+            <div class="tabs" id="viewTabs">
+              <button data-view="top" class="active">Top view</button>
+              <button data-view="3d">3D view</button>
+            </div>
+            <span class="hint" id="viewHint">origin at bottom right · X up · Y left</span>
+            <div class="tools">
+              <label>Z level <select id="zSel"></select></label>
+              <label>Color <select id="colorSel"></select></label>
+            </div>
+          </div>
+          <div class="view-wrap" id="viewWrap">
+            <canvas id="map"></canvas>
+            <canvas id="zbar"></canvas>
+            <div class="tooltip" id="tooltip"></div>
+          </div>
+          <div class="legend" id="legend"></div>
+        </section>
+
+        <aside class="side">
+          <section class="panel">
+            <div class="panel-head"><h3>MTRS rotation</h3></div>
+            <canvas id="dial"></canvas>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h3>Live pose</h3><span class="hint" id="liveInfo"></span></div>
+            <table class="kv readouts">
+              <tr><td>X</td><td id="rX">–</td><td>mm</td></tr>
+              <tr><td>Y</td><td id="rY">–</td><td>mm</td></tr>
+              <tr><td>Z</td><td id="rZ">–</td><td>mm</td></tr>
+              <tr><td>Speed</td><td id="rV">–</td><td>mm/s</td></tr>
+              <tr><td>Rotation</td><td id="rA">–</td><td>deg</td></tr>
+              <tr><td>MTRS tilt</td><td id="rT">–</td><td>deg</td></tr>
+              <tr><td>PD tilt (recorded)</td><td id="rPT">–</td><td>deg</td></tr>
+              <tr><td>Gantry</td><td id="rK">–</td><td></td></tr>
+            </table>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h3>Last measurement</h3><span class="hint" id="lastId"></span></div>
+            <div id="lastMeas" class="last-meas"></div>
+          </section>
+          <section class="panel log-panel">
+            <div class="panel-head"><h3>Log</h3></div>
+            <ul id="log"></ul>
+          </section>
+        </aside>
+
+        <section class="panel fft">
+          <div class="panel-head"><h3>Oscilloscope FFT</h3><span class="hint" id="fftInfo"></span>
+            <div class="fft-vals" id="fftVals"></div></div>
+          <canvas id="fftCv"></canvas>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <h3 id="modalTitle"></h3>
+      <p id="modalText"></p>
+      <div class="buttons right">
+        <button class="btn" id="modalCancel">Cancel</button>
+        <button class="btn primary" id="modalOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

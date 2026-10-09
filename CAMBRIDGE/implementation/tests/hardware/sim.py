@@ -128,53 +128,74 @@ class SimMTRS(MTRSBase):
 
 
 class SimScope(ScopeBase):
-    """FFT en dB de una senal LED senoidal recibida por un PD inclinado."""
+    """Emula el MSO-X 4154A del laboratorio con 4 LEDs (300/500/700/900 kHz).
 
-    LED_POS_MM = (700.0, 700.0, 300.0)
+    Mismo formato que el equipo real (medido el 2026-10-09): 20 MSa/s, registro de
+    10200 muestras (51 us/div), FFT Hanning con relleno hasta 32768 puntos (bin 610.35 Hz),
+    span 0-1 MHz en Vrms, canal en AC a 30 mV/div. Cada LED es lambertiano y el PD esta
+    inclinado PD_TILT_DEG con azimut = angulo del MTRS.
+    """
+
+    # (frecuencia [Hz], posicion [mm] X, Y, Z) - posiciones aproximadas segun el exp01
+    LEDS = ((300e3, (700.0, 1250.0, 300.0)), (500e3, (700.0, 900.0, 300.0)),
+            (700e3, (700.0, 450.0, 300.0)), (900e3, (700.0, 150.0, 300.0)))
     PD_TILT_DEG = 15.0
     LAMBERT_ORDER = 1.0
-    F_LED_HZ = 1000.0
-    FS = 100e3
-    N = 10000
+    AMPLITUDE_V = 0.02            # amplitud de cada tono a 0.5 m, en eje
+    NOISE_V = 0.004
+    FS = 20e6
+    N = 10200
+    N_FFT = 32768
+    F_MAX = 1.0004e6
 
     def __init__(self, pose_fn=None, channel=1, led_freq_hz="wgen", led_freq_band_hz=50.0,
                  fft_peak_min_hz=1.0, **_):
         super().__init__(led_freq_hz, led_freq_band_hz, fft_peak_min_hz)
         self.pose_fn = pose_fn or (lambda: ((700.0, 700.0, -300.0), 0.0))
         self.channel = channel
-        self.info = {"simulated": True, "idn": "SimScope", "fft_units": "dB",
-                     "wgen_frequency_Hz": self.F_LED_HZ, "fft_function": 1, "fft_source": "CHAN1"}
+        self._phases = np.random.uniform(0, 2 * np.pi, len(self.LEDS))
+        self.info = {"simulated": True, "idn": "SimScope (4 LEDs)", "channel": channel,
+                     "fft_units": "Vrms", "fft_function": 1, "fft_source": "CHAN1",
+                     "fft_window": "HANN", "fft_center_Hz": 500e3, "fft_span_Hz": 1e6,
+                     "timebase_s_div": 5.1e-5, "sample_rate_Sa_s": self.FS,
+                     "acquire_type": "NORM", "ch_scale_V_div": 0.03, "ch_offset_V": 0.0,
+                     "ch_coupling": "AC", "ch_impedance": "ONEM", "wgen_frequency_Hz": 700e3}
 
     def connect(self):
-        print(f"[SimScope] Ready. Simulated LED at {self.F_LED_HZ} Hz")
+        print(f"[SimScope] Ready. Simulated LEDs at {[f / 1e3 for f, _ in self.LEDS]} kHz")
 
-    def _amplitude(self):
+    def _amplitudes(self):
         (x, y, z), angle = self.pose_fn()
-        lx, ly, lz = self.LED_POS_MM
-        d_vec = np.array([lx - x, ly - y, lz - z])
-        d = np.linalg.norm(d_vec)
-        u = d_vec / d
         t, a = math.radians(self.PD_TILT_DEG), math.radians(angle)
         n = np.array([math.sin(t) * math.cos(a), math.sin(t) * math.sin(a), math.cos(t)])
-        cos_phi, cos_psi = max(u[2], 0.0), max(float(u @ n), 0.0)
-        return 0.5 * cos_phi ** self.LAMBERT_ORDER * cos_psi * (500.0 / d) ** 2
+        amps = []
+        for _, (lx, ly, lz) in self.LEDS:
+            d_vec = np.array([lx - x, ly - y, lz - z])
+            d = np.linalg.norm(d_vec)
+            u = d_vec / d
+            cos_phi, cos_psi = max(u[2], 0.0), max(float(u @ n), 0.0)
+            amps.append(self.AMPLITUDE_V * cos_phi ** self.LAMBERT_ORDER * cos_psi * (500.0 / d) ** 2)
+        return amps
 
     def _signal(self):
         t = np.arange(self.N) / self.FS
-        v = 1.0 + self._amplitude() * np.sin(2 * np.pi * self.F_LED_HZ * t) + 2e-3 * np.random.randn(self.N)
+        v = self.NOISE_V * np.random.randn(self.N)
+        for (f0, _), a, ph in zip(self.LEDS, self._amplitudes(), self._phases):
+            v += a * np.sin(2 * np.pi * f0 * t + ph)
         return t, v
 
     def _fft_of(self, v):
         w = np.hanning(v.size)
-        spec = np.abs(np.fft.rfft((v - v.mean()) * w)) * 2 / w.sum() / math.sqrt(2)
-        f = np.fft.rfftfreq(v.size, 1 / self.FS)
-        sel = f <= 5000
-        return f[sel], 20 * np.log10(np.maximum(spec[sel], 1e-9))
+        spec = np.abs(np.fft.rfft(np.pad((v - v.mean()) * w, (0, self.N_FFT - v.size))))
+        spec *= 2 / w.sum() / math.sqrt(2)
+        f = np.fft.rfftfreq(self.N_FFT, 1 / self.FS)
+        sel = f <= self.F_MAX
+        return f[sel], spec[sel]
 
     def read_fft(self):
         time.sleep(0.05)
         f, y = self._fft_of(self._signal()[1])
-        return {"unix": time.time(), "f": f, "y": y, "ylim": (-120.0, 0.0)}
+        return {"unix": time.time(), "f": f, "y": y, "ylim": (0.0, 0.02)}
 
     def record(self, n_acq, time_points):
         out = []
@@ -183,7 +204,7 @@ class SimScope(ScopeBase):
             t, v = self._signal()
             f, y = self._fft_of(v)
             out.append({"unix": t0, "f": f, "fft": y, "t": t, "v": v, "fs": self.FS})
-            time.sleep(0.2)
+            time.sleep(0.05)
         return out
 
     def close(self):

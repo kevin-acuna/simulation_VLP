@@ -22,6 +22,24 @@ least +/-1.5 bins.
 - `basic_tests/{GANTRY,MTRS,SCOPE}`: standalone per-device tests (run from their folder; independent of config).
 - `experiments/exp01_point_acquisition.py`: GUI point-by-point acquisition; only experiment parameters
   at the top (`DEVICE_MODE_OVERRIDE`, settle time, acquisitions...). Output: `data/exp01/exp01_<date>/`.
+- `experiments/exp02_database/`: database acquisition (XYZ grid x K MTRS angles theta_k = 360k/K).
+  `exp02_database.py` (entry, defaults at the top) starts `Testbed`, `engine.Engine` (plan, threads for
+  telemetry / scope / runner, pause-resume-stop, auto-pause on errors, saving) and `server.py` (stdlib
+  HTTP + Server-Sent Events on 127.0.0.1:8765). `web/` is a no-build HTML/CSS/JS UI that only sends
+  commands; all control and rigor stay in Python. pyvisa is used only from the scope thread
+  (`Engine.scope_call`). `pd_tilt_deg` is metadata of the 3D-printed mount: never sent to the MTRS (its
+  tilt stays at `tilt_target_deg` = 0). Output `data/exp02/exp02_<date>[_label]/`: points.csv (compact,
+  one row per measurement), plan.csv, trajectory.csv, fft/mNNNNN.csv, wave/mNNNNN.npz, session.json, README.txt.
+  The plan is compact (sites list + `plan_measurement(plan, i)`, no per-measurement dicts) so plans of
+  10^5-10^6 measurements work; `MAX_MEASUREMENTS` (5e6) is only a memory guard, long plans get a warning.
+  Time estimate (`estimate_times`) uses the NOMINAL speeds from testbed.toml (sim devices are sped up by
+  `sim_speedup`) and constants calibrated on real data: MTRS trapezoid 1.5 deg/s, 1.5 deg/s2 (72 deg = 49.1 s);
+  gantry 50 mm/s with ~250 mm/s2 effective (100 mm = 2.2 s); 1.25 s per acquisition + 0.15 s saving.
+  UI: light, plain style (university tool, title "Database Acquisition Tool"); the configuration panel is
+  a collapsible sidebar (button at the top left); Start/Pause/Stop stay in the header; Top view / 3D view
+  (orbit, wheel zoom, double-click reset). UI screenshot without hardware: run with all-sim modes and
+  `msedge --headless=new --screenshot=... "http://127.0.0.1:8765/?snapshot=1&view=3d&config=0&color=500kHz"`
+  (`?snapshot` avoids the never-ending SSE stream).
 
 ## Hardware facts (verified)
 - Gantry igus DLE-RG-0012-BLDC at 192.168.3.11:3920 (PC 192.168.3.100/24); iRC simulator 127.0.0.1:3921.
@@ -36,6 +54,11 @@ least +/-1.5 bins.
 - Scope is an Agilent MSO-X 4154A (not the MSOX6004A). Never send *RST/:AUToscale (its WGEN drives the LED).
   Scope FFT = Math function `:FUNCtion<m>:OPERation FFT`, read via `:WAVeform:SOURce FUNCtion<m>` (x in Hz).
   VISA may list the serial in lowercase; `VI_ERROR_NCIC` on open means another program holds the instrument.
+  Measured 2026-10-09: waveform record = 10 x timebase (51 us/div -> 10200 samples at 20 MSa/s, even if more
+  points are requested); the scope FFT = Hanning over that record zero-padded to 32768 points (bin 610.35 Hz,
+  true resolution ~2-3.7 kHz); FFT span/center only select the displayed/downloaded bins. One synchronized
+  acquisition (:DIGitize + FFT + waveform) takes ~1.05 s. The lab has 4 LEDs at 300/500/700/900 kHz (WGEN = 700 kHz).
+  `SimScope` emulates this (4 Lambertian LEDs, same FFT format).
 
 ## Verification
 - No hardware: run experiments/drivers with `DEVICE_MODE` = sim (Agg backend for headless tests).
