@@ -1,0 +1,9 @@
+# Python >= 3.11 (tested with 3.13 on Windows 11)
+# Tested versions: numpy 2.5.3, PyVISA 1.16.2, pythonnet 3.2.0, cri_lib 0.4.0 (+20 commits)
+
+numpy>=2.0
+pyvisa>=1.13            # oscilloscope; needs a VISA library (Keysight IO Libraries Suite)
+pythonnet>=3.0          # Thorlabs MTRS through the Kinesis .NET DLLs (Kinesis must be installed)
+
+# igus gantry (CRI protocol), Commonplace Robotics library pinned to the tested commit
+cri_lib @ git+https://github.com/CommonplaceRobotics/CRI-Python-Lib.git@21995a13acb20ca2ca5d3012e65d6a8668e6f60b
