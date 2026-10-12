@@ -8,3 +8,4 @@ CAMBRIDGE/simulations/Receiver models/Bastiaens 2020/results/
 *.venv
 **/.latex-build/
 *-eps-converted-to.pdf
+/CAMBRIDGE/testbed_dev/CRI-Python-Lib/
