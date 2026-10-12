@@ -8,5 +8,3 @@ CAMBRIDGE/simulations/Receiver models/Bastiaens 2020/results/
 *.venv
 **/.latex-build/
 *-eps-converted-to.pdf
-
-/CAMBRIDGE/database_acquisition/

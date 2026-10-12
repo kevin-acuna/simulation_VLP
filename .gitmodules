@@ -1,3 +1,6 @@
 [submodule "CAMBRIDGE/digital_twin_ows"]
 	path = CAMBRIDGE/digital_twin_ows
 	url = https://github.com/kevin-acuna/digital_twin_ows.git
+[submodule "CAMBRIDGE/database_acquisition"]
+	path = CAMBRIDGE/database_acquisition
+	url = https://github.com/kevin-acuna/database_acquisition.git
