@@ -42,8 +42,9 @@
 
       <section class="group">
         <h2>Orientation</h2>
-        <div class="row2">
-          <label>K (MTRS angles)<input type="number" min="1" max="360" step="1" id="kAngles"></label>
+        <div class="row3">
+          <label>K (angles)<input type="number" min="1" max="360" step="1" id="kAngles"></label>
+          <label>Offset [deg]<input type="number" step="any" id="angleOffset"></label>
           <label>PD tilt [deg]<input type="number" step="any" id="pdTilt"></label>
         </div>
         <p class="note">Angles: <span id="angleList">–</span></p>
@@ -52,13 +53,34 @@
       </section>
 
       <section class="group">
-        <h2>Acquisition</h2>
-        <div class="row2">
-          <label>Samples per orientation<input type="number" min="1" step="1" id="nSamples"></label>
-          <label>Settle time [s]<input type="number" min="0" step="any" id="settle"></label>
+        <h2>LEDs <span class="aside">frequencies recorded in points.csv</span></h2>
+        <div class="led-count">
+          <span>Number of LEDs</span>
+          <button class="btn small" id="ledMinus" title="Remove the last LED">&minus;</button>
+          <input type="number" min="1" max="32" step="1" id="ledCount">
+          <button class="btn small" id="ledPlus" title="Add a LED">+</button>
         </div>
-        <label>Frequencies of interest [kHz]<input type="text" id="freqs"></label>
+        <div class="led-list" id="ledList"></div>
+        <p class="note">Each LED adds its columns to points.csv, named after its frequency
+          (e.g. <code>700kHz_wave_Vrms</code>, <code>700kHz_fft_Vrms</code>).</p>
+      </section>
+
+      <section class="group">
+        <h2>Acquisition</h2>
+        <div class="row3">
+          <label>Samples / orient.<input type="number" min="1" step="1" id="nSamples"></label>
+          <label>Passes<input type="number" min="1" step="1" id="nPasses" title="Times the whole route is repeated"></label>
+          <label>Settle [s]<input type="number" min="0" step="any" id="settle"></label>
+        </div>
+        <p class="note">Passes: the whole route is repeated this many times (alternating direction), to measure the
+          variance of every point. Samples: consecutive captures at the same pose without moving.</p>
+        <div class="row2">
+          <label>Record length [ms]<input type="number" min="0" step="any" id="recordMs"></label>
+          <label>Sample rate [MSa/s]<input type="number" min="0" step="any" id="recordFs"></label>
+        </div>
+        <p class="note" id="recordNote"></p>
         <div class="checks">
+          <label class="check"><input type="checkbox" id="scopeFft">Also read the oscilloscope FFT (+~1.4 s per sample; records of at most 62,500 points)</label>
           <label class="check"><input type="checkbox" id="serpXY">Serpentine XY path</label>
           <label class="check"><input type="checkbox" id="serpAng">Alternate angle order (avoids cable winding)</label>
           <label class="check"><input type="checkbox" id="saveWave">Save raw waveforms</label>
@@ -148,7 +170,7 @@
         </aside>
 
         <section class="panel fft">
-          <div class="panel-head"><h3>Oscilloscope FFT</h3><span class="hint" id="fftInfo"></span>
+          <div class="panel-head"><h3>FFT</h3><span class="hint" id="fftInfo"></span>
             <div class="fft-vals" id="fftVals"></div></div>
           <canvas id="fftCv"></canvas>
         </section>

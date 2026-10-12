@@ -77,3 +77,5 @@ poll_s = 0.05                # periodo de comprobacion de llegada
 [view]
 mtrs_zero_location = "N"     # donde se dibuja 0 deg del MTRS: N, E, S, W
 mtrs_clockwise = false       # sentido de giro del MTRS visto desde arriba
+z_negative_up = true         # en este montaje el PD sube cuando Z es mas negativa:
+                             # Z = -700 es la posicion MAS ALTA del PD y Z = 0 la mas baja

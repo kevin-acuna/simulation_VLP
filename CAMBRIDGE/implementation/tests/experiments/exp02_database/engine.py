@@ -8,19 +8,25 @@ La interfaz web (server.py + web/) solo envia comandos y muestra el estado.
 Recorrido del plan:
   - Niveles Z por fuera; dentro de cada nivel, rejilla XY en serpentina (filas en X,
     Y alternando sentido) y el recorrido XY se invierte en cada nivel Z.
-  - En cada posicion se miden K angulos del MTRS: theta_k = 360 * k / K (k = 0..K-1).
+  - En cada posicion se miden K angulos del MTRS: theta_k = (offset + 360 k / K) mod 360.
     Con serpentina de angulos, una posicion los recorre en orden creciente y la
     siguiente en orden decreciente: no hay giros de vuelta y el cable no se enrolla.
   - El tilt del MTRS se mantiene SIEMPRE en el valor de la config (0 deg). El
     parametro pd_tilt_deg es la inclinacion mecanica de la pieza 3D: solo se registra.
 
+Adquisicion: cada muestra es UN registro continuo del osciloscopio (sin huecos). Con
+record_ms > 0 el registro (duracion y frecuencia de muestreo) se configura al empezar la
+sesion y la configuracion del usuario se restaura al terminar. Con scope_fft = False la FFT
+se calcula en Python sobre todo el registro (la del osciloscopio tarda ~1.4 s y solo usa 64K
+puntos).
+
 Archivos de cada sesion (output_root/exp02_<fecha>/):
-  session.json   configuracion del plan + equipos + estado final
+  session.json   configuracion del plan + equipos + registro + estado final
   plan.csv       todas las mediciones planificadas
   points.csv     una fila por medicion: pose comandada/medida, tilts y RSS por frecuencia
   trajectory.csv telemetria a 10 Hz (gantry + MTRS) durante la sesion
-  fft/mNNNNN.csv FFT del osciloscopio de cada adquisicion de la medicion NNNNN
-  wave/mNNNNN.npz forma de onda cruda (float32, comprimida) si save_waveforms
+  fft/mNNNNN.csv FFT de cada adquisicion (reducida a <= FFT_SAVE_MAX_BINS bins, picos conservados)
+  wave/mNNNNN.npz forma de onda cruda (codigos del ADC uint16, sin perdida) si save_waveforms
   README.txt     descripcion de columnas y archivos
 """
 
@@ -35,39 +41,58 @@ from datetime import datetime
 
 import numpy as np
 
-from hardware.scope import clipped_fraction, frequency_features
+from hardware.scope import clipped_fraction, decimate_spectrum, frequency_features
 from hardware.testbed import Stopped
 from hardware.utils import RateTimer
 
-# --- modelo de tiempo, calibrado con medidas reales (2026-10-07/09) ---
-#   MTRS: 72 deg en 49.1 s = perfil trapezoidal con 1.5 deg/s y 1.5 deg/s2 (config)
-#   gantry: 100 mm en 2.2 s de movimiento a 50 mm/s -> aceleracion efectiva ~250 mm/s2
-#           (firmware V980-14-003-3 usa su aceleracion por defecto, 40 %)
-#   osciloscopio: 3 adquisiciones sincronizadas + guardado = 3.7-3.9 s
-ACQ_TIME_EST_S = 1.25         # una adquisicion (:DIGitize + FFT + onda) en el MSO-X 4154A
-SAVE_TIME_EST_S = 0.15        # escribir CSV/NPZ de una medicion
-GANTRY_ACCEL_EST = 250.0      # mm/s2 efectiva del gantry real
+# --- modelo de tiempo, calibrado con medidas reales ---
+#   MTRS (03_MTRS_Rotation, 2026-10-07): 72 deg en 49.1 s = trapecio 1.5 deg/s, 1.5 deg/s2 (config)
+#   gantry (3 sesiones exp02, 2026-10-09/12, 220 movimientos): fase MOVING (incluye la deteccion
+#           de llegada) = 3.70 / 4.67 / 6.75 / 7.70 / 8.73 s para 150 / 200 / 300 / 350 / 400 mm
+#           a 50 mm/s -> d/v + v/a + llegada con a ~160 mm/s2 (firmware usa su aceleracion, 40 %)
+#   osciloscopio (2026-10-12): lo lento NO es la transferencia sino el calculo de la FFT del
+#           propio osciloscopio (~1.4 s por adquisicion con 50 kpts). Con :SINGle y sin esa FFT:
+#           ~0.2-0.3 s de captura + transferencia (50 kpts 0.17 s, 1 Mpts 0.64 s).
+#           Con el osciloscopio real, al previsualizar se MIDE una adquisicion; el modelo de
+#           abajo solo se usa con el osciloscopio simulado.
+ACQ_BASE_S = 0.30             # :SINGle + espera de fin de captura
+ACQ_PER_POINT_S = 0.65e-6     # transferencia USB por punto (WORD)
+SCOPE_FFT_S = 1.4             # calculo de la FFT del osciloscopio (solo si scope_fft)
+SAVE_BASE_S = 0.15            # escribir CSV/NPZ de una medicion
+SAVE_PER_POINT_S = 0.5e-6     # FFT en Python + compresion de la onda, por punto
+GANTRY_ACCEL_EST = 160.0      # mm/s2 efectiva del gantry real
 ARRIVAL_OVERHEAD_S = 0.1      # sondeo de llegada, se suma a motion.arrival_hold_s
 LONG_PLAN_WARN_S = 24 * 3600  # aviso si el plan dura mas que esto
 MAX_MEASUREMENTS = 5_000_000  # limite tecnico (memoria); ~140 dias a 2.4 s por medicion
 
 MAX_RETRIES = 2               # reintentos de adquisicion antes de pausar con error
-FFT_BYTES_EST = 90e3          # tamano aproximado de un fft/mNNNNN.csv (1640 bins x 1 adq)
-WAVE_BYTES_PER_ACQ = 42e3     # tamano aproximado de una adquisicion en wave/*.npz
+FFT_SAVE_MAX_BINS = 4000      # fft/mNNNNN.csv: espectro reducido (maximo por grupo) a <= N bins
+FFT_BYTES_PER_ROW = 14        # bytes por valor en el CSV de la FFT
+WAVE_BYTES_PER_POINT = 1.6    # wave/*.npz: codigos uint16 comprimidos (medido ~1.3-1.7)
+MAX_RECORD_POINTS = 4_000_000 # memoria de adquisicion del MSO-X 4154A (hoja de datos)
+# Con la FFT (Math) del osciloscopio activa, el 4154A reduce el registro del canal a ~62 500
+# puntos (medido 2026-10-12: 50 ms -> 62 500 pts a 1.25 MSa/s en lugar de 500 000 a 10 MSa/s),
+# lo que produce aliasing por encima de fs/2. scope_fft solo se permite hasta este tamano.
+SCOPE_FFT_MAX_POINTS = 62_500
 
 DEFAULT_CONFIG = {
     "x": [100.0, 1300.0, 300.0],          # inicio, fin, paso [mm]
     "y": [100.0, 1300.0, 300.0],
     "z": [-300.0, -300.0, 100.0],
     "k_angles": 4,
+    "angle_offset_deg": 65.0,
     "pd_tilt_deg": 15.0,
     "n_samples": 1,
+    "n_passes": 1,                        # veces que se repite TODO el recorrido (varianza por punto)
     "freqs_khz": [300.0, 500.0, 700.0, 900.0],
     "settle_s": 1.0,
+    "record_ms": 100.0,                   # registro continuo por muestra [ms]; 0 = config del osciloscopio
+    "record_fs_msa": 10.0,                # frecuencia de muestreo del registro [MSa/s]
+    "scope_fft": False,                   # leer tambien la FFT del osciloscopio (+~1.4 s por muestra)
     "serpentine_xy": True,
     "serpentine_angles": True,
     "save_waveforms": True,
-    "time_points": 100000,
+    "time_points": 8000000,               # puntos de onda pedidos (8e6 = todos los del registro)
     "label": "",
 }
 
@@ -114,9 +139,14 @@ def normalize_config(cfg):
     for ax in ("x", "y", "z"):
         c[ax] = [float(v) for v in c[ax]]
     c["k_angles"] = int(c["k_angles"])
+    c["angle_offset_deg"] = float(c["angle_offset_deg"])
     c["n_samples"] = int(c["n_samples"])
+    c["n_passes"] = int(c["n_passes"])
     c["pd_tilt_deg"] = float(c["pd_tilt_deg"])
     c["settle_s"] = float(c["settle_s"])
+    c["record_ms"] = float(c["record_ms"])
+    c["record_fs_msa"] = float(c["record_fs_msa"])
+    c["scope_fft"] = bool(c["scope_fft"])
     c["freqs_khz"] = [float(f) for f in c["freqs_khz"]]
     c["serpentine_xy"] = bool(c["serpentine_xy"])
     c["serpentine_angles"] = bool(c["serpentine_angles"])
@@ -146,7 +176,9 @@ def build_plan(cfg, tb, start_pose=None):
     if not 1 <= c["n_samples"] <= 100:
         errors.append("Samples per orientation must be between 1 and 100")
     if not c["freqs_khz"] or any(f <= 0 for f in c["freqs_khz"]):
-        errors.append("Frequencies must be a non-empty list of positive values (kHz)")
+        errors.append("Every LED needs a positive frequency (kHz)")
+    elif len({freq_label(f * 1e3) for f in c["freqs_khz"]}) != len(c["freqs_khz"]):
+        errors.append("Two LEDs have the same frequency (their columns in points.csv would collide)")
     if c["settle_s"] < 0:
         errors.append("Settle time must be >= 0")
     if len(axes) < 3:
@@ -158,12 +190,35 @@ def build_plan(cfg, tb, start_pose=None):
         if bad:
             errors.append(f"{ax.upper()} values outside the workspace [{lo:g}, {hi:g}]: {bad[:5]}")
     k_eff = min(max(c["k_angles"], 1), 360)
-    angles = [round(360.0 * k / k_eff, 6) for k in range(k_eff)]
+    angles = [round((c["angle_offset_deg"] + 360.0 * k / k_eff) % 360.0, 6) % 360.0 for k in range(k_eff)]
     if any(not tb.mtrs.valid_angle(a) for a in angles):
         errors.append("Some angles are not valid for the MTRS rotation mode")
 
     scope = tb.scope.info
     fs, center, span = scope.get("sample_rate_Sa_s"), scope.get("fft_center_Hz"), scope.get("fft_span_Hz")
+    if c["record_ms"] < 0 or c["record_fs_msa"] <= 0:
+        errors.append("Record length must be >= 0 ms (0 = oscilloscope settings) and the sample rate > 0")
+    elif c["record_ms"] == 0 and c["scope_fft"] and record_points(c, scope) > SCOPE_FFT_MAX_POINTS:
+        errors.append(f"The record configured on the oscilloscope has {record_points(c, scope):,} points; with "
+                      f"its FFT active the oscilloscope reduces it to ~{SCOPE_FFT_MAX_POINTS:,} (aliasing). "
+                      f"Disable 'Also read the oscilloscope FFT'.")
+    elif c["record_ms"] > 0:
+        fs = c["record_fs_msa"] * 1e6
+        n_rec = record_points(c, scope)
+        if n_rec > MAX_RECORD_POINTS:
+            errors.append(f"A {c['record_ms']:g} ms record at {c['record_fs_msa']:g} MSa/s needs {n_rec:,} points; "
+                          f"the oscilloscope memory allows {MAX_RECORD_POINTS:,}. Reduce the length or the rate.")
+        f_max = max(c["freqs_khz"]) * 1e3 if c["freqs_khz"] else 0
+        if c["scope_fft"] and n_rec > SCOPE_FFT_MAX_POINTS:
+            errors.append(f"'Also read the oscilloscope FFT' cannot be used with a {n_rec:,}-point record: with its "
+                          f"FFT active the oscilloscope reduces the record to ~{SCOPE_FFT_MAX_POINTS:,} points "
+                          f"(sample rate {SCOPE_FFT_MAX_POINTS / (c['record_ms'] * 1e-3) / 1e6:.3g} MSa/s), so "
+                          f"frequencies above {SCOPE_FFT_MAX_POINTS / (c['record_ms'] * 1e-3) / 2e3:.0f} kHz "
+                          f"alias. Disable the option (FFT computed in Python) or use a record of at most "
+                          f"{SCOPE_FFT_MAX_POINTS / fs * 1e3:.2f} ms at {c['record_fs_msa']:g} MSa/s.")
+        if f_max and fs < 4 * f_max:
+            warnings.append(f"{c['record_fs_msa']:g} MSa/s is less than 4x the highest frequency "
+                            f"({f_max / 1e3:g} kHz); use High Resolution acquisition to limit aliasing.")
     for f in c["freqs_khz"]:
         f_hz = f * 1e3
         if fs and f_hz >= fs / 2:
@@ -172,10 +227,12 @@ def build_plan(cfg, tb, start_pose=None):
             warnings.append(f"{f:g} kHz is outside the scope FFT span "
                             f"({(center - span / 2) / 1e3:g}-{(center + span / 2) / 1e3:g} kHz): "
                             f"its FFT columns will be empty (waveform RSS is still computed)")
-    n_meas = len(axes["x"]) * len(axes["y"]) * len(axes["z"]) * c["k_angles"]
+    if not 1 <= c["n_passes"] <= 1000:
+        errors.append("Passes must be between 1 and 1000")
+    n_meas = len(axes["x"]) * len(axes["y"]) * len(axes["z"]) * c["k_angles"] * c["n_passes"]
     if n_meas > MAX_MEASUREMENTS:
         errors.append(f"The plan has {n_meas:,} measurements; the program can handle at most "
-                      f"{MAX_MEASUREMENTS:,} (memory limit). Use a coarser grid or fewer angles.")
+                      f"{MAX_MEASUREMENTS:,} (memory limit). Use a coarser grid, fewer angles or passes.")
     if errors:
         return {"ok": False, "errors": errors, "warnings": warnings, "config": c}
 
@@ -192,35 +249,67 @@ def build_plan(cfg, tb, start_pose=None):
         rev = not rev
         sites += level
 
-    plan = {"ok": True, "errors": [], "warnings": warnings, "config": c, "axes": axes,
-            "angles": angles, "sites": sites, "K": c["k_angles"],
-            "n_sites": len(sites), "n_meas": len(sites) * c["k_angles"]}
-    est, breakdown = estimate_times(plan, tb, start_pose)
+    # orden de medida: angulo real del MTRS creciente (nunca cruza 0/360 -> el cable no se enrolla)
+    asc = sorted(range(len(angles)), key=lambda k: angles[k])
+    plan = {"ok": True, "errors": [], "warnings": warnings, "base_warnings": list(warnings),
+            "config": c, "axes": axes, "angles": angles, "order_asc": asc, "order_desc": asc[::-1],
+            "sites": sites, "K": c["k_angles"], "n_sites": len(sites), "passes": c["n_passes"],
+            "n_visits": len(sites) * c["n_passes"],
+            "n_meas": len(sites) * c["k_angles"] * c["n_passes"]}
+    n_rec = record_points(c, tb.scope.info)
+    plan["record_points"] = n_rec
+    fft_bytes = FFT_SAVE_MAX_BINS * FFT_BYTES_PER_ROW * (1 + c["n_samples"])
+    plan["est_bytes"] = plan["n_meas"] * (fft_bytes + (WAVE_BYTES_PER_POINT * n_rec * c["n_samples"]
+                                                       if c["save_waveforms"] else 0))
+    apply_estimate(plan, tb, start_pose)
+    return plan
+
+
+def record_points(c, scope_info):
+    """Puntos por adquisicion: los del registro pedido o, con record_ms = 0, los de la pantalla."""
+    if c["record_ms"] > 0:
+        return int(round(c["record_ms"] * 1e-3 * c["record_fs_msa"] * 1e6))
+    tb_s, fs = scope_info.get("timebase_s_div"), scope_info.get("sample_rate_Sa_s")
+    return int(round(10 * tb_s * fs)) if tb_s and fs else 10200
+
+
+def apply_estimate(plan, tb, start_pose=None, acq_s=None, acq_source="default (simulated scope)"):
+    """Calcula (o recalcula) la duracion estimada del plan."""
+    est, breakdown = estimate_times(plan, tb, start_pose, acq_s, acq_source)
     plan["est"] = est
     plan["est_cum"] = np.cumsum(est)
     plan["est_total_s"] = round(float(est.sum()), 1)
     plan["est_breakdown"] = breakdown
-    plan["est_bytes"] = plan["n_meas"] * c["n_samples"] * (
-        FFT_BYTES_EST + (WAVE_BYTES_PER_ACQ if c["save_waveforms"] else 0))
+    plan["warnings"] = list(plan["base_warnings"])
     if plan["est_total_s"] > LONG_PLAN_WARN_S:
-        warnings.append(f"Estimated duration {fmt_duration(plan['est_total_s'])} "
-                        f"({plan['n_meas']:,} measurements). Consider a coarser grid or fewer angles.")
-    return plan
+        plan["warnings"].append(f"Estimated duration {fmt_duration(plan['est_total_s'])} "
+                                f"({plan['n_meas']:,} measurements). Consider a coarser grid or fewer angles.")
 
 
-def angle_order(plan, site_index):
-    """Indices k de los angulos en el orden en que se miden en la posicion site_index."""
-    K = plan["K"]
-    rev = plan["config"]["serpentine_angles"] and site_index % 2 == 1
-    return range(K - 1, -1, -1) if rev else range(K)
+def angle_order(plan, visit):
+    """Indices k de los angulos en el orden en que se miden en la visita numero `visit`."""
+    rev = plan["config"]["serpentine_angles"] and visit % 2 == 1
+    return plan["order_desc"] if rev else plan["order_asc"]
+
+
+def visit_site(plan, visit):
+    """(pasada, indice de posicion) de la visita numero `visit` (0-based).
+
+    Cada pasada recorre toda la rejilla; con serpentine_xy las pasadas impares la recorren al
+    reves, asi el gantry continua desde donde termino en vez de volver al inicio.
+    """
+    p, j = divmod(visit, plan["n_sites"])
+    rev = plan["config"]["serpentine_xy"] and p % 2 == 1
+    return p, (plan["n_sites"] - 1 - j if rev else j)
 
 
 def plan_measurement(plan, i):
     """Medicion i (0-based) del plan, calculada a partir del indice (sin listas enormes)."""
-    s, j = divmod(i, plan["K"])
-    k = angle_order(plan, s)[j]
+    v, j = divmod(i, plan["K"])
+    p, s = visit_site(plan, v)
+    k = angle_order(plan, v)[j]
     ix, iy, iz, x, y, z = plan["sites"][s]
-    return {"meas_id": i + 1, "site_id": s + 1, "ix": ix, "iy": iy, "iz": iz, "k": k,
+    return {"meas_id": i + 1, "pass": p + 1, "site_id": s + 1, "ix": ix, "iy": iy, "iz": iz, "k": k,
             "x": x, "y": y, "z": z, "angle": plan["angles"][k], "est_s": float(plan["est"][i])}
 
 
@@ -229,41 +318,49 @@ def _trapezoid(d, v, a):
     return np.where(d >= v * v / a, d / v + v / a, 2.0 * np.sqrt(d / a))
 
 
-def estimate_times(plan, tb, start_pose=None):
+def estimate_times(plan, tb, start_pose=None, acq_s=None, acq_source="default (simulated scope)"):
     """Duracion estimada de cada medicion [s] y desglose total.
 
     Usa las velocidades NOMINALES de config/testbed.toml (las del hardware real), aunque los
     equipos esten simulados (los simulados van sim_speedup veces mas rapido).
     Por medicion: max(gantry, MTRS) + deteccion de llegada (si hubo movimiento)
                   + estabilizacion + n_samples * adquisicion + guardado.
+    acq_s: duracion de una adquisicion medida en el osciloscopio real (None -> modelo).
     """
+    n_rec = plan["record_points"]
+    acq = (ACQ_BASE_S + ACQ_PER_POINT_S * n_rec + (SCOPE_FFT_S if plan["config"]["scope_fft"] else 0.0)
+           if acq_s is None else acq_s)
+    save_s = SAVE_BASE_S + SAVE_PER_POINT_S * n_rec * plan["config"]["n_samples"]
     c, K = plan["config"], plan["K"]
     g_cfg, m_cfg = tb.cfg["gantry"], tb.cfg["mtrs"]
     v_g = max(g_cfg["velocity_mm_s"] * g_cfg.get("override_pct", 100.0) / 100.0, 1e-6)
     v_m, a_m = m_cfg["velocity_deg_s"], m_cfg["acceleration_deg_s2"]
     hold = tb.motion.get("arrival_hold_s", 0.3) + ARRIVAL_OVERHEAD_S
 
-    xyz = np.array([s[3:6] for s in plan["sites"]], dtype=float)
+    S, n_visits = plan["n_sites"], plan["n_visits"]
+    vis = np.arange(n_visits)
+    p, j = vis // S, vis % S
+    site_idx = np.where(c["serpentine_xy"] & (p % 2 == 1), S - 1 - j, j)
+    xyz = np.array([s[3:6] for s in plan["sites"]], dtype=float)[site_idx]
     start_pos = np.asarray((start_pose or {}).get("pos") or xyz[0], dtype=float)
-    d_site = np.linalg.norm(xyz - np.vstack([start_pos, xyz[:-1]]), axis=1)
-    n_sites = len(xyz)
+    d_visit = np.linalg.norm(xyz - np.vstack([start_pos, xyz[:-1]]), axis=1)
 
     angles = np.asarray(plan["angles"], dtype=float)
-    fwd, rev = angles, angles[::-1]
+    fwd, rev = angles[plan["order_asc"]], angles[plan["order_desc"]]
     if c["serpentine_angles"]:
-        seq = np.tile(np.concatenate([fwd, rev]), (n_sites + 1) // 2)[: n_sites * K]
+        seq = np.tile(np.concatenate([fwd, rev]), (n_visits + 1) // 2)[: n_visits * K]
     else:
-        seq = np.tile(fwd, n_sites)
+        seq = np.tile(fwd, n_visits)
     a0 = (start_pose or {}).get("angle")
     da = np.abs(np.diff(seq, prepend=seq[0] if a0 is None else a0))
-    dg = np.zeros(n_sites * K)
-    dg[::K] = d_site
+    dg = np.zeros(n_visits * K)
+    dg[::K] = d_visit
 
     t_g = _trapezoid(dg, v_g, GANTRY_ACCEL_EST)
     t_m = _trapezoid(da, v_m, a_m)
     moved = (dg > 0.01) | (da > 1e-3)
     t_motion = np.maximum(t_g, t_m) + moved * hold
-    t_fixed = c["settle_s"] + c["n_samples"] * ACQ_TIME_EST_S + SAVE_TIME_EST_S
+    t_fixed = c["settle_s"] + c["n_samples"] * acq + save_s
     est = t_motion + t_fixed
     mtrs_limited = t_m >= t_g
     breakdown = {
@@ -271,10 +368,11 @@ def estimate_times(plan, tb, start_pose=None):
         "gantry_motion_s": float(np.sum(np.where(mtrs_limited, 0.0, t_g))),
         "arrival_s": float(np.sum(moved * hold)),
         "settle_s": c["settle_s"] * len(est),
-        "acquisition_s": (c["n_samples"] * ACQ_TIME_EST_S + SAVE_TIME_EST_S) * len(est),
+        "acquisition_s": (c["n_samples"] * acq + save_s) * len(est),
         "model": {"gantry_mm_s": v_g, "gantry_accel_mm_s2": GANTRY_ACCEL_EST,
-                  "mtrs_deg_s": v_m, "mtrs_accel_deg_s2": a_m,
-                  "acquisition_s": ACQ_TIME_EST_S, "save_s": SAVE_TIME_EST_S, "arrival_s": hold},
+                  "mtrs_deg_s": v_m, "mtrs_accel_deg_s2": a_m, "acquisition_s": round(acq, 3),
+                  "acquisition_source": acq_source, "save_s": round(save_s, 3), "arrival_s": hold,
+                  "record_points": n_rec},
     }
     return est, breakdown
 
@@ -326,6 +424,8 @@ class Engine:
         self._stop = threading.Event()
         self._shutdown = threading.Event()
         self._scope_q = queue.Queue()
+        self._live_scope_fft = True    # False: no se lee la FFT del osciloscopio (oculta en la sesion)
+        self._fft_was_shown = None     # estado de la FFT del osciloscopio antes de ocultarla
         self._traj = None
         self._runner = None
         self._threads = []
@@ -410,8 +510,12 @@ class Engine:
                     req["result"] = req["fn"]()
                 except Exception as e:
                     req["error"] = e
+                    self.tb.scope.recover()
                 finally:
                     req["done"].set()
+                continue
+            if not self._live_scope_fft:          # FFT del osciloscopio oculta durante la sesion
+                time.sleep(0.05)
                 continue
             try:
                 fft = self.tb.scope.read_fft()
@@ -422,9 +526,13 @@ class Engine:
                     self.fft_rate = 1.0 / max(now - t_last, 1e-6)
                 t_last, failing = now, False
             except Exception as e:
+                if self._shutdown.is_set():
+                    break
                 if not failing:
-                    self.add_log(f"Error reading the live FFT: {e}", "warning")
+                    self.add_log(f"Error reading the live FFT ({e}); communication resynchronised.",
+                                 "warning")
                 failing = True
+                self.tb.scope.recover()
                 time.sleep(0.5)
             time.sleep(0.02)
 
@@ -448,6 +556,11 @@ class Engine:
         if self.busy():
             return {"ok": False, "errors": ["An acquisition is in progress."], "warnings": []}
         plan = build_plan(cfg, self.tb, self.tel)
+        if plan["ok"] and self.tb.modes.get("scope") == "real":
+            acq_s = self._measure_acquisition_time(plan["config"])
+            if acq_s is not None:
+                apply_estimate(plan, self.tb, self.tel, acq_s,
+                               "measured at preview with the current scope settings")
         with self.lock:
             self.config = plan.get("config", self.config)
             if plan["ok"]:
@@ -460,6 +573,55 @@ class Engine:
                                 f"positions. Review it and press Start.")
                 self.error = None
         return plan
+
+    def _configure_record(self, c):
+        """Aplica el registro pedido (record_ms > 0) en el osciloscopio; se deshace con _restore_record.
+
+        Con scope_fft = False tambien oculta la FFT del osciloscopio: si no, el osciloscopio la
+        recalcula en RUN entre mediciones (~2 s con 1 Mpts) y retrasa cada captura.
+        """
+        scope = self.tb.scope
+        if not c["scope_fft"] and self._fft_was_shown is None:
+            self._live_scope_fft = False
+            self._fft_was_shown = self.scope_call(scope.fft_displayed, timeout=30)
+            if self._fft_was_shown:
+                self.scope_call(lambda: scope.set_fft_display(False), timeout=30)
+        if c["record_ms"] > 0:
+            scope = self.tb.scope
+            self.scope_call(lambda: scope.configure_record(c["record_ms"] * 1e-3, c["record_fs_msa"] * 1e6),
+                            timeout=30)
+        else:
+            self.scope_call(self.tb.scope.refresh_info, timeout=30)
+
+    def _restore_record(self):
+        scope = self.tb.scope
+        try:
+            self.scope_call(scope.restore_record, timeout=30)
+            if self._fft_was_shown:
+                self.scope_call(lambda: scope.set_fft_display(True), timeout=30)
+        except Exception as e:
+            self.add_log(f"Could not restore the oscilloscope settings: {e}", "error")
+        finally:
+            self._fft_was_shown = None
+            self._live_scope_fft = True
+
+    def _measure_acquisition_time(self, c):
+        """Duracion real de una adquisicion con el registro pedido (sin mover nada)."""
+        scope = self.tb.scope
+        try:
+            self._configure_record(c)
+            t0 = time.perf_counter()
+            acqs = self.scope_call(lambda: scope.record(1, c["time_points"], c["scope_fft"]), timeout=120)
+            dt = time.perf_counter() - t0
+            self.add_log(f"Acquisition time measured: {dt:.2f} s per sample "
+                         f"({acqs[0]['v'].size:,} waveform points, "
+                         f"{acqs[0]['v'].size / acqs[0]['fs'] * 1e3:g} ms).")
+            return dt
+        except Exception as e:
+            self.add_log(f"Could not measure the acquisition time ({e}); using the model.", "warning")
+            return None
+        finally:
+            self._restore_record()
 
     def refresh_scope(self):
         if self.busy():
@@ -474,10 +636,15 @@ class Engine:
                 raise RuntimeError("An acquisition is already in progress.")
             if self.plan is None:
                 raise RuntimeError("Preview a plan first.")
+        c = self.plan["config"]
         try:
-            self.scope_call(self.tb.scope.refresh_info, timeout=30)
+            self._configure_record(c)
         except Exception as e:
-            self.add_log(f"Could not re-read the scope settings: {e}", "warning")
+            self._restore_record()
+            raise RuntimeError(f"Could not configure the oscilloscope record: {e}")
+        if c["record_ms"] > 0:
+            self.add_log(f"Oscilloscope record set to {c['record_ms']:g} ms at {c['record_fs_msa']:g} MSa/s "
+                         f"(restored at the end of the session).")
         self._open_session()
         self._pause.clear()
         self._stop.clear()
@@ -575,7 +742,7 @@ class Engine:
         n_total = self.plan["n_meas"]
         xyz, ang = (m["x"], m["y"], m["z"]), m["angle"]
         target = {"x": m["x"], "y": m["y"], "z": m["z"], "angle": ang}
-        current = {k: m[k] for k in ("meas_id", "site_id", "k", "angle")}
+        current = {k: m[k] for k in ("meas_id", "pass", "site_id", "k", "angle")}
         self._set(current=current, target=target, phase="MOVING",
                   message=f"Measurement {m['meas_id']}/{n_total}: moving to X={m['x']:g} "
                           f"Y={m['y']:g} Z={m['z']:g} mm, {ang:g} deg")
@@ -598,7 +765,7 @@ class Engine:
         scope = tb.scope
         for attempt in range(MAX_RETRIES + 1):
             try:
-                acqs = self.scope_call(lambda: scope.record(c["n_samples"], c["time_points"]),
+                acqs = self.scope_call(lambda: scope.record(c["n_samples"], c["time_points"], c["scope_fft"]),
                                        timeout=60 + 30 * c["n_samples"])
                 break
             except Exception as e:
@@ -608,7 +775,22 @@ class Engine:
                 time.sleep(1.0)
         if self._stop.is_set():
             raise Stopped
+        self._check_record(acqs)
         return self._save_measurement(m, acqs, tel_before, self.tel, t_move)
+
+    def _check_record(self, acqs):
+        """Verifica que el osciloscopio entrego el registro pedido y sin aliasing; si no, no se guarda."""
+        c = self.plan["config"]
+        expected, f_max = self.plan["record_points"], max(self.freqs_hz)
+        for a in acqs:
+            n, fs = a["v"].size, a["fs"]
+            short = c["record_ms"] > 0 and abs(n - expected) > 0.01 * expected
+            if short or fs < 2.2 * f_max:
+                raise RuntimeError(
+                    f"the oscilloscope returned {n:,} points at {fs / 1e6:.4g} MSa/s"
+                    + (f" instead of {expected:,} at {c['record_fs_msa']:g} MSa/s" if c["record_ms"] > 0 else "")
+                    + f"; frequencies above {fs / 2e3:.0f} kHz alias (highest studied: {f_max / 1e3:g} kHz). "
+                      f"Measurement not saved. Check the oscilloscope (Math FFT on? record settings changed?)")
 
     # ---------------------------------------------------------------
     # guardado
@@ -623,9 +805,9 @@ class Engine:
         if c["save_waveforms"]:
             os.makedirs(os.path.join(sdir, "wave"), exist_ok=True)
         self.freqs_hz = [f * 1e3 for f in c["freqs_khz"]]
-        units = self.tb.scope.fft_units or "fft"
+        units = self._fft_units()
 
-        fields = ["meas_id", "site_id", "ix", "iy", "iz", "k", "iso_time", "unix_time_s",
+        fields = ["meas_id", "pass", "site_id", "ix", "iy", "iz", "k", "iso_time", "unix_time_s",
                   "x_cmd_mm", "y_cmd_mm", "z_cmd_mm", "angle_cmd_deg",
                   "x_mm", "y_mm", "z_mm", "angle_deg", "mtrs_tilt_deg", "pd_tilt_deg"]
         for f in self.freqs_hz:
@@ -641,11 +823,11 @@ class Engine:
 
         with open(os.path.join(sdir, "plan.csv"), "w", newline="") as f:
             w = csv.writer(f)
-            w.writerow(["meas_id", "site_id", "ix", "iy", "iz", "k", "x_mm", "y_mm", "z_mm",
+            w.writerow(["meas_id", "pass", "site_id", "ix", "iy", "iz", "k", "x_mm", "y_mm", "z_mm",
                         "angle_deg", "est_s"])
             for i in range(p["n_meas"]):
                 m = plan_measurement(p, i)
-                w.writerow([m["meas_id"], m["site_id"], m["ix"], m["iy"], m["iz"], m["k"],
+                w.writerow([m["meas_id"], m["pass"], m["site_id"], m["ix"], m["iy"], m["iz"], m["k"],
                             m["x"], m["y"], m["z"], m["angle"], f"{m['est_s']:.2f}"])
 
         traj_f = open(os.path.join(sdir, "trajectory.csv"), "w", newline="")
@@ -667,32 +849,53 @@ class Engine:
             "plan_config": p["config"],
             "notes": {"pd_tilt_deg": "mechanical tilt of the 3D-printed PD mount (recorded only; "
                                      "the MTRS tilt stays at the config value)",
-                      "angles": "theta_k = 360*k/K, k = 0..K-1 (MTRS rotation)"},
+                      "angles": "theta_k = (angle_offset_deg + 360*k/K) mod 360, k = 0..K-1 (MTRS "
+                                "rotation); measured in increasing MTRS angle so 0/360 is never crossed"},
             "axes_mm": p["axes"], "angles_deg": p["angles"],
             "n_sites": p["n_sites"], "n_meas": p["n_meas"], "n_done": len(self.done),
             "frequencies_Hz": [f * 1e3 for f in p["config"]["freqs_khz"]],
             "estimated_total_s": p["est_total_s"],
             "estimate_breakdown": p["est_breakdown"],
+            "record": {"record_ms": p["config"]["record_ms"] or "oscilloscope settings",
+                       "sample_rate_Sa_s": self.tb.scope.info.get("sample_rate_Sa_s"),
+                       "points_per_sample": p["record_points"],
+                       "fft_source": "oscilloscope Math FFT" if p["config"]["scope_fft"] else
+                                     "Python, Hanning window over the full record (scope FFT band)"},
             "testbed": info,
         }
         with open(os.path.join(self.session_dir, "session.json"), "w") as f:
             json.dump(_clean(data), f, indent=2, default=str)
 
     def _write_readme(self, sdir, units):
+        c = self.plan["config"]
+        fft_src = "oscilloscope Math FFT" if c["scope_fft"] else "Python FFT, Hanning, whole record"
+        rec = (f"{c['record_ms']:g} ms at {c['record_fs_msa']:g} MSa/s, {self.plan['record_points']:,} points"
+               if c["record_ms"] > 0 else "length set on the oscilloscope")
+        max_bins = FFT_SAVE_MAX_BINS
         text = f"""Experiment 02 - database acquisition
 =====================================
 points.csv      one row per measurement (position x orientation), compact summary:
-  meas_id/site_id     measurement / grid position id (see plan.csv); ix,iy,iz grid indices; k angle index
+  meas_id/site_id     measurement / grid position id (see plan.csv); ix,iy,iz grid indices
+  pass                repetition of the whole route (1..n_passes); same site_id + k in different passes =
+                      same pose measured again -> group by (site_id, k) to get the variance per point
+  k                   angle index: angle_cmd_deg = (angle_offset_deg + 360*k/K) mod 360 (session.json)
   *_cmd_*             commanded pose; x_mm,y_mm,z_mm,angle_deg measured pose (gantry/MTRS feedback)
   mtrs_tilt_deg       measured MTRS tilt (kept at the config value, normally 0)
   pd_tilt_deg         mechanical tilt of the PD mount (3D-printed part) - recorded only
-  <f>kHz_fft_{units:<5} scope FFT peak near f (scope Math FFT, units {units})
-  <f>kHz_wave_Vrms    RMS amplitude of the f sinusoid in the raw waveform (lock-in projection)
+  <f>kHz_fft_{units:<5} FFT peak near f, full resolution ({fft_src})
+  <f>kHz_wave_Vrms    RMS amplitude of the f sinusoid over the whole continuous record (lock-in projection at f)
   *_std               std over the samples (only when n_samples > 1)
   clip_frac           fraction of waveform samples at the screen edge (> 0 means saturation)
   wave_ac_rms_V       total RMS of the waveform (signal + noise)
-fft/mNNNNN.csv  scope FFT of every sample: frequency_Hz, acq_1..acq_n
-wave/mNNNNN.npz raw waveform: np.load(...) -> v (n x samples, float32 V), fs (Sa/s), unix (s)
+Each sample is ONE continuous record ({rec}); see session.json "record".
+fft/mNNNNN.csv  FFT of every sample: frequency_Hz, acq_1..acq_n. Reduced to <= {max_bins} bins by taking
+                the maximum of each group of bins (peaks preserved); the full-resolution spectrum can be
+                recomputed from the waveform (hardware.scope.spectrum_vrms).
+wave/mNNNNN.npz raw waveform, lossless ADC codes:
+                  z = np.load(path); v = (z["codes"] - z["y_reference"][:, None]) * z["y_increment"][:, None]
+                                         + z["y_origin"][:, None]          # volts, shape (n, samples)
+                  t = np.arange(v.shape[1]) / z["fs"]; z["unix"] = start time of each sample
+                (simulated scope: z["v"] holds the volts directly)
 plan.csv        all planned measurements; trajectory.csv: gantry + MTRS telemetry at 10 Hz
 session.json    plan configuration, devices and scope settings, final status
 """
@@ -702,7 +905,7 @@ session.json    plan configuration, devices and scope settings, final status
     def _save_measurement(self, m, acqs, tel_before, tel_after, t_move):
         c, scope = self.plan["config"], self.tb.scope
         sdir, mid = self.session_dir, m["meas_id"]
-        units = scope.fft_units or "fft"
+        units = self._fft_units()
         tag = f"m{mid:05d}"
         pos = [float(v) for v in np.mean([tel_before["pos"], tel_after["pos"]], axis=0)]
         ang = 0.5 * (tel_before["angle"] + tel_after["angle"])
@@ -716,8 +919,20 @@ session.json    plan configuration, devices and scope settings, final status
                   f"y_mm: {pos[1]:.3f}", f"z_mm: {pos[2]:.3f}", f"angle_deg: {ang:.4f}",
                   f"pd_tilt_deg: {c['pd_tilt_deg']}", f"fft_units: {units}"]
         header += [f"acq_{i + 1}_unix_time_s: {a['unix']:.6f}" for i, a in enumerate(acqs)]
-        n_f = min(a["fft"].size for a in acqs)
-        cols = np.column_stack([acqs[0]["f"][:n_f]] + [a["fft"][:n_f] for a in acqs])
+        f0 = acqs[0]["f"]
+        bin_hz = float(f0[1] - f0[0]) if f0.size > 1 else math.nan
+        spectra = [decimate_spectrum(a["f"], a["fft"], FFT_SAVE_MAX_BINS) for a in acqs]
+        n_f = min(s[1].size for s in spectra)
+        if not c["scope_fft"]:          # la interfaz muestra la FFT (Python) de la ultima medicion
+            with self.lock:
+                self.fft = {"unix": acqs[-1]["unix"], "f": spectra[-1][0], "y": spectra[-1][1],
+                            "ylim": (None, None), "units": "Vrms", "source": "python"}
+                self.fft_seq += 1
+                self.fft_rate = 0.0
+        header += [f"fft_source: {acqs[0].get('fft_source', 'scope')}", f"fft_bin_full_Hz: {bin_hz:.6g}",
+                   f"fft_saved_bins: {n_f} (maximum of each group of {max(1, f0.size // max(n_f, 1))} bins)",
+                   f"record_points: {acqs[0]['v'].size}", f"fs_Sa_s: {acqs[0]['fs']:.6g}"]
+        cols = np.column_stack([spectra[0][0][:n_f]] + [s[1][:n_f] for s in spectra])
         names = ",".join(["frequency_Hz"] + [f"acq_{i + 1}" for i in range(len(acqs))])
         fft_file = f"fft/{tag}.csv"
         np.savetxt(os.path.join(sdir, fft_file), cols, delimiter=",", fmt="%.6e",
@@ -727,12 +942,18 @@ session.json    plan configuration, devices and scope settings, final status
         if c["save_waveforms"]:
             n_t = min(a["v"].size for a in acqs)
             wave_file = f"wave/{tag}.npz"
-            np.savez_compressed(os.path.join(sdir, wave_file),
-                                v=np.array([a["v"][:n_t] for a in acqs], dtype=np.float32),
-                                fs=acqs[0]["fs"], unix=np.array([a["unix"] for a in acqs]))
+            common = {"fs": acqs[0]["fs"], "unix": np.array([a["unix"] for a in acqs])}
+            if all("codes" in a for a in acqs):          # codigos crudos del ADC: sin perdida, 2 bytes/punto
+                sc = np.array([a["scale"] for a in acqs])
+                np.savez_compressed(os.path.join(sdir, wave_file),
+                                    codes=np.array([a["codes"][:n_t] for a in acqs], dtype=np.uint16),
+                                    y_increment=sc[:, 0], y_origin=sc[:, 1], y_reference=sc[:, 2], **common)
+            else:
+                np.savez_compressed(os.path.join(sdir, wave_file),
+                                    v=np.array([a["v"][:n_t] for a in acqs], dtype=np.float32), **common)
 
         row = {
-            "meas_id": mid, "site_id": m["site_id"], "ix": m["ix"], "iy": m["iy"], "iz": m["iz"],
+            "meas_id": mid, "pass": m["pass"], "site_id": m["site_id"], "ix": m["ix"], "iy": m["iy"], "iz": m["iz"],
             "k": m["k"], "iso_time": datetime.now().isoformat(timespec="seconds"),
             "unix_time_s": f"{acqs[0]['unix']:.3f}",
             "x_cmd_mm": m["x"], "y_cmd_mm": m["y"], "z_cmd_mm": m["z"], "angle_cmd_deg": m["angle"],
@@ -757,15 +978,22 @@ session.json    plan configuration, devices and scope settings, final status
         if clip and clip > 0.001:
             self.add_log(f"Measurement {mid}: {clip:.1%} of the samples are clipped (saturation).",
                          "warning")
-        return {"meas_id": mid, "site_id": m["site_id"], "k": m["k"], "x": pos[0], "y": pos[1],
+        return {"meas_id": mid, "pass": m["pass"], "site_id": m["site_id"], "k": m["k"], "x": pos[0], "y": pos[1],
                 "z": pos[2], "angle": ang, "rss": rss, "fft": fft_vals, "clip": clip,
                 "t_move": round(t_move, 2), "t": time.time()}
+
+    def _fft_units(self):
+        return "Vrms" if not self.plan["config"]["scope_fft"] else (self.tb.scope.fft_units or "fft")
 
     def _close_session(self, status):
         with self.lock:
             traj, self._traj = self._traj, None
         if traj is not None:
             traj[0].close()
+        c = self.plan["config"]
+        if c["record_ms"] > 0 or not c["scope_fft"]:
+            self._restore_record()
+            self.add_log("Oscilloscope settings restored (timebase / sample rate / memory / FFT display).")
         if self.session_dir:
             try:
                 self._write_session_json(status)
@@ -800,7 +1028,8 @@ session.json    plan configuration, devices and scope settings, final status
             f = f[:n:step]
         return {"seq": self.fft_seq, "f0": float(f[0]), "df": float(f[1] - f[0]) if len(f) > 1 else 0,
                 "y": [float(f"{v:.4g}") for v in y], "ylim": list(fft.get("ylim", (None, None))),
-                "units": self.tb.scope.fft_units, "rate": round(self.fft_rate, 1)}
+                "units": fft.get("units", self.tb.scope.fft_units), "rate": round(self.fft_rate, 1),
+                "source": fft.get("source", "scope")}
 
     def _tel_payload(self):
         p = self.tel
@@ -816,8 +1045,8 @@ session.json    plan configuration, devices and scope settings, final status
         if p is None:
             return None
         if p.get("_public_version") != self.plan_version:
-            pub = {k: p[k] for k in ("config", "axes", "angles", "n_sites", "n_meas", "est_total_s",
-                                     "est_breakdown", "est_bytes", "warnings")}
+            pub = {k: p[k] for k in ("config", "axes", "angles", "n_sites", "n_meas", "passes",
+                                     "est_total_s", "est_breakdown", "est_bytes", "warnings")}
             pub["sites_flat"] = [v for s in p["sites"] for v in (s[3], s[4], s[5], s[2])]
             p["_public"], p["_public_version"] = _clean(pub), self.plan_version
         return p["_public"]
@@ -839,7 +1068,8 @@ session.json    plan configuration, devices and scope settings, final status
                 "scope": {k: tb.scope.info.get(k) for k in (
                     "idn", "fft_units", "fft_window", "fft_center_Hz", "fft_span_Hz",
                     "timebase_s_div", "sample_rate_Sa_s", "acquire_type", "ch_scale_V_div",
-                    "ch_offset_V", "ch_coupling", "wgen_frequency_Hz")},
+                    "ch_offset_V", "ch_coupling", "wgen_frequency_Hz", "acq_digitizer",
+                    "acq_points", "acq_srate_max_Sa_s")},
                 "gantry": {"velocity_mm_s": g_cfg["velocity_mm_s"],
                            "override_pct": g_cfg.get("override_pct", 100.0)},
                 "mtrs": {"velocity_deg_s": m_cfg["velocity_deg_s"],

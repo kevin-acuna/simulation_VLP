@@ -375,7 +375,8 @@ class GUI:
 
         # --- Z ---
         az = self.ax_z = fig.add_axes([0.48, 0.43, 0.025, 0.52])
-        az.set_ylim(wmin[2], wmax[2])
+        # [view] z_negative_up: Z = -700 es la posicion mas alta del PD -> se dibuja arriba
+        az.set_ylim((wmax[2], wmin[2]) if tb.view.get("z_negative_up", False) else (wmin[2], wmax[2]))
         az.set_xlim(0, 1)
         az.set_xticks([])
         az.yaxis.tick_right()

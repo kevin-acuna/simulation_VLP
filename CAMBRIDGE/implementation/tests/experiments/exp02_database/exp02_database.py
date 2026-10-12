@@ -47,16 +47,25 @@ OUTPUT_ROOT = os.path.join(ROOT, "data", "exp02")
 DEFAULT_CONFIG = {
     "x": [100.0, 1300.0, 300.0],             # inicio, fin, paso [mm]
     "y": [100.0, 1300.0, 300.0],
-    "z": [-300.0, -300.0, 100.0],            # Z = 0 arriba, negativa hacia abajo
-    "k_angles": 4,                           # K angulos: 360*k/K (K=4 -> 0, 90, 180, 270)
+    "z": [-300.0, -300.0, 100.0],            # Z = -700 posicion mas alta del PD, Z = 0 la mas baja
+    "k_angles": 4,                           # K angulos: (offset + 360*k/K) mod 360
+    "angle_offset_deg": 65.0,                # offset de orientacion (K=4 -> 65, 155, 245, 335)
     "pd_tilt_deg": 15.0,                     # inclinacion mecanica de la pieza 3D (SOLO registro)
-    "n_samples": 1,                          # adquisiciones por orientacion
+    "n_samples": 1,                          # adquisiciones por orientacion (sin moverse)
+    "n_passes": 1,                           # veces que se repite TODO el recorrido (varianza por
+                                             # punto); las pasadas impares van en sentido contrario
     "freqs_khz": [300.0, 500.0, 700.0, 900.0],
     "settle_s": 1.0,                         # espera tras llegar, antes de medir
+    "record_ms": 100.0,                      # registro CONTINUO por muestra [ms]; 0 = usar lo
+                                             # configurado en el osciloscopio. Se restaura al final
+    "record_fs_msa": 10.0,                   # frecuencia de muestreo del registro [MSa/s]
+                                             # (100 ms x 10 MSa/s = 1 M puntos; maximo 4 M)
+    "scope_fft": False,                      # True: leer tambien la FFT del osciloscopio (+~1.4 s
+                                             # por muestra y solo usa 64K puntos); False: FFT en Python
     "serpentine_xy": True,                   # recorrido XY en serpentina
     "serpentine_angles": True,               # angulos alternados (sin vuelta a 0, cable seguro)
     "save_waveforms": True,                  # guardar la onda cruda (wave/*.npz)
-    "time_points": 100000,                   # puntos de onda solicitados (o "MAX")
+    "time_points": 8000000,                  # puntos de onda pedidos (8e6 = todos los del registro)
     "label": "",                             # sufijo opcional del nombre de la sesion
 }
 

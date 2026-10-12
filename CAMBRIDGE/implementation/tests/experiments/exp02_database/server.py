@@ -14,6 +14,7 @@ Escucha solo en 127.0.0.1: la interfaz es local al PC del laboratorio.
 import json
 import mimetypes
 import os
+import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -108,13 +109,22 @@ class Handler(BaseHTTPRequestHandler):
             pass
 
 
+class Server(ThreadingHTTPServer):
+    daemon_threads = True
+
+    def handle_error(self, request, client_address):
+        # el navegador corta conexiones al recargar/cerrar la pestana o al abrir conexiones
+        # especulativas ("Bad request syntax"): no es un error del programa
+        if isinstance(sys.exc_info()[1], (ConnectionAbortedError, ConnectionResetError, BrokenPipeError)):
+            return
+        super().handle_error(request, client_address)
+
+
 def make_server(engine, host="127.0.0.1", port=8765, tries=10):
     Handler.engine = engine
     for p in range(port, port + tries):
         try:
-            srv = ThreadingHTTPServer((host, p), Handler)
-            srv.daemon_threads = True
-            return srv
+            return Server((host, p), Handler)
         except OSError:
             continue
     raise RuntimeError(f"No free port in {port}-{port + tries - 1}")

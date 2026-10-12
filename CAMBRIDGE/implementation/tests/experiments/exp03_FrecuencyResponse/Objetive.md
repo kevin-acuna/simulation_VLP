@@ -1,0 +1,3 @@
+# Objetivo
+Considera que el PD se encuentra en una ubicación determinada, uno puede escribir la posicion en (x,y,z) en consola, y se tiene solo un LED encendido a una frecuencia f.
+Cambiaremos la frecuencia f con tramos de 5Khz desde 5Khz hasta 1Mhz, configurable como hyperparametro en el codigo. Para cada frecuencia f buscaremos la amplitud (en mVrms) de la FFT a esa frecuencia. Se registrará la frecuencia f, la amplitud (en el FFT). La idea es eventualmente tener un gráfico de amplitud vs frecuencia. Para ver como responde el sistema a diferentes frecuencias. Plotear esta gráfica al finalizar la ejecución. Considerar tambien grabar el .csv de solo f vs amplitud.

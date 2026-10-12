@@ -104,6 +104,8 @@ function fitCanvas(cv) {
   return { ctx, w, h, dpr };
 }
 const invalidate = () => { S.dirty = true; };
+// testbed.toml [view] z_negative_up: el PD sube cuando Z es mas negativa (Z = -700 arriba)
+const zNegUp = () => S.viewCfg.z_negative_up === true;
 
 /* ============================================================
    panel de configuracion (plegable) y pestañas de vista
@@ -135,18 +137,44 @@ $("zSel").onchange = $("colorSel").onchange = invalidate;
 /* ============================================================
    formulario
    ============================================================ */
-const INPUT_IDS = ["x0", "x1", "xs", "y0", "y1", "ys", "z0", "z1", "zs", "kAngles", "pdTilt", "nSamples",
-  "settle", "freqs", "serpXY", "serpAng", "saveWave", "label"];
+const INPUT_IDS = ["x0", "x1", "xs", "y0", "y1", "ys", "z0", "z1", "zs", "kAngles", "angleOffset", "pdTilt",
+  "nSamples", "nPasses", "settle", "recordMs", "recordFs", "scopeFft", "ledCount", "serpXY", "serpAng", "saveWave", "label"];
+
+/* ---------------- LEDs: numero y frecuencia de cada uno (columnas de points.csv) ---------------- */
+function ledInputs() { return [...$("ledList").querySelectorAll("input")]; }
+function renderLeds(freqs) {
+  const disabled = $("ledCount").disabled;
+  $("ledList").innerHTML = freqs.map((f, i) =>
+    `<label>LED ${i + 1} [kHz]<input type="number" min="0" step="any" value="${isFinite(f) ? fmtG(f) : ""}"` +
+    `${disabled ? " disabled" : ""}></label>`).join("");
+  $("ledCount").value = freqs.length;
+}
+function setLedCount(n) {
+  n = Math.max(1, Math.min(32, n || 1));
+  const cur = parseFreqs();
+  while (cur.length < n) cur.push(cur.length ? (cur[cur.length - 1] || 0) + 200 : 300);
+  renderLeds(cur.slice(0, n));
+  S.formDirty = true; S.planOk = false; updateFormPreview(); updateButtons();
+}
+$("ledPlus").onclick = () => setLedCount(ledInputs().length + 1);
+$("ledMinus").onclick = () => setLedCount(ledInputs().length - 1);
+$("ledCount").addEventListener("change", () => setLedCount(parseInt($("ledCount").value, 10)));
+$("ledList").addEventListener("input", () => { S.formDirty = true; S.planOk = false; updateFormPreview(); updateButtons(); });
 
 function fillForm(c) {
   [["x", "x0", "x1", "xs"], ["y", "y0", "y1", "ys"], ["z", "z0", "z1", "zs"]].forEach(([k, a, b, s]) => {
     $(a).value = c[k][0]; $(b).value = c[k][1]; $(s).value = c[k][2];
   });
   $("kAngles").value = c.k_angles;
+  $("angleOffset").value = c.angle_offset_deg ?? 0;
   $("pdTilt").value = c.pd_tilt_deg;
   $("nSamples").value = c.n_samples;
+  $("nPasses").value = c.n_passes ?? 1;
   $("settle").value = c.settle_s;
-  $("freqs").value = c.freqs_khz.map(fmtG).join(", ");
+  $("recordMs").value = c.record_ms ?? 0;
+  $("recordFs").value = c.record_fs_msa ?? 10;
+  $("scopeFft").checked = !!c.scope_fft;
+  renderLeds(c.freqs_khz);
   $("serpXY").checked = c.serpentine_xy;
   $("serpAng").checked = c.serpentine_angles;
   $("saveWave").checked = c.save_waveforms;
@@ -154,14 +182,16 @@ function fillForm(c) {
   S.formDirty = false;
   updateFormPreview();
 }
-const parseFreqs = () => $("freqs").value.split(/[,;\s]+/).filter((s) => s.trim() !== "").map(Number);
+const parseFreqs = () => ledInputs().map((el) => parseFloat(el.value));
 
 function readForm() {
   const base = S.config || S.defaults || {};
   return {
     x: [num("x0"), num("x1"), num("xs")], y: [num("y0"), num("y1"), num("ys")], z: [num("z0"), num("z1"), num("zs")],
-    k_angles: parseInt($("kAngles").value, 10), pd_tilt_deg: num("pdTilt"),
-    n_samples: parseInt($("nSamples").value, 10), settle_s: num("settle"), freqs_khz: parseFreqs(),
+    k_angles: parseInt($("kAngles").value, 10), angle_offset_deg: num("angleOffset"), pd_tilt_deg: num("pdTilt"),
+    n_samples: parseInt($("nSamples").value, 10), n_passes: parseInt($("nPasses").value, 10),
+    settle_s: num("settle"), freqs_khz: parseFreqs().map((f) => (isFinite(f) ? f : 0)),
+    record_ms: num("recordMs"), record_fs_msa: num("recordFs"), scope_fft: $("scopeFft").checked,
     serpentine_xy: $("serpXY").checked, serpentine_angles: $("serpAng").checked,
     save_waveforms: $("saveWave").checked, time_points: base.time_points ?? 100000, label: $("label").value.trim(),
   };
@@ -174,13 +204,27 @@ function updateFormPreview() {
     return c;
   });
   const k = parseInt($("kAngles").value, 10), pos = n[0] * n[1] * n[2];
-  $("gridCount").textContent = isFinite(pos) && k >= 1 ? `${pos.toLocaleString()} positions × ${k} = ${(pos * k).toLocaleString()} measurements` : "";
+  const np_ = Math.max(1, parseInt($("nPasses").value, 10) || 1);
+  $("gridCount").textContent = isFinite(pos) && k >= 1
+    ? `${pos.toLocaleString()} positions × ${k}${np_ > 1 ? ` × ${np_} passes` : ""} = ${(pos * k * np_).toLocaleString()} measurements` : "";
+  const ms = num("recordMs"), fsr = num("recordFs");
+  $("recordNote").textContent = ms > 0 && fsr > 0
+    ? `One continuous record of ${fmtG(ms)} ms per sample: ${Math.round(ms * fsr * 1e3).toLocaleString()} points ` +
+      `(frequency resolution ${fmtG(+(1000 / ms).toPrecision(3))} Hz). The oscilloscope timebase / sample rate / memory are set at Start and restored at the end.`
+    : "0 ms: the record length configured on the oscilloscope is used (10 × timebase).";
+  const off = isFinite(num("angleOffset")) ? num("angleOffset") : 0;
   if (k >= 1 && k <= 360) {
-    const list = Array.from({ length: Math.min(k, 12) }, (_, i) => `${fmtG((360 * i) / k)}°`);
-    $("angleList").textContent = list.join(", ") + (k > 12 ? `, … (step ${fmtG(360 / k)}°)` : "");
+    // mismo calculo que engine.py: (offset + 360 k / K) mod 360, medidos en orden creciente
+    const all = Array.from({ length: k }, (_, i) => +(((off + (360 * i) / k) % 360 + 360) % 360).toFixed(6) % 360)
+      .sort((a, b) => a - b);
+    $("angleList").textContent = all.slice(0, 12).map((a) => `${fmtG(a)}°`).join(", ") +
+      (k > 12 ? `, … (step ${fmtG(360 / k)}°)` : "");
   } else $("angleList").textContent = "–";
 }
-const setFormEnabled = (on) => INPUT_IDS.forEach((id) => { $(id).disabled = !on; });
+const setFormEnabled = (on) => {
+  INPUT_IDS.forEach((id) => { $(id).disabled = !on; });
+  [...ledInputs(), $("ledPlus"), $("ledMinus")].forEach((el) => { el.disabled = !on; });
+};
 INPUT_IDS.forEach((id) => $(id).addEventListener("input", () => {
   S.formDirty = true; S.planOk = false; updateFormPreview(); updateButtons();
 }));
@@ -265,7 +309,9 @@ function renderAll() {
   if (S.workspace) {
     const [a, b] = [S.workspace.min, S.workspace.max];
     $("wsNote").textContent = `Workspace: X ${fmtG(a[0])} to ${fmtG(b[0])}, Y ${fmtG(a[1])} to ${fmtG(b[1])}, ` +
-      `Z ${fmtG(a[2])} to ${fmtG(b[2])} mm (Z = 0 at the top).`;
+      `Z ${fmtG(a[2])} to ${fmtG(b[2])} mm ` +
+      (zNegUp() ? `(Z = ${fmtG(a[2])} is the highest PD position, Z = ${fmtG(b[2])} the lowest).`
+        : `(Z = ${fmtG(b[2])} at the top).`);
   }
 }
 function renderDevices() {
@@ -284,9 +330,11 @@ function renderScope() {
     ["ADC step (approx.)", lsb ? `${(lsb * 1e3).toFixed(2)} mV` : "–"],
     ["Offset, coupling", `${fmtG((s.ch_offset_V ?? 0) * 1e3)} mV, ${s.ch_coupling ?? "–"}`],
     ["Acquisition", s.acquire_type ?? "–"],
-    ["Timebase", s.timebase_s_div ? `${fmtG(s.timebase_s_div * 1e6)} µs/div` : "–"],
-    ["Record length", s.timebase_s_div ? `${fmtG(s.timebase_s_div * 10e3)} ms` : "–"],
+    ["Digitizer mode", s.acq_digitizer == null ? "–" : (+s.acq_digitizer ? "on (manual rate/depth)" : "off (automatic)")],
+    ["Timebase", s.timebase_s_div ? `${fmtG(s.timebase_s_div * 1e6)} µs/div (screen ${fmtG(s.timebase_s_div * 10e3)} ms)` : "–"],
     ["Sample rate", s.sample_rate_Sa_s ? `${fmtG(s.sample_rate_Sa_s / 1e6)} MSa/s` : "–"],
+    ["Memory depth", s.acq_points ? `${(s.acq_points / 1e3).toLocaleString()} kpts` : "–"],
+    ["Max. sample rate", s.acq_srate_max_Sa_s ? `${fmtG(s.acq_srate_max_Sa_s / 1e9)} GSa/s` : "–"],
     ["FFT span", span],
     ["FFT window, units", `${s.fft_window ?? "–"}, ${s.fft_units ?? "–"}`],
     ["Generator (WGEN)", s.wgen_frequency_Hz ? `${fmtG(s.wgen_frequency_Hz / 1e3)} kHz` : "–"],
@@ -302,7 +350,12 @@ function renderPlanSummary() {
     const rows = [
       ["Positions", `${p.n_sites.toLocaleString()} (${p.axes.x.length} × ${p.axes.y.length} × ${p.axes.z.length})`],
       ["Angles per position", `${p.angles.length} (step ${fmtG(360 / p.angles.length)}°)`],
+      ["LEDs", `${c.freqs_khz.length} (${c.freqs_khz.map(fmtG).join(", ")} kHz)`],
+      ["Passes", `${p.passes ?? 1}`],
       ["Measurements", `${p.n_meas.toLocaleString()} × ${c.n_samples} sample(s)`],
+      ["Record per sample", c.record_ms > 0 ? `${fmtG(c.record_ms)} ms, ${(p.est_breakdown?.model?.record_points ?? 0).toLocaleString()} pts`
+        : `scope settings, ${(p.est_breakdown?.model?.record_points ?? 0).toLocaleString()} pts`],
+      ["FFT", c.scope_fft ? "oscilloscope" : "Python (full record)"],
       ["PD tilt (recorded)", `${fmtG(c.pd_tilt_deg)}°`],
       ["Estimated duration", fmtDur(p.est_total_s)],
     ];
@@ -314,6 +367,8 @@ function renderPlanSummary() {
       sub.filter(([, v]) => v > 0).map(([k, v]) => `<tr class="sub"><td>${k}</td><td>${fmtDur(v)}</td></tr>`).join("") +
       `<tr><td>Finish if started now</td><td>${clock(p.est_total_s)}</td></tr>` +
       `<tr><td>Disk space (approx.)</td><td>${fmtBytes(p.est_bytes)}</td></tr></table>`;
+    const mdl = b.model || {};
+    html += `<p class="note">Acquisition time: ${fmtG(mdl.acquisition_s)} s per sample, ${mdl.acquisition_source || "default"}.</p>`;
     if (sim) html += `<p class="note">The duration is estimated for the real hardware (nominal speeds in testbed.toml); simulated devices run faster.</p>`;
   }
   html += (msgs.errors || []).map((e) => `<div class="msg err">Error: ${e}</div>`).join("");
@@ -335,7 +390,8 @@ function renderStatus() {
   $("pEta").textContent = busy ? fmtDur(p.eta_s) : "–";
   $("pFinish").textContent = busy && isFinite(p.eta_s) ? clock(p.eta_s) : "–";
   const c = p.current;
-  $("pCurrent").textContent = c ? `#${c.meas_id}, position ${c.site_id}, ${fmtG(c.angle)}°` : "–";
+  const passes = S.plan ? S.plan.passes ?? 1 : 1;
+  $("pCurrent").textContent = c ? `#${c.meas_id}, ${passes > 1 ? `pass ${c.pass}/${passes}, ` : ""}position ${c.site_id}, ${fmtG(c.angle)}°` : "–";
   $("phase").textContent = S.state === "RUNNING" ? PHASE_TEXT[S.phase] || "–" : S.state === "PAUSED" ? "paused" : "–";
   $("message").textContent = S.message || "";
   $("message").className = `message ${S.error ? "error" : ""}`;
@@ -350,10 +406,11 @@ function renderStatus() {
 function renderLast() {
   const d = S.done[S.done.length - 1], el = $("lastMeas");
   if (!d) { $("lastId").textContent = ""; el.innerHTML = `<span class="hint">No measurement yet.</span>`; return; }
-  const units = S.scope.fft_units;
+  const scopeFft = !!(S.plan && S.plan.config.scope_fft);
+  const units = scopeFft ? S.scope.fft_units : "Vrms";
   $("lastId").textContent = `#${d.meas_id}, position ${d.site_id}`;
   el.innerHTML = `<div class="pose">X ${fmt(d.x, 1)}  Y ${fmt(d.y, 1)}  Z ${fmt(d.z, 1)} mm  θ ${fmt(d.angle, 2)}°</div>` +
-    `<table><thead><tr><th>Freq.</th><th>Scope FFT</th><th>Waveform</th></tr></thead><tbody>` +
+    `<table><thead><tr><th>Freq.</th><th>${scopeFft ? "Scope FFT" : "FFT"}</th><th>Waveform</th></tr></thead><tbody>` +
     Object.keys(d.rss).map((k) => `<tr><td>${k}</td><td>${fmtRss(d.fft[k], units)}</td><td>${fmtRss(d.rss[k], "Vrms")}</td></tr>`).join("") +
     `</tbody></table>` + (d.clip > 0.001 ? `<div class="clip">${(d.clip * 100).toFixed(1)} % of the samples are clipped (saturation).</div>` : "");
 }
@@ -421,7 +478,8 @@ $("btnScope").onclick = async () => {
 /* ============================================================
    estadisticas por posicion
    ============================================================ */
-const K = () => (S.plan ? S.plan.angles.length : 1);
+// medidas por posicion = K angulos x pasadas
+const K = () => (S.plan ? S.plan.angles.length * (S.plan.passes ?? 1) : 1);
 function siteStats(site, key) {
   const list = S.doneBySite.get(site.site_id) || [];
   let sum = 0, n = 0;
@@ -567,8 +625,9 @@ function make3D(w, h) {
   const ps = (cam.yaw * Math.PI) / 180, pe = (cam.elev * Math.PI) / 180;
   const cps = Math.cos(ps), sps = Math.sin(ps), cpe = Math.cos(pe), spe = Math.sin(pe);
   // marco de vista: a = -Y (derecha), b = X (arriba en la vista superior), c = Z
+  const zs = zNegUp() ? -1 : 1;             // Z mas negativa = mas alto en pantalla
   const raw = (x, y, z) => {
-    const a = -(y - cy), b = x - cx, c = z - cz;
+    const a = -(y - cy), b = x - cx, c = zs * (z - cz);
     const a1 = a * cps - b * sps, b1 = a * sps + b * cps;
     return [a1, c * cpe + b1 * spe, c * spe - b1 * cpe];
   };
@@ -581,15 +640,16 @@ function make3D(w, h) {
   const s = cam.zoom * Math.min((w - 90) / (u1 - u0), (h - 60) / (v1 - v0));
   const ou = w / 2 - ((u0 + u1) / 2) * s, ov = h / 2 + ((v0 + v1) / 2) * s;
   const P = (x, y, z) => { const [u, v, d] = raw(x, y, z); return [ou + u * s, ov - v * s, d]; };
-  return { kind: "3d", P, s, lim: { xmin, xmax, ymin, ymax, zmin, zmax } };
+  return { kind: "3d", P, s, lim: { xmin, xmax, ymin, ymax, zmin, zmax },
+    zFloor: zNegUp() ? zmax : zmin, zTop: zNegUp() ? zmin : zmax };
 }
 
 function static3D(ctx, w, h) {
   proj = make3D(w, h);
-  const { P, s, lim } = proj, { xmin, xmax, ymin, ymax, zmin, zmax } = lim;
+  const { P, s, lim, zFloor, zTop } = proj, { xmin, xmax, ymin, ymax, zmin, zmax } = lim;
   const step = niceStep(Math.max(xmax - xmin, ymax - ymin), 7);
-  for (let v = Math.ceil(xmin / step) * step; v <= xmax + 1e-9; v += step) line(ctx, [P(v, ymin, zmin), P(v, ymax, zmin)], COL.grid);
-  for (let v = Math.ceil(ymin / step) * step; v <= ymax + 1e-9; v += step) line(ctx, [P(xmin, v, zmin), P(xmax, v, zmin)], COL.grid);
+  for (let v = Math.ceil(xmin / step) * step; v <= xmax + 1e-9; v += step) line(ctx, [P(v, ymin, zFloor), P(v, ymax, zFloor)], COL.grid);
+  for (let v = Math.ceil(ymin / step) * step; v <= ymax + 1e-9; v += step) line(ctx, [P(xmin, v, zFloor), P(xmax, v, zFloor)], COL.grid);
   const corners = [];
   for (const x of [xmin, xmax]) for (const y of [ymin, ymax]) for (const z of [zmin, zmax]) corners.push([x, y, z]);
   for (let i = 0; i < 8; i++) for (let j = i + 1; j < 8; j++) {
@@ -597,16 +657,16 @@ function static3D(ctx, w, h) {
     if (d === 1) line(ctx, [P(...corners[i]), P(...corners[j])], COL.frame);
   }
   ctx.font = "10.5px Consolas, monospace"; ctx.fillStyle = COL.text; ctx.textAlign = "center";
-  for (let v = Math.ceil(xmin / step) * step; v <= xmax + 1e-9; v += step) { const [x, y] = P(v, ymin - 50, zmin); ctx.fillText(fmtG(v), x, y + 4); }
-  for (let v = Math.ceil(ymin / step) * step; v <= ymax + 1e-9; v += step) { const [x, y] = P(xmin - 50, v, zmin); ctx.fillText(fmtG(v), x, y + 4); }
+  for (let v = Math.ceil(xmin / step) * step; v <= xmax + 1e-9; v += step) { const [x, y] = P(v, ymin - 50, zFloor); ctx.fillText(fmtG(v), x, y + 4); }
+  for (let v = Math.ceil(ymin / step) * step; v <= ymax + 1e-9; v += step) { const [x, y] = P(xmin - 50, v, zFloor); ctx.fillText(fmtG(v), x, y + 4); }
   const zstep = niceStep(zmax - zmin, 4);
   const [ex, ey] = [[xmin, ymin], [xmin, ymax], [xmax, ymin], [xmax, ymax]]
-    .reduce((best, c) => (P(c[0], c[1], zmin)[0] < P(best[0], best[1], zmin)[0] ? c : best));
+    .reduce((best, c) => (P(c[0], c[1], zFloor)[0] < P(best[0], best[1], zFloor)[0] ? c : best));
   ctx.textAlign = "right";
   for (let v = Math.ceil(zmin / zstep) * zstep; v <= zmax + 1e-9; v += zstep) {
     const [x, y] = P(ex, ey, v); ctx.fillText(fmtG(v), x - 6, y + 4);
   }
-  { const [x, y] = P(ex, ey, zmax); ctx.fillText("Z [mm]", x - 6, y - 12); }
+  { const [x, y] = P(ex, ey, zTop); ctx.fillText("Z [mm]", x - 6, y - 12); }
   const L = 260;
   const o = P(0, 0, 0);
   arrow(ctx, o, P(L, 0, 0), COL.x, "X");
@@ -643,7 +703,7 @@ function drawDynamic(ctx) {
   if (S.tel) {
     const [x, y] = P(S.tel.x, S.tel.y, S.tel.z);
     if (proj.kind === "3d") {
-      const [fx, fy] = P(S.tel.x, S.tel.y, proj.lim.zmin);
+      const [fx, fy] = P(S.tel.x, S.tel.y, proj.zFloor);
       line(ctx, [[x, y], [fx, fy]], "rgba(31,119,180,0.6)", 1, [3, 3]);
       ctx.fillStyle = "rgba(31,119,180,0.5)"; ctx.beginPath(); ctx.ellipse(fx, fy, 5, 2.5, 0, 0, 7); ctx.fill();
     }
@@ -662,7 +722,7 @@ function renderLegend(range) {
   let html = `<span>${dot("#fff", COL.pending)}pending</span><span>${dot(`conic-gradient(${COL.done} 0 40%, #fff 0)`, COL.pending)}partially recorded</span>` +
     `<span>${dot(COL.done, COL.doneEdge)}recorded</span><span>${dot("#fff", COL.target)}current target</span>` +
     `<span>${dot(COL.pd, "#0d3b66")}PD (live)</span>`;
-  if (key !== "status") {
+  if (key && key !== "status") {
     const grad = `linear-gradient(90deg, ${[0, 0.25, 0.5, 0.75, 1].map(viridis).join(",")})`;
     html += `<span>RSS ${key}, waveform, mean over angles: ${range ? fmtRss(range[0], "Vrms") : "–"}` +
       `<span class="grad" style="background:${grad}"></span>${range ? fmtRss(range[1], "Vrms") : "–"}</span>`;
@@ -721,9 +781,10 @@ function drawZ() {
   ctx.clearRect(0, 0, w, h);
   if (!S.workspace) return;
   const zmin = S.workspace.min[2], zmax = S.workspace.max[2], t = 10, b = 38, x0 = 18, bw = 12;
-  const PZ = (z) => t + ((zmax - z) / (zmax - zmin)) * (h - t - b);
-  ctx.fillStyle = "#fbfbfc"; ctx.fillRect(x0, PZ(zmax), bw, PZ(zmin) - PZ(zmax));
-  ctx.strokeStyle = COL.frame; ctx.strokeRect(x0 + 0.5, PZ(zmax) + 0.5, bw, PZ(zmin) - PZ(zmax));
+  const zTop = zNegUp() ? zmin : zmax;      // valor de Z dibujado arriba (posicion mas alta del PD)
+  const PZ = (z) => t + (Math.abs(zTop - z) / (zmax - zmin)) * (h - t - b);
+  ctx.fillStyle = "#fbfbfc"; ctx.fillRect(x0, t, bw, h - t - b);
+  ctx.strokeStyle = COL.frame; ctx.strokeRect(x0 + 0.5, t + 0.5, bw, h - t - b);
   ctx.font = "10.5px Consolas, monospace"; ctx.fillStyle = COL.text; ctx.textAlign = "left";
   const step = niceStep(zmax - zmin, 7);
   for (let z = Math.ceil(zmin / step) * step; z <= zmax + 1e-9; z += step) {
@@ -764,7 +825,7 @@ function drawDial() {
   for (const d of [0, 90, 180, 270]) { const [x, y] = P(d, R + 12); ctx.fillText(`${d}°`, x, y); }
   if (S.plan) {
     const cur = S.progress.current;
-    const doneK = new Set(cur ? (S.doneBySite.get(cur.site_id) || []).map((m) => m.k) : []);
+    const doneK = new Set(cur ? (S.doneBySite.get(cur.site_id) || []).filter((m) => (m.pass ?? 1) === (cur.pass ?? 1)).map((m) => m.k) : []);
     S.plan.angles.forEach((a, k) => {
       const [x, y] = P(a, R - 17);
       ctx.fillStyle = doneK.has(k) ? COL.done : "#fff"; ctx.strokeStyle = doneK.has(k) ? COL.doneEdge : "#6b7c8f";
@@ -830,7 +891,9 @@ function drawFFT() {
     vals.push(`<span>${fmtG(fk)} kHz</span> ${fmtRss(best, f.units)}`);
   }
   $("fftVals").innerHTML = vals.map((v) => `<div>${v}</div>`).join("");
-  $("fftInfo").textContent = `${f.units}, ${fmtG(f.rate)} updates/s`;
+  $("fftInfo").textContent = f.source === "python"
+    ? `${f.units}, computed in Python from the last measurement (oscilloscope FFT hidden during the session)`
+    : `${f.units}, ${fmtG(f.rate)} updates/s`;
 }
 
 /* ============================================================

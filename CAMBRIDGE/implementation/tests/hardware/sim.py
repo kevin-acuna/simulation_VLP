@@ -15,7 +15,7 @@ import numpy as np
 
 from .gantry import GantryBase
 from .mtrs import MTRSBase
-from .scope import ScopeBase
+from .scope import ScopeBase, spectrum_vrms
 
 
 class _Mover:
@@ -136,9 +136,10 @@ class SimScope(ScopeBase):
     inclinado PD_TILT_DEG con azimut = angulo del MTRS.
     """
 
-    # (frecuencia [Hz], posicion [mm] X, Y, Z) - posiciones aproximadas segun el exp01
-    LEDS = ((300e3, (700.0, 1250.0, 300.0)), (500e3, (700.0, 900.0, 300.0)),
-            (700e3, (700.0, 450.0, 300.0)), (900e3, (700.0, 150.0, 300.0)))
+    # (frecuencia [Hz], posicion [mm] X, Y, Z) - posiciones aproximadas segun el exp01;
+    # frecuencias como las medidas en el laboratorio (~1 ppm de la nominal, 2026-10-12)
+    LEDS = ((299999.654, (700.0, 1250.0, 300.0)), (499999.456, (700.0, 900.0, 300.0)),
+            (700000.834, (700.0, 450.0, 300.0)), (900000.984, (700.0, 150.0, 300.0)))
     PD_TILT_DEG = 15.0
     LAMBERT_ORDER = 1.0
     AMPLITUDE_V = 0.02            # amplitud de cada tono a 0.5 m, en eje
@@ -177,35 +178,58 @@ class SimScope(ScopeBase):
             amps.append(self.AMPLITUDE_V * cos_phi ** self.LAMBERT_ORDER * cos_psi * (500.0 / d) ** 2)
         return amps
 
-    def _signal(self):
-        t = np.arange(self.N) / self.FS
-        v = self.NOISE_V * np.random.randn(self.N)
+    def _signal(self, n=None):
+        n = n or self.N
+        t = np.arange(n) / self.FS
+        v = self.NOISE_V * np.random.randn(n)
         for (f0, _), a, ph in zip(self.LEDS, self._amplitudes(), self._phases):
             v += a * np.sin(2 * np.pi * f0 * t + ph)
         return t, v
 
     def _fft_of(self, v):
+        """FFT 'del osciloscopio': como mucho 64K muestras, relleno hasta potencia de 2 (>= 32768)."""
+        v = v[:65536]
+        n_fft = max(self.N_FFT, 1 << int(math.ceil(math.log2(v.size))))
         w = np.hanning(v.size)
-        spec = np.abs(np.fft.rfft(np.pad((v - v.mean()) * w, (0, self.N_FFT - v.size))))
+        spec = np.abs(np.fft.rfft(np.pad((v - v.mean()) * w, (0, n_fft - v.size))))
         spec *= 2 / w.sum() / math.sqrt(2)
-        f = np.fft.rfftfreq(self.N_FFT, 1 / self.FS)
+        f = np.fft.rfftfreq(n_fft, 1 / self.FS)
         sel = f <= self.F_MAX
         return f[sel], spec[sel]
 
     def read_fft(self):
         time.sleep(0.05)
-        f, y = self._fft_of(self._signal()[1])
+        f, y = self._fft_of(self._signal(min(self.N, 65536))[1])
         return {"unix": time.time(), "f": f, "y": y, "ylim": (0.0, 0.02)}
 
-    def record(self, n_acq, time_points):
+    def record(self, n_acq, time_points, scope_fft=True):
         out = []
         for _ in range(n_acq):
             t0 = time.time()
             t, v = self._signal()
-            f, y = self._fft_of(v)
-            out.append({"unix": t0, "f": f, "fft": y, "t": t, "v": v, "fs": self.FS})
+            acq = {"unix": t0, "t": t, "v": v, "fs": self.FS}
+            if scope_fft:
+                acq["f"], acq["fft"] = self._fft_of(v)
+                acq["fft_source"] = "scope"
+            else:
+                acq["f"], acq["fft"] = spectrum_vrms(v, self.FS, *self.fft_band())
+                acq["fft_source"] = "python"
+            out.append(acq)
             time.sleep(0.05)
         return out
+
+    def configure_record(self, record_s, fs):
+        if getattr(self, "_record_saved", None) is None:
+            self._record_saved = (self.N, self.FS, dict(self.info))
+        self.N, self.FS = int(round(record_s * fs)), fs
+        self.info.update(timebase_s_div=record_s / 10, sample_rate_Sa_s=fs)
+        print(f"[SimScope] Record: {record_s * 1e3:g} ms at {fs / 1e6:g} MSa/s ({self.N:,} points).")
+        return self.info
+
+    def restore_record(self):
+        saved, self._record_saved = getattr(self, "_record_saved", None), None
+        if saved is not None:
+            self.N, self.FS, self.info = saved[0], saved[1], saved[2]
 
     def close(self):
         print("[SimScope] Closed.")
