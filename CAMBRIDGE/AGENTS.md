@@ -99,6 +99,15 @@ least +/-1.5 bins.
   independent of config).
 - `testbed_dev/experiments/exp01_point_acquisition.py`: GUI point-by-point acquisition (comments still in
   Spanish; private); only experiment parameters at the top. Output: `testbed_dev/data/exp01/exp01_<date>/`.
+- `testbed_dev/experiments/exp03_FrecuencyResponse/exp03_frequency_response.py`: console-only frequency sweep
+  of ONE LED driven by the measuring scope's WGEN (`:WGEN:FREQuency`, command templates are hyperparameters);
+  PD position typed in the console (or `--pos X Y Z`), gantry + scope only (no MTRS). Per frequency:
+  N_SAMPLES x RECORD_MS records (`Scope.record`, :DIGitize, LAN), peak of the Python FFT (Hanning, whole
+  record) at f within +/-FFT_BAND_HZ. Hyperparameters F_START/STOP/STEP_HZ (default 5 kHz..1 MHz step 5 kHz).
+  Output `testbed_dev/data/exp03/exp03_<date>/`: frequency_response.csv (frequency_Hz, amplitude_mVrms only,
+  written incrementally), session.json (settings, std per point), frequency_response.png. Restores the WGEN
+  frequency and the scope settings at the end. `--sim` (sim scope = a single LED at f, flat response),
+  `--no-show`. Verified in sim (200 points, 1.5 min); not yet run on the real hardware.
 - `app/` (formerly `tests/experiments/exp02_database/`, "exp02"): database acquisition
   (XYZ grid x K MTRS angles theta_k = (angle_offset_deg + 360k/K) mod 360, default offset 65 deg; measured
   in increasing MTRS angle). Run `python app/run.py [--sim] [--port] [--no-browser]
