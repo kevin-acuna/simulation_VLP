@@ -47,6 +47,33 @@ scope Utility > I/O > Configure USB > Compatibility Mode, and/or a USB 2.0-only 
 laptop's internal Genesys hub (VID_05E3 PID_0610, shared with internal devices) under the AMD USB 3.10 xHCI;
 the MTRS is on the root hub. pnputil /restart-device (admin) does NOT unfreeze it: the user must unplug USB,
 power-cycle the scope, then reconnect. Yesterday's sessions had only ~43 transfers of 1 Mpts in total.
+More tests (1 Mpts back to back): *OPC? sync after :SINGle -> lock-up after 150; scope moved to a port
+directly on the root hub (MTRS moved to the internal hub) -> lock-up after 60. Neither helps; the failure looks
+random per transfer (~1/60-1/600). Compatibility Mode was already enabled. No USB 2.0 hub, single Ethernet
+port (gantry). 20 ms records (200 kpts, 5x less data), :SINGle back to back -> lock-up after 285: the
+size barely matters, the number of STOP/:SINGle/poll cycles does. Sessions with :DIGitize + *OPC? on 10-12
+(148 small records) never failed. Next test: :DIGitize instead of :SINGle polling (stress script
+%TEMP%\scope_stress3.py --mode digitize).
+LAN test (laptop Ethernet temporarily moved from the gantry to the scope; scope set to manual IP
+192.168.3.50/24, ports 111/4880/5025 open): over HiSLIP the FIRST 1 Mpts read crashed inside Keysight VISA
+(`OSError: access violation` in viRead) and the scope locked up again (ping OK, no SCPI on LAN or USB).
+Installed: Keysight IO Libraries Suite 2026 Update 1 (21.4.204), VISA shared 8.0.7331, installed 2026-10-02.
+Hypothesis: VISA aborts/corrupts large reads -> the scope firmware hangs on an aborted transfer. Test
+without VISA: %TEMP%\scope_socket_stress.py (raw TCP socket to port 5025, same capture cycle).
+RESULT 2026-10-13: raw socket over LAN = 1500 captures of 1 Mpts back to back in 17.4 min, 0 errors,
+0 wrong records, 0.69 s per capture (VISA USB: 0.78 s and lock-ups after 60-590). => Keysight VISA is the
+culprit (USB and HiSLIP). Options: LAN + socket transport (needs a switch: single Ethernet port is for the
+gantry), older IO Libraries / NI-VISA over USB, or pyvisa-py over USB (WinUSB driver).
+But then, through the driver over the socket with STOP/:SINGle polling: total freeze (no ping, front panel
+dead) after 530 -> the root cause is the STOP/:SINGle/poll/RUN cycle at a high rate (VISA made it worse).
+FINAL SOLUTION (2026-10-13): oscilloscope on LAN through `hardware/scpi_socket.py` (address
+"TCPIP::192.168.4.50::5025::SOCKET"), acquisitions with `:DIGitize` + `*OPC?` (no polling) and the scope
+kept stopped during a session (record() only sends :RUN when no record is configured; restore_record()
+sends :RUN). Test: 1500 records of 1 Mpts in batches of 10, 0 errors, 0.55 s per record; a full app
+session (sim motion, 6 points x 10 samples) OK. Network: gantry on the USB-Ethernet adapter ASIX AX88772B
+("Ethernet 3", PC 192.168.3.10), scope on the built-in Realtek port ("Ethernet", PC 192.168.4.100,
+scope 192.168.4.50) - different subnets on purpose. The Realtek port has energy saving enabled
+(not changed). `_find_fft` re-shows a Math FFT left hidden by an interrupted session.
 If configure_record runs while the scope was left in the session setup (failed restore), the "previous
 settings" saved are the session ones: restore the scope by hand first.
 Lab fact (2026-10-13): the PD signal is dominated by ~100 Hz ambient-light flicker (~120 mVrms, peaks
