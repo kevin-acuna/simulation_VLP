@@ -15,6 +15,43 @@ The venv was moved from implementation/: python.exe works, but the pip.exe launc
 path -> use `python -m pip`.
 EVERYTHING in the released code is in English (comments, docstrings, GUI, messages): the repository is
 shared with the research group. Hyperparameters go in a commented block at the top of each script.
+Released defaults must stay NEUTRAL (K=1, offset 0, adapter/pd tilt 0, MTRS tilt fixed 0): the
+investigator's own values (offset 65 deg, 15 deg adapter used in the analysis) are unpublished results and
+must not appear as defaults or recommendations (the README only lists that 0/15 deg adapters exist).
+The tool is presented as general position+orientation sampling (no research question in the README).
+README sections: Quick start, features, system/adapters (figures in docs/), ..., Credits (author Kevin
+Acuna-Condori, LISV Universite Paris-Saclay - UVSQ, visiting PhD at the LiFi R&D Centre, Cambridge),
+How to acknowledge, Usage (internal use, do not redistribute).
+MTRS tilt (since 2026-10-12): +/-3 deg, 0.5 deg/s, 0.5 deg/s2 (Thorlabs spec; [mtrs] tilt_limit_deg,
+tilt_velocity_deg_s, tilt_acceleration_deg_s2). `MTRS.move_tilt/tilt_moving/tilt_arrived`, Testbed
+`move_to_pose/wait_pose/go_to_pose(..., tilt=)`. The app: `mtrs_tilt_mode` fixed | random (uniform in
+[min,max], one value per (site, k) reused by passes, numpy default_rng(tilt_seed), seed drawn at every
+Preview and stored in session.json; commanded tilt in plan.csv / points.csv `mtrs_tilt_cmd_deg`). Real
+tilt tested 2026-10-13 (session_20261013_101402, random [-1, 1]): measured = commanded, estimate 316 s vs
+311 s real. UI: "MTRS tilt" gauge panel between MTRS rotation and Live pose; FFT amplitude axis can be
+fixed by double-clicking the FFT (display only, stored in localStorage "dbacq.fftYfix").
+Incident 2026-10-13 (sessions 103703, 113114 with 10 and 5 samples x 1 Mpts): VI_ERROR_IO in the middle of
+a waveform transfer, then VI_ERROR_TMO/NCIC; the scope's USB interface hung (front panel Run/Stop red, no
+answer to *IDN? even after device clear or reopening the session; Windows logged no USB disconnect). Only
+replugging its USB cable / power-cycling recovers it. The 2-sample session that morning was fine. Changes:
+waveforms transferred as BYTE when acquire_type is NORM/PEAK (WORD had the low byte always 0 -> half the
+USB traffic, uint8 codes in wave/*.npz), :SINGle completion polled every 20 ms (was 5 ms),
+`Scope.recover()` reopens the VISA session and sets `alive=False` if it still fails (restore/close then
+skip commands instead of hanging), the engine re-applies the record setup (`_reapply_scope_setup`) before
+retrying / after Resume, and pauses with replug instructions. The laptop runs the Balanced plan with USB
+selective suspend enabled (suggested: disable it, scope on a direct USB port, not a hub shared with the MTRS).
+Stress tests 2026-10-13 (scope alone, 1 Mpts BYTE records back to back, ~0.78 s each): chunk_size 4 MB ->
+lock-up after 205 transfers; 256 kB -> after 590 (VI_ERROR_SYSTEM_ERROR). Known Keysight KB issue
+("InfiniiVision-X ... connection loss during long, repetitive waveform data transfers over USB"): fixes =
+scope Utility > I/O > Configure USB > Compatibility Mode, and/or a USB 2.0-only hub. The scope is on the
+laptop's internal Genesys hub (VID_05E3 PID_0610, shared with internal devices) under the AMD USB 3.10 xHCI;
+the MTRS is on the root hub. pnputil /restart-device (admin) does NOT unfreeze it: the user must unplug USB,
+power-cycle the scope, then reconnect. Yesterday's sessions had only ~43 transfers of 1 Mpts in total.
+If configure_record runs while the scope was left in the session setup (failed restore), the "previous
+settings" saved are the session ones: restore the scope by hand first.
+Lab fact (2026-10-13): the PD signal is dominated by ~100 Hz ambient-light flicker (~120 mVrms, peaks
+~220 mV at 75 mV/div = +/-300 mV screen, only x1.4 headroom) while the LED tones are 1-16 mVrms; it does not
+bias the tone amplitudes but limits the vertical scale (lights off -> finer scale, less clipping risk).
 Studied frequencies for exp01 are `FREQUENCIES_KHZ` (points.csv gets per-frequency columns
 `<f>kHz_fft_<units>` from the scope FFT and `<f>kHz_wave_Vrms` from the raw waveform). The scope FFT
 bin can be much wider than `led_freq_band_hz` (610 Hz measured at 700 kHz), so `fft_peak` searches at

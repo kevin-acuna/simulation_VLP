@@ -27,9 +27,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.213"
-     inkscape:cx="579.96701"
-     inkscape:cy="407.66693"
+     inkscape:zoom="1.7154411"
+     inkscape:cx="531.35023"
+     inkscape:cy="316.82814"
      inkscape:window-width="2560"
      inkscape:window-height="1494"
      inkscape:window-x="-11"
@@ -1117,7 +1117,7 @@
        r="14"
        fill="#b9820f"
        id="circle87"
-       style="fill:#b99c5d;fill-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
     <text
        x="246"
        y="206.5"
@@ -1125,7 +1125,8 @@
        fill="#ffffff"
        text-anchor="middle"
        font-weight="bold"
-       id="text88">1</text>
+       id="text88"
+       style="fill:#000000">1</text>
     <text
        x="268"
        y="207"
@@ -1138,20 +1139,22 @@
        stroke="#b9820f"
        stroke-width="1.1"
        fill="none"
-       id="path94" />
+       id="path94"
+       style="stroke:#000000;stroke-opacity:1" />
     <circle
        cx="511.5"
        cy="449.6"
        r="3"
        fill="#b9820f"
-       id="circle94" />
+       id="circle94"
+       style="fill:#000000" />
     <circle
        cx="722"
        cy="290"
        r="14"
        fill="#d9363e"
        id="circle95"
-       style="fill:#d96d72;fill-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
     <text
        x="722"
        y="296.5"
@@ -1159,7 +1162,8 @@
        fill="#ffffff"
        text-anchor="middle"
        font-weight="bold"
-       id="text95">3</text>
+       id="text95"
+       style="fill:#000000">3</text>
     <text
        x="744"
        y="297"
@@ -1172,20 +1176,22 @@
        stroke="#d9363e"
        stroke-width="1.28315"
        fill="none"
-       id="path98" />
+       id="path98"
+       style="stroke:#000000;stroke-opacity:1" />
     <circle
        cx="623.29999"
        cy="374.89999"
        r="3"
        fill="#d9363e"
-       id="circle98" />
+       id="circle98"
+       style="fill:#000000" />
     <circle
        cx="722"
        cy="808"
        r="14"
        fill="#6a4bc4"
        id="circle99"
-       style="fill:#7b62c4;fill-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
     <text
        x="722"
        y="814.5"
@@ -1193,7 +1199,8 @@
        fill="#ffffff"
        text-anchor="middle"
        font-weight="bold"
-       id="text99">2</text>
+       id="text99"
+       style="fill:#000000">2</text>
     <text
        x="744"
        y="815"
@@ -1206,13 +1213,15 @@
        stroke="#6a4bc4"
        stroke-width="0.89578"
        fill="none"
-       id="path101" />
+       id="path101"
+       style="fill:#000000;stroke:#000000;stroke-opacity:1" />
     <circle
        cx="690"
        cy="640.5"
        r="3"
        fill="#6a4bc4"
-       id="circle101" />
+       id="circle101"
+       style="fill:#000000" />
     <rect
        x="683.5"
        y="578"

@@ -31,15 +31,15 @@
 
 
 \author{To be determinate
-\thanks{Manuscript received MM DD, 2025.
-This work was supported in part by the French National Research Agency (ANR) through the Project SAFELiFi under Grant ANR-21-CE25-0001-01, and in part by the European Union's Smart Networks and Services Joint Undertaking (SNS JU) under grant agreement No. 101139292 (\textit{Corresponding author: Kevin Acuna-Condori.})
+\thanks{Manuscript received MM DD, 2026.
+%This work was supported in part by the French National Research Agency (ANR) through the Project SAFELiFi under Grant ANR-21-CE25-0001-01, and in part by the European Union's Smart Networks and Services Joint Undertaking (SNS JU) under grant agreement No. 101139292 (\textit{Corresponding author: Kevin Acuna-Condori.})
 }
 \thanks{
-The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Villacoublay, France (e-mail: kevin-jose.acuna-condori@uvsq.fr).
+%The authors are with the Université Paris-Saclay, UVSQ, LISV, 78140, Vélizy-Villacoublay, France (e-mail: kevin-jose.acuna-condori@uvsq.fr).
 }
 }
 \markboth{IEEE Transactions on Communications,~Vol.~XX, No.~X, 2026}%
-{Acuna-Condori \MakeLowercase{\textit{et al.}}: Model-Based Beam-Steered OWP with Single-LED Single-PD for 3D Localization}
+{Integrated Sensing and Communication with a Single Steerable VCSEL: Fundamental Limits of RSS-Based Direction Finding}
 \maketitle
 
 \begin{abstract}
@@ -69,9 +69,9 @@ pointing accuracy, and the throughput of the subsequent link.
 \section{Introduction}
 % =====================================================================
 
-The rapid growth of wireless data traffic is expected to push the
-radio-frequency (RF) spectrum toward a capacity crunch in the coming
-years~\cite{TODO_spectrum_crunch}. Providing additional spectral resources
+The rapid growth of wireless data traffic is placing increasing
+pressure on radio-frequency (RF) spectrum resources~\cite{Koonen2018}.
+Providing additional spectral resources
 is therefore among the objectives of sixth-generation (6G)
 systems~\cite{Trevlakis2023}, and optical wireless communication (OWC) has
 emerged as a promising candidate technology owing to its vast, unlicensed
@@ -165,10 +165,11 @@ contributions of this paper are as follows:
   from RSS feedback, through a wide-beam scan and a local refinement,
   and then reuses the same beam, narrowed, for data transmission.
   \item A closed-form Cram\'er--Rao lower bound (CRLB) for RSS-based
-  direction finding with unknown range. In the far field, the bound
-  factorizes into a scalar radiometric term and a geometric matrix that
-  depends only on the probing beams, which makes direction finding
-  calibration-free. We also establish the identifiability condition and
+  direction finding with unknown range. %In the far field, the bound
+  %factorizes into a scalar radiometric term and a geometric matrix that
+  %depends only on the probing beams, which makes direction finding
+  %calibration-free.
+  We also establish the identifiability condition and
   the validity domain of the far-field bound.
   \item A CRLB-driven design of the scan and refinement beam sets that
   quantifies the trade-off between the number of probing beams, i.e.,
@@ -181,13 +182,13 @@ contributions of this paper are as follows:
 \end{itemize}
 
 % Ajustar a la estructura final del paper:
-The remainder of this paper is organized as follows.
-Section~\ref{sec:system} describes the system model and the operating
-principle. Section~\ref{sec:crlb} derives the CRLB for direction finding.
-Section~\ref{sec:design} addresses the design of the scan and refinement
-stages, and Section~\ref{sec:comm} analyzes the communication stage.
-Numerical results are presented in Section~\ref{sec:results}, and
-Section~\ref{sec:conclusion} concludes the paper.
+%The remainder of this paper is organized as follows.
+%Section~\ref{sec:system} describes the system model and the operating
+%principle. Section~\ref{sec:crlb} derives the CRLB for direction finding.
+%Section~\ref{sec:design} addresses the design of the scan and refinement
+%stages, and Section~\ref{sec:comm} analyzes the communication stage.
+%Numerical results are presented in Section~\ref{sec:results}, and
+%Section~\ref{sec:conclusion} concludes the paper.
 
 % =====================================================================
 \section{System Model and Operating Principle}\label{sec:system}
@@ -314,7 +315,7 @@ the scan time, and the pointing accuracy.
 divergence $\theta_{\mathrm{d,r}}$ are steered around
 $\hat{\boldsymbol{\alpha}}^{(0)}$, and the estimate is updated to
 $\hat{\boldsymbol{\alpha}}$. Since at least three non-collinear beams are
-required to identify the direction (Section~\ref{sec:crlb}),
+required to identify the direction,
 $K_{\mathrm{r}}\geq3$. Different strategies for selecting the number and
 placement of these beams (e.g., fixed pattern, random, or greedy CRLB
 minimization) are compared in terms of accuracy and overhead.
@@ -330,15 +331,15 @@ ISAC scheme.
 
 
 % *******************************************
-\section{Direction Error Bound}
+%\section{Direction Error Bound}
 % *******************************************
 
 % *******************************************
-\section{Optimization of the Orientation Set}
+%\section{Optimization of the Orientation Set}
 % *******************************************
 
 % *******************************************
-\section{Direction Estimators}
+%\section{Direction Estimators}
 % *******************************************
 
 % *******************************************
