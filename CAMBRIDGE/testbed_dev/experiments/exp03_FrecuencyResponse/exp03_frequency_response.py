@@ -50,9 +50,12 @@ N_SAMPLES = 3                    # capturas por frecuencia (se promedia el pico)
 SETTLE_S = 0.2                   # espera tras cambiar la frecuencia, antes de medir
 FFT_BAND_HZ = 200.0              # el pico se busca en f +/- esta banda (minimo 1.5 bins)
 
-# Generador que alimenta el LED: por defecto el WGEN del propio osciloscopio de medida.
-WGEN_FREQ_CMD = ":WGEN:FREQuency {f:.6E}"
-WGEN_FREQ_QUERY = ":WGEN:FREQuency?"
+# Generador que alimenta el LED: WaveGen del propio osciloscopio de medida (el MSO-X 4154A tiene 2;
+# ":WGEN" sin numero = WaveGen 1). Su salida (Output) debe estar encendida; el programa no la enciende.
+WGEN = 1                         # 1 o 2: WaveGen conectado al LED que se quiere barrer
+WGEN_FREQ_CMD = f":WGEN{WGEN}:FREQuency {{f:.6E}}"
+WGEN_FREQ_QUERY = f":WGEN{WGEN}:FREQuency?"
+WGEN_OUTPUT_QUERY = f":WGEN{WGEN}:OUTPut?"
 
 DEVICE_MODE_OVERRIDE = {}        # p.ej. {"gantry": "sim"}; vacio = modos de la config
 SHOW_PLOT = True                 # abrir la grafica al terminar (siempre se guarda el .png)
@@ -167,8 +170,12 @@ def main():
 
         if not isinstance(sc, SimScope):
             f_orig = float(sc.inst.query(WGEN_FREQ_QUERY))
-            if sc.inst.query(":WGEN:OUTPut?").strip() not in ("1", "ON"):
-                print("[exp03] WARNING: the WGEN output is OFF: the LED will not be modulated.")
+            out_on = sc.inst.query(WGEN_OUTPUT_QUERY).strip() in ("1", "ON")
+            print(f"[exp03] Sweeping WaveGen {WGEN} (now at {f_orig / 1e3:g} kHz, output {'ON' if out_on else 'OFF'}).")
+            if not out_on:
+                print(f"[exp03] WARNING: the WaveGen {WGEN} output is OFF: the LED will not be modulated. "
+                      f"Turn it on (Wave Gen key -> Output) and run again.")
+                return
         print("[exp03] Make sure that ONLY the LED driven by the generator is on.")
         sc.configure_record(RECORD_MS * 1e-3, fs)
         fft_shown = sc.fft_displayed()

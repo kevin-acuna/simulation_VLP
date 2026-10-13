@@ -100,7 +100,9 @@ least +/-1.5 bins.
 - `testbed_dev/experiments/exp01_point_acquisition.py`: GUI point-by-point acquisition (comments still in
   Spanish; private); only experiment parameters at the top. Output: `testbed_dev/data/exp01/exp01_<date>/`.
 - `testbed_dev/experiments/exp03_FrecuencyResponse/exp03_frequency_response.py`: console-only frequency sweep
-  of ONE LED driven by the measuring scope's WGEN (`:WGEN:FREQuency`, command templates are hyperparameters);
+  of ONE LED driven by one of the TWO WaveGens of the measuring MSO-X 4154A (hyperparameter `WGEN` = 1 | 2,
+  `:WGEN<n>:FREQuency`; ":WGEN" without number = WaveGen 1, which was at 700 kHz with output ON on 10-13);
+  the program never turns the output on: it stops with a message if it is OFF;
   PD position typed in the console (or `--pos X Y Z`), gantry + scope only (no MTRS). Per frequency:
   N_SAMPLES x RECORD_MS records (`Scope.record`, :DIGitize, LAN), peak of the Python FFT (Hanning, whole
   record) at f within +/-FFT_BAND_HZ. Hyperparameters F_START/STOP/STEP_HZ (default 5 kHz..1 MHz step 5 kHz).
