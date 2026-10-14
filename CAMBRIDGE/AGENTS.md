@@ -129,7 +129,16 @@ least +/-1.5 bins.
   run.py tees stdout/stderr to `logs/acq_<date>.log` (timestamped, git-ignored; `--no-log`); measurement
   failures also print the traceback. Campaign 20261013_182008 (141x141 grid, 10 mm, K=1, 100 ms): 3879/19881
   done in 2.4 h (~2.2 s/measurement), measurement 3880 failed at 20:44 (cause unknown: no log yet) and it
-  stayed paused until the PC restart. Older output `data/session_<date>[_label]/`
+  stayed paused until the PC restart. Continued 10-14 10:24 from 3880; measurement 5942 failed at 11:41
+  (2062 captures later): ConnectionResetError (WinError 10054) inside `:WAVeform:DATA?` recv, scope front
+  panel frozen again -> with :DIGitize over LAN the scope firmware still freezes randomly, ~1 per 2000-5000
+  1 Mpts captures (1.3-2.4 h). No link events, EEE / Power Saving already disabled. After that power cycle
+  WaveGen 1 came back with output OFF (it drives the 700 kHz LED). Since then: `AUTO_RESUME` (run.py,
+  Engine(auto_resume=True)): while paused with the scope dead (`_scope_dead`), `_scope_answers()` every
+  SCOPE_CHECK_S = 15 s and continues by itself; `Scope.wgen_state()/set_wgen()`, the WaveGen state at start
+  is stored in session.json `wgen_at_start` and `_check_wgen()` restores outputs/frequencies that were ON
+  (after every recovery and when continuing a campaign). Campaign 20261013_182008 has no wgen_at_start:
+  the reference is read at Continue, so WaveGen 1 must be ON before pressing it. Older output `data/session_<date>[_label]/`
   (sessions recorded before the split are in `testbed_dev/data/exp02/exp02_<date>/`): points.csv (compact,
   one row per measurement), plan.csv, trajectory.csv, fft/mNNNNN.csv, wave/mNNNNN.npz, session.json, README.txt.
   The plan is compact (sites list + `plan_measurement(plan, i)`, no per-measurement dicts) so plans of
