@@ -22,7 +22,7 @@ grid_lines_surface = true;            % draw grid lines (wireframe) over the 3D 
 grid_lines_step_mm = 40;              % spacing of the grid lines (rounded to a multiple of grid_step_mm)
 grid_lines_color   = [0.1 0.1 0.1];         % RGB color of the grid lines
 grid_lines_width   = 0.01;             % line width of the grid lines (pt)
-export_figures  = true;               % PNG (300 dpi) + FIG in output_dir (overwritten at every run)
+export_figures  = false;               % PNG (300 dpi) + FIG in output_dir (overwritten at every run)
 output_dir      = fullfile(fileparts(csv_file), 'figures');
 
 %% Load
@@ -132,7 +132,13 @@ for f = 1:nf
     end
     title(ax, sprintf('%d kHz (max %.4g at x = %g, y = %g mm)', frequencies_khz(f), peak, ...
         grid_mm(kx), grid_mm(ky)), 'FontWeight', 'normal');
+
+    % ADJUSMENT
+    if f==2
+        plot(ax, 904.8, 281.1, 'wp', 'MarkerFaceColor', 'k', 'MarkerSize', 10);
+    end
 end
+
 
 %% 3D surfaces
 fig_surf = figure('Name', 'RSS surfaces', 'Color', 'w', 'Position', [120 60 1100 950]);
