@@ -118,7 +118,18 @@ least +/-1.5 bins.
   HTTP + Server-Sent Events on 127.0.0.1:8765). `web/` is a no-build HTML/CSS/JS UI that only sends
   commands; all control and rigor stay in Python. pyvisa is used only from the scope thread
   (`Engine.scope_call`). `pd_tilt_deg` is metadata of the 3D-printed mount: never sent to the MTRS (its
-  tilt stays at `tilt_target_deg` = 0). Output `data/session_<date>[_label]/`
+  tilt stays at `tilt_target_deg` = 0). Output `data/campaign_<date>[_label]/` (older: `session_<date>`;
+  both can be continued). Continue an interrupted campaign: `Engine.list_campaigns()` (unfinished =
+  points.csv rows < n_meas), `Engine.load_campaign(name)` rebuilds the plan from session.json plan_config
+  (incl. tilt_seed), checks contiguity/consistency, removes a cut last row, loads `done` from points.csv and
+  sets `next_index`; `start()` then calls `_reopen_session()` (append mode) instead of `_open_session()`.
+  session.json stores `resumes`, `scope_user_settings` (restored on continuation instead of the current scope
+  state) and n_done (updated every 200 measurements and on error pauses). API GET /api/campaigns,
+  POST /api/campaign/load; UI panel "Continue a campaign", Start button reads "Continue".
+  run.py tees stdout/stderr to `logs/acq_<date>.log` (timestamped, git-ignored; `--no-log`); measurement
+  failures also print the traceback. Campaign 20261013_182008 (141x141 grid, 10 mm, K=1, 100 ms): 3879/19881
+  done in 2.4 h (~2.2 s/measurement), measurement 3880 failed at 20:44 (cause unknown: no log yet) and it
+  stayed paused until the PC restart. Older output `data/session_<date>[_label]/`
   (sessions recorded before the split are in `testbed_dev/data/exp02/exp02_<date>/`): points.csv (compact,
   one row per measurement), plan.csv, trajectory.csv, fft/mNNNNN.csv, wave/mNNNNN.npz, session.json, README.txt.
   The plan is compact (sites list + `plan_measurement(plan, i)`, no per-measurement dicts) so plans of
