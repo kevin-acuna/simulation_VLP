@@ -215,6 +215,49 @@ least +/-1.5 bins.
   the new standalone repository ignores `data/`.
   `SimScope` emulates this (4 Lambertian LEDs, same FFT format).
 
+## Analysis of real data (`CAMBRIDGE/analysis/`, MATLAB R2026a, one script per folder)
+Scripts follow the same style: commented hyperparameter block at the top, `export_figures` (PNG 300 dpi +
+FIG in `figures/`), top views in the acquisition-tool orientation (`app_orientation`: Y horizontal growing
+to the left, X vertical). The investigator adds `close all` and edits the hyperparameters directly.
+Headless check: `matlab -batch "run('script.m')"` from the script folder (local functions cannot be
+called from outside the script).
+- `RSS_Distribution/plot_rss_distribution.m`: heatmaps + 3D surfaces of the 4 LEDs (XY scan, PD horizontal).
+- `Frecuency_Response/plot_frequency_response.m`: exp03 response, linear/dB.
+- `Lambertian_order_LED_500khz/estimate_led_pattern.m`: RSS = A R(psi) L(phi)/d^2, PD horizontal so psi = phi
+  (only R*L is identifiable: m depends on the assumed PD model). Calibration scan at gantry z = -300 with
+  h = H_LED - H_PD = 3 - 1.13496 = 1.86504 m (H_PD = 103.8 + 9.696 cm). LED 500 kHz at (270, 890) mm
+  (grid maximum); joint fit of A, m, LED XY with SQ gives (281.1, 904.8) mm. SQ: staged m = 6.15,
+  joint m = 5.71, joint_xy m = 5.60. The scan shows 1-2 % steps after the overnight resume (LED/gain drift).
+- `Experiment_01_3D_estimation/estimate_3d_positions.m`: campaign_01 (PD on the gantry, 15 deg adapter,
+  K = 10 MTRS angles). Reuses `simulations/` estimators via `cambridge_setup` (cos/cos^mR: rx_estimate
+  GLS/WLS/NLS_TCOM; SQ: pd_fit_estimate ratio_gls/ratio_wls/joint_nls) and refits A, m from the
+  calibration scan with the same PD model and LED position. Frame: X, Y gantry (m), Z = height above
+  the floor (up): Z_pd = H_base(1.038 m at gantry z = -300) + gantry_z_scale*(-300 - z)/1000 + 0.09696
+  (gantry base -> PD centre, MTRS + adapter); LED at Z = 3 m, normal [0 0 -1]; PD normal
+  [sin t sin a, sin t cos a, cos t], a = theta - offset (tilt towards +Y at theta = offset; increasing
+  theta turns it towards +X). The investigator once wrote [0, cos15, -sin15]: the data reject it. Range
+  recovery = exact dual of F_broadcast_Konly/core/broadcast_distance.m (eta = sum(y h)/sum(h^2),
+  d = sqrt(A cos^m(phi)/eta)); with NLS it is already the position ML. The RSS shape over K gives a real
+  MTRS offset of ~67.5 deg (same on both levels and PD models, default orientation_fit = 'offset' cross
+  height); the tilt is NOT identifiable apart from the PD slope (13.8-14.7, cos needs 25) -> keep 15.
+  Open issue (2026-10-15): at gantry z = -600 the estimates sit ~9-11 cm below the nominal height, from
+  both direction-only triangulation (LED Z = 2.99 m, level offset -93 mm) and amplitude; with
+  gantry_z_scale = 0.667 SQ+NLS gives 3.3 cm mean (nominal geometry 8.2 cm, 2.7 cm at z = -300).
+  To verify: tape-measure the PD height at gantry z = -300 / -600. Report: report/experiment01_report.pdf.
+  The 1.038 m base height must be at gantry z = -300 (at z = 0 the data give 27 cm errors, LED at 3.27 m).
+  Campaign folders (2026-10-15): campaign_20261014_185628 (z -600, -300) and campaign_20261015_000723
+  (z -200, -100, 0; same XY grid and K = 10 angles), analysed together via `campaign_dirs`. The second
+  campaign confirmed the vertical compression out of sample: nominal geometry gives a vertical bias linear
+  in z (-11.5 ... +9.7 cm), real/commanded travel 0.647 (estimated heights) / 0.632 (direction-only
+  triangulation); with the a-priori gantry_z_scale = 0.667 all 5 levels give 3.6-3.75 cm (125 sites: SQ+NLS
+  3.69 cm) and in-situ A (0.0605), tilt (14.80 deg) and triangulation become height-independent; cos^1.9
+  stays inconsistent. Fitted MTRS offset drifts 67.55 -> 67.06 deg in acquisition order (10 h).
+  gantry_z_scale default stays 1 until the investigator tape-measures the heights.
+  `k_study = true`: error vs K with near-uniform subsets of the measured angles (all rotations); SQ+NLS,
+  z scale 0.667: K = 10 -> 4.8 cm (nominal 65 deg) / 3.65 cm (offset fitted once with K = 10), K = 5 same,
+  K = 3 -> 5.8 / 4.7 cm, no failures. Campaign timing (campaign_01, real): 27.2 s per 36 deg MTRS step,
+  8.5 s per site change -> per step ~ step_deg/1.5 + 3.2 s; 500 measurements took 3.52 h.
+
 ## Verification
 - No hardware: `python app/run.py --sim` (from `database_acquisition/`); other scripts with
   `DEVICE_MODE` = sim (Agg backend for headless tests). `node --check app/web/app.js` after JS changes.
