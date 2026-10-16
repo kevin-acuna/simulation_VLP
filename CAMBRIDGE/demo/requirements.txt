@@ -1,0 +1,4 @@
+# Python >= 3.11 (tomllib). The vlp package only needs numpy.
+# The hardware drivers come from ../database_acquisition (install its requirements.txt, or simply use
+# its virtual environment: database_acquisition\.venv).
+numpy>=1.26

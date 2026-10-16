@@ -9,6 +9,19 @@ Two folders (the old `CAMBRIDGE/implementation/` was split on 2026-10-12):
 - `CAMBRIDGE/testbed_dev/`: private material, never released: `basic_tests/`, `experiments/` (exp01,
   exp03), `CRI-Python-Lib/` (clone), `data/exp01|exp02/` (sessions before the split), `notes/` (docx,
   pdf). exp01 imports the drivers/config from `../database_acquisition` and writes to `testbed_dev/data/exp01`.
+- `CAMBRIDGE/demo/` (2026-10-16): VLP Positioning Demo, same UI style as database_acquisition, port 8766.
+  `vlp/` = generic numpy library (responses SQ / cos^m, Lambertian VLPModel, GLS/WLS/NLS + broadcast-dual
+  range, LM on the sphere, fit_lambertian) - port of simulations/ rx_estimate + pd_fit_*, meant to be shared;
+  `app/` = run.py, engine (random/manual point loop, K orientations, pause after the orientation, Stop
+  immediate), geometry.py (gantry -> PD: z scale 0.6, elevation 0.09696, n = [sin t sin a, sin t cos a,
+  cos t], a = theta - offset), positioner.py, storage.py (points.csv = database_acquisition columns +
+  estimates.csv), sim_scope.py (DemoSimScope: RSS from the model + LED offset + noise), server.py, web/.
+  Hyperparameters ONLY in `config/demo.toml` (not in the UI): SQ + NLS, LED (281.1, 904.8), A 0.062707,
+  m 6.0918, offset 66.5 (LED XY and offset are correlated; (270, 890) goes with 67.3, A 0.06273, m 6.151).
+  `tools/replay.py` reproduces the MATLAB results exactly (3.92 / 3.66 cm on 125 sites), `tools/calibrate.py`
+  prints A, m. Run with database_acquisition/.venv: `python app/run.py [--sim]`; tests:
+  `python -m unittest discover -s tests -v` (13 tests, ~20 s). Headless screenshot: run.py --sim --no-browser,
+  then msedge --headless=new --screenshot=... "http://127.0.0.1:8766/?snapshot=1&view=top&config=0".
 Environment: `database_acquisition/.venv` (Python 3.13; pythonnet, pyvisa, numpy, matplotlib/TkAgg,
 cri_lib 0.4.0 copied from the CRI-Python-Lib clone = GitHub commit 21995a1, pinned in requirements.txt).
 The venv was moved from implementation/: python.exe works, but the pip.exe launchers point to the old

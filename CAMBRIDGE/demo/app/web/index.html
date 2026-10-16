@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VLP Positioning Demo</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="appbar">
+    <button class="cfg-toggle" id="btnConfig" aria-expanded="true" title="Show / hide the configuration">
+      <span class="burger"><i></i><i></i><i></i></span>Configuration
+    </button>
+    <h1>VLP Positioning Demo</h1>
+    <span class="model-tag" id="modelTag" title="Positioning model and estimator (config/demo.toml)"></span>
+    <div class="devices" id="devices"></div>
+    <div class="run">
+      <span class="state" id="stateLabel">Connecting</span>
+      <button class="btn go" id="btnStart">Start</button>
+      <button class="btn" id="btnPause">Pause</button>
+      <button class="btn stop" id="btnStop">Stop</button>
+    </div>
+  </header>
+
+  <div class="body cfg-open" id="body">
+    <!-- ===================== CONFIGURATION (collapsible) ===================== -->
+    <aside class="cfg-panel" id="cfgPanel">
+      <section class="group">
+        <h2>Positions</h2>
+        <div class="tabs wide" id="modeTabs">
+          <button data-mode="random" class="active">Random</button>
+          <button data-mode="manual">Manual</button>
+        </div>
+        <p class="note" id="modeNote"></p>
+        <div id="randomBox">
+          <table class="grid-table">
+            <thead><tr><th></th><th>Min</th><th>Max</th></tr></thead>
+            <tbody>
+              <tr><th>X [mm]</th><td><input type="number" step="any" id="rx0"></td><td><input type="number" step="any" id="rx1"></td></tr>
+              <tr><th>Y [mm]</th><td><input type="number" step="any" id="ry0"></td><td><input type="number" step="any" id="ry1"></td></tr>
+              <tr><th>Z [mm]</th><td><input type="number" step="any" id="rz0"></td><td><input type="number" step="any" id="rz1"></td></tr>
+            </tbody>
+          </table>
+          <p class="note" id="wsNote"></p>
+        </div>
+        <div class="manual-box">
+          <div class="row3">
+            <label>X [mm]<input type="number" step="any" id="mx"></label>
+            <label>Y [mm]<input type="number" step="any" id="my"></label>
+            <label>Z [mm]<input type="number" step="any" id="mz"></label>
+          </div>
+          <div class="buttons">
+            <button class="btn primary" id="btnTarget" title="Queue this position: it is measured next">Measure here</button>
+            <button class="btn" id="btnClearQueue">Clear queue</button>
+          </div>
+          <p class="note">Click on the top view to pick X, Y. Queued positions are measured first, in both modes.
+            <span id="queueInfo"></span></p>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2>Orientations</h2>
+        <div class="row2">
+          <label>K (orientations)<input type="number" min="3" max="72" step="1" id="kAngles"></label>
+          <label>Max. points (0 = no limit)<input type="number" min="0" step="1" id="maxPoints"></label>
+        </div>
+        <p class="note">MTRS angles: <span id="angleList">–</span></p>
+      </section>
+
+      <section class="group">
+        <h2>LEDs recorded <span class="aside" id="ledPos"></span></h2>
+        <label>Frequencies [kHz]<input type="text" id="freqs" placeholder="300, 500, 700, 900"></label>
+        <p class="note">All of them are saved in points.csv (database format); the positioning LED is always included.</p>
+      </section>
+
+      <section class="group">
+        <h2>Acquisition</h2>
+        <div class="row3">
+          <label>Samples / orient.<input type="number" min="1" step="1" id="nSamples"></label>
+          <label>Settle [s]<input type="number" min="0" step="any" id="settle"></label>
+          <label>Seed<input type="number" step="1" id="seed" placeholder="random"></label>
+        </div>
+        <div class="row2">
+          <label>Record length [ms]<input type="number" min="0" step="any" id="recordMs"></label>
+          <label>Sample rate [MSa/s]<input type="number" min="0" step="any" id="recordFs"></label>
+        </div>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="saveWave">Save raw waveforms</label>
+        </div>
+        <label>Session label (optional)<input type="text" id="label" placeholder="e.g. demo_lab"></label>
+        <div id="checkMsgs" class="plan-summary"></div>
+      </section>
+
+      <section class="group">
+        <h2>Session</h2>
+        <p class="note path" id="sessionDir">–</p>
+      </section>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <main class="main">
+      <section class="panel stats-panel">
+        <div class="stats" id="stats"></div>
+        <div class="progress-info">
+          <span>Phase <b id="phase">–</b></span>
+          <span>Elapsed <b id="pElapsed">–</b></span>
+          <span>Time per point <b id="pPerPoint">–</b></span>
+          <span>Current <b id="pCurrent">–</b></span>
+        </div>
+        <div class="message" id="message"></div>
+      </section>
+
+      <div class="demo-grid">
+        <section class="panel view">
+          <div class="panel-head">
+            <h3>Real vs estimated position</h3>
+            <div class="tabs" id="viewTabs">
+              <button data-view="top" class="active">Top view</button>
+              <button data-view="3d">3D view</button>
+            </div>
+            <span class="hint" id="viewHint"></span>
+            <div class="tools">
+              <label title="Draws the estimated positions at real + N x (estimated - real): only the drawing changes">Error drawn
+                <select id="magSel"><option value="1">×1 (true scale)</option><option value="5">×5</option>
+                  <option value="10">×10</option><option value="20">×20</option></select></label>
+              <label>Show <select id="showSel">
+                <option value="all">all points</option><option value="20">last 20</option>
+                <option value="5">last 5</option><option value="1">last point</option></select></label>
+            </div>
+          </div>
+          <div class="view-wrap" id="viewWrap">
+            <canvas id="map"></canvas>
+            <div class="tooltip" id="tooltip"></div>
+          </div>
+          <div class="legend" id="legend"></div>
+        </section>
+
+        <aside class="side">
+          <section class="panel current">
+            <div class="panel-head"><h3>Last estimate</h3><span class="hint" id="curId"></span></div>
+            <div id="curBody"></div>
+            <canvas id="zoomCv" title="Close-up of the last estimate at true scale (top view and height)"></canvas>
+            <div class="now" id="nowLine"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h3>RSS per orientation</h3><span class="hint" id="rssInfo"></span></div>
+            <canvas id="rssCv"></canvas>
+            <div class="rss-list" id="rssList"></div>
+          </section>
+          <section class="panel log-panel">
+            <div class="panel-head"><h3>Log</h3></div>
+            <ul id="log"></ul>
+          </section>
+        </aside>
+
+        <section class="panel errors">
+          <div class="panel-head"><h3>3D error per point</h3><span class="hint" id="errInfo"></span></div>
+          <div class="err-wrap">
+            <canvas id="histCv"></canvas>
+            <canvas id="cdfCv"></canvas>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <h3 id="modalTitle"></h3>
+      <p id="modalText"></p>
+      <div class="buttons right">
+        <button class="btn" id="modalCancel">Cancel</button>
+        <button class="btn primary" id="modalOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

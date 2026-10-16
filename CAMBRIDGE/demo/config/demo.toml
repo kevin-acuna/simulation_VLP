@@ -1,0 +1,69 @@
+# ==========================================================================
+# VLP Positioning Demo - hyperparameters (NOT shown in the interface)
+#
+# Device parameters (IP, workspace, speeds, scope) stay in
+# database_acquisition/config/testbed.toml: they are not duplicated here.
+# Paths are relative to the demo folder.
+# ==========================================================================
+
+[paths]
+hardware_root = "../database_acquisition"     # hardware/ drivers + config/testbed.toml
+output_root = "data"                          # sessions: data/demo_<date>[_label]/
+calibration_csv = "../analysis/Lambertian_order_LED_500khz/points.csv"   # used by tools/calibrate.py
+campaigns_root = "../analysis/Experiment_01_3D_estimation"               # used by tools/replay.py
+campaigns = ["campaign_20261014_185628", "campaign_20261015_000723"]
+
+# --------------------------------------------------------------------------
+# Positioning model and estimator (analysis/Experiment_01_3D_estimation)
+# --------------------------------------------------------------------------
+[positioning]
+led_frequency_khz = 500.0      # LED used for positioning (the other recorded LEDs are only saved)
+pd_response = "SQ"             # SQ (1 - C psi^2) | cosine_mR (cos^m_R) | cosine
+estimator = "NLS"              # NLS | GLS | WLS
+psi_3db_rad = 0.61             # SQ, PDA100A2 (Bastiaens 2020)
+m_R = 1.9                      # cosine_mR order
+pd_fov_deg = 64.0              # FOV of the cosine models (SQ uses its own zero, 64.58 deg)
+starts = 3                     # multi-start of the nonlinear estimators
+
+# --------------------------------------------------------------------------
+# LED (fixed, facing down) and its calibration: RSS = A R(psi) cos(phi)^m / d^2
+# A and m MUST come from the calibration scan with the same pd_response and xy_mm
+# (python tools/calibrate.py prints them).
+# --------------------------------------------------------------------------
+# Validated with tools/replay.py on the 125 sites of the two campaigns (SQ + NLS, K = 10):
+#   LED (281.1, 904.8), A 0.062707, m 6.0918, offset 66.5 -> 3.66 cm mean (K = 5: 3.73 cm)   <- used
+#   LED (270, 890),     A 0.06273,  m 6.151,  offset 67.3 -> 3.92 cm mean
+# The LED XY and the MTRS offset are correlated: change them together (and refit A, m).
+[led]
+xy_mm = [281.1, 904.8]         # gantry X, Y of the LED (joint fit of the Lambertian scan)
+height_m = 3.0                 # LED plane above the floor
+A = 0.062707                   # [V m^2], staged fit (tools/calibrate.py)
+m = 6.0918                     # Lambertian order
+
+# --------------------------------------------------------------------------
+# Testbed geometry (gantry -> PD pose)
+# --------------------------------------------------------------------------
+[geometry]
+base_height_m = 1.038          # gantry base height at gantry z = z_ref_mm
+z_ref_mm = -300.0
+pd_elevation_m = 0.09696       # gantry base -> PD centre (MTRS + adapter)
+gantry_z_scale = 0.6           # real vertical travel per commanded mm (tape, 2026-10-15)
+pd_tilt_deg = 15.0             # adapter tilt from the vertical
+mtrs_offset_deg = 66.5         # MTRS angle that points the tilt towards +Y (tools/replay.py --offset-fit all)
+mtrs_direction = 1             # +1: increasing MTRS angle turns the tilt from +Y towards +X
+
+# --------------------------------------------------------------------------
+# Measurement plan (the interface sets K, the region and the acquisition)
+# --------------------------------------------------------------------------
+[plan]
+first_angle_deg = 66.5         # theta_k = (first_angle + 360 k / K) mod 360 (tilt towards +Y for k = 0)
+random_step_mm = 1.0           # random positions are rounded to this step
+
+# --------------------------------------------------------------------------
+# Simulation (run.py --sim): signal generated with the same model + errors
+# --------------------------------------------------------------------------
+[sim]
+speedup = 12.0                 # simulated gantry / MTRS speed factor
+led_error_mm = [6.0, -4.0]     # true LED = configured LED + this (model mismatch)
+rss_noise_rel = 0.005          # multiplicative noise of every orientation (std)
+other_leds_mV = 2.0            # amplitude of the LEDs that are only recorded
