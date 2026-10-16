@@ -40,9 +40,9 @@ pd_elevation_m     = 0.09696;              % gantry base -> PD centre in the cam
 gantry_z_scale     = 1;                  % real vertical travel per commanded mm of gantry z (1 = nominal;
                                            % 0.6 measured with a tape on 2026-10-15)
 pd_tilt_deg        = 15;                   % nominal tilt of the adapter (deg from the vertical)
-mtrs_offset_deg    = 65;                   % nominal MTRS angle that points the tilt towards +Y (set by eye)
+mtrs_offset_deg    = 67.3;                   % nominal MTRS angle that points the tilt towards +Y (set by eye)
 mtrs_direction     = 1;                    % +1: increasing MTRS angle turns the tilt from +Y towards +X
-orientation_fit    = 'offset';             % 'none' (nominal offset/tilt) | 'offset' | 'offset_tilt': fitted
+orientation_fit    = 'none';             % 'none' (nominal offset/tilt) | 'offset' | 'offset_tilt': fitted
                                            % from the RSS shape over the K angles at the true positions
 orientation_sites  = 'cross_height';       % sites used for that fit: 'all' (in-sample) | 'cross_height'
                                            % (each height uses the values fitted on the other heights)
@@ -53,7 +53,7 @@ m_R                = 1.9;                  % cosine_mR order
 pd_fov_deg         = 64;                   % FOV of the cosine models (SQ uses its own zero, 64.58 deg)
 calibration_method = 'staged';             % 'staged' (A from the point below the LED) | 'joint' (A, m together)
 methods            = {'GLS', 'WLS', 'NLS'};
-k_study            = false;                % error vs K with subsets of the measured angles (one PD model/method)
+k_study            = true;                % error vs K with subsets of the measured angles (one PD model/method)
 k_study_values     = 3:10;                 % K values; every K uses the near-uniform subsets of the K angles
                                            % (round((0:K-1) Kfull/K)) and all their rotations
 k_study_model      = 'SQ';
