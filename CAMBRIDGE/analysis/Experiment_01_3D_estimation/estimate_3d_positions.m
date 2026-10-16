@@ -36,7 +36,8 @@ H_base_cal_m       = 1.038;                % height of the gantry base at z = z_
 z_cal_mm           = -300;                 % gantry Z of the calibration scan (mm)
 pd_elevation_cal_m = 0.09696;              % gantry base -> PD centre in the calibration scan (0 deg adapter)
 pd_elevation_m     = 0.09696;              % gantry base -> PD centre in the campaign (MTRS + 15 deg adapter)
-gantry_z_scale     = 1;                    % real vertical travel per commanded mm of gantry z (1 = nominal)
+gantry_z_scale     = 0.6;                  % real vertical travel per commanded mm of gantry z (1 = nominal;
+                                           % 0.6 measured with a tape on 2026-10-15)
 pd_tilt_deg        = 15;                   % nominal tilt of the adapter (deg from the vertical)
 mtrs_offset_deg    = 65;                   % nominal MTRS angle that points the tilt towards +Y (set by eye)
 mtrs_direction     = 1;                    % +1: increasing MTRS angle turns the tilt from +Y towards +X

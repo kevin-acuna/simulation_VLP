@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  15 OCT 2026 08:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.18)  15 OCT 2026 13:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -478,7 +478,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 14.
 (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (0.84338pt too wide) in paragraph at lines 23--24
+Overfull \hbox (0.84338pt too wide) in paragraph at lines 25--26
 []\T1/cmr/bx/n/10.95 Campaña. \T1/cmr/m/n/10.95 Car-pe-ta $\T1/cmtt/m/n/10.95 c
 ampaign _ 20261014 _ 185628$\T1/cmr/m/n/10.95 . Re-ji-lla $\OML/cmm/m/it/10.95 
 X; Y \OMS/cmsy/m/n/10.95 2 f\OT1/cmr/m/n/10.95 100\OML/cmm/m/it/10.95 ; \OT1/cm
@@ -490,17 +490,16 @@ r/m/n/10.95 400\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 700\OML/cmm/m/it/10.95
 [1
 
 {c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/
-texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}]
-Underfull \hbox (badness 1424) in paragraph at lines 81--81
+texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}] [2]
+Underfull \hbox (badness 1424) in paragraph at lines 83--83
 []\T1/cmr/m/n/10 cocientes $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 y[]=y[]\OT1/cmr/m
 /n/10 )[]$\T1/cmr/m/n/10 , co-va-rian-za com-ple-ta,
  []
 
-[2]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 87.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 89.
 
-Overfull \hbox (1.00934pt too wide) in paragraph at lines 88--89
+Overfull \hbox (1.00934pt too wide) in paragraph at lines 90--91
 []\T1/cmr/m/n/10.95 En F_broadcast_Konly se re-orien-ta el LED: $\OML/cmm/m/it/
 10.95 ^^V[] \OT1/cmr/m/n/10.95 = \OML/cmm/m/it/10.95 ^^QQ[]$\T1/cmr/m/n/10.95 ,
  $[] \OT1/cmr/m/n/10.95 = [] \OML/cmm/m/it/10.95 ^^V[]Q[]= [] Q[]$ \T1/cmr/m/n/
@@ -509,73 +508,93 @@ Overfull \hbox (1.00934pt too wide) in paragraph at lines 88--89
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 100.
+(hyperref)                removing `math shift' on input line 102.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 100.
+(hyperref)                removing `math shift' on input line 102.
 
 [3]
-<figures/offset/positions_SQ.png, id=99, 1061.1645pt x 668.4975pt>
+<figures/offset/positions_SQ.png, id=104, 1061.1645pt x 668.4975pt>
 File: figures/offset/positions_SQ.png Graphic file (type png)
 <use figures/offset/positions_SQ.png>
 Package pdftex.def Info: figures/offset/positions_SQ.png  used on input line 12
-3.
+5.
 (pdftex.def)             Requested size: 472.31577pt x 297.53654pt.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 127.
+(hyperref)                removing `math shift' on input line 129.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 127.
+(hyperref)                removing `math shift' on input line 129.
 
 [4 <./figures/offset/positions_SQ.png (PNG copy)>]
-<figures/zscale_sweep.png, id=106, 446.6286pt x 266.4354pt>
+<figures/zscale_sweep.png, id=111, 446.6286pt x 266.4354pt>
 File: figures/zscale_sweep.png Graphic file (type png)
 <use figures/zscale_sweep.png>
-Package pdftex.def Info: figures/zscale_sweep.png  used on input line 153.
+Package pdftex.def Info: figures/zscale_sweep.png  used on input line 155.
 (pdftex.def)             Requested size: 340.06792pt x 202.86702pt.
-<figures/zscale/positions_SQ.png, id=107, 1061.1645pt x 668.4975pt>
+<figures/zscale/positions_SQ.png, id=112, 1061.1645pt x 668.4975pt>
 File: figures/zscale/positions_SQ.png Graphic file (type png)
 <use figures/zscale/positions_SQ.png>
 Package pdftex.def Info: figures/zscale/positions_SQ.png  used on input line 17
-2.
+4.
 (pdftex.def)             Requested size: 472.31577pt x 297.53654pt.
  [5 <./figures/zscale_sweep.png (PNG copy)>] [6 <./figures/zscale/positions_SQ.
 png (PNG copy)>]
-<figures/combined_nominal/positions_SQ.png, id=120, 1061.1645pt x 668.4975pt>
+<figures/combined_nominal/positions_SQ.png, id=125, 1061.1645pt x 668.4975pt>
 File: figures/combined_nominal/positions_SQ.png Graphic file (type png)
 <use figures/combined_nominal/positions_SQ.png>
 Package pdftex.def Info: figures/combined_nominal/positions_SQ.png  used on inp
-ut line 228.
+ut line 230.
 (pdftex.def)             Requested size: 472.31577pt x 297.53654pt.
-<figures/combined/positions_SQ.png, id=121, 1061.1645pt x 668.4975pt>
+<figures/combined/positions_SQ.png, id=126, 1061.1645pt x 668.4975pt>
 File: figures/combined/positions_SQ.png Graphic file (type png)
 <use figures/combined/positions_SQ.png>
 Package pdftex.def Info: figures/combined/positions_SQ.png  used on input line 
-232.
+234.
 (pdftex.def)             Requested size: 472.31577pt x 297.53654pt.
  [7]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 236.
+(hyperref)                removing `math shift' on input line 238.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 236.
+(hyperref)                removing `subscript' on input line 238.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 238.
 
 [8 <./figures/combined_nominal/positions_SQ.png (PNG copy)> <./figures/combined
-/positions_SQ.png (PNG copy)>]
-<figures/combined/error_vs_K.png, id=133, 758.5941pt x 327.624pt>
-File: figures/combined/error_vs_K.png Graphic file (type png)
-<use figures/combined/error_vs_K.png>
-Package pdftex.def Info: figures/combined/error_vs_K.png  used on input line 25
-0.
+/positions_SQ.png (PNG copy)>] [9]
+<figures/measured/positions_SQ.png, id=144, 1061.1645pt x 668.4975pt>
+File: figures/measured/positions_SQ.png Graphic file (type png)
+<use figures/measured/positions_SQ.png>
+Package pdftex.def Info: figures/measured/positions_SQ.png  used on input line 
+288.
+(pdftex.def)             Requested size: 472.31577pt x 297.53654pt.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 292.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 292.
+
+<figures/measured/error_vs_K.png, id=145, 758.5941pt x 327.624pt>
+File: figures/measured/error_vs_K.png Graphic file (type png)
+<use figures/measured/error_vs_K.png>
+Package pdftex.def Info: figures/measured/error_vs_K.png  used on input line 30
+6.
 (pdftex.def)             Requested size: 472.31577pt x 203.98962pt.
- [9 <./figures/combined/error_vs_K.png (PNG copy)>] [10] (build/experiment01_re
-port.aux
+[10{c:/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc} <./fi
+gures/measured/positions_SQ.png (PNG copy)>] [11 <./figures/measured/error_vs_K
+.png (PNG copy)>] [12] (build/experiment01_report.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 )
@@ -584,16 +603,16 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `experiment01_report.out' has not changed.
-(rerunfilecheck)             Checksum: 5C180D3C9E9F6C36709D6F1665298737;2485.
+(rerunfilecheck)             Checksum: 19717374786EEDB78AE1884A0DD032B5;2768.
  ) 
 Here is how much of TeX's memory you used:
- 12285 strings out of 467525
- 187426 string characters out of 5423209
- 630579 words of memory out of 5000000
- 40974 multiletter control sequences out of 15000+600000
- 655899 words of font info for 123 fonts, out of 8000000 for 9000
+ 12307 strings out of 467525
+ 187897 string characters out of 5423209
+ 630670 words of memory out of 5000000
+ 40987 multiletter control sequences out of 15000+600000
+ 656240 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,79p,746b,571s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,79p,745b,598s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
 live/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2026/texmf-di
@@ -619,10 +638,10 @@ b><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb><c:/texl
 ive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb><c:/texlive/2026/t
 exmf-dist/fonts/type1/public/cm-super/sftt1095.pfb><c:/texlive/2026/texmf-dist/
 fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on build/experiment01_report.pdf (10 pages, 3712039 bytes).
+Output written on build/experiment01_report.pdf (12 pages, 4520292 bytes).
 PDF statistics:
- 281 PDF objects out of 1000 (max. 8388607)
- 204 compressed objects within 3 object streams
- 43 named destinations out of 1000 (max. 500000)
- 127 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 304 PDF objects out of 1000 (max. 8388607)
+ 223 compressed objects within 3 object streams
+ 50 named destinations out of 1000 (max. 500000)
+ 140 words of extra memory for PDF output out of 10000 (max. 10000000)
 

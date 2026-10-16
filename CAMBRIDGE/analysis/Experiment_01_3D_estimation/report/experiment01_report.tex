@@ -12,6 +12,8 @@
 \begin{document}
 \maketitle
 \begin{abstract}
+\textbf{Geometría medida (15/10).} La medición con cinta da $s_z=0.6$: el PD sube 0.6~mm por cada mm comandado en el eje Z del gantry. Con ese valor real, SQ + NLS da en las 125 posiciones un error 3D de \textbf{3.92~cm de media} (RMSE 4.30, mediana 3.44, P90 6.73~cm) sin ningún fallo; SQ + GLS da 3.91~cm. Sin calibrar el offset del MTRS el error es de 4.98~cm. Por altura, va de 3.1~cm ($Z=1.315$~m) a 4.6~cm ($Z=0.955$~m). Queda un sesgo vertical residual que va de $+0.5$ a $-2.3$~cm entre la altura más alta y la más baja (sección~\ref{sec:measured}).
+
 \textbf{Actualización del 15/10.} La segunda campaña (\path{campaign_20261015_000723}, 75 posiciones a gantry $z=-200$, $-100$ y $0$) confirma fuera de muestra la corrección geométrica deducida sólo con la primera. Con la geometría nominal, el sesgo vertical crece de forma lineal con la altura comandada ($-11.5$, $-0.9$, $+2.6$, $+6.0$ y $+9.7$~cm de $z=-600$ a $z=0$). Con el factor $s_z=0.667$, fijado \emph{antes} de esta campaña, las cinco alturas quedan en 3.6--3.75~cm de error medio: 3.69~cm en las 125 posiciones y 3.71~cm en las 75 nuevas. Además, $A$, el tilt del adaptador y la triangulación pasan a ser constantes entre alturas (sección~\ref{sec:c2}).
 
 \textbf{Campaña del 14/10.} Se estiman las posiciones 3D del PD con las RSS de las 50 posiciones de \path{campaign_20261014_185628} (25 a gantry $z=-600$ y 25 a $z=-300$), con $K=10$ orientaciones por posición. Se usan exactamente los estimadores de \path{CAMBRIDGE/simulations}: GLS, WLS y NLS para tres respuestas del PDA100A2 (SQ, $\cos^{1.9}\psi$ y $\cos\psi$). Se verifican con los datos la convención de orientación, el offset del MTRS y la recuperación de distancia, que es el dual exacto de \path{broadcast_distance.m}.
@@ -233,8 +235,62 @@ En la campaña nueva, el error es de 3.71~cm de media (RMSE 4.23, P90 6.94). En 
 \caption{125 posiciones con $s_z=0.667$ (fijado con la primera campaña): media 3.69~cm, RMSE 4.11~cm.}
 \end{figure}
 
+\section{Resultados con la geometría medida ($s_z=0.6$)}\label{sec:measured}
+\textbf{Medición.} El investigador comprobó con cinta que el recorrido vertical real es 0.6 veces el comandado. Las alturas del PD quedan en $Z=1.315$, 1.135, 1.075, 1.015 y 0.955~m para gantry $z=-600$, $-300$, $-200$, $-100$ y $0$. Éste es ahora el valor por defecto de \path{gantry_z_scale}. Sólo cambia la referencia: las estimaciones no dependen de $s_z$, salvo por el ajuste cruzado del offset.
+
+\begin{table}[H]\centering\small
+\begin{tabular}{llrrrrrrrr}\toprule
+PD & Est. & ok & media & RMSE & mediana & P90 & horiz. & sesgo vert. & dir. ($^\circ$)\\\midrule
+SQ & GLS & 125/125 & 3.91 & 4.30 & 3.42 & 6.73 & 3.02 & $-1.20$ & 0.86\\
+SQ & WLS & 125/125 & 4.46 & 5.12 & 3.86 & 8.18 & 3.52 & $+1.03$ & 1.03\\
+SQ & NLS & 125/125 & \textbf{3.92} & \textbf{4.30} & 3.44 & 6.73 & 3.01 & $-1.23$ & 0.86\\
+$\cos^{1.9}$ & GLS & 125/125 & 8.43 & 9.72 & 8.31 & 12.35 & 3.32 & $-5.20$ & 1.40\\
+$\cos^{1.9}$ & WLS & 125/125 & 7.38 & 8.23 & 6.86 & 10.56 & 3.07 & $-5.03$ & 1.27\\
+$\cos^{1.9}$ & NLS & 125/125 & 8.42 & 9.68 & 8.31 & 12.37 & 3.31 & $-5.25$ & 1.40\\
+$\cos$ & GLS & 115/125 & 72.3 & 82.0 & 66.3 & 131.8 & 18.4 & $+68.1$ & 11.4\\
+$\cos$ & WLS & 116/125 & 76.7 & 85.6 & 75.6 & 132.7 & 19.2 & $+72.4$ & 12.1\\
+$\cos$ & NLS & 125/125 & 77.4 & 87.6 & 76.9 & 135.6 & 21.3 & $+72.5$ & 11.8\\\bottomrule
+\end{tabular}
+\caption{Errores en cm, 125 posiciones, $s_z=0.6$, LED $(270,890)$, offset ajustado de forma cruzada entre alturas.}
+\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrrr}\toprule
+Gantry $z$ (mm) & $-600$ & $-300$ & $-200$ & $-100$ & $0$\\\midrule
+$Z_{\rm PD}$ (m) & 1.315 & 1.135 & 1.075 & 1.015 & 0.955\\
+Error medio SQ+NLS (cm) & 3.07 & 3.57 & 4.00 & 4.32 & 4.62\\
+P90 (cm) & 6.36 & 6.40 & 6.73 & 7.27 & 7.55\\
+Sesgo vertical (cm) & $+0.45$ & $-0.92$ & $-1.36$ & $-1.99$ & $-2.31$\\
+Error horizontal (cm) & 2.57 & 2.93 & 3.04 & 3.21 & 3.30\\
+Triangulación, $\delta_z$ (mm) & $+14.4$ & 0 & $-0.1$ & $-4.9$ & $-7.1$\\
+$A$ in situ (V\,m$^2$) & 0.0619 & 0.0606 & 0.0601 & 0.0596 & 0.0594\\
+$m$ in situ & 5.98 & 5.68 & 5.59 & 5.47 & 5.39\\
+Tilt ajustado ($^\circ$) & 15.03 & 14.77 & 14.75 & 14.69 & 14.65\\\bottomrule
+\end{tabular}
+\caption{Por altura, SQ + NLS con $s_z=0.6$. Primera campaña: 3.32~cm (50 posiciones); segunda: 4.31~cm (75 posiciones).}
+\end{table}
+
+\textbf{Interpretación.}
+\begin{itemize}
+\item El valor medido (0.6) está cerca de lo que estimaba el VLP a partir de las RSS: 0.632 por direcciones y 0.647 por alturas estimadas. La diferencia restante es un 3--5~\% del recorrido, equivalente a $\le2.8$~cm en 600~mm. Se ve como un sesgo vertical que pasa de $+0.5$ a $-2.3$~cm al bajar el PD.
+\item Este residuo no se corrige con la altura del LED. Variando $H_{\rm LED}$ entre 2.95 y 3.20~m, el mínimo está en 3.00~m (3.92~cm; 4.97~cm con 3.05~m y 5.97~cm con 2.95~m), y la pendiente del sesgo se mantiene en unos 2.8~cm en todos los casos.
+\item Lo más probable es el modelo del LED. $m$ in situ cae de 5.98 a 5.39 a medida que el PD se aleja: el patrón aparente es más plano lejos, algo que $\cos^m$ con un solo $m$ no puede reproducir. Ya el barrido lambertiano mostraba que el LED es más puntiagudo cerca del eje que $\cos^m$. $A$ varía sólo un $\pm2$~\% y el tilt $\pm0.2^\circ$.
+\item El LED en $(281.1,904.8)$, la posición \path{joint_xy}, mejora el resultado con la geometría medida: 3.66~cm (RMSE 3.96, P90 6.06, horizontal 2.46~cm). La dispersión medida/modelo también baja, de $\pm0.038$ a $\pm0.022$ a $z=-600$. El offset ajustado pasa entonces a $66.5^\circ$, porque el offset y la posición XY del LED están correlacionados.
+\item Otras variantes con $s_z=0.6$ (SQ + NLS):
+  \begin{itemize}
+  \item offset nominal de $65^\circ$: 4.98~cm;
+  \item offset y tilt ajustados de forma cruzada: 3.82~cm;
+  \item calibración conjunta de $A$ y $m$: 4.24~cm.
+  \end{itemize}
+\end{itemize}
+
+\begin{figure}[H]\centering
+\includegraphics[width=\linewidth]{measured/positions_SQ.png}
+\caption{125 posiciones con la geometría medida ($s_z=0.6$), SQ, offset ajustado: media 3.9~cm, RMSE 4.3~cm.}
+\end{figure}
+
 \section{Error frente a $K$}
-\textbf{Configuración.} SQ + NLS, $s_z=0.667$, LED $(270,890)$, $A$ y $m$ de la calibración, las 125 posiciones de las dos campañas. Para cada $K$ se usan los subconjuntos casi uniformes de los 10 ángulos medidos, índices $\mathrm{round}(j\cdot10/K)$ para $j=0,\ldots,K-1$, con todas sus rotaciones. Así:
+\textbf{Configuración.} SQ + NLS, $s_z=0.6$ (medido), LED $(270,890)$, $A$ y $m$ de la calibración, las 125 posiciones de las dos campañas. Para cada $K$ se usan los subconjuntos casi uniformes de los 10 ángulos medidos, índices $\mathrm{round}(j\cdot10/K)$ para $j=0,\ldots,K-1$, con todas sus rotaciones. Así:
 \begin{itemize}
 \item $K=3$ son $\{0^\circ,108^\circ,252^\circ\}$, con separaciones de 108, 144 y $108^\circ$, en 10 rotaciones;
 \item $K=5$ son dos subconjuntos exactos de $72^\circ$;
@@ -247,24 +303,24 @@ Se comparan dos casos:
 \end{itemize}
 
 \begin{figure}[H]\centering
-\includegraphics[width=\linewidth]{combined/error_vs_K.png}
-\caption{Error 3D medio (continuo) y P90 (discontinuo) frente a $K$. Izquierda: las 125 posiciones. Derecha: sólo el nivel de calibración, que no depende de $s_z$.}\label{fig:K}
+\includegraphics[width=\linewidth]{measured/error_vs_K.png}
+\caption{Error 3D medio (continuo) y P90 (discontinuo) frente a $K$, geometría medida. Izquierda: las 125 posiciones. Derecha: sólo el nivel de calibración, que no depende de $s_z$.}\label{fig:K}
 \end{figure}
 
 \begin{table}[H]\centering\small
 \begin{tabular}{rrrrrrrr}\toprule
  & & \multicolumn{3}{c}{sin offset ($65^\circ$)} & \multicolumn{3}{c}{offset fijo de $K=10$}\\\cmidrule(lr){3-5}\cmidrule(lr){6-8}
 $K$ & subconj. & media & P90 & $z=-300$ & media & P90 & $z=-300$\\\midrule
-3 & 10 & 5.96 & 8.80 & 5.82 & 5.09 & 8.11 & 4.85\\
-4 & 5 & 5.06 & 7.08 & 5.00 & 4.08 & 6.64 & 3.92\\
-5 & 2 & 4.88 & 6.92 & 4.83 & 3.80 & 6.60 & 3.66\\
-6 & 5 & 4.88 & 6.85 & 4.82 & 3.78 & 6.60 & 3.64\\
-7 & 10 & 5.00 & 6.95 & 4.94 & 3.92 & 6.67 & 3.77\\
-8 & 5 & 4.87 & 6.75 & 4.81 & 3.75 & 6.60 & 3.62\\
-9 & 10 & 4.88 & 6.77 & 4.82 & 3.76 & 6.62 & 3.63\\
-10 & 1 & 4.82 & 6.73 & 4.77 & 3.69 & 6.62 & 3.57\\\bottomrule
+3 & 10 & 6.06 & 8.99 & 5.82 & 5.20 & 8.34 & 4.85\\
+4 & 5 & 5.20 & 7.21 & 5.00 & 4.25 & 6.77 & 3.92\\
+5 & 2 & 5.04 & 6.97 & 4.83 & 4.00 & 6.78 & 3.66\\
+6 & 5 & 5.03 & 6.91 & 4.82 & 3.99 & 6.69 & 3.64\\
+7 & 10 & 5.15 & 7.10 & 4.94 & 4.11 & 6.80 & 3.77\\
+8 & 5 & 5.02 & 6.84 & 4.81 & 3.97 & 6.70 & 3.62\\
+9 & 10 & 5.03 & 6.85 & 4.82 & 3.97 & 6.73 & 3.63\\
+10 & 1 & 4.98 & 6.68 & 4.77 & 3.92 & 6.73 & 3.57\\\bottomrule
 \end{tabular}
-\caption{Error 3D (cm) frente a $K$ (subconjuntos $\times$ 125 posiciones). Ningún caso falla, ni siquiera con $K=3$. Con sólo la primera campaña (50 posiciones) los valores eran casi iguales: con $K=10$, 4.83 y 3.65; con $K=3$, 5.76 y 4.73.}
+\caption{Error 3D (cm) frente a $K$ con $s_z=0.6$ (subconjuntos $\times$ 125 posiciones). Ningún caso falla, ni siquiera con $K=3$. Con $s_z=0.667$ las curvas eran casi iguales, unos 0.2~cm más bajas.}
 \end{table}
 \begin{itemize}
 \item \textbf{A partir de $K=5$ el error es prácticamente el de $K=10$}: menos de 0.1~cm de diferencia en la media. Las orientaciones adicionales no reducen un error que ya está dominado por los sesgos del modelo y la geometría, no por el ruido.
@@ -278,15 +334,15 @@ $K$ & subconj. & media & P90 & $z=-300$ & media & P90 & $z=-300$\\\midrule
 \item Los estimadores son los de las simulaciones. La recuperación de distancia es el dual exacto de \path{broadcast_distance}, y con NLS es la MV de la posición.
 \item La convención $[\sin t\sin a,\sin t\cos a,\cos t]$ con giro $+Y\to+X$ queda verificada. El offset real es de unos $67.3^\circ$, con una deriva de $0.5^\circ$ en 10~h. Con la geometría corregida, la inclinación es $14.8^\circ$ en las cinco alturas.
 \item SQ $>$ $\cos^{1.9}$ $\gg$ $\cos$. GLS $\approx$ NLS; WLS es algo peor. Sólo SQ hace coherentes $A$, el tilt y la triangulación entre alturas.
-\item \textbf{La campaña del 15/10 confirma fuera de muestra la corrección geométrica}, $s_z\approx0.65$ ($0.632$ por direcciones, $0.647$ por alturas estimadas, $0.667$ fijado a priori). Con ella, el error es de 3.7~cm en las cinco alturas y en las 125 posiciones, frente a 7.4~cm con la geometría nominal.
-\item El error crece suavemente al reducir $K$: con $K=5$ ya se alcanza el rendimiento de $K=10$, y con $K=3$ se pierden 1.1--1.4~cm de media.
-\item \textbf{Comprobaciones pendientes:}
+\item \textbf{El recorrido Z del gantry es 0.6 veces el comandado}, medido con cinta. El VLP lo había detectado sólo con las RSS (0.63--0.65), y la segunda campaña lo confirmó antes de la medición. La configuración del eje Z del gantry afecta a todos los experimentos con Z.
+\item \textbf{Resultado final, geometría medida:} SQ + NLS (o GLS), $K=10$, 125 posiciones en 5 alturas, error 3D medio de \textbf{3.9~cm} (RMSE 4.3, P90 6.7~cm), sin fallos. Sin calibrar el offset, 5.0~cm.
+\item El error crece suavemente al reducir $K$: con $K=5$ se queda en 4.0~cm y con $K=3$ sube a 5.2~cm (6.1~cm sin offset).
+\item \textbf{Siguientes mejoras:}
 \begin{itemize}
-\item medir con cinta la altura del PD a varias $z$ del gantry. La predicción es que entre $z=0$ y $z=-600$ suba unos 0.39~m, y no 0.60~m. Si se confirma, la configuración del eje Z del gantry afecta a todos los experimentos con Z;
-\item confirmar a qué $z$ se midió el 1.038~m;
-\item medir la posición XY del LED con una plomada (la triangulación da $\approx(300,885)$~mm).
+\item modelar mejor el patrón del LED, cuyo $m$ aparente cambia con la distancia y deja un residuo vertical de unos 2.8~cm en 600~mm (un barrido de calibración a otra altura lo resolvería);
+\item medir la posición XY del LED con una plomada: $(281,905)$ da 3.7~cm y la triangulación da $\approx(300,885)$~mm;
+\item medir el offset del MTRS en lugar de calibrarlo con los datos.
 \end{itemize}
-Mientras tanto, el programa conserva \path{gantry_z_scale = 1} por defecto.
 \end{enumerate}
 
 \appendix

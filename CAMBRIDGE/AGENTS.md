@@ -252,7 +252,12 @@ called from outside the script).
   triangulation); with the a-priori gantry_z_scale = 0.667 all 5 levels give 3.6-3.75 cm (125 sites: SQ+NLS
   3.69 cm) and in-situ A (0.0605), tilt (14.80 deg) and triangulation become height-independent; cos^1.9
   stays inconsistent. Fitted MTRS offset drifts 67.55 -> 67.06 deg in acquisition order (10 h).
-  gantry_z_scale default stays 1 until the investigator tape-measures the heights.
+  MEASURED (tape, 2026-10-15): gantry_z_scale = 0.6 (real vertical travel per commanded mm), now the
+  default. Final result, 125 sites, K = 10: SQ+NLS 3.92 cm mean (RMSE 4.30, P90 6.73), SQ+GLS 3.91,
+  nominal offset 65 deg 4.98; per level 3.1 (Z 1.315 m) ... 4.6 cm (Z 0.955 m) with a residual vertical
+  bias +0.5 ... -2.3 cm (in-situ m drifts 5.98 -> 5.39 with distance: cos^m LED model limitation);
+  H_led = 3.00 m is the best value; LED (281.1, 904.8) gives 3.66 cm. K study (0.6): K = 5 -> 4.00,
+  K = 3 -> 5.20 cm (offset fixed from K = 10).
   `k_study = true`: error vs K with near-uniform subsets of the measured angles (all rotations); SQ+NLS,
   z scale 0.667: K = 10 -> 4.8 cm (nominal 65 deg) / 3.65 cm (offset fitted once with K = 10), K = 5 same,
   K = 3 -> 5.8 / 4.7 cm, no failures. Campaign timing (campaign_01, real): 27.2 s per 36 deg MTRS step,

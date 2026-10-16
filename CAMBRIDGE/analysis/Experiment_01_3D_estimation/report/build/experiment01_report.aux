@@ -13,8 +13,8 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2}Verificación de la orientación con los datos}{2}{section.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces RMS de $y_k/R(\psi _k)$ alrededor de su media por posición (valores nominales $65^\circ $, $15^\circ $, geometría nominal). La normal $[0,\cos 15^\circ ,-\sin 15^\circ ]$ inclinaría el PD $75^\circ $ y lo dejaría sin ver el LED: los datos la descartan.}}{2}{table.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Offset del MTRS y tilt del adaptador que mejor explican la forma de las RSS (posiciones verdaderas).}}{2}{table.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Estimadores}{2}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Dirección}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Estimadores}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Dirección}{3}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Distancia: dual de \texttt  {broadcast\_distance}}{3}{subsection.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Calibración coherente con el modelo del PD}{3}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {4}Resultados con $K=10$ (geometría nominal)}{3}{section.4}\protected@file@percent }
@@ -30,10 +30,15 @@
 \newlabel{sec:c2}{{6}{6}{Campaña del 15/10: validación con otras tres alturas}{section.6}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces 125 posiciones, SQ, offset ajustado, geometría nominal: el sesgo vertical cambia de signo entre las alturas extremas.}}{8}{figure.4}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 125 posiciones con $s_z=0.667$ (fijado con la primera campaña): media 3.69~cm, RMSE 4.11~cm.}}{8}{figure.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Error frente a $K$}{9}{section.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Error 3D medio (continuo) y P90 (discontinuo) frente a $K$. Izquierda: las 125 posiciones. Derecha: sólo el nivel de calibración, que no depende de $s_z$.}}{9}{figure.6}\protected@file@percent }
-\newlabel{fig:K}{{6}{9}{Error 3D medio (continuo) y P90 (discontinuo) frente a $K$. Izquierda: las 125 posiciones. Derecha: sólo el nivel de calibración, que no depende de $s_z$}{figure.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Error 3D (cm) frente a $K$ (subconjuntos $\times $ 125 posiciones). Ningún caso falla, ni siquiera con $K=3$. Con sólo la primera campaña (50 posiciones) los valores eran casi iguales: con $K=10$, 4.83 y 3.65; con $K=3$, 5.76 y 4.73.}}{9}{table.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusiones y próximos pasos}{10}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Hiperparámetros del programa}{10}{appendix.Alph1}\protected@file@percent }
-\gdef \@abspage@last{10}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Resultados con la geometría medida ($s_z=0.6$)}{9}{section.7}\protected@file@percent }
+\newlabel{sec:measured}{{7}{9}{Resultados con la geometría medida ($s_z=0.6$)}{section.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Errores en cm, 125 posiciones, $s_z=0.6$, LED $(270,890)$, offset ajustado de forma cruzada entre alturas.}}{9}{table.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Por altura, SQ + NLS con $s_z=0.6$. Primera campaña: 3.32~cm (50 posiciones); segunda: 4.31~cm (75 posiciones).}}{9}{table.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces 125 posiciones con la geometría medida ($s_z=0.6$), SQ, offset ajustado: media 3.9~cm, RMSE 4.3~cm.}}{10}{figure.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Error frente a $K$}{10}{section.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Error 3D medio (continuo) y P90 (discontinuo) frente a $K$, geometría medida. Izquierda: las 125 posiciones. Derecha: sólo el nivel de calibración, que no depende de $s_z$.}}{11}{figure.7}\protected@file@percent }
+\newlabel{fig:K}{{7}{11}{Error 3D medio (continuo) y P90 (discontinuo) frente a $K$, geometría medida. Izquierda: las 125 posiciones. Derecha: sólo el nivel de calibración, que no depende de $s_z$}{figure.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Error 3D (cm) frente a $K$ con $s_z=0.6$ (subconjuntos $\times $ 125 posiciones). Ningún caso falla, ni siquiera con $K=3$. Con $s_z=0.667$ las curvas eran casi iguales, unos 0.2~cm más bajas.}}{11}{table.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusiones y próximos pasos}{11}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Hiperparámetros del programa}{12}{appendix.Alph1}\protected@file@percent }
+\gdef \@abspage@last{12}
