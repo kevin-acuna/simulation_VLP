@@ -23,8 +23,9 @@ close all
 
 %% Hyperparameters
 here               = fileparts(mfilename('fullpath'));
-campaign_dirs      = {'campaign_20261014_185628', ...   % campaign folders (points.csv) analysed together
-                      'campaign_20261015_000723'};
+% campaign_dirs      = {'campaign_20261014_185628', ...   % campaign folders (points.csv) analysed together
+%                       'campaign_20261015_000723'};
+campaign_dirs      = {'campaign_20261014_185628'}
 calibration_csv    = fullfile(here, '..', 'Lambertian_order_LED_500khz', 'points.csv');
 simulations_dir    = fullfile(here, '..', '..', 'simulations');
 led_freq_khz       = 500;                  % LED used for positioning (column <f>kHz_<source>_Vrms)
@@ -36,7 +37,7 @@ H_base_cal_m       = 1.038;                % height of the gantry base at z = z_
 z_cal_mm           = -300;                 % gantry Z of the calibration scan (mm)
 pd_elevation_cal_m = 0.09696;              % gantry base -> PD centre in the calibration scan (0 deg adapter)
 pd_elevation_m     = 0.09696;              % gantry base -> PD centre in the campaign (MTRS + 15 deg adapter)
-gantry_z_scale     = 0.6;                  % real vertical travel per commanded mm of gantry z (1 = nominal;
+gantry_z_scale     = 1;                  % real vertical travel per commanded mm of gantry z (1 = nominal;
                                            % 0.6 measured with a tape on 2026-10-15)
 pd_tilt_deg        = 15;                   % nominal tilt of the adapter (deg from the vertical)
 mtrs_offset_deg    = 65;                   % nominal MTRS angle that points the tilt towards +Y (set by eye)
@@ -45,7 +46,8 @@ orientation_fit    = 'offset';             % 'none' (nominal offset/tilt) | 'off
                                            % from the RSS shape over the K angles at the true positions
 orientation_sites  = 'cross_height';       % sites used for that fit: 'all' (in-sample) | 'cross_height'
                                            % (each height uses the values fitted on the other heights)
-pd_models          = {'SQ', 'cosine_mR', 'cosine'};  % PD responses evaluated (Bastiaens 2020, PDA100A2)
+% pd_models          = {'SQ', 'cosine_mR', 'cosine'};  % PD responses evaluated (Bastiaens 2020, PDA100A2)
+pd_models          = {'SQ'};
 psi_3db_rad        = 0.61;                 % SQ: R(psi_3dB) = 1/sqrt(2)
 m_R                = 1.9;                  % cosine_mR order
 pd_fov_deg         = 64;                   % FOV of the cosine models (SQ uses its own zero, 64.58 deg)
@@ -59,7 +61,7 @@ k_study_method     = 'NLS';
 plot_models        = pd_models;            % PD models with a positions figure
 app_orientation    = true;                 % top views as in the acquisition tool (Y horizontal, X vertical)
 cdf_xlim_cm        = [];                   % x limits of the error CDF (cm), [] = automatic
-export_figures     = false;                % PNG (300 dpi) + FIG in output_dir (overwritten at every run)
+export_figures     = true;                % PNG (300 dpi) + FIG in output_dir (overwritten at every run)
 output_dir         = fullfile(here, 'figures');
 
 %% Setup
