@@ -560,6 +560,7 @@ function drawRss() {
   const { ctx, w, h } = fitCanvas(rssCv);
   ctx.clearRect(0, 0, w, h);
   const cx = w / 2, cy = h / 2 + 8, R = Math.min(w, h) / 2 - 28;
+  if (R < 10) return;                     // no room (e.g. panel hidden): arc() would throw
   const base = { N: -90, E: 0, S: 90, W: 180 }[S.viewCfg.mtrs_zero_location || "N"] ?? -90;
   const dir = S.viewCfg.mtrs_clockwise ? 1 : -1;
   const P = (deg, r) => { const a = ((base + dir * deg) * Math.PI) / 180; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; };
@@ -695,12 +696,20 @@ function drawCdf() {
    drawing loop and live connection
    ============================================================ */
 let lastSize = "";
+const visible = (cv) => cv.clientWidth > 0 && cv.clientHeight > 0;     // hidden panels (enlarged view) are not drawn
+function safely(draw, cv) {               // an error in one panel must never stop the drawing loop
+  if (cv && !visible(cv)) return;
+  try { draw(); } catch (e) { console.error(e); }
+}
 function frame() {
+  requestAnimationFrame(frame);           // scheduled first: the loop keeps running whatever happens below
   const size = `${mapCv.clientWidth}x${mapCv.clientHeight}|${histCv.clientWidth}|${rssCv.clientWidth}`;
   if (size !== lastSize) { lastSize = size; S.dirty = true; S.plotsDirty = true; }
-  if (S.dirty) { S.dirty = false; renderView(); drawRss(); }
-  if (S.plotsDirty) { S.plotsDirty = false; drawHist(); drawCdf(); $("errInfo").textContent = S.done.length ? `last ${Math.min(80, S.done.length)} points · CDF of all` : ""; }
-  requestAnimationFrame(frame);
+  if (S.dirty) { S.dirty = false; safely(renderView, mapCv); safely(drawRss, rssCv); }
+  if (S.plotsDirty) {
+    S.plotsDirty = false; safely(drawHist, histCv); safely(drawCdf, cdfCv);
+    $("errInfo").textContent = S.done.length ? `last ${Math.min(80, S.done.length)} points · CDF of all` : "";
+  }
 }
 let lastStatsN = -1;
 setInterval(() => { if (S.stats && S.stats.n !== lastStatsN) { lastStatsN = S.stats.n; S.plotsDirty = true; } }, 300);
