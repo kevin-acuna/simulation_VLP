@@ -5,9 +5,11 @@ commands and displays the state).
 Loop, without end until Stop (or max_points):
   1. next position: the manual queue first; otherwise a random position in the region (random mode)
      or wait for one (manual mode)
-  2. K orientations theta_k = (first_angle + 360 k / K) mod 360 (sorted; measured in increasing order
-     on one point and decreasing on the next, so the MTRS never makes a return turn): move, settle,
-     record, RSS of every LED (lock-in on the raw waveform); the RSS panel fills up live
+  2. K orientations theta_k = (nominal_offset + 360 k / K) mod 360, nominal offset 65 deg as in the
+     campaigns (sorted; measured in increasing order on one point and decreasing on the next, so the
+     MTRS never makes a return turn): move, settle, record, RSS of every LED (lock-in on the raw
+     waveform); the RSS panel fills up live. The estimator uses the real (calibrated) offset of
+     [geometry] mtrs_offset_deg with the measured MTRS angles
   3. estimate the position from the K RSS of the positioning LED (positioner.py) and compare it with
      the true one (gantry feedback -> PD centre, geometry.py)
 Pause takes effect after the current orientation (the point continues on Resume); Stop is immediate
@@ -74,7 +76,8 @@ class DemoEngine:
     def __init__(self, tb, positioner, settings, output_root, defaults=None):
         self.tb, self.pos, self.settings, self.output_root = tb, positioner, settings, output_root
         self.led_freq_khz = float(settings["positioning"]["led_frequency_khz"])
-        self.first_angle = float(settings["plan"]["first_angle_deg"])
+        self.nominal_offset = float(settings["plan"]["nominal_offset_deg"])
+        self.show_led = bool(settings.get("display", {}).get("show_led", False))
         self.random_step = float(settings["plan"].get("random_step_mm", 1.0))
         self.defaults = normalize_config(defaults or {}, DEFAULT_CONFIG)
         self.config = dict(self.defaults)
@@ -185,7 +188,8 @@ class DemoEngine:
         self._rng = np.random.default_rng(c["seed"])
         self._configure_scope(c)
         meta = {"positioning": self.pos.describe(), "settings_file": self.settings["_path"],
-                "angles_deg": plan_angles(c["k_angles"], self.first_angle), "testbed": self.tb.info()}
+                "nominal_offset_deg": self.nominal_offset,
+                "angles_deg": plan_angles(c["k_angles"], self.nominal_offset), "testbed": self.tb.info()}
         self.session = Session(self.output_root, c, [f * 1e3 for f in c["freqs_khz"]], meta)
         self._pause.clear()
         self._stop.clear()
@@ -354,7 +358,7 @@ class DemoEngine:
         K, freqs_hz = c["k_angles"], [f * 1e3 for f in c["freqs_khz"]]
         self._pid += 1                      # also counts points that failed: ids never repeat
         pid = self._pid
-        angles = plan_angles(K, self.first_angle)
+        angles = plan_angles(K, self.nominal_offset)
         order = list(range(K)) if pid % 2 else list(range(K))[::-1]
         truth_cmd = self.pos.geometry.pd_position(target)
         cur = {"id": pid, "origin": origin, "target": list(target), "true_cmd_mm": (1e3 * truth_cmd).tolist(),
@@ -485,9 +489,9 @@ class DemoEngine:
         return {"workspace": {"min": list(g.workspace_min), "max": list(g.workspace_max)},
                 "phys_box": {"min": [g.workspace_min[0], g.workspace_min[1], 1e3 * zmin],
                              "max": [g.workspace_max[0], g.workspace_max[1], 1e3 * zmax]},
-                "led_mm": (1e3 * m.led_position).tolist(), "led_freq_khz": self.led_freq_khz,
-                "first_angle_deg": self.first_angle, "z_scale": geo.gantry_z_scale,
-                "model_label": f"{m.response.name} + {self.pos.method}", "view": self.tb.view, "modes": self.tb.modes}
+                "led_mm": (1e3 * m.led_position).tolist() if self.show_led else None,
+                "led_freq_khz": self.led_freq_khz, "nominal_offset_deg": self.nominal_offset,
+                "view": self.tb.view, "modes": self.tb.modes}
 
     def full_state(self):
         with self.lock:

@@ -6,22 +6,20 @@ const $ = (id) => document.getElementById(id);
 const BUSY = ["RUNNING", "PAUSED", "STOPPING"];
 const STATE_TEXT = { IDLE: "Idle", RUNNING: "Running", PAUSED: "Paused", STOPPING: "Stopping",
   FINISHED: "Finished", STOPPED: "Stopped", CONNECTING: "Connecting" };
-const PHASE_TEXT = { WAITING: "waiting for a position", MOVING: "moving", SETTLING: "settling",
-  MEASURING: "measuring", ESTIMATING: "estimating" };
 const COL = {
   grid: "#e4e7eb", frame: "#a9b1bb", text: "#5f6b7a", ink: "#1f2933", pending: "#9aa4b1",
   truth: "#1f2933", link: "rgba(95,107,122,0.55)", target: "#ff7f0e", pd: "#1f77b4",
   x: "#d62728", y: "#2ca02c", z: "#1f77b4", led: "#f2c200", rss: "#1f77b4", fit: "#d62728", active: "#e6550d",
   accent: "#24527a", p90: "#e6550d", fail: "#b3261e",
 };
-const ERR_SCALE_MM = 100;                 // color scale of the errors: 0 to 10 cm
+const ERR_SCALE_MM = 200;                 // color scale of the errors: 0 to 20 cm
 
 const S = {
   state: "CONNECTING", phase: "", message: "", error: null, config: null, defaults: null,
-  workspace: null, box: null, led: null, ledFreq: 500, firstAngle: 0, modelLabel: "", viewCfg: {}, modes: {},
-  queue: [], done: [], current: null, prev: null, stats: {}, tel: null, log: [], sessionDir: null, elapsed: null,
+  workspace: null, box: null, led: null, ledFreq: 500, nominalOffset: 65, viewCfg: {}, modes: {},
+  queue: [], done: [], current: null, prev: null, stats: {}, tel: null, log: [], sessionDir: null,
   connected: false, formDirty: false, mode: "random", pick: null, checkMsgs: { errors: [], warnings: [] },
-  view: localStorage.getItem("vlpdemo.view") || "top", dirty: true, plotsDirty: true,
+  view: localStorage.getItem("vlpdemo.view") || "top", dirty: true, plotsDirty: true, focus: false, histHover: null,
 };
 const cam = { yaw: 32, elev: 22, zoom: 1 };
 
@@ -31,13 +29,6 @@ const cam = { yaw: 32, elev: 22, zoom: 1 };
 const fmtG = (v) => String(+(+v).toPrecision(6));
 const fmt = (v, d = 1) => (v === null || v === undefined || !isFinite(v) ? "–" : (+v).toFixed(d));
 const cm = (mm, d = 2) => fmt(mm === null || mm === undefined ? NaN : mm / 10, d);
-function fmtDur(s) {
-  if (s === null || s === undefined || !isFinite(s)) return "–";
-  s = Math.max(0, Math.round(s));
-  if (s < 60) return `${s} s`;
-  if (s < 3600) return `${Math.floor(s / 60)} min ${s % 60} s`;
-  return `${Math.floor(s / 3600)} h ${Math.round((s % 3600) / 60)} min`;
-}
 async function post(url, body) {
   const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
   const data = await r.json().catch(() => ({}));
@@ -79,7 +70,7 @@ function arrow(ctx, [x1, y1], [x2, y2], color, label) {
   ctx.font = "600 12px Segoe UI, Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   ctx.fillText(label, x2 + 11 * Math.cos(a), y2 + 11 * Math.sin(a)); ctx.textBaseline = "alphabetic";
 }
-function errColor(mm) {                  // green (0) -> amber (5 cm) -> red (>= 10 cm)
+function errColor(mm) {                  // green (0) -> amber (10 cm) -> red (>= 20 cm)
   if (mm === null || mm === undefined || !isFinite(mm)) return "#9aa4b1";
   const t = Math.min(1, Math.max(0, mm / ERR_SCALE_MM));
   const c = t < 0.5 ? [[44, 160, 44], [242, 177, 0]] : [[242, 177, 0], [214, 39, 40]];
@@ -103,8 +94,8 @@ const shownDone = () => {
 const mag = () => parseFloat($("magSel").value) || 1;
 // estimated position as drawn: real + mag * (estimated - real); the numbers always use the true values
 const drawnEst = (t, e) => t.map((v, i) => v + mag() * (e[i] - v));
-$("magSel").value = localStorage.getItem("vlpdemo.mag") || "5";
-$("magSel").onchange = () => { localStorage.setItem("vlpdemo.mag", $("magSel").value); renderLegend(); invalidate(); };
+$("magSel").value = "1";                 // always true scale when the page opens
+$("magSel").onchange = () => { renderLegend(); invalidate(); };
 function rememberCurrent(c) {          // keeps the last finished point (RSS + fit) while the next one starts
   if (c && c.result) S.prev = c;
 }
@@ -118,8 +109,22 @@ function setConfigOpen(open) {
   localStorage.setItem("vlpdemo.cfgOpen", open ? "1" : "0");
   invalidate(); S.plotsDirty = true;
 }
-$("btnConfig").onclick = () => setConfigOpen(!$("body").classList.contains("cfg-open"));
+$("btnConfig").onclick = () => {
+  if (S.focus) { setFocus(false); setConfigOpen(true); return; }
+  setConfigOpen(!$("body").classList.contains("cfg-open"));
+};
 setConfigOpen(localStorage.getItem("vlpdemo.cfgOpen") !== "0");
+
+// enlarged view: only "Real vs estimated position" below the header (Esc or the button to go back)
+function setFocus(on) {
+  S.focus = on;
+  $("body").classList.toggle("focus", on);
+  $("btnFocus").textContent = on ? "Back to normal view" : "Enlarge";
+  $("tooltip").style.display = "none";
+  invalidate(); S.plotsDirty = true;
+}
+$("btnFocus").onclick = () => setFocus(!S.focus);
+window.addEventListener("keydown", (e) => { if (e.key === "Escape" && S.focus && !$("modal").classList.contains("show")) setFocus(false); });
 
 function setView(v) {
   S.view = v; localStorage.setItem("vlpdemo.view", v);
@@ -178,7 +183,7 @@ function readForm() {
 function updateAngles() {
   const K = parseInt($("kAngles").value, 10);
   if (!(K >= 1)) { $("angleList").textContent = "–"; return; }
-  const a = [...Array(K).keys()].map((k) => (S.firstAngle + (360 * k) / K) % 360).sort((p, q) => p - q);
+  const a = [...Array(K).keys()].map((k) => (S.nominalOffset + (360 * k) / K) % 360).sort((p, q) => p - q);
   $("angleList").textContent = a.map((v) => `${fmtG(+v.toFixed(2))}°`).join(", ");
 }
 let checkTimer = null;
@@ -209,13 +214,13 @@ function alertError(e) { confirmModal("Error", String(e.message || e), "Close");
    ============================================================ */
 function applyStatic(d) {
   Object.assign(S, { workspace: d.workspace, box: d.phys_box, led: d.led_mm, ledFreq: d.led_freq_khz,
-    firstAngle: d.first_angle_deg, modelLabel: d.model_label, viewCfg: d.view || {}, modes: d.modes || {} });
+    nominalOffset: d.nominal_offset_deg, viewCfg: d.view || {}, modes: d.modes || {} });
 }
 function applyFull(d) {
   applyStatic(d);
   Object.assign(S, { state: d.state, phase: d.phase, message: d.message, error: d.error, config: d.config,
     defaults: d.defaults, queue: d.queue || [], done: d.done || [], current: d.current, stats: d.stats || {},
-    tel: d.tel, sessionDir: d.session_dir, elapsed: d.elapsed_s });
+    tel: d.tel, sessionDir: d.session_dir });
   rememberCurrent(S.current);
   if (!S.formDirty && S.config) fillForm(S.config);
   $("log").innerHTML = ""; S.log = []; appendLog(d.log || []);
@@ -223,10 +228,10 @@ function applyFull(d) {
 }
 function applyUpdate(d) {
   Object.assign(S, { state: d.state, phase: d.phase, message: d.message, error: d.error, queue: d.queue || [],
-    tel: d.tel, sessionDir: d.session_dir, elapsed: d.elapsed_s });
+    tel: d.tel, sessionDir: d.session_dir });
   if (BUSY.includes(S.state) && d.mode && d.mode !== S.mode) { S.mode = d.mode; renderModeUi(); }
   if (d.new_done && d.new_done.length) { S.done.push(...d.new_done); S.plotsDirty = true; }
-  if ("current" in d) { S.current = d.current; rememberCurrent(d.current); renderCurrent(); }
+  if ("current" in d) { S.current = d.current; rememberCurrent(d.current); renderRssList(); }
   if (d.stats) S.stats = d.stats;
   appendLog(d.log || []);
   renderStatus(); invalidate();
@@ -236,9 +241,8 @@ function applyUpdate(d) {
    text panels
    ============================================================ */
 function renderAll() {
-  renderDevices(); renderStatus(); renderCurrent(); renderCheck(); updateAngles(); renderModeUi();
-  $("modelTag").textContent = S.modelLabel;
-  $("ledPos").textContent = S.led ? `positioning LED ${fmtG(S.ledFreq)} kHz` : "";
+  renderDevices(); renderStatus(); renderRssList(); renderCheck(); updateAngles(); renderModeUi();
+  $("ledPos").textContent = `positioning LED ${fmtG(S.ledFreq)} kHz`;
   if (S.workspace) {
     const [a, b] = [S.workspace.min, S.workspace.max];
     $("wsNote").textContent = `Gantry coordinates. Workspace X ${fmtG(a[0])}–${fmtG(b[0])}, Y ${fmtG(a[1])}–${fmtG(b[1])}, ` +
@@ -255,92 +259,13 @@ function renderStatus() {
   const lab = $("stateLabel");
   lab.textContent = S.connected ? STATE_TEXT[S.state] || S.state : "Offline";
   lab.className = `state ${S.connected ? S.state : "OFFLINE"}`;
-  $("phase").textContent = S.state === "RUNNING" ? PHASE_TEXT[S.phase] || "–" : S.state === "PAUSED" ? "paused" : "–";
-  $("pElapsed").textContent = fmtDur(S.elapsed);
-  $("pPerPoint").textContent = fmtDur(S.stats.mean_time_s);
-  const c = S.current;
-  $("pCurrent").textContent = c ? `point ${c.id}, ${c.rss_mV.filter((v) => v !== null).length}/${c.angles.length} orientations` : "–";
-  $("message").textContent = S.message || ""; $("message").className = `message ${S.error ? "error" : ""}`;
+  const st = $("statusLine");
+  st.textContent = S.message || "";
+  st.title = S.message || "";
+  st.className = `status-line ${S.error ? "error" : ""}`;
   $("sessionDir").textContent = S.sessionDir || "–";
   $("queueInfo").textContent = S.queue.length ? `Queue: ${S.queue.map((q) => `(${q.map(fmtG).join(", ")})`).join(" ")}` : "Queue empty.";
-  renderStats(); updateButtons();
-}
-function renderStats() {
-  const s = S.stats || {}, items = [
-    ["Points", s.n ? `${s.n_ok}${s.n_ok !== s.n ? `<small>/${s.n}</small>` : ""}` : "0", ""],
-    ["Mean 3D error", cm(s.mean_mm), "cm", "main"], ["Median", cm(s.median_mm), "cm"], ["RMSE", cm(s.rmse_mm), "cm"],
-    ["P90", cm(s.p90_mm), "cm"], ["Last point", cm(s.last_mm), "cm"], ["Horizontal (mean)", cm(s.mean_h_mm), "cm"],
-    ["Vertical bias", s.bias_v_mm === undefined ? "–" : `${s.bias_v_mm >= 0 ? "+" : ""}${cm(s.bias_v_mm)}`, "cm"],
-  ];
-  $("stats").innerHTML = items.map(([k, v, u, cls]) =>
-    `<div class="stat ${cls || ""}"><div class="k">${k}</div><div class="v">${v}${u && v !== "–" ? `<small>${u}</small>` : ""}</div></div>`).join("");
-}
-function renderCurrent() {
-  const r = S.done[S.done.length - 1], el = $("curBody"), c = S.current;
-  const now = $("nowLine");
-  if (c && !c.result && BUSY.includes(S.state)) {
-    const n = c.rss_mV.filter((v) => v !== null).length;
-    now.innerHTML = `Now: <b>point ${c.id}</b> (${c.origin}), gantry target ${c.target.map((v) => fmtG(v)).join(", ")} mm · ` +
-      `<b>${n}/${c.angles.length}</b> orientations measured`;
-  } else now.innerHTML = "";
-  if (!r) { $("curId").textContent = ""; el.innerHTML = `<span class="hint">No point yet. Press Start.</span>`; renderRssList(); S.zoomDirty = true; return; }
-  $("curId").textContent = `point ${r.id} · ${r.origin} · K = ${r.K}`;
-  const row = (name, v, cls = "") => `<tr class="${cls}"><td>${name}</td>${[0, 1, 2].map((i) => `<td>${v ? fmt(v[i], 1) : "–"}</td>`).join("")}</tr>`;
-  let html = r.ok
-    ? `<div class="cur-err"><span class="big" style="color:${errColor(r.err_3d_mm)}">${cm(r.err_3d_mm, 1)}</span><span class="unit">cm 3D error</span></div>`
-    : `<div class="cur-err"><span class="big" style="color:${COL.pending}">–</span><span class="unit">no estimate</span></div>`;
-  html += `<table class="cur-table"><thead><tr><th></th><th>X [mm]</th><th>Y [mm]</th><th>Z [mm]</th></tr></thead><tbody>` +
-    row("Real", r.true) + row("Estimated", r.est, "est") + row("Error", r.err) + `</tbody></table>`;
-  if (r.ok) {
-    html += `<div class="cur-extra"><span>Horizontal <b>${cm(r.err_h_mm, 1)} cm</b></span><span>Vertical <b>${r.err[2] >= 0 ? "+" : ""}${cm(r.err[2], 1)} cm</b></span>` +
-      `<span>Direction <b>${fmt(r.err_dir_deg, 2)}°</b></span><span>Range <b>${r.err_range_mm >= 0 ? "+" : ""}${cm(r.err_range_mm, 1)} cm</b></span>` +
-      `<span>Fit residual <b>${fmt(r.fit_rms_pct, 1)} %</b></span><span>Duration <b>${fmtDur(r.duration_s)}</b></span></div>`;
-  } else html += `<div class="cur-status">Status: ${r.status}</div>`;
-  html += `<div class="note">Z = height of the PD centre above the floor.</div>`;
-  el.innerHTML = html;
-  renderRssList(); S.zoomDirty = true;
-}
-
-/* close-up of the last estimate at true scale: top view (left) and height (right) */
-const zoomCv = $("zoomCv");
-function drawZoom() {
-  const { ctx, w, h } = fitCanvas(zoomCv);
-  ctx.clearRect(0, 0, w, h);
-  const r = S.done[S.done.length - 1];
-  if (!r || !r.ok) return;
-  const e = r.err.map((v) => v / 10);                            // cm
-  const L = Math.ceil(Math.max(2, 1.25 * Math.max(Math.abs(e[0]), Math.abs(e[1]), Math.abs(e[2]))));
-  const side = h - 26, x0 = 8, y0 = 6, zx = x0 + side + 46, zw = 34;
-  const S2 = side / (2 * L);
-  const PX = (dy) => x0 + side / 2 - dy * S2, PY = (dx) => y0 + side / 2 - dx * S2;   // Y left, X up (as the main view)
-  ctx.fillStyle = "#fbfbfc"; ctx.fillRect(x0, y0, side, side); ctx.strokeStyle = COL.frame; ctx.strokeRect(x0 + 0.5, y0 + 0.5, side, side);
-  const step = niceStep(L, 2);
-  ctx.font = "10px Consolas, monospace"; ctx.fillStyle = COL.text; ctx.textAlign = "left";
-  for (let v = step; v <= L + 1e-9; v += step) {
-    ctx.strokeStyle = COL.grid; ctx.beginPath(); ctx.arc(PX(0), PY(0), v * S2, 0, 7); ctx.stroke();
-    ctx.fillText(`${fmtG(v)} cm`, PX(0) + v * S2 * 0.72 + 2, PY(0) - v * S2 * 0.72);
-  }
-  line(ctx, [[x0, PY(0)], [x0 + side, PY(0)]], COL.grid); line(ctx, [[PX(0), y0], [PX(0), y0 + side]], COL.grid);
-  line(ctx, [[PX(0), PY(0)], [PX(e[1]), PY(e[0])]], COL.ink, 1.6);
-  ctx.lineWidth = 1.6; ctx.strokeStyle = COL.truth; ctx.fillStyle = "#fff";
-  ctx.beginPath(); ctx.arc(PX(0), PY(0), 5, 0, 7); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = errColor(r.err_3d_mm); ctx.strokeStyle = COL.ink; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.arc(PX(e[1]), PY(e[0]), 5.5, 0, 7); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = COL.text; ctx.textAlign = "center"; ctx.font = "11px Segoe UI, Arial";
-  ctx.fillText("top view (X up, Y left)", x0 + side / 2, h - 6);
-  ctx.textAlign = "left"; ctx.fillText(`±${L} cm`, x0 + 3, y0 + 12);
-  // height
-  const PZ = (dz) => y0 + side / 2 - dz * S2;
-  ctx.fillStyle = "#fbfbfc"; ctx.fillRect(zx, y0, zw, side); ctx.strokeStyle = COL.frame; ctx.strokeRect(zx + 0.5, y0 + 0.5, zw, side);
-  line(ctx, [[zx, PZ(0)], [zx + zw, PZ(0)]], COL.truth, 1.6);
-  ctx.fillStyle = errColor(r.err_3d_mm); ctx.fillRect(zx + 6, Math.min(PZ(0), PZ(e[2])), zw - 12, Math.max(2, Math.abs(PZ(e[2]) - PZ(0))));
-  ctx.fillStyle = COL.text; ctx.textAlign = "center"; ctx.fillText("Z", zx + zw / 2, h - 6);
-  ctx.textAlign = "left"; ctx.font = "11px Consolas, monospace"; ctx.fillStyle = COL.ink;
-  const tx = zx + zw + 10;
-  ctx.fillText(`dX ${e[0] >= 0 ? "+" : ""}${e[0].toFixed(1)} cm`, tx, y0 + 14);
-  ctx.fillText(`dY ${e[1] >= 0 ? "+" : ""}${e[1].toFixed(1)} cm`, tx, y0 + 30);
-  ctx.fillText(`dZ ${e[2] >= 0 ? "+" : ""}${e[2].toFixed(1)} cm`, tx, y0 + 46);
-  ctx.font = "11px Segoe UI, Arial"; ctx.fillStyle = COL.text; ctx.fillText("true scale", tx, y0 + 66);
+  updateButtons();
 }
 const rssPoint = () => {                 // point shown in the RSS panel: the current one, or the last finished
   const c = S.current;
@@ -412,7 +337,7 @@ function makeTop(w, h) {
 }
 function make3D(w, h) {
   const [xmin, ymin, zmin] = S.box.min, [xmax, ymax, zmax] = S.box.max;
-  const zTopDraw = zmax + 0.45 * (zmax - zmin);              // the LED marker is drawn above the box
+  const zTopDraw = S.led ? zmax + 0.45 * (zmax - zmin) : zmax;   // room above the box for the LED marker
   const cx = (xmin + xmax) / 2, cy = (ymin + ymax) / 2, cz = (zmin + zmax) / 2;
   const ps = (cam.yaw * Math.PI) / 180, pe = (cam.elev * Math.PI) / 180;
   const cps = Math.cos(ps), sps = Math.sin(ps), cpe = Math.cos(pe), spe = Math.sin(pe);
@@ -609,7 +534,8 @@ mapCv.addEventListener("click", (ev) => {
   S.pick = [Math.round(x / 10) * 10, Math.round(y / 10) * 10];
   $("mx").value = S.pick[0]; $("my").value = S.pick[1];
   if (S.mode !== "manual") { S.mode = "manual"; renderModeUi(); if (BUSY.includes(S.state)) post("/api/mode", { mode: "manual" }).catch(alertError); }
-  setConfigOpen(true); invalidate();
+  if (!S.focus) setConfigOpen(true);
+  invalidate();
 });
 mapCv.addEventListener("mousemove", (ev) => {
   const tip = $("tooltip");
@@ -688,9 +614,11 @@ function drawRss() {
    error plots: per point and CDF
    ============================================================ */
 const histCv = $("histCv"), cdfCv = $("cdfCv");
+let histBars = [];                        // [{x0, x1, d}] slot of every bar, for the hover tooltip
 function drawHist() {
   const { ctx, w, h } = fitCanvas(histCv);
   ctx.clearRect(0, 0, w, h);
+  histBars = [];
   const m = { l: 40, r: 10, t: 10, b: 28 }, pts = S.done.slice(-80);
   const errs = pts.filter((d) => d.ok).map((d) => d.err_3d_mm / 10);
   let ymax = Math.max(1, ...errs) * 1.15;
@@ -705,8 +633,12 @@ function drawHist() {
   const n = Math.max(pts.length, 20), bw = (w - m.l - m.r) / n;
   pts.forEach((d, i) => {
     const x = m.l + i * bw + bw * 0.15;
-    if (d.ok) { ctx.fillStyle = errColor(d.err_3d_mm); ctx.fillRect(x, PY(d.err_3d_mm / 10), bw * 0.7, PY(0) - PY(d.err_3d_mm / 10)); }
-    else { ctx.fillStyle = COL.fail; ctx.font = "11px Segoe UI, Arial"; ctx.textAlign = "center"; ctx.fillText("×", x + bw * 0.35, PY(0) - 3); }
+    histBars.push({ x0: m.l + i * bw, x1: m.l + (i + 1) * bw, d });
+    if (S.histHover === d.id) { ctx.fillStyle = "rgba(36,82,122,0.08)"; ctx.fillRect(m.l + i * bw, m.t, bw, h - m.t - m.b); }
+    if (d.ok) {
+      ctx.fillStyle = errColor(d.err_3d_mm); ctx.fillRect(x, PY(d.err_3d_mm / 10), bw * 0.7, PY(0) - PY(d.err_3d_mm / 10));
+      if (S.histHover === d.id) { ctx.strokeStyle = COL.ink; ctx.lineWidth = 1.2; ctx.strokeRect(x, PY(d.err_3d_mm / 10), bw * 0.7, PY(0) - PY(d.err_3d_mm / 10)); }
+    } else { ctx.fillStyle = COL.fail; ctx.font = "11px Segoe UI, Arial"; ctx.textAlign = "center"; ctx.fillText("×", x + bw * 0.35, PY(0) - 3); }
   });
   ctx.textAlign = "center"; ctx.fillStyle = COL.text; ctx.font = "10.5px Consolas, monospace";
   const every = Math.max(1, Math.ceil(pts.length / 12));
@@ -721,6 +653,22 @@ function drawHist() {
     ctx.fillStyle = COL.p90; ctx.fillText(`P90 ${cm(s.p90_mm)} cm`, w - m.r - 4, PY(s.p90_mm / 10) - 4);
   }
 }
+histCv.addEventListener("mousemove", (ev) => {
+  const tip = $("histTip"), rect = histCv.getBoundingClientRect(), mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
+  const bar = histBars.find((b) => mx >= b.x0 && mx < b.x1);
+  const id = bar ? bar.d.id : null;
+  if (id !== S.histHover) { S.histHover = id; S.plotsDirty = true; }
+  if (!bar) { tip.style.display = "none"; return; }
+  const d = bar.d;
+  tip.textContent = d.ok ? `point ${d.id}: ${(d.err_3d_mm / 10).toFixed(2)} cm` : `point ${d.id}: no estimate (${d.status})`;
+  tip.style.display = "block";
+  tip.style.left = `${Math.min(mx + 12, rect.width - 190)}px`; tip.style.top = `${Math.max(0, my - 30)}px`;
+});
+histCv.addEventListener("mouseleave", () => {
+  $("histTip").style.display = "none";
+  if (S.histHover !== null) { S.histHover = null; S.plotsDirty = true; }
+});
+
 function drawCdf() {
   const { ctx, w, h } = fitCanvas(cdfCv);
   ctx.clearRect(0, 0, w, h);
@@ -746,12 +694,11 @@ function drawCdf() {
 /* ============================================================
    drawing loop and live connection
    ============================================================ */
-let lastSize = "", lastZoomSize = "";
+let lastSize = "";
 function frame() {
   const size = `${mapCv.clientWidth}x${mapCv.clientHeight}|${histCv.clientWidth}|${rssCv.clientWidth}`;
   if (size !== lastSize) { lastSize = size; S.dirty = true; S.plotsDirty = true; }
   if (S.dirty) { S.dirty = false; renderView(); drawRss(); }
-  if (S.zoomDirty || size !== lastZoomSize) { S.zoomDirty = false; lastZoomSize = size; drawZoom(); }
   if (S.plotsDirty) { S.plotsDirty = false; drawHist(); drawCdf(); $("errInfo").textContent = S.done.length ? `last ${Math.min(80, S.done.length)} points · CDF of all` : ""; }
   requestAnimationFrame(frame);
 }
@@ -775,6 +722,7 @@ const QS = new URLSearchParams(location.search);
 if (QS.has("snapshot")) {                         // ?snapshot=1: state loaded once (screenshots)
   if (QS.has("view")) setView(QS.get("view"));
   if (QS.has("config")) setConfigOpen(QS.get("config") === "1");
+  if (QS.has("focus")) setFocus(QS.get("focus") === "1");
   fetch("/api/state").then((r) => r.json()).then((d) => { S.connected = true; applyFull(d); });
 } else {
   connect();

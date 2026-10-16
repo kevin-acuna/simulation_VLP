@@ -35,13 +35,13 @@ The interface opens at <http://127.0.0.1:8766> (8765 is the Database Acquisition
 
 | Panel | Content |
 |---|---|
-| Statistics strip | points, mean / median / RMSE / P90 / last 3D error, mean horizontal error, vertical bias |
-| Real vs estimated | top view (as the acquisition tool) and orbitable 3D view; real (hollow) vs estimated (colour = error) with the error vector; LED; live PD; *Error drawn x1-x20* magnifies only the drawing |
-| Last estimate | real / estimated / error (mm), horizontal, vertical, direction and range errors, fit residual; close-up at true scale; progress of the point in progress |
+| Header | Configuration, current status message, devices, Start / Pause / Stop |
+| Real vs estimated | top view (as the acquisition tool) and orbitable 3D view; real (hollow) vs estimated (colour = 3D error, 0-20 cm) with the error vector; live PD; hover a point for its values; *Error drawn* x1 (default, true scale) to x20 magnifies only the drawing; **Enlarge** shows only this view below the header (Esc or *Back to normal view*) |
 | RSS per orientation | polar plot (MTRS angle around, RSS radial) that fills up orientation by orientation, live MTRS needle, and the model fitted by the estimator once the point is finished |
-| 3D error per point | bars of the last 80 points with mean and P90, CDF of all the points |
+| 3D error per point | bars of the last 80 points with mean and P90 (hover a bar: its error in cm), CDF of all the points |
 
 Z in the views is the **height of the PD centre above the floor** (physical frame of the estimator).
+The LED position is not drawn unless `[display] show_led = true`.
 
 ---
 
@@ -53,14 +53,20 @@ Z in the views is the **height of the PD centre above the floor** (physical fram
 |---|---|
 | `[positioning]` | LED frequency (500 kHz), PD response (`SQ` / `cosine_mR` / `cosine`), estimator (`NLS` / `GLS` / `WLS`) |
 | `[led]` | LED XY and height, calibration constant `A` and Lambertian order `m` |
-| `[geometry]` | gantry base height, PD elevation (9.696 cm), **gantry z scale 0.6** (measured), adapter tilt 15 deg, **MTRS offset** |
-| `[plan]` | first MTRS angle of the K orientations |
+| `[geometry]` | gantry base height, PD elevation (9.696 cm), **gantry z scale 0.6** (measured), adapter tilt 15 deg, **real MTRS offset** (calibrated) |
+| `[plan]` | **nominal MTRS offset** (65 deg) of the commanded angles |
+| `[display]` | `show_led` (default false) |
 | `[sim]` | `--sim`: speed-up, model mismatch (LED offset) and RSS noise |
 
+**MTRS offset, as in the MATLAB analysis**: the MTRS is commanded with the nominal offset of every
+campaign, theta_k = (65 + 360 k / K) mod 360 (K = 5: 65, 137, 209, 281, 353 deg), and the estimator
+builds the PD normals from the measured angles with the real offset calibrated from the campaigns
+(`[geometry] mtrs_offset_deg` = 66.5 deg).
+
 Default (best validated configuration): **SQ + NLS**, LED (281.1, 904.8) mm, A = 0.062707 V m², m = 6.0918,
-MTRS offset 66.5 deg, gantry z scale 0.6. The LED XY and the MTRS offset are correlated: change them
-together and recompute A and m with `tools/calibrate.py` (the alternative LED (270, 890) goes with
-offset 67.3 deg and A = 0.06273, m = 6.151).
+real MTRS offset 66.5 deg, gantry z scale 0.6. The LED XY and the real offset are correlated: change them
+together and recompute A and m with `tools/calibrate.py` (the alternative LED (270, 890) goes with a
+real offset of 67.3 deg and A = 0.06273, m = 6.151).
 
 Model: `RSS = A R(psi) cos(phi)^m / d^2` with R the PD response. Estimation in two stages: direction
 from the K RSS (ratios or joint fit with a free amplitude), then range from the same RSS,

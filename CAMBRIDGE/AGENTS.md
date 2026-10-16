@@ -16,8 +16,13 @@ Two folders (the old `CAMBRIDGE/implementation/` was split on 2026-10-12):
   immediate), geometry.py (gantry -> PD: z scale 0.6, elevation 0.09696, n = [sin t sin a, sin t cos a,
   cos t], a = theta - offset), positioner.py, storage.py (points.csv = database_acquisition columns +
   estimates.csv), sim_scope.py (DemoSimScope: RSS from the model + LED offset + noise), server.py, web/.
-  Hyperparameters ONLY in `config/demo.toml` (not in the UI): SQ + NLS, LED (281.1, 904.8), A 0.062707,
-  m 6.0918, offset 66.5 (LED XY and offset are correlated; (270, 890) goes with 67.3, A 0.06273, m 6.151).
+  Hyperparameters ONLY in `config/demo.toml` (not in the UI, the model/estimator name is not shown): SQ + NLS,
+  LED (281.1, 904.8), A 0.062707, m 6.0918, REAL offset [geometry] mtrs_offset_deg 66.5 (estimator only;
+  LED XY and offset are correlated; (270, 890) goes with 67.3, A 0.06273, m 6.151); the commanded angles use
+  the NOMINAL offset [plan] nominal_offset_deg = 65 (as in the campaigns / MATLAB analysis); [display]
+  show_led = false (LED and its projection hidden). UI (user feedback 2026-10-16): no statistics strip, no
+  "Last estimate" panel; status message in the header; error colour scale 0-20 cm; "Error drawn" always
+  starts at x1; bar chart tooltip (cm, 2 decimals); "Enlarge" = only the Real vs estimated view (Esc).
   `tools/replay.py` reproduces the MATLAB results exactly (3.92 / 3.66 cm on 125 sites), `tools/calibrate.py`
   prints A, m. Run with database_acquisition/.venv: `python app/run.py [--sim]`; tests:
   `python -m unittest discover -s tests -v` (13 tests, ~20 s). Headless screenshot: run.py --sim --no-browser,

@@ -12,7 +12,7 @@
       <span class="burger"><i></i><i></i><i></i></span>Configuration
     </button>
     <h1>VLP Positioning Demo</h1>
-    <span class="model-tag" id="modelTag" title="Positioning model and estimator (config/demo.toml)"></span>
+    <div class="status-line" id="statusLine"></div>
     <div class="devices" id="devices"></div>
     <div class="run">
       <span class="state" id="stateLabel">Connecting</span>
@@ -99,17 +99,6 @@
 
     <!-- ===================== MAIN ===================== -->
     <main class="main">
-      <section class="panel stats-panel">
-        <div class="stats" id="stats"></div>
-        <div class="progress-info">
-          <span>Phase <b id="phase">–</b></span>
-          <span>Elapsed <b id="pElapsed">–</b></span>
-          <span>Time per point <b id="pPerPoint">–</b></span>
-          <span>Current <b id="pCurrent">–</b></span>
-        </div>
-        <div class="message" id="message"></div>
-      </section>
-
       <div class="demo-grid">
         <section class="panel view">
           <div class="panel-head">
@@ -126,6 +115,7 @@
               <label>Show <select id="showSel">
                 <option value="all">all points</option><option value="20">last 20</option>
                 <option value="5">last 5</option><option value="1">last point</option></select></label>
+              <button class="btn small" id="btnFocus" title="Show only this view, as large as possible (Esc to go back)">Enlarge</button>
             </div>
           </div>
           <div class="view-wrap" id="viewWrap">
@@ -136,12 +126,6 @@
         </section>
 
         <aside class="side">
-          <section class="panel current">
-            <div class="panel-head"><h3>Last estimate</h3><span class="hint" id="curId"></span></div>
-            <div id="curBody"></div>
-            <canvas id="zoomCv" title="Close-up of the last estimate at true scale (top view and height)"></canvas>
-            <div class="now" id="nowLine"></div>
-          </section>
           <section class="panel">
             <div class="panel-head"><h3>RSS per orientation</h3><span class="hint" id="rssInfo"></span></div>
             <canvas id="rssCv"></canvas>
@@ -156,7 +140,10 @@
         <section class="panel errors">
           <div class="panel-head"><h3>3D error per point</h3><span class="hint" id="errInfo"></span></div>
           <div class="err-wrap">
-            <canvas id="histCv"></canvas>
+            <div class="hist-wrap">
+              <canvas id="histCv"></canvas>
+              <div class="tooltip" id="histTip"></div>
+            </div>
             <canvas id="cdfCv"></canvas>
           </div>
         </section>

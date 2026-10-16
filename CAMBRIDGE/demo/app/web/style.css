@@ -27,9 +27,9 @@ h1, h2, h3 { margin: 0; }
   height: var(--header-h); display: flex; align-items: center; gap: 18px; padding: 0 16px;
   background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5;
 }
-.appbar h1 { font-size: 17px; font-weight: 600; letter-spacing: .1px; }
-.model-tag { font: 12px var(--mono); color: var(--muted); border: 1px solid var(--border); padding: 2px 8px; border-radius: 3px; }
-.model-tag:empty { display: none; }
+.appbar h1 { font-size: 17px; font-weight: 600; letter-spacing: .1px; white-space: nowrap; }
+.status-line { flex: 1; min-width: 0; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status-line.error { color: var(--err); }
 .cfg-toggle {
   display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;
   border: 1px solid var(--border-strong); border-radius: 3px; background: #fff; color: var(--text);
@@ -39,7 +39,7 @@ h1, h2, h3 { margin: 0; }
 .cfg-toggle[aria-expanded="true"] { background: #e9eef4; border-color: #9fb0c3; }
 .burger { display: inline-flex; flex-direction: column; gap: 3px; }
 .burger i { display: block; width: 14px; height: 2px; background: var(--text); }
-.devices { margin-left: auto; color: var(--muted); font-size: 12px; display: flex; gap: 14px; }
+.devices { color: var(--muted); font-size: 12px; display: flex; gap: 14px; white-space: nowrap; }
 .devices b { color: var(--text); font-weight: 600; }
 .devices .bad b { color: var(--stop); }
 .run { display: flex; align-items: center; gap: 8px; }
@@ -62,6 +62,7 @@ h1, h2, h3 { margin: 0; }
 .btn.go:hover:not(:disabled) { background: #256b29; }
 .btn.stop { background: var(--stop); border-color: var(--stop); color: #fff; }
 .btn.stop:hover:not(:disabled) { background: #96201a; }
+.btn.small { height: 26px; padding: 0 10px; font-size: 12px; }
 input[type=number], input[type=text], select {
   width: 100%; height: 28px; padding: 0 7px; border: 1px solid var(--border-strong); border-radius: 3px;
   background: #fff; color: var(--text); font: 13px var(--mono);
@@ -123,19 +124,6 @@ label input { margin-top: 3px; }
 .tabs.wide { display: flex; }
 .tabs.wide button { flex: 1; padding: 6px 0; font-weight: 600; }
 
-/* statistics strip */
-.stats { display: flex; gap: 10px; flex-wrap: wrap; }
-.stat { flex: 1; min-width: 92px; padding: 4px 10px; border-left: 3px solid var(--border); }
-.stat .k { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
-.stat .v { font: 20px var(--mono); color: var(--text); white-space: nowrap; }
-.stat .v small { font-size: 12px; color: var(--muted); margin-left: 2px; }
-.stat.main { border-left-color: var(--accent); }
-.stat.main .v { font-size: 24px; font-weight: 600; }
-.progress-info { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 8px; color: var(--muted); font-size: 12px; }
-.progress-info b { color: var(--text); font-family: var(--mono); font-weight: 400; margin-left: 4px; }
-.message { margin-top: 6px; font-size: 12.5px; word-break: break-all; }
-.message.error { color: var(--err); }
-
 .demo-grid {
   display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr) 330px;
   grid-template-areas: "view side" "errors side";
@@ -157,24 +145,6 @@ label input { margin-top: 3px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
 .legend .grad { display: inline-block; width: 140px; height: 10px; vertical-align: middle; margin: 0 6px; border: 1px solid var(--border); }
 
-/* current point */
-.cur-err { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
-.cur-err .big { font: 600 30px var(--mono); }
-.cur-err .unit { color: var(--muted); }
-.cur-err .tag { margin-left: auto; font-size: 12px; color: var(--muted); }
-.cur-table { width: 100%; border-collapse: collapse; font: 12px var(--mono); }
-.cur-table th { font: 12px "Segoe UI", Arial, sans-serif; color: var(--muted); text-align: right; font-weight: 400; padding-bottom: 2px; }
-.cur-table th:first-child, .cur-table td:first-child { text-align: left; font-family: "Segoe UI", Arial, sans-serif; color: var(--muted); }
-.cur-table td { text-align: right; border-top: 1px solid #eceef1; padding: 2px 0; }
-.cur-table tr.est td { color: var(--accent); font-weight: 600; }
-.cur-extra { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-top: 6px; font-size: 12px; color: var(--muted); }
-.cur-extra b { font: 12px var(--mono); color: var(--text); float: right; }
-.cur-status { margin-top: 6px; font-size: 12px; color: var(--warn); }
-#zoomCv { width: 100%; height: 170px; display: block; margin-top: 8px; }
-.now { margin-top: 6px; padding-top: 6px; border-top: 1px solid #eceef1; font-size: 12px; color: var(--muted); }
-.now b { color: var(--text); font-weight: 600; }
-.now:empty { display: none; }
-
 #rssCv { width: 100%; height: 270px; display: block; }
 .rss-list { display: flex; flex-wrap: wrap; gap: 2px 10px; font: 11.5px var(--mono); color: var(--muted); margin-top: 4px; }
 .rss-list span b { color: var(--text); font-weight: 400; }
@@ -186,6 +156,7 @@ label input { margin-top: 3px; }
 #log li.warning { color: var(--warn); }
 #log li.error { color: var(--err); }
 .err-wrap { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+.hist-wrap { position: relative; min-width: 0; }
 #histCv, #cdfCv { width: 100%; height: 200px; display: block; }
 
 /* ---------------- dialog ---------------- */
@@ -199,3 +170,10 @@ label input { margin-top: 3px; }
   .demo-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "view" "errors" "side"; }
   .side { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 }
+
+/* ---------------- enlarged view: only "Real vs estimated position" below the header ---------------- */
+.body.focus, .body.focus.cfg-open { grid-template-columns: minmax(0, 1fr); }
+.body.focus .cfg-panel { display: none; }
+.body.focus .demo-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "view"; }
+.body.focus .side, .body.focus .errors { display: none; }
+.body.focus #map { height: calc(100vh - var(--header-h) - 112px); min-height: 360px; }

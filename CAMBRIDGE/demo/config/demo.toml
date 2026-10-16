@@ -31,9 +31,9 @@ starts = 3                     # multi-start of the nonlinear estimators
 # (python tools/calibrate.py prints them).
 # --------------------------------------------------------------------------
 # Validated with tools/replay.py on the 125 sites of the two campaigns (SQ + NLS, K = 10):
-#   LED (281.1, 904.8), A 0.062707, m 6.0918, offset 66.5 -> 3.66 cm mean (K = 5: 3.73 cm)   <- used
-#   LED (270, 890),     A 0.06273,  m 6.151,  offset 67.3 -> 3.92 cm mean
-# The LED XY and the MTRS offset are correlated: change them together (and refit A, m).
+#   LED (281.1, 904.8), A 0.062707, m 6.0918, real offset 66.5 -> 3.66 cm mean (K = 5: 3.73 cm)   <- used
+#   LED (270, 890),     A 0.06273,  m 6.151,  real offset 67.3 -> 3.92 cm mean
+# The LED XY and the real MTRS offset are correlated: change them together (and refit A, m).
 [led]
 xy_mm = [281.1, 904.8]         # gantry X, Y of the LED (joint fit of the Lambertian scan)
 height_m = 3.0                 # LED plane above the floor
@@ -49,15 +49,24 @@ z_ref_mm = -300.0
 pd_elevation_m = 0.09696       # gantry base -> PD centre (MTRS + adapter)
 gantry_z_scale = 0.6           # real vertical travel per commanded mm (tape, 2026-10-15)
 pd_tilt_deg = 15.0             # adapter tilt from the vertical
-mtrs_offset_deg = 66.5         # MTRS angle that points the tilt towards +Y (tools/replay.py --offset-fit all)
+mtrs_offset_deg = 66.5         # REAL MTRS angle that points the tilt towards +Y, calibrated from the campaigns
+                               # (tools/replay.py --offset-fit all). Used only by the estimator, as in the
+                               # MATLAB analysis; the commanded angles keep the nominal 65 deg ([plan])
 mtrs_direction = 1             # +1: increasing MTRS angle turns the tilt from +Y towards +X
 
 # --------------------------------------------------------------------------
 # Measurement plan (the interface sets K, the region and the acquisition)
 # --------------------------------------------------------------------------
 [plan]
-first_angle_deg = 66.5         # theta_k = (first_angle + 360 k / K) mod 360 (tilt towards +Y for k = 0)
+nominal_offset_deg = 65.0      # nominal MTRS offset (set by eye, used in every campaign): the commanded angles
+                               # are theta_k = (nominal_offset + 360 k / K) mod 360
 random_step_mm = 1.0           # random positions are rounded to this step
+
+# --------------------------------------------------------------------------
+# Interface
+# --------------------------------------------------------------------------
+[display]
+show_led = false               # true: draw the LED position (top view) and its projection (3D view)
 
 # --------------------------------------------------------------------------
 # Simulation (run.py --sim): signal generated with the same model + errors
