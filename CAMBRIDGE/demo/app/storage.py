@@ -24,7 +24,7 @@ ESTIMATE_FIELDS = ["point_id", "iso_time", "K", "status", "estimator", "pd_respo
                    "x_cmd_mm", "y_cmd_mm", "z_cmd_mm", "true_X_m", "true_Y_m", "true_Z_m",
                    "est_X_m", "est_Y_m", "est_Z_m", "est_gantry_z_mm", "err_X_cm", "err_Y_cm", "err_Z_cm",
                    "err_3d_cm", "err_h_cm", "err_dir_deg", "err_range_cm", "distance_m", "amplitude_V",
-                   "fit_rms_pct", "angles_deg", "rss_V"]
+                   "fit_rms_pct", "angles_deg", "rss_V", "mtrs_tilt_cmd_deg", "mtrs_tilts_deg"]
 
 
 def freq_label(f_hz):
@@ -107,7 +107,9 @@ class Session:
                "err_range_cm": f(res.get("err_range_m"), 100), "distance_m": f(res.get("distance_m")),
                "amplitude_V": f(res.get("amplitude_V")), "fit_rms_pct": f(res.get("fit_rms_pct")),
                "angles_deg": " ".join(f"{a:.4f}" for a in point["meas_angles"]),
-               "rss_V": " ".join(f"{v:.6g}" for v in point["rss_V"])}
+               "rss_V": " ".join(f"{v:.6g}" for v in point["rss_V"]),
+               "mtrs_tilt_cmd_deg": point.get("tilt_cmd", 0.0),
+               "mtrs_tilts_deg": " ".join(f"{v:.4f}" for v in point.get("meas_tilts", []) if v is not None)}
         self._append("estimates.csv", ESTIMATE_FIELDS, row)
 
     def write_json(self, status, extra=None):

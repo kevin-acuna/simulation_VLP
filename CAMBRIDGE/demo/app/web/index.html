@@ -65,6 +65,16 @@
           <label>Max. points (0 = no limit)<input type="number" min="0" step="1" id="maxPoints"></label>
         </div>
         <p class="note">MTRS angles: <span id="angleList">–</span></p>
+        <div class="row2">
+          <label>MTRS tilt<select id="tiltMode">
+            <option value="fixed">Fixed</option><option value="random">Uniform random</option></select></label>
+          <label id="tiltFixedBox">Tilt [deg]<input type="number" step="any" min="-3" max="3" id="tiltDeg"></label>
+        </div>
+        <div class="row2" id="tiltRandomBox">
+          <label>Min [deg]<input type="number" step="any" min="-3" max="3" id="tiltMin"></label>
+          <label>Max [deg]<input type="number" step="any" min="-3" max="3" id="tiltMax"></label>
+        </div>
+        <p class="note" id="tiltNote"></p>
       </section>
 
       <section class="group">

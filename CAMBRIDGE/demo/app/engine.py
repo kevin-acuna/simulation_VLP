@@ -40,6 +40,10 @@ DEFAULT_CONFIG = {
     "region_y": [100.0, 1300.0],
     "region_z": [-600.0, 0.0],              # gantry z: -700 highest PD position, 0 the lowest
     "k_angles": 5,                          # orientations per point
+    "mtrs_tilt_mode": "fixed",              # MTRS tilt, commanded at every new position: "fixed" | "random"
+    "mtrs_tilt_deg": 0.0,                   # fixed mode
+    "mtrs_tilt_min_deg": -3.0,              # random mode: uniform in [min, max], one value per position
+    "mtrs_tilt_max_deg": 3.0,
     "n_samples": 1,                         # records per orientation (averaged)
     "settle_s": 1.0,
     "record_ms": 100.0,                     # continuous record per sample [ms]; 0 = scope settings
@@ -59,8 +63,9 @@ def normalize_config(cfg, defaults):
     c["mode"] = "manual" if c["mode"] == "manual" else "random"
     for k in ("k_angles", "n_samples", "max_points"):
         c[k] = int(c[k])
-    for k in ("settle_s", "record_ms", "record_fs_msa"):
+    for k in ("settle_s", "record_ms", "record_fs_msa", "mtrs_tilt_deg", "mtrs_tilt_min_deg", "mtrs_tilt_max_deg"):
         c[k] = float(c[k])
+    c["mtrs_tilt_mode"] = "random" if str(c["mtrs_tilt_mode"]).lower() == "random" else "fixed"
     c["freqs_khz"] = [float(f) for f in c["freqs_khz"]]
     c["save_waveforms"] = bool(c["save_waveforms"])
     c["seed"] = None if c.get("seed") in (None, "") else int(c["seed"])
@@ -89,6 +94,7 @@ class DemoEngine:
         self._pause, self._stop, self._shutdown = threading.Event(), threading.Event(), threading.Event()
         self._runner, self._threads = None, []
         self._fft_was_shown = None
+        self._tilt_rng, self._last_tilt_cmd = None, None
 
     # ---------------------------------------------------------------
     # helpers and threads
@@ -152,6 +158,17 @@ class DemoEngine:
                               f"[{g.workspace_min[i]:g}, {g.workspace_max[i]:g}] mm.")
         if not 3 <= c["k_angles"] <= 72:
             errors.append("K must be between 3 and 72 (the 3D position needs at least 3 orientations).")
+        mtrs, lim = self.tb.mtrs, self.tb.mtrs.tilt_limit
+        tilts = ([c["mtrs_tilt_deg"]] if c["mtrs_tilt_mode"] == "fixed"
+                 else [c["mtrs_tilt_min_deg"], c["mtrs_tilt_max_deg"]])
+        if not all(mtrs.valid_tilt(t) for t in tilts):
+            errors.append(f"MTRS tilt must be within +/-{lim:g} deg.")
+        elif c["mtrs_tilt_mode"] == "random" and c["mtrs_tilt_min_deg"] > c["mtrs_tilt_max_deg"]:
+            errors.append("MTRS tilt range: min must be <= max.")
+        elif any(abs(t) > mtrs.tolerance for t in tilts):
+            warnings.append("The estimator does not model the MTRS tilt yet (its PD normals assume tilt 0): with a "
+                            "non-zero tilt the estimated positions will be biased. The tilt is still commanded "
+                            "and recorded (points.csv, estimates.csv).")
         if c["n_samples"] < 1:
             errors.append("Samples per orientation must be >= 1.")
         if c["record_ms"] < 0 or c["record_fs_msa"] <= 0:
@@ -186,6 +203,8 @@ class DemoEngine:
             raise ValueError(" ".join(errors))
         c["seed"] = c["seed"] if c["seed"] is not None else int(np.random.SeedSequence().entropy % 2 ** 31)
         self._rng = np.random.default_rng(c["seed"])
+        self._tilt_rng = np.random.default_rng([c["seed"], 1])      # own stream: positions do not change
+        self._last_tilt_cmd = None
         self._configure_scope(c)
         meta = {"positioning": self.pos.describe(), "settings_file": self.settings["_path"],
                 "nominal_offset_deg": self.nominal_offset,
@@ -361,9 +380,12 @@ class DemoEngine:
         angles = plan_angles(K, self.nominal_offset)
         order = list(range(K)) if pid % 2 else list(range(K))[::-1]
         truth_cmd = self.pos.geometry.pd_position(target)
+        tilt = (c["mtrs_tilt_deg"] if c["mtrs_tilt_mode"] == "fixed" else
+                round(float(self._tilt_rng.uniform(c["mtrs_tilt_min_deg"], c["mtrs_tilt_max_deg"])), 3))
         cur = {"id": pid, "origin": origin, "target": list(target), "true_cmd_mm": (1e3 * truth_cmd).tolist(),
                "angles": angles, "order": order, "rss_V": [None] * K, "meas_angles": [None] * K,
-               "meas_pos": [None] * K, "rss_all": [None] * K, "active_k": None, "t0": time.time(), "result": None}
+               "meas_pos": [None] * K, "rss_all": [None] * K, "active_k": None, "t0": time.time(), "result": None,
+               "tilt_cmd": tilt, "meas_tilts": [None] * K}
         self._set(current=cur, cur_seq=self.cur_seq + 1)
         lb_pos = freq_label(self.led_freq_khz * 1e3)
         for j, k in enumerate(order):
@@ -374,13 +396,21 @@ class DemoEngine:
             cur["active_k"] = k
             self._set(phase="MOVING", cur_seq=self.cur_seq + 1,
                       message=f"Point {pid}: {'moving to' if j == 0 else 'turning to'} X {target[0]:g} Y {target[1]:g} "
-                              f"Z {target[2]:g} mm, {ang:.1f} deg ({j + 1}/{K})")
+                              f"Z {target[2]:g} mm, {ang:.1f} deg, tilt {tilt:g} deg ({j + 1}/{K})")
             tel = self.tel
             xyz_cmd = None if (j or tb.gantry.arrived(target, {"pos": tel["pos"], "speed": tel["speed"]})) else target
             ang_cmd = None if tb.mtrs.arrived(ang, tel["angle"], tel["mtrs_moving"]) else ang
-            if xyz_cmd is not None or ang_cmd is not None:
-                tb.move_to_pose(xyz_cmd, ang_cmd)
-                tb.wait_pose(xyz_cmd, ang_cmd, stop_event=self._stop)
+            # tilt: always commanded at a new position (j = 0), and again if it is found away from the command
+            last = self._last_tilt_cmd
+            if last is not None and not tel["tilt_moving"] and abs(tel["tilt"] - last) > tb.mtrs.tolerance:
+                self.add_log(f"Point {pid}: MTRS tilt read {tel['tilt']:.3f} deg but {last:g} deg was commanded: "
+                             f"it moved by itself; commanding {tilt:g} deg again.", "warning")
+            tilt_off = not tb.mtrs.tilt_arrived(tilt, tel["tilt"], tel["tilt_moving"])
+            tilt_cmd = tilt if j == 0 or tilt_off else None
+            if xyz_cmd is not None or ang_cmd is not None or tilt_cmd is not None:
+                tb.move_to_pose(xyz_cmd, ang_cmd, tilt_cmd, force_tilt=j == 0)
+                tb.wait_pose(xyz_cmd, ang_cmd, stop_event=self._stop, tilt=tilt_cmd)
+            self._last_tilt_cmd = tilt
             self._set(phase="SETTLING", message=f"Point {pid}: settling {c['settle_s']:g} s ({j + 1}/{K})")
             self._sleep(c["settle_s"])
             self._set(phase="MEASURING", message=f"Point {pid}: measuring orientation {j + 1}/{K} ({ang:.1f} deg)")
@@ -397,7 +427,7 @@ class DemoEngine:
             v_all = np.concatenate([a["v"] for a in acqs])
             row = {"site_id": pid, "k": k, "unix_time_s": f"{acqs[0]['unix']:.3f}",
                    "x_cmd_mm": target[0], "y_cmd_mm": target[1], "z_cmd_mm": target[2], "angle_cmd_deg": ang,
-                   "mtrs_tilt_cmd_deg": 0.0, "x_mm": round(pos[0], 3), "y_mm": round(pos[1], 3),
+                   "mtrs_tilt_cmd_deg": tilt, "x_mm": round(pos[0], 3), "y_mm": round(pos[1], 3),
                    "z_mm": round(pos[2], 3), "angle_deg": round(ang_m, 4), "mtrs_tilt_deg": round(tilt_m, 4),
                    "pd_tilt_deg": self.pos.geometry.pd_tilt_deg, "pos_err_mm": round(math.dist(pos, target), 3),
                    "angle_err_deg": round(ang_m - ang, 4), "n_acq": len(acqs), "clip_frac": f"{clip:.4g}",
@@ -413,6 +443,7 @@ class DemoEngine:
                 self.add_log(f"Point {pid}, {ang:.1f} deg: {clip:.1%} of the samples clipped (saturation).", "warning")
             with self.lock:
                 cur["rss_V"][k], cur["meas_angles"][k], cur["meas_pos"][k] = rss_all[lb_pos], ang_m, pos
+                cur["meas_tilts"][k] = tilt_m
                 cur["rss_all"][k] = rss_all
                 self.cur_seq += 1
 

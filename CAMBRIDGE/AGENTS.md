@@ -27,6 +27,19 @@ Two folders (the old `CAMBRIDGE/implementation/` was split on 2026-10-12):
   prints A, m. Run with database_acquisition/.venv: `python app/run.py [--sim]`; tests:
   `python -m unittest discover -s tests -v` (13 tests, ~20 s). Headless screenshot: run.py --sim --no-browser,
   then msedge --headless=new --screenshot=... "http://127.0.0.1:8766/?snapshot=1&view=top&config=0".
+  (test_engine_sim uses random positions without a seed: an err < 30 mm assertion fails now and then.)
+  INCIDENT 2026-10-16 (session demo_20261016_113422): between 14:29:33 and 14:31:16 (point 48) the MTRS
+  TILT left 0 by itself (nothing commanded it: the demo only set it at connect; Kinesis closed; no other
+  program); reading = 3.000 * sin(theta - 281 deg) (+/-2.853, +/-1.763, 0 at the 5 angles), still there at
+  17:12. RSS shape fit: before offset 66.5 / tilt 15 -> 0.77 % rms; after -> 3 %, best explained by a ~3.7 deg
+  tilt of the rotation axis; mean 3D error 3 cm -> 13 cm, A unchanged. Points 1-47 valid. Fix (both tools):
+  `MTRS.move_tilt(tilt, force)`, `Testbed.move_to_pose(..., force_tilt)`; the tilt is commanded at EVERY new
+  position (database_acquisition: (pass, site_id) change; demo: first orientation of a point) and again when
+  the reading is away from the last command (warning "moved by itself" in the log). Demo config (UI):
+  mtrs_tilt_mode fixed | random (uniform [min, max], one value per point, rng default_rng([seed, 1])),
+  points.csv mtrs_tilt_cmd_deg, estimates.csv mtrs_tilt_cmd_deg + mtrs_tilts_deg (K readings). The demo
+  estimator does NOT model the MTRS tilt (geometry normals use pd_tilt + angle only): non-zero tilt -> a
+  check_config warning.
 Environment: `database_acquisition/.venv` (Python 3.13; pythonnet, pyvisa, numpy, matplotlib/TkAgg,
 cri_lib 0.4.0 copied from the CRI-Python-Lib clone = GitHub commit 21995a1, pinned in requirements.txt).
 The venv was moved from implementation/: python.exe works, but the pip.exe launchers point to the old

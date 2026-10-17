@@ -153,14 +153,17 @@ for (const b of $("modeTabs").querySelectorAll("button")) b.onclick = async () =
 /* ============================================================
    form
    ============================================================ */
-const FORM_IDS = ["rx0", "rx1", "ry0", "ry1", "rz0", "rz1", "kAngles", "maxPoints", "freqs", "nSamples", "settle",
-  "seed", "recordMs", "recordFs", "saveWave", "label"];
+const FORM_IDS = ["rx0", "rx1", "ry0", "ry1", "rz0", "rz1", "kAngles", "maxPoints", "tiltMode", "tiltDeg", "tiltMin",
+  "tiltMax", "freqs", "nSamples", "settle", "seed", "recordMs", "recordFs", "saveWave", "label"];
 const num = (id) => parseFloat($(id).value);
 function fillForm(c) {
   $("rx0").value = c.region_x[0]; $("rx1").value = c.region_x[1];
   $("ry0").value = c.region_y[0]; $("ry1").value = c.region_y[1];
   $("rz0").value = c.region_z[0]; $("rz1").value = c.region_z[1];
   $("kAngles").value = c.k_angles; $("maxPoints").value = c.max_points;
+  $("tiltMode").value = c.mtrs_tilt_mode || "fixed"; $("tiltDeg").value = c.mtrs_tilt_deg ?? 0;
+  $("tiltMin").value = c.mtrs_tilt_min_deg ?? -3; $("tiltMax").value = c.mtrs_tilt_max_deg ?? 3;
+  renderTiltUi();
   $("freqs").value = c.freqs_khz.map(fmtG).join(", ");
   $("nSamples").value = c.n_samples; $("settle").value = c.settle_s; $("seed").value = c.seed ?? "";
   $("recordMs").value = c.record_ms; $("recordFs").value = c.record_fs_msa;
@@ -173,6 +176,8 @@ function readForm() {
   return {
     mode: S.mode, region_x: [num("rx0"), num("rx1")], region_y: [num("ry0"), num("ry1")], region_z: [num("rz0"), num("rz1")],
     k_angles: parseInt($("kAngles").value, 10), max_points: parseInt($("maxPoints").value, 10) || 0,
+    mtrs_tilt_mode: $("tiltMode").value, mtrs_tilt_deg: num("tiltDeg"),
+    mtrs_tilt_min_deg: num("tiltMin"), mtrs_tilt_max_deg: num("tiltMax"),
     freqs_khz: $("freqs").value.split(/[,;\s]+/).filter(Boolean).map(parseFloat),
     n_samples: parseInt($("nSamples").value, 10), settle_s: num("settle"),
     seed: $("seed").value === "" ? null : parseInt($("seed").value, 10),
@@ -180,6 +185,15 @@ function readForm() {
     label: $("label").value.trim(),
   };
 }
+function renderTiltUi() {
+  const random = $("tiltMode").value === "random";
+  $("tiltFixedBox").style.visibility = random ? "hidden" : "";
+  $("tiltRandomBox").style.display = random ? "" : "none";
+  $("tiltNote").textContent = random
+    ? "Commanded at every new position: one value per position, uniform in [min, max] (range ±3°)."
+    : "Commanded at every new position (range ±3°).";
+}
+$("tiltMode").addEventListener("change", renderTiltUi);
 function updateAngles() {
   const K = parseInt($("kAngles").value, 10);
   if (!(K >= 1)) { $("angleList").textContent = "–"; return; }

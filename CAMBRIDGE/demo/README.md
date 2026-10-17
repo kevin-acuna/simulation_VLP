@@ -26,7 +26,11 @@ The interface opens at <http://127.0.0.1:8766> (8765 is the Database Acquisition
 
 1. Configuration panel: **Random** positions (box in gantry coordinates) or **Manual** positions
    (type X, Y, Z or click on the top view, then *Measure here*; queued positions are measured first in
-   both modes), **K** (default 5), recorded LEDs, record length, settle time, waveforms, label.
+   both modes), **K** (default 5), **MTRS tilt** (*Fixed* value, default 0°, or *Uniform random*
+   in [min, max], one value per position; within ±3°), recorded LEDs, record length, settle time,
+   waveforms, label. The tilt is commanded at every new position and again if it is found away from
+   the command (a warning in the log: on 2026-10-16 it left 0° by itself). **The estimator does not
+   model the MTRS tilt yet**: with a non-zero tilt the estimates are biased (the interface warns).
 2. **Start**. **Pause** takes effect after the current orientation (the point continues on Resume);
    **Stop** is immediate (the point in progress is not estimated; its orientations stay saved).
    The mode can be switched and positions queued while running.
@@ -132,7 +136,7 @@ testbed = another `geometry.py` (the library does not change).
 | File | Content |
 |---|---|
 | `points.csv` | one row per orientation, database_acquisition columns (`site_id` = point) |
-| `estimates.csv` | one row per point: true / estimated PD position (m), errors (cm), direction / range error, status, angles and RSS used |
+| `estimates.csv` | one row per point: true / estimated PD position (m), errors (cm), direction / range error, status, angles and RSS used, commanded MTRS tilt and the K measured tilts |
 | `wave/mNNNNN.npz` | raw waveforms (optional, lossless ADC codes) |
 | `session.json` | interface configuration, positioning hyperparameters, devices, summary |
 
