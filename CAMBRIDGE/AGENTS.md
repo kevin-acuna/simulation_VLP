@@ -40,6 +40,22 @@ Two folders (the old `CAMBRIDGE/implementation/` was split on 2026-10-12):
   points.csv mtrs_tilt_cmd_deg, estimates.csv mtrs_tilt_cmd_deg + mtrs_tilts_deg (K readings). The demo
   estimator does NOT model the MTRS tilt (geometry normals use pd_tilt + angle only): non-zero tilt -> a
   check_config warning.
+- `analysis/Estimation_with_2LEDs/` (2026-10-18): position from the DIRECTIONS of 2+ LEDs (no range, no A/m/power):
+  scenario 1 `estimate_position_known_yaw.m` -> `results_known_yaw/` (also writes led_positions.csv per level and
+  error_vs_K.csv), scenario 2 `estimate_position_unknown_yaw.m` -> `results_unknown_yaw/` (yaw = MTRS offset NOT
+  known: directions in the receiver frame with offset 0, then `rays_intersection_yaw.m` = position + yaw, grid 1
+  deg + fminbnd, vectorised with pagemldivide; reads the LED positions of scenario 1, nothing recalibrated;
+  66.5 only to report the yaw error). Unknown yaw K=10: 5.05 / 7.38 / 3.60 / 2.92 cm, yaw std 1.4 / 2.2 / 1.2 /
+  0.7 deg, yaw bias ~0, no ambiguous minima. README.md in the folder. (Campaign copy of 20261014-185628, 50 sites, K=10),
+  reusable `led_direction.m` (pd_fit_estimate direction only), `rays_intersection.m` (LS point closest to N
+  lines + range, miss, min angle, rcond), `pd_normals.m`. LEDs: 300 / 500 / 700 / 900 kHz. Flat-scan pattern
+  fits (RSS_Distribution) give (1177, 1175), (284, 905), (205, 508), (1164, 235) mm, but the LED positions
+  implied by the rays from the true PD positions are (1203, 1174, 2.93 m), (303, 893, 2.96), (314, 369, 2.96),
+  (1189, 180, 2.94): pattern centre != geometric position (700 kHz LED tilted ~5 deg, 18 cm). With the
+  flat-scan positions: 8.1 / 51.6 / 10.4 / 11.3 cm (500+300 / +700 / +900 / all). With
+  led_positions = 'rays_cross_height' (LED from the rays of the OTHER level, default): 4.46 / 6.27 / 3.30 /
+  2.77 cm, vertical bias ~0; single-LED 500 kHz with A, m: 2.98 cm. Direction error per LED ~0.6 deg for all.
+  Run with `matlab -batch "cd('...'); estimate_position_2LEDs"` (R2026b; figures forced to the light theme).
 Environment: `database_acquisition/.venv` (Python 3.13; pythonnet, pyvisa, numpy, matplotlib/TkAgg,
 cri_lib 0.4.0 copied from the CRI-Python-Lib clone = GitHub commit 21995a1, pinned in requirements.txt).
 The venv was moved from implementation/: python.exe works, but the pip.exe launchers point to the old
