@@ -28,7 +28,7 @@ Two folders (the old `CAMBRIDGE/implementation/` was split on 2026-10-12):
   `python -m unittest discover -s tests -v` (13 tests, ~20 s). Headless screenshot: run.py --sim --no-browser,
   then msedge --headless=new --screenshot=... "http://127.0.0.1:8766/?snapshot=1&view=top&config=0".
   (test_engine_sim uses random positions without a seed: an err < 30 mm assertion fails now and then.)
-  INCIDENT 2026-10-16 (session demo_20261016_113422): between 14:29:33 and 14:31:16 (point 48) the MTRS
+  INCIDENT 2026-10-16 (session demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms): between 14:29:33 and 14:31:16 (point 48) the MTRS
   TILT left 0 by itself (nothing commanded it: the demo only set it at connect; Kinesis closed; no other
   program); reading = 3.000 * sin(theta - 281 deg) (+/-2.853, +/-1.763, 0 at the 5 angles), still there at
   17:12. RSS shape fit: before offset 66.5 / tilt 15 -> 0.77 % rms; after -> 3 %, best explained by a ~3.7 deg
@@ -58,7 +58,7 @@ tilt_velocity_deg_s, tilt_acceleration_deg_s2). `MTRS.move_tilt/tilt_moving/tilt
 `move_to_pose/wait_pose/go_to_pose(..., tilt=)`. The app: `mtrs_tilt_mode` fixed | random (uniform in
 [min,max], one value per (site, k) reused by passes, numpy default_rng(tilt_seed), seed drawn at every
 Preview and stored in session.json; commanded tilt in plan.csv / points.csv `mtrs_tilt_cmd_deg`). Real
-tilt tested 2026-10-13 (session_20261013_101402, random [-1, 1]): measured = commanded, estimate 316 s vs
+tilt tested 2026-10-13 (campaign_20261013-101402_grid5x5x1-xy100to1300-s300-z-300_K1-off65_pd0_tiltU-1to1_100msx2, random [-1, 1]): measured = commanded, estimate 316 s vs
 311 s real. UI: "MTRS tilt" gauge panel between MTRS rotation and Live pose; FFT amplitude axis can be
 fixed by double-clicking the FFT (display only, stored in localStorage "dbacq.fftYfix").
 Incident 2026-10-13 (sessions 103703, 113114 with 10 and 5 samples x 1 Mpts): VI_ERROR_IO in the middle of
@@ -149,8 +149,14 @@ least +/-1.5 bins.
   HTTP + Server-Sent Events on 127.0.0.1:8765). `web/` is a no-build HTML/CSS/JS UI that only sends
   commands; all control and rigor stay in Python. pyvisa is used only from the scope thread
   (`Engine.scope_call`). `pd_tilt_deg` is metadata of the 3D-printed mount: never sent to the MTRS (its
-  tilt stays at `tilt_target_deg` = 0). Output `data/campaign_<date>[_label]/` (older: `session_<date>`;
-  both can be continued). Continue an interrupted campaign: `Engine.list_campaigns()` (unfinished =
+  tilt stays at `tilt_target_deg` = 0). Output folder name DESCRIBES the campaign (2026-10-17, same format in
+  database_acquisition, demo and the legacy exp02 folders; helpers in `hardware/utils.py`: name_tail,
+  folder_name, unique_dir; `engine.campaign_name`, demo `storage.demo_name`):
+  `campaign_<YYYYmmdd-HHMMSS>_grid<nx>x<ny>x<nz>-xy<a>to<b>-s<step>-z<a>to<b>_K<K>-off<deg>_pd<deg>_tilt<v>|tiltU<a>to<b>_<ms>ms[x<n>][_p<passes>][_<label>]`
+  (decimals with "p"), demo: `demo_<date>_random-xy..-z..|manual_K.._pd.._tilt.._<rec>`. All 21 existing
+  folders (database_acquisition/data, analysis/Experiment_01_3D_estimation, testbed_dev/data/exp02,
+  demo/data) were renamed on 2026-10-17; each session.json keeps `former_name` (e.g. campaign_20261014_185628,
+  session_20261013_182008). Any folder with session.json can be continued. Continue an interrupted campaign: `Engine.list_campaigns()` (unfinished =
   points.csv rows < n_meas), `Engine.load_campaign(name)` rebuilds the plan from session.json plan_config
   (incl. tilt_seed), checks contiguity/consistency, removes a cut last row, loads `done` from points.csv and
   sets `next_index`; `start()` then calls `_reopen_session()` (append mode) instead of `_open_session()`.
@@ -231,7 +237,7 @@ least +/-1.5 bins.
   reaches fs/2 (625 kHz): 700/900 kHz were empty in the FFT and aliased in the waveform (+1.5-4 % bias).
   exp02 therefore rejects `scope_fft` with records > 62,500 points and `_check_record` refuses to save (and
   pauses) any sample whose point count/sample rate differ from the plan or alias the studied frequencies.
-  Session exp02_20261012_173036 (50 ms + scope FFT) is affected: use only its 300/500 kHz columns.
+  Session exp02_20261012-173036_grid3x3x2-xy100to1300-s600-z-300to0_K1-off65_pd15_tilt0_50ms (50 ms + scope FFT) is affected: use only its 300/500 kHz columns.
   LED generators are ~1.1-1.3 ppm off nominal (measured 2026-10-12 from 43 records of 100 ms, spread
   < 0.01 Hz: 299999.654 / 499999.456 / 700000.834 / 900000.984 Hz). With 100 ms records the lock-in at the
   NOMINAL frequency (`<f>kHz_wave_Vrms`) reads 0.2 / 0.5 / 1.1 / 1.6 % low. By the investigator's decision
@@ -276,7 +282,7 @@ called from outside the script).
   gantry_z_scale = 0.667 SQ+NLS gives 3.3 cm mean (nominal geometry 8.2 cm, 2.7 cm at z = -300).
   To verify: tape-measure the PD height at gantry z = -300 / -600. Report: report/experiment01_report.pdf.
   The 1.038 m base height must be at gantry z = -300 (at z = 0 the data give 27 cm errors, LED at 3.27 m).
-  Campaign folders (2026-10-15): campaign_20261014_185628 (z -600, -300) and campaign_20261015_000723
+  Campaign folders (2026-10-15): campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms (z -600, -300) and campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms
   (z -200, -100, 0; same XY grid and K = 10 angles), analysed together via `campaign_dirs`. The second
   campaign confirmed the vertical compression out of sample: nominal geometry gives a vertical bias linear
   in z (-11.5 ... +9.7 cm), real/commanded travel 0.647 (estimated heights) / 0.632 (direction-only

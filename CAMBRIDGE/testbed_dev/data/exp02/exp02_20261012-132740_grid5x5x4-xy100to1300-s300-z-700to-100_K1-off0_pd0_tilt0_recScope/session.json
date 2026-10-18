@@ -1,8 +1,8 @@
 {
   "experiment": "exp02_database",
   "status": "FINISHED",
-  "start": "2026-10-09T17:20:09.171893",
-  "end": "2026-10-09T17:32:07.777421",
+  "start": "2026-10-12T13:27:40.764326",
+  "end": "2026-10-12T13:47:33.593955",
   "plan_config": {
     "x": [
       100.0,
@@ -15,9 +15,9 @@
       300.0
     ],
     "z": [
-      -300.0,
+      -700.0,
       0.0,
-      150.0
+      200.0
     ],
     "k_angles": 1,
     "pd_tilt_deg": 0.0,
@@ -55,30 +55,31 @@
       1300.0
     ],
     "z": [
+      -700.0,
+      -500.0,
       -300.0,
-      -150.0,
-      0.0
+      -100.0
     ]
   },
   "angles_deg": [
     0.0
   ],
-  "n_sites": 75,
-  "n_meas": 75,
-  "n_done": 75,
+  "n_sites": 100,
+  "n_meas": 100,
+  "n_done": 100,
   "frequencies_Hz": [
     300000.0,
     500000.0,
     700000.0,
     900000.0
   ],
-  "estimated_total_s": 707.1,
+  "estimated_total_s": 932.1,
   "estimate_breakdown": {
     "mtrs_rotation_s": 44.333333333333336,
-    "gantry_motion_s": 452.80000000000007,
-    "arrival_s": 29.999999999999993,
-    "settle_s": 75.0,
-    "acquisition_s": 105.0,
+    "gantry_motion_s": 607.8000000000004,
+    "arrival_s": 39.99999999999999,
+    "settle_s": 100.0,
+    "acquisition_s": 140.0,
     "model": {
       "gantry_mm_s": 50.0,
       "gantry_accel_mm_s2": 250.0,
@@ -204,10 +205,10 @@
       "fft_window": "HANN",
       "fft_center_Hz": 500000.0,
       "fft_span_Hz": 1000000.0,
-      "timebase_s_div": 5.1e-05,
-      "sample_rate_Sa_s": 20000000.0,
+      "timebase_s_div": 0.0005,
+      "sample_rate_Sa_s": 10000000.0,
       "acquire_type": "NORM",
-      "ch_scale_V_div": 0.03,
+      "ch_scale_V_div": 0.033,
       "ch_offset_V": 0.0,
       "ch_coupling": "AC",
       "ch_impedance": "ONEM",
@@ -218,5 +219,6 @@
       "wgen_vpp_V": 2.0,
       "wgen_offset_V": 0.0
     }
-  }
+  },
+  "former_name": "exp02_20261012_132740"
 }

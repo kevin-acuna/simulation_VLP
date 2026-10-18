@@ -23,9 +23,9 @@ close all
 
 %% Hyperparameters
 here               = fileparts(mfilename('fullpath'));
-% campaign_dirs      = {'campaign_20261014_185628', ...   % campaign folders (points.csv) analysed together
-%                       'campaign_20261015_000723'};
-campaign_dirs      = {'campaign_20261014_185628'}
+% campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms', ...   % campaign folders (points.csv) analysed together
+%                       'campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms'};
+campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms'}
 calibration_csv    = fullfile(here, '..', 'Lambertian_order_LED_500khz', 'points.csv');
 simulations_dir    = fullfile(here, '..', '..', 'simulations');
 led_freq_khz       = 500;                  % LED used for positioning (column <f>kHz_<source>_Vrms)

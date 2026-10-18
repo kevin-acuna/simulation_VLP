@@ -8,10 +8,11 @@
 
 [paths]
 hardware_root = "../database_acquisition"     # hardware/ drivers + config/testbed.toml
-output_root = "data"                          # sessions: data/demo_<date>[_label]/
+output_root = "data"                          # sessions: data/demo_<date>_<region>_K.._pd.._tilt.._<record>[_label]/
 calibration_csv = "../analysis/Lambertian_order_LED_500khz/points.csv"   # used by tools/calibrate.py
 campaigns_root = "../analysis/Experiment_01_3D_estimation"               # used by tools/replay.py
-campaigns = ["campaign_20261014_185628", "campaign_20261015_000723"]
+campaigns = ["campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms",
+             "campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms"]
 
 # --------------------------------------------------------------------------
 # Positioning model and estimator (analysis/Experiment_01_3D_estimation)

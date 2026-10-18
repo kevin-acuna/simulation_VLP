@@ -131,7 +131,12 @@ models/Bastiaens 2020/Estimators/pd_fit_*.m`):
 `cutoff_cos`); a new estimator = a function in `vlp/estimators.py` added to `estimate_direction`; a new
 testbed = another `geometry.py` (the library does not change).
 
-## Session files (`data/demo_<date>[_label]/`)
+## Session files (`data/demo_<date>_<region>_K…_pd…_tilt…_<record>[_label]/`)
+
+The folder name follows the format of `database_acquisition` (`hardware/utils.py`), e.g.
+`demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms`: start time, positions
+(`random-<region>` in gantry mm, or `manual`), K and nominal MTRS offset, adapter tilt, MTRS tilt
+(`tilt<value>` or `tiltU<min>to<max>`) and record length (`x<n>` = samples per orientation).
 
 | File | Content |
 |---|---|

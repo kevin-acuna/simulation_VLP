@@ -1,5 +1,6 @@
 """
-storage.py - Files of a demo session (output_root/demo_<date>[_label]/).
+storage.py - Files of a demo session (output_root/demo_<date>_<region>_K.._pd.._tilt.._<record>[_label]/,
+same folder-name format as database_acquisition: hardware/utils.py).
 
   points.csv     one row per orientation, same columns as database_acquisition (the MATLAB analysis
                  reads it unchanged); site_id = point number
@@ -15,6 +16,8 @@ import os
 from datetime import datetime
 
 import numpy as np
+
+from hardware.utils import folder_name, name_span, name_tail, name_xy, unique_dir
 
 POINT_FIELDS_HEAD = ["meas_id", "pass", "site_id", "ix", "iy", "iz", "k", "iso_time", "unix_time_s",
                      "x_cmd_mm", "y_cmd_mm", "z_cmd_mm", "angle_cmd_deg", "mtrs_tilt_cmd_deg",
@@ -43,10 +46,22 @@ def _clean(obj):
     return obj
 
 
+def demo_name(config, nominal_offset, pd_tilt, when=None):
+    """Folder name in the format of the acquisition tools (hardware/utils.py), e.g.
+    demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms"""
+    c = config
+    where = "manual" if c.get("mode") == "manual" else (
+        f"random-{name_xy(c['region_x'], c['region_y'])}-z{name_span(*c['region_z'])}")
+    tail = name_tail(c["k_angles"], nominal_offset, pd_tilt, c.get("mtrs_tilt_mode", "fixed"), c.get("mtrs_tilt_deg", 0.0),
+                     c.get("mtrs_tilt_min_deg", 0.0), c.get("mtrs_tilt_max_deg", 0.0), c.get("record_ms", 0.0),
+                     c.get("n_samples", 1), 1, c.get("label", ""))
+    return folder_name("demo", when, where, tail)
+
+
 class Session:
     def __init__(self, output_root, config, freqs_hz, meta):
-        name = f"demo_{datetime.now():%Y%m%d_%H%M%S}" + (f"_{config['label']}" if config.get("label") else "")
-        self.dir = os.path.join(output_root, "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in name))
+        name = demo_name(config, meta.get("nominal_offset_deg", 0.0), meta.get("positioning", {}).get("pd_tilt_deg", 0.0))
+        self.dir = unique_dir(output_root, name)
         os.makedirs(self.dir, exist_ok=True)
         if config["save_waveforms"]:
             os.makedirs(os.path.join(self.dir, "wave"), exist_ok=True)
