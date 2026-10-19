@@ -207,6 +207,51 @@ actualización y latencia. Generalización a trayectorias, alturas y días no vi
 un PD rotatorio (Liu 2022). Sirve solo como estudio de arquitectura o *ablation* dentro del paper de
 trayectoria, o con un modelo híbrido y pruebas de generalización (otra altura, otro día, otro LED).
 
+### Variante: 1 LED, 1 PD, orientación conocida, trayectoria y PD con inclinaciones pequeñas
+**¿Ya se hizo?** En parte:
+- **Kim, Park y Kim, *Sensors* 22(17):6488, 2022** (*Single LED, Single PD-Based Adaptive Bayesian
+  Tracking*).
+  - Usa 1 LED (el más fuerte en cada instante) + 1 PD + IMU, con un filtro de partículas.
+  - Es un peatón con la mano inclinada (de ±5° a ±35°); la IMU aporta la orientación **y** la
+    navegación inercial (*dead reckoning*).
+  - Obtiene < 11 cm en 80–100 m, a altura casi fija (1.2–1.5 m), con la verdad terreno de un recorrido
+    marcado.
+- **Nuestro arXiv 2603.29400** (LED orientable): robusto a inclinaciones aleatorias del receptor, pero
+  sin trayectoria.
+
+**Qué sería nuevo:**
+1. **Sin navegación inercial:** solo se conoce la orientación (encoders o IMU), no el desplazamiento.
+2. **3D completo**, altura incluida.
+3. **Usar las inclinaciones pequeñas y naturales** (oscilación de un dron o de una mano) como
+   diversidad angular, con un análisis de observabilidad o PEB en función de su amplitud y del
+   movimiento.
+4. **Verdad terreno precisa** (gantry + encoders) y trayectorias controladas.
+5. **Comparación** del modelo físico (EKF / ventana NLS / filtro de partículas tipo Kim) con DL y con un
+   híbrido.
+
+**Factibilidad, con el estimador actual en simulación (estático, K = 5, mismo modelo y LED):**
+
+| Inclinación | 1° | 3° | 5° | 10° | 15° |
+|---|---|---|---|---|---|
+| Mediana del error, ruido 0.2 % (laboratorio) | 11.0 cm | 3.6 cm | 2.1 cm | 1.1 cm | 0.7 cm |
+| Mediana del error, ruido 1 % | 53 cm | 19 cm | 11 cm | 5.3 cm | 3.5 cm |
+
+- El error escala ~ ruido / inclinación. Con 3–5° funciona en el laboratorio; con ruido realista hace
+  falta acumular muchas muestras a lo largo de la trayectoria, que es justo lo que aporta el modelo
+  secuencial.
+- **El punto crítico es el error de orientación.** Con solo 3° de diversidad, 1° de error de la IMU es
+  enorme. Por eso "orientación perfectamente conocida" es un supuesto fuerte: hay que estudiar la
+  degradación frente al error de orientación (encoders exactos + ruido de IMU sintético).
+- **Emulación en el testbed:**
+  - adaptador de 0° + tilt del MTRS de ±3° (inclinaciones pequeñas y conocidas por encoder);
+  - gantry en trayectoria;
+  - rotación opcional para comparar.
+- **El tilt va a 0.5°/s y la rotación a 1.5°/s, así que las trayectorias deben ser lentas.** Es
+  válido: la física por muestra no depende de la velocidad. Importa la relación entre movimiento y
+  cambio de orientación, así que se puede escalar el tiempo.
+- **Requisitos:** el modo de adquisición continua (E9) y registros de 20 ms para tener ~3–5 muestras
+  por segundo.
+
 ### Para la reunión
 - **Actualizado tras revisar los antecedentes:** proponer como principal la **selección activa de
   orientaciones (opción 1)**: original, práctica y ligada a un cuello de botella medido.
