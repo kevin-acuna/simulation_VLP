@@ -107,10 +107,9 @@ def parse_args(argv=None):
 
 
 def build_testbed(sim, positioner):
-    modes = {}
+    modes = {"mtrs_optional": False}             # the demo needs the MTRS to reorient the photodetector
     if sim:
-        modes = {"gantry": "sim", "mtrs": "sim", "scope": "sim",
-                 "sim_speedup": SETTINGS["sim"].get("speedup", 4.0)}
+        modes.update(gantry="sim", mtrs="sim", scope="sim", sim_speedup=SETTINGS["sim"].get("speedup", 4.0))
     tb = Testbed(modes=modes)
     if tb.modes.get("scope") == "sim":           # signal consistent with the positioning model
         from sim_scope import DemoSimScope
@@ -132,6 +131,8 @@ def main(argv=None):
     engine = server = None
     try:
         tb.connect()
+        if not tb.has_mtrs:
+            raise RuntimeError("The demo needs the MTRS (config/testbed.toml [modes] mtrs = 'none').")
         engine = DemoEngine(tb, positioner, SETTINGS, args.output, DEFAULT_CONFIG)
         engine.start_threads()
         server = make_server(engine, args.host, args.port)

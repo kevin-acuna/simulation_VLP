@@ -574,7 +574,7 @@ def experiment_params():
 
 
 def main():
-    tb = Testbed(modes=DEVICE_MODE_OVERRIDE)
+    tb = Testbed(modes={**DEVICE_MODE_OVERRIDE, "mtrs_optional": False})     # exp01 needs the MTRS
     threads = []
     try:
         tb.connect()

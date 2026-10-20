@@ -77,6 +77,16 @@ Preview and stored in session.json; commanded tilt in plan.csv / points.csv `mtr
 tilt tested 2026-10-13 (campaign_20261013-101402_grid5x5x1-xy100to1300-s300-z-300_K1-off65_pd0_tiltU-1to1_100msx2, random [-1, 1]): measured = commanded, estimate 316 s vs
 311 s real. UI: "MTRS tilt" gauge panel between MTRS rotation and Live pose; FFT amplitude axis can be
 fixed by double-clicking the FFT (display only, stored in localStorage "dbacq.fftYfix").
+OPTIONAL MTRS (2026-10-20, the MTRS went to Thorlabs for repair; presented as a feature, never as a fault):
+[modes] mtrs = "real" | "sim" | "none" and mtrs_optional = true -> Testbed.connect() drops a failing MTRS
+(tb.mtrs = None, tb.has_mtrs False, tb.mtrs_status "not connected (...)"); `run.py --no-mtrs` = mode none.
+Engine: plan config `use_mtrs` (make_plan forces it to tb.has_mtrs; a loaded campaign keeps its value);
+use_mtrs False -> K=1, offset 0, tilt fixed 0, no MTRS command, angle/tilt columns EMPTY in points/plan/
+trajectory (angle_deg = reading if an unused MTRS is connected), session.json "orientation", folder
+tail "fixedOrient_pd<deg>" instead of "K..-off.._pd.._tilt..". A campaign with use_mtrs True cannot be
+continued without the MTRS (plan error). UI: header "MTRS not connected" (grey italic), MTRS_IDS inputs
+disabled, MTRS panels greyed (.mtrs-panel.unavailable), Orientation note. demo/run.py and exp01 pass
+mtrs_optional False (they need the MTRS); the demo also refuses mtrs = "none".
 Incident 2026-10-13 (sessions 103703, 113114 with 10 and 5 samples x 1 Mpts): VI_ERROR_IO in the middle of
 a waveform transfer, then VI_ERROR_TMO/NCIC; the scope's USB interface hung (front panel Run/Stop red, no
 answer to *IDN? even after device clear or reopening the session; Windows logged no USB disconnect). Only
