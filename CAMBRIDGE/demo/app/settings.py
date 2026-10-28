@@ -5,6 +5,7 @@ The positioning hyperparameters (PD model, estimator, LED, calibration, geometry
 the interface: edit config/demo.toml. Device parameters stay in database_acquisition/config/testbed.toml.
 """
 
+import json
 import os
 import sys
 import tomllib
@@ -25,6 +26,19 @@ def load_settings(path=None):
 def resolve(path):
     """Paths in demo.toml are relative to the demo folder."""
     return path if os.path.isabs(path) else os.path.normpath(os.path.join(DEMO_ROOT, path))
+
+
+def check_z_convention(folder):
+    """Refuses data whose session.json still has the gantry z negative upwards (z_negative_up = true): positions
+    recorded before the gantry Z repair of 2026-10-20 that were not converted to real mm (z positive upwards)."""
+    try:
+        with open(os.path.join(folder, "session.json")) as f:
+            s = json.load(f)
+    except (OSError, ValueError):
+        return
+    if s.get("testbed", {}).get("config", {}).get("view", {}).get("z_negative_up"):
+        raise SystemExit(f"{folder}: gantry z negative upwards (recorded before the gantry Z repair and not "
+                         "converted to real mm, z positive upwards): not supported.")
 
 
 def add_import_paths(settings):

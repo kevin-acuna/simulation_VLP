@@ -1,0 +1,193 @@
+<!-- Parameter set for Commonplace Robotics robotics control  /-->
+<!-- Robot Type: drylin-gantry/RoomGantry/DLE-RG-0012-BLDC    /-->
+<!-- support@cpr-robots.com                                   /-->
+<AmpParameter>
+    <Configuration ModuleType="ObjectLibrary" NrOfJoints="3"/>
+
+<Joint0 ID="16" Version="v03.12.02">
+   <FWParameter Index="0"  SubIndex="0"     Name="Serialno."                                 Value="1"            Unit=""         />
+   <FWParameter Index="0"  SubIndex="1"     Name="Firmware version"                          Value="199682"       Unit=""         />
+   <FWParameter Index="0"  SubIndex="2"     Name="Hardwareno."                               Value="80"           Unit=""         />
+   <FWParameter Index="0"  SubIndex="3"     Name="min. supply Voltage"                       Value="22000"        Unit="mV"       />
+   <FWParameter Index="0"  SubIndex="4"     Name="max. Boardtemp"                            Value="70000"        Unit="m°C"      />
+   <FWParameter Index="1"  SubIndex="0"     Name="Encoder Tics"                              Value="4000"         Unit="1/Rev"    />
+   <FWParameter Index="1"  SubIndex="1"     Name="no. of pole pairs"                         Value="4"            Unit=""         />
+   <FWParameter Index="1"  SubIndex="4"     Name="maxRPM"                                    Value="3500"         Unit="RPM"      />
+   <FWParameter Index="1"  SubIndex="5"     Name="max. Motortemp."                           Value="0"            Unit="m°C"      />
+   <FWParameter Index="1"  SubIndex="6"     Name="max. current"                              Value="8000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="7"     Name="StartUpMethod"                             Value="4"            Unit=""         />
+   <FWParameter Index="1"  SubIndex="8"     Name="Rotor offset"                              Value="0"            Unit="Tics"     />
+   <FWParameter Index="1"  SubIndex="9"     Name="Encoder inverted"                          Value="0"            Unit="bool"     />
+   <FWParameter Index="1"  SubIndex="10"    Name="Motor inverted"                            Value="0"            Unit="bool"     />
+   <FWParameter Index="1"  SubIndex="11"    Name="OpenLoopCurrent"                           Value="6000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="12"    Name="OpenLoopCurrent Standstill"                Value="50"           Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="13"    Name="OpenLoopCurrent Calibration"               Value="7000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="14"    Name="CalibrationTime"                           Value="50"           Unit="ms"       />
+   <FWParameter Index="1"  SubIndex="15"    Name="RotorCalibrated"                           Value="0"            Unit="bool"     />
+   <FWParameter Index="2"  SubIndex="0"     Name="Controltype"                               Value="1"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="1"     Name="Referencing type"                          Value="1"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="2"     Name="Referencing Offset"                        Value="100"          Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="3"     Name="Referencing speed"                         Value="50"           Unit="RPM"      />
+   <FWParameter Index="2"  SubIndex="4"     Name="Referencing speed slow"                    Value="10"           Unit="RPM"      />
+   <FWParameter Index="2"  SubIndex="5"     Name="Referencing switch type"                   Value="0"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="6"     Name="max. positionlag"                          Value="3000"         Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="7"     Name="Enable Brake"                              Value="0"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="8"     Name="Brake PWM high"                            Value="0"            Unit="%"        />
+   <FWParameter Index="2"  SubIndex="9"     Name="Brake PWM low"                             Value="0"            Unit="%"        />
+   <FWParameter Index="2"  SubIndex="10"    Name="IPO Position"                              Value="20000"        Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="11"    Name="IPO Velocity"                              Value="200"          Unit="Tics/10ms" />
+   <FWParameter Index="2"  SubIndex="12"    Name="Axis inverted"                             Value="1"            Unit="bool"     />
+   <FWParameter Index="2"  SubIndex="13"    Name="Gear ratio"                                Value="3"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="0"     Name="Position P"                                Value="400"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="1"     Name="Position I"                                Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="3"     Name="Position P scale"                          Value="8"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="4"     Name="Position min"                              Value="-3000"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="5"     Name="Position max"                              Value="3000"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="7"     Name="Velocity P"                                Value="2500"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="8"     Name="Velocity I"                                Value="1100"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="10"    Name="Velocity P scale"                          Value="10"           Unit=""         />
+   <FWParameter Index="3"  SubIndex="11"    Name="Velocity min"                              Value="-1024"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="12"    Name="Velocity max"                              Value="1024"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="13"    Name="Velocity sensor"                           Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="14"    Name="DQ P"                                      Value="1500"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="15"    Name="DQ I"                                      Value="200"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="17"    Name="DQ back calc"                              Value="200"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="18"    Name="DQ min"                                    Value="-2000"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="19"    Name="DQ max"                                    Value="2000"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="20"    Name="OpenLoop current P"                        Value="10"           Unit=""         />
+   <FWParameter Index="3"  SubIndex="21"    Name="OpenLoop current I"                        Value="1"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="22"    Name="OpenLoop current D"                        Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="23"    Name="OpenLoop current AntiWindUp"               Value="160000"       Unit=""         />
+   <FWParameter Index="3"  SubIndex="24"    Name="OpenLoop current min"                      Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="25"    Name="OpenLoop current max"                      Value="1600"         Unit=""         />
+   <FWParameter Index="4"  SubIndex="0"     Name="CAN max. missed coms"                      Value="500"          Unit=""         />
+   <FWParameter Index="4"  SubIndex="1"     Name="CAN ID Source"                             Value="1"            Unit=""         />
+   <FWParameter Index="4"  SubIndex="2"     Name="CAN ID"                                    Value="16"           Unit=""         />
+   <FWParameter Index="4"  SubIndex="3"     Name="SPI Active"                                Value="0"            Unit=""         />
+</Joint0>
+
+<Joint1 ID="32" Version="v03.12.02">
+   <FWParameter Index="0"  SubIndex="0"     Name="Serialno."                                 Value="1"            Unit=""         />
+   <FWParameter Index="0"  SubIndex="1"     Name="Firmware version"                          Value="199682"       Unit=""         />
+   <FWParameter Index="0"  SubIndex="2"     Name="Hardwareno."                               Value="80"           Unit=""         />
+   <FWParameter Index="0"  SubIndex="3"     Name="min. supply Voltage"                       Value="22000"        Unit="mV"       />
+   <FWParameter Index="0"  SubIndex="4"     Name="max. Boardtemp"                            Value="70000"        Unit="m°C"      />
+   <FWParameter Index="1"  SubIndex="0"     Name="Encoder Tics"                              Value="4000"         Unit="1/Rev"    />
+   <FWParameter Index="1"  SubIndex="1"     Name="no. of pole pairs"                         Value="4"            Unit=""         />
+   <FWParameter Index="1"  SubIndex="4"     Name="maxRPM"                                    Value="3500"         Unit="RPM"      />
+   <FWParameter Index="1"  SubIndex="5"     Name="max. Motortemp."                           Value="0"            Unit="m°C"      />
+   <FWParameter Index="1"  SubIndex="6"     Name="max. current"                              Value="8000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="7"     Name="StartUpMethod"                             Value="4"            Unit=""         />
+   <FWParameter Index="1"  SubIndex="8"     Name="Rotor offset"                              Value="0"            Unit="Tics"     />
+   <FWParameter Index="1"  SubIndex="9"     Name="Encoder inverted"                          Value="0"            Unit="bool"     />
+   <FWParameter Index="1"  SubIndex="10"    Name="Motor inverted"                            Value="0"            Unit="bool"     />
+   <FWParameter Index="1"  SubIndex="11"    Name="OpenLoopCurrent"                           Value="3000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="12"    Name="OpenLoopCurrent Standstill"                Value="50"           Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="13"    Name="OpenLoopCurrent Calibration"               Value="4000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="14"    Name="CalibrationTime"                           Value="50"           Unit="ms"       />
+   <FWParameter Index="1"  SubIndex="15"    Name="RotorCalibrated"                           Value="0"            Unit="bool"     />
+   <FWParameter Index="2"  SubIndex="0"     Name="Controltype"                               Value="1"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="1"     Name="Referencing type"                          Value="1"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="2"     Name="Referencing Offset"                        Value="0"            Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="3"     Name="Referencing speed"                         Value="-50"          Unit="RPM"      />
+   <FWParameter Index="2"  SubIndex="4"     Name="Referencing speed slow"                    Value="-10"          Unit="RPM"      />
+   <FWParameter Index="2"  SubIndex="5"     Name="Referencing switch type"                   Value="0"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="6"     Name="max. positionlag"                          Value="3000"         Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="7"     Name="Enable Brake"                              Value="0"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="8"     Name="Brake PWM high"                            Value="0"            Unit="%"        />
+   <FWParameter Index="2"  SubIndex="9"     Name="Brake PWM low"                             Value="0"            Unit="%"        />
+   <FWParameter Index="2"  SubIndex="10"    Name="IPO Position"                              Value="20000"        Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="11"    Name="IPO Velocity"                              Value="200"          Unit="Tics/10ms" />
+   <FWParameter Index="2"  SubIndex="12"    Name="Axis inverted"                             Value="0"            Unit="bool"     />
+   <FWParameter Index="2"  SubIndex="13"    Name="Gear ratio"                                Value="3"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="0"     Name="Position P"                                Value="400"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="1"     Name="Position I"                                Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="3"     Name="Position P scale"                          Value="8"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="4"     Name="Position min"                              Value="-3000"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="5"     Name="Position max"                              Value="3000"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="7"     Name="Velocity P"                                Value="2500"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="8"     Name="Velocity I"                                Value="1100"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="10"    Name="Velocity P scale"                          Value="10"           Unit=""         />
+   <FWParameter Index="3"  SubIndex="11"    Name="Velocity min"                              Value="-1024"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="12"    Name="Velocity max"                              Value="1024"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="13"    Name="Velocity sensor"                           Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="14"    Name="DQ P"                                      Value="1500"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="15"    Name="DQ I"                                      Value="200"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="17"    Name="DQ back calc"                              Value="200"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="18"    Name="DQ min"                                    Value="-2000"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="19"    Name="DQ max"                                    Value="2000"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="20"    Name="OpenLoop current P"                        Value="10"           Unit=""         />
+   <FWParameter Index="3"  SubIndex="21"    Name="OpenLoop current I"                        Value="1"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="22"    Name="OpenLoop current D"                        Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="23"    Name="OpenLoop current AntiWindUp"               Value="160000"       Unit=""         />
+   <FWParameter Index="3"  SubIndex="24"    Name="OpenLoop current min"                      Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="25"    Name="OpenLoop current max"                      Value="1600"         Unit=""         />
+   <FWParameter Index="4"  SubIndex="0"     Name="CAN max. missed coms"                      Value="500"          Unit=""         />
+   <FWParameter Index="4"  SubIndex="1"     Name="CAN ID Source"                             Value="1"            Unit=""         />
+   <FWParameter Index="4"  SubIndex="2"     Name="CAN ID"                                    Value="32"           Unit=""         />
+   <FWParameter Index="4"  SubIndex="3"     Name="SPI Active"                                Value="0"            Unit=""         />
+</Joint1>
+
+<Joint2 ID="48" Version="v03.12.02">
+   <FWParameter Index="0"  SubIndex="0"     Name="Serialno."                                 Value="1"            Unit=""         />
+   <FWParameter Index="0"  SubIndex="1"     Name="Firmware version"                          Value="199682"       Unit=""         />
+   <FWParameter Index="0"  SubIndex="2"     Name="Hardwareno."                               Value="80"           Unit=""         />
+   <FWParameter Index="0"  SubIndex="3"     Name="min. supply Voltage"                       Value="22000"        Unit="mV"       />
+   <FWParameter Index="0"  SubIndex="4"     Name="max. Boardtemp"                            Value="70000"        Unit="m°C"      />
+   <FWParameter Index="1"  SubIndex="0"     Name="Encoder Tics"                              Value="4000"         Unit="1/Rev"    />
+   <FWParameter Index="1"  SubIndex="1"     Name="no. of pole pairs"                         Value="4"            Unit=""         />
+   <FWParameter Index="1"  SubIndex="4"     Name="maxRPM"                                    Value="3500"         Unit="RPM"      />
+   <FWParameter Index="1"  SubIndex="5"     Name="max. Motortemp."                           Value="0"            Unit="m°C"      />
+   <FWParameter Index="1"  SubIndex="6"     Name="max. current"                              Value="10000"        Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="7"     Name="StartUpMethod"                             Value="4"            Unit=""         />
+   <FWParameter Index="1"  SubIndex="8"     Name="Rotor offset"                              Value="0"            Unit="Tics"     />
+   <FWParameter Index="1"  SubIndex="9"     Name="Encoder inverted"                          Value="0"            Unit="bool"     />
+   <FWParameter Index="1"  SubIndex="10"    Name="Motor inverted"                            Value="0"            Unit="bool"     />
+   <FWParameter Index="1"  SubIndex="11"    Name="OpenLoopCurrent"                           Value="8000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="12"    Name="OpenLoopCurrent Standstill"                Value="50"           Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="13"    Name="OpenLoopCurrent Calibration"               Value="8000"         Unit="mA"       />
+   <FWParameter Index="1"  SubIndex="14"    Name="CalibrationTime"                           Value="50"           Unit="ms"       />
+   <FWParameter Index="1"  SubIndex="15"    Name="RotorCalibrated"                           Value="0"            Unit="bool"     />
+   <FWParameter Index="2"  SubIndex="0"     Name="Controltype"                               Value="1"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="1"     Name="Referencing type"                          Value="1"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="2"     Name="Referencing Offset"                        Value="0"            Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="3"     Name="Referencing speed"                         Value="-20"          Unit="RPM"      />
+   <FWParameter Index="2"  SubIndex="4"     Name="Referencing speed slow"                    Value="-10"          Unit="RPM"      />
+   <FWParameter Index="2"  SubIndex="5"     Name="Referencing switch type"                   Value="0"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="6"     Name="max. positionlag"                          Value="3000"         Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="7"     Name="Enable Brake"                              Value="1"            Unit=""         />
+   <FWParameter Index="2"  SubIndex="8"     Name="Brake PWM high"                            Value="100"          Unit="%"        />
+   <FWParameter Index="2"  SubIndex="9"     Name="Brake PWM low"                             Value="100"          Unit="%"        />
+   <FWParameter Index="2"  SubIndex="10"    Name="IPO Position"                              Value="20000"        Unit="Tics"     />
+   <FWParameter Index="2"  SubIndex="11"    Name="IPO Velocity"                              Value="200"          Unit="Tics/10ms" />
+   <FWParameter Index="2"  SubIndex="12"    Name="Axis inverted"                             Value="0"            Unit="bool"     />
+   <FWParameter Index="2"  SubIndex="13"    Name="Gear ratio"                                Value="3"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="0"     Name="Position P"                                Value="400"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="1"     Name="Position I"                                Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="3"     Name="Position P scale"                          Value="8"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="4"     Name="Position min"                              Value="-3000"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="5"     Name="Position max"                              Value="3000"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="7"     Name="Velocity P"                                Value="2500"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="8"     Name="Velocity I"                                Value="1100"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="10"    Name="Velocity P scale"                          Value="10"           Unit=""         />
+   <FWParameter Index="3"  SubIndex="11"    Name="Velocity min"                              Value="-1024"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="12"    Name="Velocity max"                              Value="1024"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="13"    Name="Velocity sensor"                           Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="14"    Name="DQ P"                                      Value="1500"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="15"    Name="DQ I"                                      Value="200"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="17"    Name="DQ back calc"                              Value="200"          Unit=""         />
+   <FWParameter Index="3"  SubIndex="18"    Name="DQ min"                                    Value="-2000"        Unit=""         />
+   <FWParameter Index="3"  SubIndex="19"    Name="DQ max"                                    Value="2000"         Unit=""         />
+   <FWParameter Index="3"  SubIndex="20"    Name="OpenLoop current P"                        Value="10"           Unit=""         />
+   <FWParameter Index="3"  SubIndex="21"    Name="OpenLoop current I"                        Value="1"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="22"    Name="OpenLoop current D"                        Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="23"    Name="OpenLoop current AntiWindUp"               Value="160000"       Unit=""         />
+   <FWParameter Index="3"  SubIndex="24"    Name="OpenLoop current min"                      Value="0"            Unit=""         />
+   <FWParameter Index="3"  SubIndex="25"    Name="OpenLoop current max"                      Value="1600"         Unit=""         />
+   <FWParameter Index="4"  SubIndex="0"     Name="CAN max. missed coms"                      Value="500"          Unit=""         />
+   <FWParameter Index="4"  SubIndex="1"     Name="CAN ID Source"                             Value="1"            Unit=""         />
+   <FWParameter Index="4"  SubIndex="2"     Name="CAN ID"                                    Value="48"           Unit=""         />
+   <FWParameter Index="4"  SubIndex="3"     Name="SPI Active"                                Value="0"            Unit=""         />
+</Joint2>
+
+</AmpParameter>

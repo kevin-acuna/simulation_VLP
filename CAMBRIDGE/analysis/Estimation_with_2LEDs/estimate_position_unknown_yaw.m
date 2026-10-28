@@ -15,7 +15,7 @@ close all
 
 %% Hyperparameters
 here               = fileparts(mfilename('fullpath'));
-campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms'};
+campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms'};
 simulations_dir    = fullfile(here, '..', '..', 'simulations');
 rss_source         = 'wave';               % 'wave' (lock-in on the raw waveform) | 'fft' (FFT peak)
 led_freqs_khz      = [300 500 700 900];
@@ -24,10 +24,9 @@ reference_led_khz  = 500;                  % always used
 partner_leds_khz   = [300 700 900];        % paired one by one with the reference
 include_all_leds   = true;                 % also all the LEDs together
 % PD geometry (same as scenario 1)
-H_base_cal_m       = 1.038;
-z_cal_mm           = -300;
+H_base_cal_m       = 1.038;                % gantry base height at z = z_cal_mm (m); gantry z in real mm, up
+z_cal_mm           = 180;
 pd_elevation_m     = 0.09696;
-gantry_z_scale     = 0.6;
 pd_tilt_deg        = 15;                   % adapter tilt (known: it does not depend on the yaw)
 mtrs_direction     = 1;
 psi_3db_rad        = 0.61;
@@ -46,7 +45,7 @@ output_dir         = fullfile(here, 'results_unknown_yaw');
 %% Setup
 addpath(simulations_dir);
 cambridge_setup();
-pd_height = @(z_gantry_mm) H_base_cal_m + gantry_z_scale*(z_cal_mm - z_gantry_mm)/1e3 + pd_elevation_m;
+pd_height = @(z_gantry_mm) H_base_cal_m + (z_gantry_mm - z_cal_mm)/1e3 + pd_elevation_m;
 column = @(f) sprintf('%gkHz_%s_Vrms', f, rss_source);
 base = system_parameters();
 base.acquisition.samples_per_orientation = 1;

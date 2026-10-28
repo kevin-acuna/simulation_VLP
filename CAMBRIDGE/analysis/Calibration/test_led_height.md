@@ -36,6 +36,6 @@ Se ajustan juntos la XY del LED, su altura H, A y m. La altura del PD es conocid
 - **Medir la altura del LED** (cinta o telémetro láser, una vez) y calibrar XY, A y m con un plano de
   3 × 3 o 4 × 4 puntos.
 - **Alternativa sin medir la altura:** un **segundo plano** de puntos a otra altura del gantry,
-  conocida (por ejemplo 9 puntos a z = −600 y 9 a z = 0). Entre los dos planos, la distancia d cambia
+  conocida (por ejemplo 9 puntos a z = 360 y 9 a z = 0). Entre los dos planos, la distancia d cambia
   de forma conocida y se separa de A y m. Es la misma idea que permitiría separar la inclinación del
   LED. Requiere el barrido de E7 para comprobarlo.

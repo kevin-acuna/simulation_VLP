@@ -11,6 +11,13 @@
 \date{15 de octubre de 2026}
 \begin{document}
 \maketitle
+\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\small\textbf{Nota (28/10/2026).} Este informe conserva
+las $z$ del gantry tal como se comandaron entonces (eje Z negativo hacia arriba, recorrido real $0.6\times$ el
+comandado: $s_z$). El 20/10 se corrigió la configuración del robot y los datos se convirtieron a mm reales con $z$
+hacia arriba: $z_{\rm actual}=-0.6\,z_{\rm informe}$ ($-600\to360$, $-300\to180$, $-200\to120$, $-100\to60$, $0\to0$),
+y las carpetas cambiaron de nombre (\path{z-600to-300}~$\to$~\path{z180to360}, \path{z-200to0}~$\to$~\path{z0to120}).
+Las alturas físicas y todos los resultados son los mismos; los programas ya no usan $s_z$.}}
+\medskip
 \begin{abstract}
 \textbf{Geometría medida (15/10).} La medición con cinta da $s_z=0.6$: el PD sube 0.6~mm por cada mm comandado en el eje Z del gantry. Con ese valor real, SQ + NLS da en las 125 posiciones un error 3D de \textbf{3.92~cm de media} (RMSE 4.30, mediana 3.44, P90 6.73~cm) sin ningún fallo; SQ + GLS da 3.91~cm. Sin calibrar el offset del MTRS el error es de 4.98~cm. Por altura, va de 3.1~cm ($Z=1.315$~m) a 4.6~cm ($Z=0.955$~m). Queda un sesgo vertical residual que va de $+0.5$ a $-2.3$~cm entre la altura más alta y la más baja (sección~\ref{sec:measured}).
 

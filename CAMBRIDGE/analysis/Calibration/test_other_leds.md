@@ -7,7 +7,7 @@
 ## Qué se hizo
 1. **Calibración** de cada LED (300, 500, 700 y 900 kHz) con **solo** los puntos de una rejilla
    regular de 3 × 3 (9) o de 4 × 4 (16) sobre el área de trabajo (X, Y de 100 a 1300 mm). Se usa el
-   barrido con el PD horizontal (z = −300, K = 1) y el modelo `RSS = A·R_SQ(φ)·cos^m φ / d²`, con el
+   barrido con el PD horizontal (z = 180, K = 1) y el modelo `RSS = A·R_SQ(φ)·cos^m φ / d²`, con el
    LED apuntando hacia abajo a 3.0 m.
    - **XY ajustada** (primera vez de verdad): la XY del LED, A y m salen juntos de esos mismos
      puntos.

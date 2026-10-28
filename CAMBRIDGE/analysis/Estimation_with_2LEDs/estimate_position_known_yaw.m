@@ -12,14 +12,14 @@
 % Reference: the single-LED method of experiment 01 (direction + range with the calibrated A, m).
 %
 % Coordinates: X, Y of the gantry (m), Z = height above the floor (m, up). The PD centre is
-%   Z_pd = H_base_cal + gantry_z_scale (z_cal - z_gantry) + pd_elevation
+%   Z_pd = H_base_cal + (z_gantry - z_cal)/1000 + pd_elevation    (gantry z in real mm, positive upwards)
 % LED positions: given (mm) or fitted from the flat-PD scan of RSS_Distribution (calibration data, not the
 % campaign): joint fit of XY, A and m of RSS = A R(phi) cos(phi)^m / d^2, horizontal PD (psi = phi).
 close all
 
 %% Hyperparameters
 here               = fileparts(mfilename('fullpath'));
-campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms'};
+campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms'};
 simulations_dir    = fullfile(here, '..', '..', 'simulations');
 rss_source         = 'wave';               % 'wave' (lock-in on the raw waveform) | 'fft' (FFT peak)
 % LEDs: frequency, XY in gantry coordinates (mm, or 'fit' = fitted from the flat-PD scan) and height (m)
@@ -38,10 +38,9 @@ partner_leds_khz   = [300 700 900];        % paired one by one with the referenc
 include_all_leds   = true;                 % also the position from all the LEDs together
 % PD geometry and orientation (final values of experiment 01 / demo/config/demo.toml)
 H_base_cal_m       = 1.038;                % height of the gantry base at z = z_cal_mm (m)
-z_cal_mm           = -300;
+z_cal_mm           = 180;                  % gantry z of the flat scan (mm)
 pd_elevation_cal_m = 0.09696;              % gantry base -> PD centre in the flat scan (0 deg adapter)
 pd_elevation_m     = 0.09696;              % gantry base -> PD centre in the campaign (MTRS + 15 deg adapter)
-gantry_z_scale     = 0.6;                  % real vertical travel per commanded mm (tape, 2026-10-15)
 pd_tilt_deg        = 15;                   % adapter tilt from the vertical
 mtrs_offset_deg    = 66.5;                 % real MTRS offset (calibrated with LED 500 at (281.1, 904.8))
 mtrs_direction     = 1;
@@ -63,7 +62,7 @@ output_dir         = fullfile(here, 'results_known_yaw');
 %% Setup
 addpath(simulations_dir);
 cambridge_setup();
-pd_height = @(z_gantry_mm, elevation_m) H_base_cal_m + gantry_z_scale*(z_cal_mm - z_gantry_mm)/1e3 + elevation_m;
+pd_height = @(z_gantry_mm, elevation_m) H_base_cal_m + (z_gantry_mm - z_cal_mm)/1e3 + elevation_m;
 column = @(f) sprintf('%gkHz_%s_Vrms', f, rss_source);
 base = system_parameters();
 base.acquisition.samples_per_orientation = 1;

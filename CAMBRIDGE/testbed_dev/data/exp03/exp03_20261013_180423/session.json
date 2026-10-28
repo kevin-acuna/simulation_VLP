@@ -2,7 +2,7 @@
   "position_mm": [
     400.0,
     300.0,
-    -500.0
+    300.0
   ],
   "frequencies": {
     "start_Hz": 5000.0,
@@ -251,5 +251,11 @@
     "mtrs": "real",
     "scope": "real",
     "sim_speedup": 4.0
+  },
+  "z_conversion": {
+    "date": "2026-10-28",
+    "formula": "z [mm] = -0.6 x z as recorded",
+    "reason": "recorded before the gantry Z repair of 2026-10-20 (robot Z GearScale 166.067 instead of 276.778, ratio 0.600, and Cartesian z negative upwards). Converted to the current convention: z in real mm, positive upwards, z = 0 at the reference (lowest photodetector position). Same physical positions; every z field (CSV columns, fft headers, session.json) and the folder name converted",
+    "previous_name": "exp03_20261013_180423"
   }
 }

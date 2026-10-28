@@ -45,7 +45,10 @@ The interface opens at <http://127.0.0.1:8766> (8765 is the Database Acquisition
 | 3D error per point | bars of the last 80 points with mean and P90 (hover a bar: its error in cm), CDF of all the points |
 
 Z in the views is the **height of the PD centre above the floor** (physical frame of the estimator).
-The LED position is not drawn unless `[display] show_led = true`.
+The positions typed or drawn in the configuration (random region, manual X Y Z) are **gantry
+coordinates**: the gantry z is in real mm, positive upwards (z = 0 = lowest PD position, 0.955 m;
+z = 700 = 1.655 m). The default random region z = 0–360 mm covers the heights where the
+positioning was validated (PD 0.955–1.315 m). The LED position is not drawn unless `[display] show_led = true`.
 
 ---
 
@@ -57,7 +60,7 @@ The LED position is not drawn unless `[display] show_led = true`.
 |---|---|
 | `[positioning]` | LED frequency (500 kHz), PD response (`SQ` / `cosine_mR` / `cosine`), estimator (`NLS` / `GLS` / `WLS`) |
 | `[led]` | LED XY and height, calibration constant `A` and Lambertian order `m` |
-| `[geometry]` | gantry base height, PD elevation (9.696 cm), **gantry z scale 0.6** (measured), adapter tilt 15 deg, **real MTRS offset** (calibrated) |
+| `[geometry]` | gantry base height at z = 0, PD elevation (9.696 cm), adapter tilt 15 deg, **real MTRS offset** (calibrated) |
 | `[plan]` | **nominal MTRS offset** (65 deg) of the commanded angles |
 | `[display]` | `show_led` (default false) |
 | `[sim]` | `--sim`: speed-up, model mismatch (LED offset) and RSS noise |
@@ -67,8 +70,12 @@ campaign, theta_k = (65 + 360 k / K) mod 360 (K = 5: 65, 137, 209, 281, 353 deg)
 builds the PD normals from the measured angles with the real offset calibrated from the campaigns
 (`[geometry] mtrs_offset_deg` = 66.5 deg).
 
+PD height: `Z_pd = base_height + z / 1000 + pd_elevation = 0.858 + z / 1000 + 0.097` m (gantry z in real mm,
+positive upwards). The demo refuses to start if `testbed.toml` `[view] z_negative_up = true`.
+
 Default (best validated configuration): **SQ + NLS**, LED (281.1, 904.8) mm, A = 0.062707 V m², m = 6.0918,
-real MTRS offset 66.5 deg, gantry z scale 0.6. The LED XY and the real offset are correlated: change them
+real MTRS offset 66.5 deg (calibrated on the campaigns of 14–15/10; re-calibrate it after remounting the
+adapter or servicing the MTRS). The LED XY and the real offset are correlated: change them
 together and recompute A and m with `tools/calibrate.py` (the alternative LED (270, 890) goes with a
 real offset of 67.3 deg and A = 0.06273, m = 6.151).
 
@@ -85,6 +92,10 @@ python tools/replay.py                    # replays the recorded campaigns throu
 python tools/replay.py --offset-fit all   # MTRS offset fitted on all sites (value for demo.toml)
 python tools/replay.py --K 5              # near-uniform subsets of 5 of the 10 recorded angles
 ```
+
+All the recorded data use the same gantry z (real mm, positive upwards): the datasets recorded before
+the gantry Z repair of 2026-10-20 were converted (`session.json` `z_conversion`). The tools refuse data
+whose `session.json` still has `z_negative_up = true`.
 
 `tools/replay.py` reproduces the MATLAB analysis (`analysis/Experiment_01_3D_estimation`) on the 125
 sites of the two campaigns: SQ + NLS, LED (270, 890), offset fitted per height, **3.92 cm** (MATLAB 3.92),
@@ -134,7 +145,7 @@ testbed = another `geometry.py` (the library does not change).
 ## Session files (`data/demo_<date>_<region>_K…_pd…_tilt…_<record>[_label]/`)
 
 The folder name follows the format of `database_acquisition` (`hardware/utils.py`), e.g.
-`demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms`: start time, positions
+`demo_20261016-113422_random-xy100to1300-z0to360_K5-off65_pd15_tilt0_100ms`: start time, positions
 (`random-<region>` in gantry mm, or `manual`), K and nominal MTRS offset, adapter tilt, MTRS tilt
 (`tilt<value>` or `tiltU<min>to<max>`) and record length (`x<n>` = samples per orientation).
 

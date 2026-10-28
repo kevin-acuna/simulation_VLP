@@ -1,0 +1,240 @@
+{
+  "experiment": "exp02_database",
+  "status": "FINISHED",
+  "start": "2026-10-12T17:30:36.229547",
+  "end": "2026-10-12T17:35:36.179785",
+  "plan_config": {
+    "x": [
+      100.0,
+      1300.0,
+      600.0
+    ],
+    "y": [
+      100.0,
+      1300.0,
+      600.0
+    ],
+    "z": [
+      180.0,
+      0.0,
+      180.0
+    ],
+    "k_angles": 1,
+    "angle_offset_deg": 65.0,
+    "pd_tilt_deg": 15.0,
+    "n_samples": 1,
+    "freqs_khz": [
+      300.0,
+      500.0,
+      700.0,
+      900.0
+    ],
+    "settle_s": 1.0,
+    "record_ms": 50.0,
+    "record_fs_msa": 10.0,
+    "scope_fft": true,
+    "serpentine_xy": true,
+    "serpentine_angles": true,
+    "save_waveforms": true,
+    "time_points": 8000000,
+    "label": ""
+  },
+  "notes": {
+    "pd_tilt_deg": "mechanical tilt of the 3D-printed PD mount (recorded only; the MTRS tilt stays at the config value)",
+    "angles": "theta_k = (angle_offset_deg + 360*k/K) mod 360, k = 0..K-1 (MTRS rotation); measured in increasing MTRS angle so 0/360 is never crossed"
+  },
+  "axes_mm": {
+    "x": [
+      100.0,
+      700.0,
+      1300.0
+    ],
+    "y": [
+      100.0,
+      700.0,
+      1300.0
+    ],
+    "z": [
+      180.0,
+      0.0
+    ]
+  },
+  "angles_deg": [
+    65.0
+  ],
+  "n_sites": 18,
+  "n_meas": 18,
+  "n_done": 18,
+  "frequencies_Hz": [
+    300000.0,
+    500000.0,
+    700000.0,
+    900000.0
+  ],
+  "estimated_total_s": 331.6,
+  "estimate_breakdown": {
+    "mtrs_rotation_s": 0.0,
+    "gantry_motion_s": 209.625,
+    "arrival_s": 7.200000000000001,
+    "settle_s": 18.0,
+    "acquisition_s": 96.76860119997146,
+    "model": {
+      "gantry_mm_s": 50.0,
+      "gantry_accel_mm_s2": 160.0,
+      "mtrs_deg_s": 1.5,
+      "mtrs_accel_deg_s2": 1.5,
+      "acquisition_s": 4.976,
+      "acquisition_source": "measured at preview with the current scope settings",
+      "save_s": 0.4,
+      "arrival_s": 0.4,
+      "record_points": 500000
+    }
+  },
+  "record": {
+    "record_ms": 50.0,
+    "sample_rate_Sa_s": 10000000.0,
+    "points_per_sample": 500000,
+    "fft_source": "oscilloscope Math FFT"
+  },
+  "testbed": {
+    "config_file": "c:\\Users\\lisvuser\\Documents\\Kevin\\Software\\simulation_VLP\\CAMBRIDGE\\implementation\\tests\\config\\testbed.toml",
+    "modes": {
+      "gantry": "real",
+      "mtrs": "real",
+      "scope": "real",
+      "sim_speedup": 4.0
+    },
+    "config": {
+      "modes": {
+        "gantry": "real",
+        "mtrs": "real",
+        "scope": "real",
+        "sim_speedup": 4.0
+      },
+      "gantry": {
+        "ip": "192.168.3.11",
+        "port": 3920,
+        "workspace_min_mm": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "workspace_max_mm": [
+          1400.0,
+          1400.0,
+          420.0
+        ],
+        "velocity_mm_s": 50.0,
+        "override_pct": 100.0,
+        "acceleration_pct": 20.0,
+        "tolerance_mm": 1.0,
+        "still_speed_mm_s": 0.5,
+        "connect_attempts": 5,
+        "disable_on_exit": false,
+        "expected_robot": "DLE-RG-0012-BLDC",
+        "expected_versions": [
+          "V980-14-003-3",
+          "V980-14-004-4"
+        ]
+      },
+      "mtrs": {
+        "rot_serial": "",
+        "tilt_serial": "",
+        "velocity_deg_s": 1.5,
+        "acceleration_deg_s2": 1.5,
+        "rotation_mode": "LinearRange",
+        "rotation_direction": "Quickest",
+        "tilt_target_deg": 0.0,
+        "tolerance_deg": 0.05,
+        "polling_ms": 50,
+        "kinesis_path": "C:\\Program Files\\Thorlabs\\Kinesis"
+      },
+      "scope": {
+        "address": "USB0::0x0957::0x17BC::MY64080105::0::INSTR",
+        "channel": 1,
+        "fft_function": 0,
+        "fft_points": "MAX",
+        "timeout_ms": 20000,
+        "led_freq_hz": "wgen",
+        "led_freq_band_hz": 50.0,
+        "fft_peak_min_hz": 1.0
+      },
+      "motion": {
+        "arrival_hold_s": 0.3,
+        "stall_time_s": 5.0,
+        "timeout_margin_s": 30.0,
+        "poll_s": 0.05
+      },
+      "view": {
+        "mtrs_zero_location": "N",
+        "mtrs_clockwise": false,
+        "z_negative_up": false
+      }
+    },
+    "gantry": {
+      "robot_type": "drylin-gantry/RoomGantry/DLE-RG-0012-BLDC",
+      "robot_control_version": "V980-14-003-3",
+      "ip": "192.168.3.11",
+      "port": 3920,
+      "simulated_irc": false,
+      "velocity_mm_s": 50.0,
+      "override_pct": 100.0,
+      "acceleration_pct": null,
+      "workspace_min_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "workspace_max_mm": [
+        1400.0,
+        1400.0,
+        420.0
+      ]
+    },
+    "mtrs": {
+      "rot_serial": "117000096",
+      "rot_channel": 2,
+      "tilt_serial": "117000096",
+      "tilt_channel": 1,
+      "velocity_deg_s": 1.5,
+      "acceleration_deg_s2": 1.5,
+      "rotation_mode": "LinearRange",
+      "rotation_direction": "Quickest",
+      "tilt_target_deg": 0.0
+    },
+    "scope": {
+      "idn": "AGILENT TECHNOLOGIES,MSO-X 4154A,MY64080105,07.65.2024120521",
+      "address": "USB0::0x0957::0x17BC::MY64080105::0::INSTR",
+      "channel": 1,
+      "fft_function": 1,
+      "fft_source": "CHAN1",
+      "fft_vtype": "VRMS",
+      "fft_window": "HANN",
+      "fft_center_Hz": 500000.0,
+      "fft_span_Hz": 1000000.0,
+      "timebase_s_div": 0.0005,
+      "sample_rate_Sa_s": 10000000.0,
+      "acquire_type": "NORM",
+      "ch_scale_V_div": 0.075,
+      "ch_offset_V": 0.0,
+      "ch_coupling": "AC",
+      "ch_impedance": "ONEM",
+      "fft_units": "Vrms",
+      "wgen_output": "1",
+      "wgen_function": "SIN",
+      "wgen_frequency_Hz": 700000.0,
+      "wgen_vpp_V": 2.0,
+      "wgen_offset_V": 0.0,
+      "acq_digitizer": "1",
+      "acq_points": 50000,
+      "acq_srate_max_Sa_s": 5000000000.0
+    }
+  },
+  "former_name": "exp02_20261012_173036",
+  "z_conversion": {
+    "date": "2026-10-28",
+    "formula": "z [mm] = -0.6 x z as recorded",
+    "reason": "recorded before the gantry Z repair of 2026-10-20 (robot Z GearScale 166.067 instead of 276.778, ratio 0.600, and Cartesian z negative upwards). Converted to the current convention: z in real mm, positive upwards, z = 0 at the reference (lowest photodetector position). Same physical positions; every z field (CSV columns, fft headers, session.json) and the folder name converted",
+    "previous_name": "exp02_20261012-173036_grid3x3x2-xy100to1300-s600-z-300to0_K1-off65_pd15_tilt0_50ms"
+  }
+}

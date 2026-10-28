@@ -36,7 +36,7 @@ class TestEngineSim(unittest.TestCase):
         eng = DemoEngine(tb, pos, SETTINGS, out)
         try:
             eng.start_threads()
-            eng.add_target([700.0, 700.0, -300.0])            # manual position first, then random ones
+            eng.add_target([700.0, 700.0, 180.0])             # manual position first, then random ones
             eng.start({"k_angles": 5, "max_points": 3, "settle_s": 0.0, "record_ms": 2.0, "save_waveforms": True})
             t0 = time.time()
             while eng.state in ("RUNNING", "STOPPING") and time.time() - t0 < 120:

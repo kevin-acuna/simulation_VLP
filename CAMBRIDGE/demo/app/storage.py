@@ -48,7 +48,7 @@ def _clean(obj):
 
 def demo_name(config, nominal_offset, pd_tilt, when=None):
     """Folder name in the format of the acquisition tools (hardware/utils.py), e.g.
-    demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms"""
+    demo_20261016-113422_random-xy100to1300-z0to360_K5-off65_pd15_tilt0_100ms"""
     c = config
     where = "manual" if c.get("mode") == "manual" else (
         f"random-{name_xy(c['region_x'], c['region_y'])}-z{name_span(*c['region_z'])}")

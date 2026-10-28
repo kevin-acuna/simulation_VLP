@@ -35,10 +35,10 @@ cos φ = h/d):
 | Posición del LED (281.1, 904.8) mm, a 3.0 m de altura | **A**, la ganancia |
 | Respuesta del PD: SQ (Bastiaens 2020, ψ₃dB = 0.61 rad) | **m**, el orden Lambertiano |
 | Offset del MTRS: 66.5° | |
-| Geometría del testbed (s_z = 0.6, alturas del PD) | |
+| Geometría del testbed (alturas del PD; z del gantry en mm reales, hacia arriba) | |
 
 - **Datos de calibración:** solo el barrido con el **PD horizontal** (adaptador de 0°, K = 1, tilt
-  0): `campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z-300_K1-off65_pd0_tilt0_100ms`.
+  0): `campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z180_K1-off65_pd0_tilt0_100ms`.
   Son 19 881 puntos cada 10 mm, con h = 1.865 m y φ de 0 a 37.7°. Hay un punto de la rejilla a 4.9 mm
   de la vertical del LED (el "nadir").
 - **Puntos reales:** cada punto de calibración es un punto medido de verdad, una muestra de 100 ms.

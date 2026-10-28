@@ -13,7 +13,7 @@ Two folders (the old `CAMBRIDGE/implementation/` was split on 2026-10-12):
   `vlp/` = generic numpy library (responses SQ / cos^m, Lambertian VLPModel, GLS/WLS/NLS + broadcast-dual
   range, LM on the sphere, fit_lambertian) - port of simulations/ rx_estimate + pd_fit_*, meant to be shared;
   `app/` = run.py, engine (random/manual point loop, K orientations, pause after the orientation, Stop
-  immediate), geometry.py (gantry -> PD: z scale 0.6, elevation 0.09696, n = [sin t sin a, sin t cos a,
+  immediate), geometry.py (gantry -> PD: Z = 0.858 + z/1000 + 0.09696, n = [sin t sin a, sin t cos a,
   cos t], a = theta - offset), positioner.py, storage.py (points.csv = database_acquisition columns +
   estimates.csv), sim_scope.py (DemoSimScope: RSS from the model + LED offset + noise), server.py, web/.
   Hyperparameters ONLY in `config/demo.toml` (not in the UI, the model/estimator name is not shown): SQ + NLS,
@@ -28,7 +28,7 @@ Two folders (the old `CAMBRIDGE/implementation/` was split on 2026-10-12):
   `python -m unittest discover -s tests -v` (13 tests, ~20 s). Headless screenshot: run.py --sim --no-browser,
   then msedge --headless=new --screenshot=... "http://127.0.0.1:8766/?snapshot=1&view=top&config=0".
   (test_engine_sim uses random positions without a seed: an err < 30 mm assertion fails now and then.)
-  INCIDENT 2026-10-16 (session demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms): between 14:29:33 and 14:31:16 (point 48) the MTRS
+  INCIDENT 2026-10-16 (session demo_20261016-113422_random-xy100to1300-z0to360_K5-off65_pd15_tilt0_100ms): between 14:29:33 and 14:31:16 (point 48) the MTRS
   TILT left 0 by itself (nothing commanded it: the demo only set it at connect; Kinesis closed; no other
   program); reading = 3.000 * sin(theta - 281 deg) (+/-2.853, +/-1.763, 0 at the 5 angles), still there at
   17:12. RSS shape fit: before offset 66.5 / tilt 15 -> 0.77 % rms; after -> 3 %, best explained by a ~3.7 deg
@@ -74,9 +74,60 @@ tilt_velocity_deg_s, tilt_acceleration_deg_s2). `MTRS.move_tilt/tilt_moving/tilt
 `move_to_pose/wait_pose/go_to_pose(..., tilt=)`. The app: `mtrs_tilt_mode` fixed | random (uniform in
 [min,max], one value per (site, k) reused by passes, numpy default_rng(tilt_seed), seed drawn at every
 Preview and stored in session.json; commanded tilt in plan.csv / points.csv `mtrs_tilt_cmd_deg`). Real
-tilt tested 2026-10-13 (campaign_20261013-101402_grid5x5x1-xy100to1300-s300-z-300_K1-off65_pd0_tiltU-1to1_100msx2, random [-1, 1]): measured = commanded, estimate 316 s vs
+tilt tested 2026-10-13 (campaign_20261013-101402_grid5x5x1-xy100to1300-s300-z180_K1-off65_pd0_tiltU-1to1_100msx2, random [-1, 1]): measured = commanded, estimate 316 s vs
 311 s real. UI: "MTRS tilt" gauge panel between MTRS rotation and Live pose; FFT amplitude axis can be
 fixed by double-clicking the FFT (display only, stored in localStorage "dbacq.fftYfix").
+GANTRY Z SCALE ROOT CAUSE (2026-10-20): robot config read by iRC today
+(C:\iRC-igusRobotControl-V14\Data\Robots\MyRobots\3e9b8dab\drylin-gantry\RoomGantry\DLE-RG-0012-BLDC\DLE-RG-0012-BLDC.xml)
+has GearScale A1/A2 = 571.428, A3 = 166.067 (= value of the SMALL stock DLE-RG-0012-BLDC, Z stroke 160 mm), while
+igus' large BLDC room gantries (0004-BLDC, 001387, 001502-BLDC in iRC V15 Data/Robots) use A3 = 276.778:
+166.067 / 276.778 = 0.600 = measured gantry_z_scale. The config is customised (SoftwareMinMax 1500/1500/1250, lengths
+1620/1680/1300) but Z GearScale was not updated. Amp parameters backup (testbed_dev/gantry_reparation/AmpParamBackup_
+2026-10-20_15-35-31_DLE-RG-0012-BLDC.dat) shows nothing abnormal (4000 tics/rev, internal gear 3, all axes equal).
+NOT changed yet: confirm with igus, back up, check the free physical Z stroke (Z=-700 is ~420 mm real today), then
+adjust testbed.toml workspace and analysis z scale (0.6 for data before the fix, 1.0 after).
+GANTRY FIXED (2026-10-20/21): robot config written with GearScale A3 = 276.778 (real mm), dirA3 = "0 0 1"
+(Cartesian Z = +A3, right-handed, Z UP, Z = 0 at the reference = lowest PD position), A3Max = 720 (physical top
+~750 mm). Backups in testbed_dev/gantry_reparation/. The "minimum joint position reached (-0.000250 < 0)" error
+of 10-20 came from not restarting the robot software after writing the config (user, 10-21) -> minimum Z = 0
+again. database_acquisition updated (2026-10-21): workspace Z [0, 700], [view] z_negative_up = false, defaults Z 300, SimScope LEDs at Z = 2000 mm (REF 2000 mm),
+session.json notes.z; campaigns recorded with the other z_negative_up are flagged in "Continue a campaign" and
+cannot be loaded. 04_igus_move_positions.py (Z 0..700) and exp01 (reads range/view from the config) updated.
+DEMO updated (2026-10-21, simplified 2026-10-28): geometry.py Z_pd = base_height (0.858 m at z = 0) + z/1000
++ pd_elevation (0.09696), NO scale / direction / legacy geometry. Defaults region_z [0, 360] (= PD 0.955-1.315 m,
+the validated heights); engine _static z_to_height map; run.py refuses testbed.toml z_negative_up = true;
+tools (replay, calibrate via load_sites / check_z_convention) refuse session.json with z_negative_up = true.
+mtrs_offset_deg 66.5 must be re-calibrated (adapter remounted 10-19, MTRS serviced). 13 tests OK.
+Z CONVERSION OF ALL DATA (2026-10-28, user request: no z scale anywhere, shareable database with real values):
+every dataset recorded before the repair converted in place to real mm, z up: z_new = -0.6 * z_old (exact
+decimal; -600 -> 360, -300 -> 180, -200 -> 120, -100 -> 60, 0 -> 0) by
+testbed_dev/gantry_reparation/convert_z_to_real_mm.py (idempotent; manifest z_conversion_manifest.json =
+old -> new folder names + loose CSVs). Converted: CSV columns z_cmd_mm, z_mm, z_target_mm, est_gantry_z_mm;
+"# z_mm:" headers of fft/*.csv and exp01 p*_fft/wave.csv; session.json plan_config.z, axes_mm.z, gantry
+workspace z ([-700, 0] -> [0, 420]), view.z_negative_up -> false, demo config.region_z + positioning (base
+0.858, no z_ref/scale), exp03 position_mm; "z_conversion" record (formula, reason, previous_name); folder
+names (z-600to-300 -> z180to360, z-200to0 -> z0to120, z-300 -> z180, demo z-600to0 -> z0to360, exp02 too)
+in database_acquisition/data, demo/data, testbed_dev/data/exp01|02|03 and the analysis copies (Calibration,
+Estimation_with_2LEDs, Experiment_01_3D_estimation, Lambertian_order_LED_500khz/points.csv,
+RSS_Distribution/points.csv). NOT converted: campaign_20261021-170303 (simulated test, old convention, can be
+deleted). Originals: simulation_VLP_backups/2026-10-28_before_z_real_mm/ (outside the repo, 24,149 files).
+Verified vs backup: 6,509,696 z values = -0.6 x original, 50,258,704 other values identical, 23,064 headers;
+the rebuilt plans match the saved positions (campaign 18-10, 1772/1960, can now be loaded/continued).
+Results identical before/after (old geometry vs no scale): replay 3.66 cm (K5 3.73, cross 3.66), calibrate
+A 0.062707 m 6.0918, Calibration results.json / other_leds / led_height, executive-summary numbers.json,
+MATLAB experiment 01 + 2LEDs known/unknown yaw (all result CSVs). MATLAB geometry: H_base_cal_m = 1.038 at
+z_cal_mm = 180, Z_pd = H_base_cal + (z - z_cal)/1000 + elevation; the gantry-Z diagnostics now print
+"z ratio" = real / recorded travel (1 = correct; the old data gives 1.08 = 0.647 / 0.6). make_figures.py:
+fig_zaxis "as commanded" case rebuilt explicitly with FAULT_TRAVEL_RATIO = 0.6 (historical diagnosis, the
+only place where 0.6 remains). experiment01_report.tex keeps the original commanded z (note at the top).
+In the notes below (before 2026-10-28) gantry z values are the OLD commanded ones (multiply by -0.6).
+PUSH AFTER RENAMING DATA FOLDERS (2026-10-28): `git push` failed with HTTP 408 (315 MB). Cause: git's default
+sparse pack walk (pack.useSparse) resends unchanged files whose folder was renamed (500 wave/*.npz of the 2-LED
+copy = 243 MB, already on GitHub). Push such commits with `git -c pack.useSparse=false push origin main` (39 MB).
+Root .gitignore now ignores __pycache__/, *.py[cod], LaTeX build files (*.aux, *.fls, *.fdb_latexmk,
+*.synctex.gz, *.toc; *.log / *.out only under CAMBRIDGE/analysis because ExpValidation_Journal versions
+run.log), Office lock files (~$*) and MATLAB autosaves (*.asv). Older build files of other projects are still
+tracked (not removed).
 OPTIONAL MTRS (2026-10-20, the MTRS went to Thorlabs for repair; presented as a feature, never as a fault):
 [modes] mtrs = "real" | "sim" | "none" and mtrs_optional = true -> Testbed.connect() drops a failing MTRS
 (tb.mtrs = None, tb.has_mtrs False, tb.mtrs_status "not connected (...)"); `run.py --no-mtrs` = mode none.
@@ -263,7 +314,7 @@ least +/-1.5 bins.
   reaches fs/2 (625 kHz): 700/900 kHz were empty in the FFT and aliased in the waveform (+1.5-4 % bias).
   exp02 therefore rejects `scope_fft` with records > 62,500 points and `_check_record` refuses to save (and
   pauses) any sample whose point count/sample rate differ from the plan or alias the studied frequencies.
-  Session exp02_20261012-173036_grid3x3x2-xy100to1300-s600-z-300to0_K1-off65_pd15_tilt0_50ms (50 ms + scope FFT) is affected: use only its 300/500 kHz columns.
+  Session exp02_20261012-173036_grid3x3x2-xy100to1300-s600-z0to180_K1-off65_pd15_tilt0_50ms (50 ms + scope FFT) is affected: use only its 300/500 kHz columns.
   LED generators are ~1.1-1.3 ppm off nominal (measured 2026-10-12 from 43 records of 100 ms, spread
   < 0.01 Hz: 299999.654 / 499999.456 / 700000.834 / 900000.984 Hz). With 100 ms records the lock-in at the
   NOMINAL frequency (`<f>kHz_wave_Vrms`) reads 0.2 / 0.5 / 1.1 / 1.6 % low. By the investigator's decision
@@ -287,6 +338,7 @@ called from outside the script).
 - `RSS_Distribution/plot_rss_distribution.m`: heatmaps + 3D surfaces of the 4 LEDs (XY scan, PD horizontal).
 - `Frecuency_Response/plot_frequency_response.m`: exp03 response, linear/dB.
 - `Lambertian_order_LED_500khz/estimate_led_pattern.m`: RSS = A R(psi) L(phi)/d^2, PD horizontal so psi = phi
+  [Notes of 10-15/10: gantry z = OLD commanded values; data now converted, z_new = -0.6 z_old.]
   (only R*L is identifiable: m depends on the assumed PD model). Calibration scan at gantry z = -300 with
   h = H_LED - H_PD = 3 - 1.13496 = 1.86504 m (H_PD = 103.8 + 9.696 cm). LED 500 kHz at (270, 890) mm
   (grid maximum); joint fit of A, m, LED XY with SQ gives (281.1, 904.8) mm. SQ: staged m = 6.15,
@@ -308,7 +360,7 @@ called from outside the script).
   gantry_z_scale = 0.667 SQ+NLS gives 3.3 cm mean (nominal geometry 8.2 cm, 2.7 cm at z = -300).
   To verify: tape-measure the PD height at gantry z = -300 / -600. Report: report/experiment01_report.pdf.
   The 1.038 m base height must be at gantry z = -300 (at z = 0 the data give 27 cm errors, LED at 3.27 m).
-  Campaign folders (2026-10-15): campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms (z -600, -300) and campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms
+  Campaign folders (2026-10-15): campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms (z -600, -300) and campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z0to120_K10-off65_pd15_tilt0_100ms
   (z -200, -100, 0; same XY grid and K = 10 angles), analysed together via `campaign_dirs`. The second
   campaign confirmed the vertical compression out of sample: nominal geometry gives a vertical bias linear
   in z (-11.5 ... +9.7 cm), real/commanded travel 0.647 (estimated heights) / 0.632 (direction-only

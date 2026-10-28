@@ -1,0 +1,26 @@
+{
+  "loose_csv": [
+    "analysis/Lambertian_order_LED_500khz/points.csv",
+    "analysis/RSS_Distribution/points.csv"
+  ],
+  "renamed": {
+    "campaign_20261013-101402_grid5x5x1-xy100to1300-s300-z-300_K1-off65_pd0_tiltU-1to1_100msx2": "campaign_20261013-101402_grid5x5x1-xy100to1300-s300-z180_K1-off65_pd0_tiltU-1to1_100msx2",
+    "campaign_20261013-103703_grid5x5x1-xy100to1300-s300-z-300_K1-off65_pd0_tiltU-2to2_100msx10": "campaign_20261013-103703_grid5x5x1-xy100to1300-s300-z180_K1-off65_pd0_tiltU-2to2_100msx10",
+    "campaign_20261013-113114_grid5x5x1-xy100to1300-s300-z-300_K1-off65_pd0_tiltU-1to1_100msx5": "campaign_20261013-113114_grid5x5x1-xy100to1300-s300-z180_K1-off65_pd0_tiltU-1to1_100msx5",
+    "campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z-300_K1-off65_pd0_tilt0_100ms": "campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z180_K1-off65_pd0_tilt0_100ms",
+    "campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms": "campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms",
+    "campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms": "campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z0to120_K10-off65_pd15_tilt0_100ms",
+    "campaign_20261015-123045_grid5x5x1-xy100to1300-s300-z-300_K1-off0_pd0_tilt0_100ms": "campaign_20261015-123045_grid5x5x1-xy100to1300-s300-z180_K1-off0_pd0_tilt0_100ms",
+    "campaign_20261018-034334_grid7x7x4-xy100to1300-s200-z-600to0_K10-off65_pd15_tilt0_100ms": "campaign_20261018-034334_grid7x7x4-xy100to1300-s200-z0to360_K10-off65_pd15_tilt0_100ms",
+    "demo_20261016-103131_random-xy100to1300-z-600to0_K5-off66p5_pd15_tilt0_100ms": "demo_20261016-103131_random-xy100to1300-z0to360_K5-off66p5_pd15_tilt0_100ms",
+    "demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms": "demo_20261016-113422_random-xy100to1300-z0to360_K5-off65_pd15_tilt0_100ms",
+    "demo_20261016-174621_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms": "demo_20261016-174621_random-xy100to1300-z0to360_K5-off65_pd15_tilt0_100ms",
+    "demo_20261020-094913_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms": "demo_20261020-094913_random-xy100to1300-z0to360_K5-off65_pd15_tilt0_100ms",
+    "exp02_20261009-172009_grid5x5x3-xy100to1300-s300-z-300to0_K1-off0_pd0_tilt0_recScope": "exp02_20261009-172009_grid5x5x3-xy100to1300-s300-z0to180_K1-off0_pd0_tilt0_recScope",
+    "exp02_20261012-132740_grid5x5x4-xy100to1300-s300-z-700to-100_K1-off0_pd0_tilt0_recScope": "exp02_20261012-132740_grid5x5x4-xy100to1300-s300-z60to420_K1-off0_pd0_tilt0_recScope",
+    "exp02_20261012-144402_grid4x4x3-xy100to1300-s400-z-700to0_K1-off0_pd0_tilt0_recScope": "exp02_20261012-144402_grid4x4x3-xy100to1300-s400-z0to420_K1-off0_pd0_tilt0_recScope",
+    "exp02_20261012-171719_grid5x5x1-xy100to1300-s300-z-300_K1-off65_pd15_tilt0_100ms": "exp02_20261012-171719_grid5x5x1-xy100to1300-s300-z180_K1-off65_pd15_tilt0_100ms",
+    "exp02_20261012-172406_grid3x3x2-xy100to1300-s600-z-300to0_K1-off65_pd15_tilt0_100ms": "exp02_20261012-172406_grid3x3x2-xy100to1300-s600-z0to180_K1-off65_pd15_tilt0_100ms",
+    "exp02_20261012-173036_grid3x3x2-xy100to1300-s600-z-300to0_K1-off65_pd15_tilt0_50ms": "exp02_20261012-173036_grid3x3x2-xy100to1300-s600-z0to180_K1-off65_pd15_tilt0_50ms"
+  }
+}

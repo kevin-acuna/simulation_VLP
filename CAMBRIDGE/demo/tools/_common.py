@@ -11,7 +11,7 @@ sys.path.insert(0, DEMO_ROOT)
 
 import numpy as np                      # noqa: E402
 
-from settings import load_settings, resolve   # noqa: E402,F401
+from settings import check_z_convention, load_settings, resolve   # noqa: E402,F401
 
 
 def read_csv(path):
@@ -23,6 +23,7 @@ def load_sites(campaign_dirs, column):
     """Complete sites of database_acquisition campaigns: list of dicts gantry_mm, angles, rss, campaign."""
     sites = []
     for c, d in enumerate(campaign_dirs):
+        check_z_convention(d)
         groups = {}
         rows = read_csv(os.path.join(d, "points.csv"))
         K = len({r["k"] for r in rows})

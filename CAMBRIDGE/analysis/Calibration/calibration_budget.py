@@ -5,7 +5,7 @@ Known (physical / measurable): LED position (281.1, 904.8) mm and height, PD res
 2020), MTRS offset (66.5 deg), testbed geometry (config of the demo). Unknown: the gain A and the
 Lambertian order m of the LED in
     RSS = A R(psi) cos(phi)^m / d^2,   horizontal PD under the LED -> psi = phi, cos(phi) = h / d
-They are fitted from N points of the HORIZONTAL scan (PD facing up, K = 1, 10 mm grid, z = -300):
+They are fitted from N points of the HORIZONTAL scan (PD facing up, K = 1, 10 mm grid, z = 180):
     log(RSS d^2 / R) = log A + m log cos(phi)     (linear least squares; N = 2 -> exact solution)
 Every calibration point is a real measured point (real noise and real model mismatch, nothing
 simulated). The calibrated (A, m) are then evaluated on:
@@ -40,7 +40,7 @@ from vlp import make_response                           # noqa: E402
 # ============================================================
 # HYPERPARAMETERS
 # ============================================================
-SCAN_DIR = os.path.join(HERE, "campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z-300_K1-off65_pd0_tilt0_100ms")
+SCAN_DIR = os.path.join(HERE, "campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z180_K1-off65_pd0_tilt0_100ms")
 FREQ_KHZ = 500.0                     # LED studied
 RSS_SOURCE = "wave"                  # "wave" (lock-in on the raw waveform) | "fft"
 LED_XY_MM = (281.1, 904.8)           # known LED position (demo.toml)

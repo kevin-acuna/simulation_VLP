@@ -48,7 +48,8 @@ DEFAULT_CONFIG = {
     "mode": "random",                       # "random" | "manual"
     "region_x": [100.0, 1300.0],            # random positions [mm, gantry]
     "region_y": [100.0, 1300.0],
-    "region_z": [-600.0, 0.0],              # -700 = highest PD position, 0 = lowest
+    "region_z": [0.0, 360.0],               # gantry z up: 0 = lowest PD position (0.955 m); 0-360 = PD
+                                            # 0.955-1.315 m, the validated heights (higher: up to 700)
     "k_angles": 5,
     "n_samples": 1,
     "settle_s": 1.0,
@@ -133,6 +134,9 @@ def main(argv=None):
         tb.connect()
         if not tb.has_mtrs:
             raise RuntimeError("The demo needs the MTRS (config/testbed.toml [modes] mtrs = 'none').")
+        if tb.view.get("z_negative_up", False):
+            raise RuntimeError("testbed.toml [view] z_negative_up = true, but the demo geometry expects the gantry z "
+                               "in real mm, positive upwards (z = 0 at the reference).")
         engine = DemoEngine(tb, positioner, SETTINGS, args.output, DEFAULT_CONFIG)
         engine.start_threads()
         server = make_server(engine, args.host, args.port)

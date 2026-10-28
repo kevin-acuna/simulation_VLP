@@ -1,7 +1,7 @@
 """
 test_other_leds.py - The 3x3 / 4x4 calibration grids applied to every LED "as if it were the first time".
 
-For every LED (300, 500, 700, 900 kHz) of the horizontal scan (PD facing up, K = 1, z = -300):
+For every LED (300, 500, 700, 900 kHz) of the horizontal scan (PD facing up, K = 1, z = 180):
   1. Calibration with ONLY the points of a regular n x n grid over the working area (X, Y 100-1300 mm),
      model RSS = A R_SQ(phi) cos(phi)^m / d^2 (LED facing down, height 3.0 m):
        xy_fit   : LED XY, A and m fitted together from those points (nothing else is known)
@@ -40,7 +40,7 @@ from vlp import Lambertian, VLPModel, estimate_position, make_response   # noqa:
 # ============================================================
 # HYPERPARAMETERS
 # ============================================================
-SCAN_DIR = os.path.join(HERE, "campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z-300_K1-off65_pd0_tilt0_100ms")
+SCAN_DIR = os.path.join(HERE, "campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z180_K1-off65_pd0_tilt0_100ms")
 LEDS_KHZ = [300.0, 500.0, 700.0, 900.0]
 RSS_SOURCE = "wave"
 LED_HEIGHT_M = 3.0                    # LED plane (assumed, as for the 500 kHz LED)

@@ -169,7 +169,7 @@ function fillForm(c) {
   $("recordMs").value = c.record_ms; $("recordFs").value = c.record_fs_msa;
   $("saveWave").checked = !!c.save_waveforms; $("label").value = c.label || "";
   S.mode = c.mode || "random";
-  if (!$("mz").value) $("mz").value = -300;
+  if (!$("mz").value) $("mz").value = (c.region_z[0] + c.region_z[1]) / 2;   // manual Z: middle of the region
   S.formDirty = false; renderModeUi(); updateAngles();
 }
 function readForm() {
@@ -227,8 +227,8 @@ function alertError(e) { confirmModal("Error", String(e.message || e), "Close");
    state from the server
    ============================================================ */
 function applyStatic(d) {
-  Object.assign(S, { workspace: d.workspace, box: d.phys_box, led: d.led_mm, ledFreq: d.led_freq_khz,
-    nominalOffset: d.nominal_offset_deg, viewCfg: d.view || {}, modes: d.modes || {} });
+  Object.assign(S, { workspace: d.workspace, box: d.phys_box, zMap: d.z_to_height || null, led: d.led_mm,
+    ledFreq: d.led_freq_khz, nominalOffset: d.nominal_offset_deg, viewCfg: d.view || {}, modes: d.modes || {} });
 }
 function applyFull(d) {
   applyStatic(d);
@@ -260,7 +260,7 @@ function renderAll() {
   if (S.workspace) {
     const [a, b] = [S.workspace.min, S.workspace.max];
     $("wsNote").textContent = `Gantry coordinates. Workspace X ${fmtG(a[0])}–${fmtG(b[0])}, Y ${fmtG(a[1])}–${fmtG(b[1])}, ` +
-      `Z ${fmtG(a[2])}–${fmtG(b[2])} mm (Z = ${fmtG(a[2])} is the highest PD position).`;
+      `Z ${fmtG(a[2])}–${fmtG(b[2])} mm (Z positive upwards, Z = ${fmtG(a[2])} is the lowest PD position).`;
   }
   S.plotsDirty = true; invalidate();
 }
@@ -507,10 +507,10 @@ function drawDynamic(ctx) {
     ctx.strokeStyle = "#0d3b66"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, 7.2, 0, 7); ctx.stroke();
   }
 }
-const gantryToHeight = (z) => {                   // queued gantry z -> approximate PD height (display only)
-  if (!S.box || !S.workspace) return z;
-  const [zg0, zg1] = [S.workspace.max[2], S.workspace.min[2]], [h0, h1] = [S.box.min[2], S.box.max[2]];
-  return h0 + ((z - zg0) / (zg1 - zg0)) * (h1 - h0);
+const gantryToHeight = (z) => {                   // queued gantry z -> PD height [mm] (display only)
+  if (!S.zMap) return z;
+  const [z0, h0, z1, h1] = S.zMap;                // PD height at both gantry z limits (server geometry)
+  return z1 === z0 ? h0 : h0 + ((z - z0) / (z1 - z0)) * (h1 - h0);
 };
 
 function renderLegend() {

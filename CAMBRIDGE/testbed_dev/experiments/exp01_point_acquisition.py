@@ -2,7 +2,11 @@
 exp01_point_acquisition.py - Experimento 01: adquisicion punto a punto (manual).
 
 El usuario escribe X, Y, Z [mm] (coordenadas del gantry) y el angulo de rotacion del
-MTRS [deg] (tilt siempre 0) y pulsa "Go & measure":
+MTRS [deg] (tilt siempre 0) y pulsa "Go & measure".
+Convencion de Z: mm reales, Z = 0 en la referencia (posicion mas baja del PD) y positiva hacia
+arriba, hasta 700 mm (rango y orientacion de la vista: config/testbed.toml). Las sesiones grabadas
+antes de la reparacion del eje Z (2026-10-20) se convirtieron a esta convencion
+(testbed_dev/gantry_reparation/convert_z_to_real_mm.py).
   1. El gantry y el MTRS se mueven a la vez.
   2. Cada 100 ms se actualizan: posicion XY (+ Z), angulo del MTRS y la FFT del
      osciloscopio (la que calcula el propio osciloscopio, funcion Math FFT).
@@ -377,7 +381,8 @@ class GUI:
 
         # --- Z ---
         az = self.ax_z = fig.add_axes([0.48, 0.43, 0.025, 0.52])
-        # [view] z_negative_up: Z = -700 es la posicion mas alta del PD -> se dibuja arriba
+        # [view] z_negative_up: false (actual) = Z positiva hacia arriba, Z max arriba;
+        # true = robots con Z = -A3, la Z mas negativa se dibuja arriba
         az.set_ylim((wmax[2], wmin[2]) if tb.view.get("z_negative_up", False) else (wmin[2], wmax[2]))
         az.set_xlim(0, 1)
         az.set_xticks([])

@@ -11,8 +11,8 @@ hardware_root = "../database_acquisition"     # hardware/ drivers + config/testb
 output_root = "data"                          # sessions: data/demo_<date>_<region>_K.._pd.._tilt.._<record>[_label]/
 calibration_csv = "../analysis/Lambertian_order_LED_500khz/points.csv"   # used by tools/calibrate.py
 campaigns_root = "../analysis/Experiment_01_3D_estimation"               # used by tools/replay.py
-campaigns = ["campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms",
-             "campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms"]
+campaigns = ["campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms",
+             "campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z0to120_K10-off65_pd15_tilt0_100ms"]
 
 # --------------------------------------------------------------------------
 # Positioning model and estimator (analysis/Experiment_01_3D_estimation)
@@ -42,17 +42,17 @@ A = 0.062707                   # [V m^2], staged fit (tools/calibrate.py)
 m = 6.0918                     # Lambertian order
 
 # --------------------------------------------------------------------------
-# Testbed geometry (gantry -> PD pose)
+# Testbed geometry (gantry -> PD pose): Z_pd = base_height + z / 1000 + pd_elevation
+# Gantry z in real mm, positive upwards, z = 0 at the reference (lowest PD position, Z_pd = 0.955 m).
 # --------------------------------------------------------------------------
 [geometry]
-base_height_m = 1.038          # gantry base height at gantry z = z_ref_mm
-z_ref_mm = -300.0
+base_height_m = 0.858          # gantry base height at gantry z = 0 (measured: 1.038 m at z = 180)
 pd_elevation_m = 0.09696       # gantry base -> PD centre (MTRS + adapter)
-gantry_z_scale = 0.6           # real vertical travel per commanded mm (tape, 2026-10-15)
 pd_tilt_deg = 15.0             # adapter tilt from the vertical
-mtrs_offset_deg = 66.5         # REAL MTRS angle that points the tilt towards +Y, calibrated from the campaigns
-                               # (tools/replay.py --offset-fit all). Used only by the estimator, as in the
-                               # MATLAB analysis; the commanded angles keep the nominal 65 deg ([plan])
+mtrs_offset_deg = 66.5         # REAL MTRS angle that points the tilt towards +Y. 66.5 was calibrated on the campaigns
+                               # of 14-15/10 (tools/replay.py --offset-fit all). The adapter was remounted on 19/10
+                               # and the MTRS was repaired afterwards: RE-CALIBRATE before using the live demo.
+                               # Used only by the estimator; the commanded angles keep the nominal 65 deg ([plan])
 mtrs_direction = 1             # +1: increasing MTRS angle turns the tilt from +Y towards +X
 
 # --------------------------------------------------------------------------

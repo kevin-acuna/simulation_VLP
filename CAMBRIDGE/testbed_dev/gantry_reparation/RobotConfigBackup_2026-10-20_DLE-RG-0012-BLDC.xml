@@ -1,0 +1,39 @@
+<Robot>
+    <INFO NAME="igus XYZ gantry" AUTHOR=""/>
+    <BusConfiguration Protocol="CPRCANV2" CycleTimeMS="10" GapMS="0.5" Type="PCANUSB" ParameterInterfaceVersion="2" PreciseTiming="true">
+        <Joints NrOfJoints="3"/>
+        <!-- Attention: In this case 16 (means 0x20) is the sender message id, 17 (0x21) is the anser message id.-->
+        <Joint0 ID="16" Min="-1.0" Max="425.0" CurrentScale="1.0" CurrentZero="0.0" GearScale="571.428" GearZero="000" GearPlay="0.0" GearPlayInc="0.05" TempScale="0.01" TempZero="0.0"/>
+        <Joint1 ID="32" Min="-1.0" Max="400.0" CurrentScale="1.0" CurrentZero="0.0" GearScale="571.428" GearZero="000" GearPlay="0.0" GearPlayInc="0.05" TempScale="0.01" TempZero="0.0"/>
+        <Joint2 ID="48" Min="-1.0" Max="160.0" CurrentScale="1.0" CurrentZero="0.0" GearScale="166.067" GearZero="000" GearPlay="0.0" GearPlayInc="0.05" TempScale="0.01" TempZero="0.0"/>
+    </BusConfiguration>
+    <RemoteConfiguration IP="192.168.3.11" CycleTimeMS="50" Protocol="CRI_V01"/>
+    <TinyCtrl DebugMode="false" User="" Pwd="" Dir="/home/root/TinyCtrl/" DisplayPort="/dev/ttyO1"/>
+    <Kinematic Type="Cartesian" FourthAxis="False" dirA1="1 0 0" dirA2="0 1 0" dirA3="0 0 -1" xOffset="0" yOffset="0" zOffset="0"/>
+    <CartesianOffset Enabled="false"/>
+    <!--<SoftwareMinMax A1Min="0" A1Max="480" A2Min="0" A2Max="470" A3Min="0" A3Max="80.0" A4Min="-179.0" A4Max="179.0" />-->
+    <!-- Standard RG-0012 -->
+    <SoftwareMinMax A1Min="0" A1Max="1500" A2Min="0" A2Max="1500" A3Min="0" A3Max="1250" A4Min="-179.0" A4Max="179.0"/>
+    <Velocities JogCart="200.0" JogOri="45" JogJoint="0.4"/>
+    <JointVelocities A1="5000" A2="5000" A3="5000" A4="180" cart="5000"/>
+    <JointAccelerations A1="20000" A2="20000" A3="20000" A4="600.0" A5="100.0" A6="100.0"/>
+    <JointAccelerationIncs A1="20000" A2="20000" A3="20000" A4="2000.0" A5="100.0" A6="100.0"/>
+    <CartVelocities VelTrans="300" VelOri="180"/>
+    <CartAccelerations AccLin="6000" AccLinInc="20000" AccOri="900" AccOriInc="3000"/>
+    <JointVelocities2 A1="650" A2="650" A3="2000" A4="360"/>
+    <JointAccelerations2 A1="120000" A2="160000" A3="160000" A4="600.0" A5="100.0" A6="100.0"/>
+    <JointAccelerationIncs2 A1="110000" A2="120000" A3="120000" A4="2000.0" A5="100.0" A6="100.0"/>
+    <CartVelocities2 VelTrans="500" VelOri="360"/>
+    <CartAccelerations2 AccLin="2500" AccLinInc="5000" AccOri="1500" AccOriInc="6000"/>
+    <PathGeneration Optimize="true" GeneratorType="02Linear" SlicingMS="20" LookAhead="20" SmoothDistCart="100.0" SmoothDistJoint="100.0"/>
+    <Referencing Mandatory="true"/>
+    <Brake Active="False" DOutChannel="-1" DelayMS="500"/>
+    <EStopMonitoring DInChannel="-1" Delay="0"/>
+    <ZeroTorque A1="true" A2="true" A3="true" A4="true" A5="false" A6="false" A7="false" A8="false" A9="false"/>
+    <AccelerationJog Active="true" AccelJogJointDegPerSec2="250.0" FastDecelJogJointDegPerSec2="1000.0" AccelJogCartMMPerSec2="250.0" FastDecelJogCartMMPerSec2="1000.0" AccelJogCartDegPerSec2="30.0" FastDecelJogCartDegPerSec2="90.0"/>
+    <!--<VariableJoints OffsetX0="105.3" OffsetY0="70" OffsetZ0="-49.5" LengthY0="550" LengthX0="2600" OffsetX1="45.3" OffsetY1="70" OffsetZ1="0" OffsetX3="0" OffsetY3="0" OffsetZ3="15" LengthZ3="450" />-->
+    <!-- Standard RG-0012 -->
+    <VariableJoints OffsetX0="110.3" OffsetY0="90" OffsetZ0="-44.5" LengthY0="1680" LengthX0="1620" OffsetX1="50.3" OffsetY1="90" OffsetZ1="5" OffsetX3="0" OffsetY3="0" OffsetZ3="15" LengthZ3="1300"/>
+    <Graphics detailed="True" CSSize="50.0"/>
+    <Trail active="True" PointSize="2" PointDist="10" ColorR="1" ColorG="0.4" ColorB="0" detailed="True"/>
+</Robot>

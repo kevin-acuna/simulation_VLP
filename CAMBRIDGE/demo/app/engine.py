@@ -38,7 +38,8 @@ DEFAULT_CONFIG = {
     "mode": "random",                       # "random" | "manual"
     "region_x": [100.0, 1300.0],            # random positions: gantry box [mm]
     "region_y": [100.0, 1300.0],
-    "region_z": [-600.0, 0.0],              # gantry z: -700 highest PD position, 0 the lowest
+    "region_z": [0.0, 360.0],               # gantry z up (0 = lowest PD position): PD 0.955-1.315 m, the heights
+                                            # where the positioning was validated (campaigns of 14-15/10)
     "k_angles": 5,                          # orientations per point
     "mtrs_tilt_mode": "fixed",              # MTRS tilt, commanded at every new position: "fixed" | "random"
     "mtrs_tilt_deg": 0.0,                   # fixed mode
@@ -516,10 +517,12 @@ class DemoEngine:
 
     def _static(self):
         g, geo, m = self.tb.gantry, self.pos.geometry, self.pos.model
-        zmin, zmax = geo.pd_height(g.workspace_max[2]), geo.pd_height(g.workspace_min[2])
+        z_lo, z_hi = g.workspace_min[2], g.workspace_max[2]
+        h_lo, h_hi = 1e3 * geo.pd_height(z_lo), 1e3 * geo.pd_height(z_hi)     # PD height [mm] at both z limits
         return {"workspace": {"min": list(g.workspace_min), "max": list(g.workspace_max)},
-                "phys_box": {"min": [g.workspace_min[0], g.workspace_min[1], 1e3 * zmin],
-                             "max": [g.workspace_max[0], g.workspace_max[1], 1e3 * zmax]},
+                "phys_box": {"min": [g.workspace_min[0], g.workspace_min[1], min(h_lo, h_hi)],
+                             "max": [g.workspace_max[0], g.workspace_max[1], max(h_lo, h_hi)]},
+                "z_to_height": [z_lo, h_lo, z_hi, h_hi],           # linear map gantry z -> PD height (display)
                 "led_mm": (1e3 * m.led_position).tolist() if self.show_led else None,
                 "led_freq_khz": self.led_freq_khz, "nominal_offset_deg": self.nominal_offset,
                 "view": self.tb.view, "modes": self.tb.modes}

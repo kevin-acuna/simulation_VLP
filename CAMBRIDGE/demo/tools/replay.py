@@ -66,11 +66,11 @@ def main():
         s["led"]["A"] = a.A
     if a.m:
         s["led"]["m"] = a.m
-    if a.offset is not None:
-        s["geometry"]["mtrs_offset_deg"] = a.offset
-    pos = Positioner.from_settings(s)
     col = f"{s['positioning']['led_frequency_khz']:g}kHz_wave_Vrms"
     dirs = [os.path.join(resolve(s["paths"]["campaigns_root"]), c) for c in s["paths"]["campaigns"]]
+    pos = Positioner.from_settings(s)
+    if a.offset is not None:
+        pos = Positioner(pos.model, dataclasses.replace(pos.geometry, mtrs_offset_deg=a.offset), pos.method, pos.starts)
     sites = load_sites(dirs, col)
     heights = sorted({st["gantry_mm"][2] for st in sites})
     print(f"{len(sites)} sites from {len(dirs)} campaigns, gantry z = {heights} mm; {pos.method} + "

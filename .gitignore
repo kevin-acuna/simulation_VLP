@@ -9,3 +9,19 @@ CAMBRIDGE/simulations/Receiver models/Bastiaens 2020/results/
 **/.latex-build/
 *-eps-converted-to.pdf
 /CAMBRIDGE/testbed_dev/CRI-Python-Lib/
+
+# Python caches
+__pycache__/
+*.py[cod]
+# LaTeX build files (the .tex sources and the PDFs stay versioned). No global *.log / *.out:
+# ExpValidation_Journal versions experiment run.log files
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+CAMBRIDGE/analysis/**/*.log
+CAMBRIDGE/analysis/**/*.out
+# Office lock files and MATLAB autosaves
+~$*
+*.asv

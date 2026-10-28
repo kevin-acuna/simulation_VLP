@@ -6,7 +6,6 @@ SQ + NLS, LED 500 kHz at (281.1, 904.8) mm / 3.0 m, A and m from the horizontal 
 """
 
 import csv
-import dataclasses
 import glob
 import json
 import os
@@ -26,6 +25,11 @@ add_import_paths(S)
 from _common import load_sites, resolve                 # noqa: E402
 from positioner import Positioner                       # noqa: E402
 
+# Gantry Z diagnosis (fig_zaxis): before the repair of 2026-10-20 the robot moved the PD 0.6 mm per commanded mm.
+# The database holds the real z; the "as commanded" case rebuilds the heights that ignoring the fault would give.
+FAULT_TRAVEL_RATIO = 0.6               # real / commanded vertical travel before the repair
+Z_HEIGHT_MEASURED_MM = 180.0           # gantry z where the PD height was measured (calibration scan)
+
 
 def subset(K_full, K, rot):
     return np.sort((np.round(np.arange(K) * K_full / K).astype(int) + rot) % K_full)
@@ -39,7 +43,7 @@ def run(pos, sites, K=None):
             sub = list(sub)
             r = pos.locate(st["rss"][sub], st["angles"][sub], st["gantry_mm"])
             if r["ok"]:
-                out.append((st["gantry_mm"][2], 100 * r["err_3d_m"], 100 * r["err_v_m"]))
+                out.append((st.get("z_real", st["gantry_mm"][2]), 100 * r["err_3d_m"], 100 * r["err_v_m"]))
     return np.array(out)
 
 
@@ -59,14 +63,16 @@ def main():
             demo_est.append([float(r[f"est_{a}_m"]) for a in "XYZ"])
     demo, demo_true, demo_est = np.array(demo), np.array(demo_true), np.array(demo_est)
 
-    # gantry z: nominal (scale 1) vs measured (0.6)
+    # gantry z: heights as commanded before the repair (fault ignored) vs real heights (database)
     heights = sorted({st["gantry_mm"][2] for st in sites})
+    as_commanded = [{**st, "z_real": st["gantry_mm"][2],
+                     "gantry_mm": (st["gantry_mm"][0], st["gantry_mm"][1], Z_HEIGHT_MEASURED_MM
+                                   + (st["gantry_mm"][2] - Z_HEIGHT_MEASURED_MM) / FAULT_TRAVEL_RATIO)} for st in sites]
     zres = {}
-    for sz in (1.0, 0.6):
-        p = Positioner(pos.model, dataclasses.replace(pos.geometry, gantry_z_scale=sz), pos.method, pos.starts)
-        r = run(p, sites)
-        zres[sz] = {z: (r[r[:, 0] == z, 1].mean(), r[r[:, 0] == z, 2].mean()) for z in heights}
-        zres[sz]["all"] = (r[:, 1].mean(), r[:, 2].mean())
+    for case, s in (("as_commanded", as_commanded), ("real", sites)):
+        r = run(pos, s)
+        zres[case] = {z: (r[r[:, 0] == z, 1].mean(), r[r[:, 0] == z, 2].mean()) for z in heights}
+        zres[case]["all"] = (r[:, 1].mean(), r[:, 2].mean())
 
     def st(e):
         return {"n": int(e.size), "mean": float(e.mean()), "median": float(np.median(e)),
@@ -74,14 +80,14 @@ def main():
 
     numbers = {"K10": st(res[None][:, 1]), "K5": st(res[5][:, 1]), "K3": st(res[3][:, 1]), "demo_random": st(demo),
                "vertical_bias_K10": float(res[None][:, 2].mean()),
-               "z_axis": {f"scale_{sz:g}": {str(k): {"mean": float(v[0]), "vbias": float(v[1])} for k, v in d.items()}
-                          for sz, d in zres.items()},
+               "z_axis": {case: {str(k): {"mean": float(v[0]), "vbias": float(v[1])} for k, v in d.items()}
+                          for case, d in zres.items()},
                "pd_height_m": {str(z): float(pos.geometry.pd_height(z)) for z in heights}}
     with open(os.path.join(HERE, "numbers.json"), "w") as f:
         json.dump(numbers, f, indent=2)
     print(json.dumps({k: v for k, v in numbers.items() if k != "z_axis"}, indent=1))
-    for sz, d in zres.items():
-        print(f"z scale {sz}: " + ", ".join(f"z={k}: {v[0]:.1f} cm (bias {v[1]:+.1f})" for k, v in d.items()))
+    for case, d in zres.items():
+        print(f"z {case}: " + ", ".join(f"z={k}: {v[0]:.1f} cm (bias {v[1]:+.1f})" for k, v in d.items()))
 
     import matplotlib
     matplotlib.use("Agg")
@@ -102,16 +108,17 @@ def main():
     fig.tight_layout()
     fig.savefig(os.path.join(HERE, "fig_accuracy.png"), dpi=250)
 
-    # z axis: vertical bias per height, nominal vs measured scale
+    # z axis: vertical bias per height, Z as commanded (fault ignored) vs real Z
     fig, ax = plt.subplots(figsize=(5.2, 3.2))
     xs = np.arange(len(heights))
-    for i, (sz, lab, c) in enumerate(((1.0, "Nominal Z (as commanded)", "C3"), (0.6, "Measured Z scale (0.6)", "C0"))):
-        b = [zres[sz][z][1] for z in heights]
-        ax.bar(xs + (i - 0.5) * 0.38, b, 0.38, color=c, label=f"{lab}: mean error {zres[sz]['all'][0]:.1f} cm")
+    for i, (case, lab, c) in enumerate((("as_commanded", "Nominal Z (as commanded)", "C3"),
+                                        ("real", "Real Z (measured 0.6 travel)", "C0"))):
+        b = [zres[case][z][1] for z in heights]
+        ax.bar(xs + (i - 0.5) * 0.38, b, 0.38, color=c, label=f"{lab}: mean error {zres[case]['all'][0]:.1f} cm")
     ax.axhline(0, color="k", lw=0.8)
-    ax.set(xticks=xs, xticklabels=[f"{z:g}" for z in heights], xlabel="Commanded gantry z (mm)",
-           ylabel="Vertical bias of the estimate (cm)")
-    ax.legend(fontsize=7.5, loc="upper left")
+    ax.set(xticks=xs, xticklabels=[f"{pos.geometry.pd_height(z):.3f}" for z in heights],
+           xlabel="Real PD height (m)", ylabel="Vertical bias of the estimate (cm)")
+    ax.legend(fontsize=7.5, loc="lower left")
     fig.tight_layout()
     fig.savefig(os.path.join(HERE, "fig_zaxis.png"), dpi=250)
 

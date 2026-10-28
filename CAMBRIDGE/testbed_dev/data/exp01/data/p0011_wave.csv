@@ -1,7 +1,7 @@
 # point_id: 11
 # x_mm: 700.000
 # y_mm: 300.000
-# z_mm: -300.000
+# z_mm: 180.000
 # angle_deg: 35.0000
 # fft_units: Vrms
 # acq_1_unix_time_s: 1791546552.889140

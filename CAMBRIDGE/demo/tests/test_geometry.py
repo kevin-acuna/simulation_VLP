@@ -15,7 +15,7 @@ sys.path.insert(0, DEMO)
 
 from geometry import TestbedGeometry    # noqa: E402
 from positioner import Positioner       # noqa: E402
-from settings import load_settings      # noqa: E402
+from settings import load_settings     # noqa: E402
 
 
 class TestGeometry(unittest.TestCase):
@@ -26,14 +26,17 @@ class TestGeometry(unittest.TestCase):
         np.testing.assert_allclose(g.normals([155.0])[0], [np.sin(t), 0, np.cos(t)], atol=1e-12)  # then +X
 
     def test_heights(self):
-        g = TestbedGeometry(base_height_m=1.038, z_ref_mm=-300, pd_elevation_m=0.09696, gantry_z_scale=0.6)
-        self.assertAlmostEqual(g.pd_height(-300), 1.13496)
-        self.assertAlmostEqual(g.pd_height(-600), 1.31496)
-        self.assertAlmostEqual(g.gantry_z(g.pd_height(-123.0)), -123.0)
+        """Gantry z in real mm, positive upwards; measured PD heights of the campaigns (tape)."""
+        g = Positioner.from_settings(load_settings()).geometry
+        self.assertAlmostEqual(g.pd_height(0), 0.95496)          # reference (lowest PD position)
+        self.assertAlmostEqual(g.pd_height(180), 1.13496)        # horizontal calibration scan: 1.038 m + PD elevation
+        self.assertAlmostEqual(g.pd_height(360), 1.31496)
+        self.assertAlmostEqual(g.pd_height(700) - g.pd_height(0), 0.700)
+        self.assertAlmostEqual(g.gantry_z(g.pd_height(512.0)), 512.0)
 
     def test_positioner_recovers_simulated_point(self):
         pos = Positioner.from_settings(load_settings())
-        gantry = (900.0, 400.0, -250.0)
+        gantry = (900.0, 400.0, 250.0)
         angles = 66.5 + 72.0 * np.arange(5)
         rss = pos.model.rss(pos.geometry.pd_position(gantry), pos.geometry.normals(angles))
         res = pos.locate(rss, angles, gantry)

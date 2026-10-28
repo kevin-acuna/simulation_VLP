@@ -11,8 +11,9 @@
 % (Lambertian_order_LED_500khz/points.csv) with the SAME PD model and LED position, so every PD model has
 % its own coherent A, m.
 %
-% Coordinates: X, Y of the gantry (m) and Z = height above the floor (m, up). The PD centre is
-%   Z_pd = H_base_cal + gantry_z_scale (z_cal - z_gantry) + pd_elevation    (the gantry z axis points down)
+% Coordinates: X, Y of the gantry (m) and Z = height above the floor (m, up). The gantry z is in real mm,
+% positive upwards (z = 0 at the reference = lowest PD position). The PD centre is
+%   Z_pd = H_base_cal + (z_gantry - z_cal)/1000 + pd_elevation
 % where pd_elevation is the gantry base -> PD centre distance (MTRS + adapter). LED at (led_xy, H_led),
 % normal [0 0 -1]. PD normal at MTRS angle theta:
 %   n = [sin(t) sin(a), sin(t) cos(a), cos(t)],  a = mtrs_direction*(theta - mtrs_offset),  t = pd_tilt
@@ -23,9 +24,9 @@ close all
 
 %% Hyperparameters
 here               = fileparts(mfilename('fullpath'));
-% campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms', ...   % campaign folders (points.csv) analysed together
-%                       'campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms'};
-campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms'}
+% campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms', ...   % campaign folders (points.csv) analysed together
+%                       'campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z0to120_K10-off65_pd15_tilt0_100ms'};
+campaign_dirs      = {'campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms'}
 calibration_csv    = fullfile(here, '..', 'Lambertian_order_LED_500khz', 'points.csv');
 simulations_dir    = fullfile(here, '..', '..', 'simulations');
 led_freq_khz       = 500;                  % LED used for positioning (column <f>kHz_<source>_Vrms)
@@ -34,11 +35,9 @@ led_xy_mm          = [270 890];            % LED XY in gantry coordinates (mm); 
                                            % with SQ; 'fit' = joint_xy fit for every PD model
 H_led_m            = 3;                    % height of the LED plane above the floor (m)
 H_base_cal_m       = 1.038;                % height of the gantry base at z = z_cal_mm (m)
-z_cal_mm           = -300;                 % gantry Z of the calibration scan (mm)
+z_cal_mm           = 180;                  % gantry z of the calibration scan (mm)
 pd_elevation_cal_m = 0.09696;              % gantry base -> PD centre in the calibration scan (0 deg adapter)
 pd_elevation_m     = 0.09696;              % gantry base -> PD centre in the campaign (MTRS + 15 deg adapter)
-gantry_z_scale     = 1;                  % real vertical travel per commanded mm of gantry z (1 = nominal;
-                                           % 0.6 measured with a tape on 2026-10-15)
 pd_tilt_deg        = 15;                   % nominal tilt of the adapter (deg from the vertical)
 mtrs_offset_deg    = 67.3;                   % nominal MTRS angle that points the tilt towards +Y (set by eye)
 mtrs_direction     = 1;                    % +1: increasing MTRS angle turns the tilt from +Y towards +X
@@ -68,7 +67,7 @@ output_dir         = fullfile(here, 'figures');
 addpath(simulations_dir);
 cambridge_setup();
 column = sprintf('%dkHz_%s_Vrms', led_freq_khz, rss_source);
-pd_height = @(z_gantry_mm, elevation_m) H_base_cal_m + gantry_z_scale*(z_cal_mm - z_gantry_mm)/1e3 + elevation_m;
+pd_height = @(z_gantry_mm, elevation_m) H_base_cal_m + (z_gantry_mm - z_cal_mm)/1e3 + elevation_m;
 h_cal = H_led_m - pd_height(z_cal_mm, pd_elevation_cal_m);
 labels = struct('SQ', '1 - C\psi^2 (SQ)', 'cosine_mR', sprintf('cos^{%g}\\psi', m_R), 'cosine', 'cos\psi');
 
@@ -250,13 +249,14 @@ fprintf('\nLED triangulated from the estimated directions (vertical offsets of t
     levels(reference));
 others = setdiff(1:numel(levels), reference);
 fprintf('  %-10s %-4s %24s %s %8s %10s\n', 'PD model', 'est', 'LED (mm, mm, m)', ...
-    sprintf('%9s', string(compose('z=%g', levels(others)))), 'rays', 'z scale');
+    sprintf('%9s', string(compose('z=%g', levels(others)))), 'rays', 'z ratio');
 for im = 1:nm
     for j = 1:nmeth
         [position, offsets, ray_rms] = triangulate(direction(:, :, im, j), truth, level, reference);
-        % offsets are linear in the commanded travel if the gantry z scale differs from gantry_z_scale
-        travel = (z_cal_mm - levels(others))'/1e3;
-        scale = gantry_z_scale + (travel \ offsets);
+        % offsets are linear in the travel if the real vertical travel differs from the gantry z travel;
+        % z ratio = real / gantry travel implied by the directions (1 = gantry z correct)
+        travel = (levels(others) - z_cal_mm)'/1e3;
+        scale = 1 + (travel \ offsets);
         fprintf('  %-10s %-4s (%6.1f, %6.1f, %6.3f) %s %5.1f mm %10.3f\n', pd_models{im}, methods{j}, ...
             1e3*position(1:2), position(3), sprintf('%+6.1f mm', 1e3*offsets), 1e3*ray_rms, scale);
     end
@@ -286,9 +286,9 @@ for im = 1:nm
         end
     end
 end
-fprintf('Per gantry level (cm): mean 3D error / vertical bias; and real vertical travel per commanded mm\n');
-fprintf('estimated from the mean estimated heights of the levels (independent of gantry_z_scale):\n');
-fprintf('  %-10s %-4s%s %8s\n', 'PD model', 'est', sprintf('%16s', string(compose('z = %g', levels))), 'z scale');
+fprintf('Per gantry level (cm): mean 3D error / vertical bias; and z ratio = real vertical travel per gantry mm\n');
+fprintf('estimated from the mean estimated heights of the levels (1 = gantry z correct):\n');
+fprintf('  %-10s %-4s%s %8s\n', 'PD model', 'est', sprintf('%16s', string(compose('z = %g', levels))), 'z ratio');
 for im = 1:nm
     for j = 1:nmeth
         text = '';
@@ -299,7 +299,7 @@ for im = 1:nm
             text = [text sprintf('  %6.2f / %+6.2f', 100*mean(error_3d(sel, im, j), 'omitnan'), ...
                 100*mean(estimate(3, sel, im, j) - truth(3, sel), 'omitnan'))]; %#ok<AGROW>
         end
-        coef = [ones(numel(levels), 1) -levels(:)/1e3] \ heights;
+        coef = [ones(numel(levels), 1) levels(:)/1e3] \ heights;
         fprintf('  %-10s %-4s%s %8.3f\n', pd_models{im}, methods{j}, text, coef(2));
     end
 end
@@ -383,8 +383,8 @@ if k_study
             title(ax, sprintf('Sites at the calibration height (gantry z = %g)', z_cal_mm), 'FontWeight', 'normal');
         end
     end
-    title(layout, sprintf('%s + %s, LED (%.1f, %.1f) mm, gantry z scale %g', k_study_model, k_study_method, ...
-        p.calibration.led_xy_mm, gantry_z_scale), 'FontSize', 11);
+    title(layout, sprintf('%s + %s, LED (%.1f, %.1f) mm', k_study_model, k_study_method, ...
+        p.calibration.led_xy_mm), 'FontSize', 11);
 end
 
 %% Figures: true vs estimated positions

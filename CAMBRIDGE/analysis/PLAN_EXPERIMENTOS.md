@@ -3,6 +3,10 @@
 *Elaborado el 17/10/2026, a partir de los datos y análisis de `analysis/`, `demo/`,
 `database_acquisition/`, `simulations/` y `ExpValidation_Journal/`.*
 
+*Nota (28/10/2026): las z de este plan están en la convención actual del gantry (mm reales, z hacia
+arriba, z = 0 en la referencia), igual que los datos ya convertidos: z = −0.6 × la z comandada antes
+de la reparación del eje Z del 20/10 (−600 → 360, −300 → 180, −200 → 120, 0 → 0).*
+
 ---
 
 ## 0. Resumen ejecutivo
@@ -42,11 +46,11 @@ este plan y tres decisiones a pedirle (sección 8).
 
 | Dataset | Condiciones | Resultado / uso | Limitaciones |
 |---|---|---|---|
-| `RSS_Distribution/points.csv` (`campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z-300_K1-off65_pd0_tilt0_100ms`) | PD plano (adaptador 0°), K = 1, rejilla de 10 mm en 1400 × 1400 mm, z = −300, 4 LEDs | Mapa de RSS denso, calibración del LED | Una sola altura |
+| `RSS_Distribution/points.csv` (`campaign_20261013-182008_grid141x141x1-xy0to1400-s10-z180_K1-off65_pd0_tilt0_100ms`) | PD plano (adaptador 0°), K = 1, rejilla de 10 mm en 1400 × 1400 mm, z = 180, 4 LEDs | Mapa de RSS denso, calibración del LED | Una sola altura |
 | `Lambertian_order_LED_500khz/points.csv` | El mismo barrido recortado | A, m y posición XY del LED (281.1, 904.8) | Una sola altura: el m aparente cambia con la distancia |
-| `campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z-600to-300_K10-off65_pd15_tilt0_100ms` + `campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z-200to0_K10-off65_pd15_tilt0_100ms` | Adaptador 15°, K = 10 (65 + 36k), rejilla de 5 × 5 en XY con paso de 300 mm, 5 alturas, 1 muestra de 100 ms | **125 posiciones: 3.9 cm de media** (3.66 cm con el LED en 281.1, 904.8), sin fallos; con K = 5, 4.0 cm; con K = 3, 5.2 cm | Paso grueso; una muestra (sin estimar ruido); el offset se ajusta con los propios datos |
-| `demo/data/demo_20261016-113422_random-xy100to1300-z-600to0_K5-off65_pd15_tilt0_100ms` | Posiciones aleatorias, K = 5 | **Puntos 1–47: 3.28 cm de media** (mediana 3.36, P90 5.74) | Desde el punto 48 el tilt del MTRS se fue solo a ~3° (incidente) |
-| `demo/data/demo_20261016-103131_random-xy100to1300-z-600to0_K5-off66p5_pd15_tilt0_100ms` | Posiciones aleatorias, K = 5, 13 puntos | 5.4 cm de media | Un punto con 19.6 cm sin explicar |
+| `campaign_20261014-185628_grid5x5x2-xy100to1300-s300-z180to360_K10-off65_pd15_tilt0_100ms` + `campaign_20261015-000723_grid5x5x3-xy100to1300-s300-z0to120_K10-off65_pd15_tilt0_100ms` | Adaptador 15°, K = 10 (65 + 36k), rejilla de 5 × 5 en XY con paso de 300 mm, 5 alturas, 1 muestra de 100 ms | **125 posiciones: 3.9 cm de media** (3.66 cm con el LED en 281.1, 904.8), sin fallos; con K = 5, 4.0 cm; con K = 3, 5.2 cm | Paso grueso; una muestra (sin estimar ruido); el offset se ajusta con los propios datos |
+| `demo/data/demo_20261016-113422_random-xy100to1300-z0to360_K5-off65_pd15_tilt0_100ms` | Posiciones aleatorias, K = 5 | **Puntos 1–47: 3.28 cm de media** (mediana 3.36, P90 5.74) | Desde el punto 48 el tilt del MTRS se fue solo a ~3° (incidente) |
+| `demo/data/demo_20261016-103131_random-xy100to1300-z0to360_K5-off66p5_pd15_tilt0_100ms` | Posiciones aleatorias, K = 5, 13 puntos | 5.4 cm de media | Un punto con 19.6 cm sin explicar |
 | `Frecuency_Response/` | Barrido de 5 kHz a 1 MHz | Respuesta del enlace | — |
 
 **Resultados que ya son publicables:**
@@ -67,7 +71,7 @@ este plan y tres decisiones a pedirle (sección 8).
 
 | # | Brecha | Por qué importa | Cómo se cierra |
 |---|---|---|---|
-| G1 | Ground truth en Z con una única medida con cinta (s_z = 0.6) | Todo el error vertical depende de esto | **E0**: medir la altura real del PD en cada nivel de z, con repeticiones e incertidumbre |
+| G1 | Ground truth en Z con una única medida con cinta (recorrido real 0.6 × el comandado antes de la reparación del 20/10) | Todo el error vertical depende de esto | **E0**: medir la altura real del PD en cada nivel de z, con repeticiones e incertidumbre |
 | G2 | Calibración y test no separados: el offset, el LED y A, m se ajustan con los mismos datos que se evalúan | Riesgo de sobreajuste; un revisor lo detecta enseguida | **Protocolo congelado** (sección 3): se calibra con los datos del 13–15/10 y se testea con los del fin de semana |
 | G3 | Una sola muestra por orientación: no hay estimación de σ | Sin σ no hay comparación honesta con PEB/CRLB | Registros de 300 ms divisibles en 3 × 100 ms (E1) y E2 con más registros |
 | G4 | Rejilla de 5 × 5 con paso de 300 mm | Pocos puntos para mapas espaciales y para estudiar la calibración | **E1**: 7 × 7 × 4 con paso de 200 mm, que comparte puntos con la rejilla antigua |
@@ -163,11 +167,9 @@ Confirmar siempre con *Preview*.
 
 **Para qué:** cerrar G1 y comprobar el montaje después del incidente.
 
-- **Altura real del centro del PD** en z = 0, −200, −300, −400 y −600, con 3 repeticiones cada una.
+- **Altura real del centro del PD** en z = 0, 120, 180, 240 y 360, con 3 repeticiones cada una.
   Usar telémetro láser o regla desde el suelo, o desde una referencia fija.
-  - Se obtiene la tabla z_cmd → Z_PD, la linealidad de s_z y una incertidumbre (±mm).
-  - **No tocar la configuración del eje Z del controlador**: se perdería la comparabilidad con los
-    datos anteriores. Mejor documentar el mapeo medido.
+  - Se obtiene la tabla z_cmd → Z_PD, su linealidad y una incertidumbre (±mm).
 - **LED:** posición XY con plomada y altura H_LED (hoy se supone 3.0 m), con incertidumbre.
 - **MTRS:**
   - lectura de tilt = 0 a varios ángulos (comprobar que no varía con la rotación);
@@ -188,7 +190,7 @@ Confirmar siempre con *Preview*.
 | Parámetro | Valor |
 |---|---|
 | X, Y | 100 → 1300, paso 200 (7 × 7) |
-| Z | −600 → 0, paso 200 (4 niveles: 0, −200, −400, −600) |
+| Z | 0 → 360, paso 120 (4 niveles: 0, 120, 240, 360) |
 | K | 10, offset 65°, adaptador 15° (anotado) |
 | Tilt del MTRS | Fixed 0 (ahora se comanda en cada posición) |
 | Registro | **300 ms a 10 MSa/s**, 1 muestra (o 100 ms × 3 si el riesgo de congelamiento no preocupa) |
@@ -200,7 +202,7 @@ Confirmar siempre con *Preview*.
 
 **Puntos comunes con las campañas del 14–15/10:**
 - en XY, (100, 700, 1300)², 9 posiciones por nivel;
-- en Z, los niveles 0, −200 y −600.
+- en Z, los niveles 0, 120 y 360.
 
 Son **27 posiciones repetidas tras 3 días**, que dan la repetibilidad entre días (G9).
 
@@ -215,7 +217,7 @@ Son **27 posiciones repetidas tras 3 días**, que dan la repetibilidad entre dí
 para usar tilt en la demo y para explicar el incidente.
 
 **Configuración:** 3 sesiones con tilt fijo de **−3°, 0° y +3°**.
-- XY ∈ {100, 700, 1300}², z = −300: 9 posiciones, comunes con la rejilla del 14/10.
+- XY ∈ {100, 700, 1300}², z = 180: 9 posiciones, comunes con la rejilla del 14/10.
 - K = 10, 100 ms × 1.
 - ≈ 40 min por sesión.
 
@@ -247,7 +249,7 @@ para usar tilt en la demo y para explicar el incidente.
 (G7).
 
 **Configuración:**
-- XY ∈ {250, 550, 850, 1150}² (entre los puntos de la rejilla) y z ∈ {−300, −600}: 32 posiciones.
+- XY ∈ {250, 550, 850, 1150}² (entre los puntos de la rejilla) y z ∈ {180, 360}: 32 posiciones.
 - K = 10, tilt **Random U[−3°, 3°] para cada posición × orientación** (semilla guardada).
 - 300 ms × 1.
 
@@ -262,7 +264,7 @@ para usar tilt en la demo y para explicar el incidente.
 
 **Para qué:** σ empírico por orientación y repetibilidad del reposicionado (G3, G9).
 
-**Configuración:** las 9 posiciones de E3 a z = −300, K = 10, **300 ms × 4** (12 segmentos de
+**Configuración:** las 9 posiciones de E3 a z = 180, K = 10, **300 ms × 4** (12 segmentos de
 100 ms) y **2 pasadas**.
 
 **Análisis:**
@@ -293,7 +295,7 @@ quasi-Lambertiana (eje B de `ExpValidation_Journal`) y del PINN de `proposal_jou
 **Configuración:**
 - **Requiere cambiar al adaptador de 0°**: por eso se hace al final, cuando ya no haga falta el de
   15°.
-- K = 1, paso de 25 mm (57 × 57), z = −600 y z = 0 (≈ 2 h por altura). z = −300 ya existe.
+- K = 1, paso de 25 mm (57 × 57), z = 360 y z = 0 (≈ 2 h por altura). z = 180 ya existe.
 
 **Análisis:**
 - m aparente frente a la distancia;

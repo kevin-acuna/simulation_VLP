@@ -6,7 +6,8 @@ via CRI (cri_lib).
 
   - Mover a una posicion absoluta X Y Z [mm] escrita en consola.
   - Recorrer posiciones de prueba predefinidas (TEST_POSITIONS).
-  - Test de ejes: mueve +X, +Y, +Z por separado para conocer la direccion fisica.
+  - Test de ejes: mueve +X, +Y, +Z por separado para conocer la direccion fisica
+    (+Z debe SUBIR con la configuracion actual del robot, dirA3 = "0 0 1").
   - Durante cada movimiento se muestra la posicion actual cada REFRESH_S (100 ms).
   - Cualquier tecla (o Ctrl+C) durante un movimiento -> STOP.
 
@@ -47,10 +48,13 @@ CONNECT_RETRY_PAUSE_S = 1.0
 # --- Espacio de trabajo permitido (filtro de seguridad de ESTE script) ---
 # Cualquier objetivo fuera de esta caja se rechaza antes de enviarlo al robot.
 # (El controlador ademas tiene sus propios limites / virtual box.)
-# Convencion iRC de este gantry: Z cartesiana = -A3 -> Z = 0 arriba (home) y
-# Z negativa hacia abajo. 700 mm de carrera vertical = Z en [-700, 0].
-WORKSPACE_MIN_MM = (0.0, 0.0, -700.0)       # X, Y, Z minimos
-WORKSPACE_MAX_MM = (1400.0, 1400.0, 0.0)    # X, Y, Z maximos
+# Convencion iRC de este gantry (desde 2026-10-20, dirA3 = "0 0 1" y GearScale Z corregido):
+# Z cartesiana = +A3 en mm reales -> Z = 0 abajo (referencia) y Z positiva hacia ARRIBA.
+# Limite del controlador A3Max = 720 mm (tope fisico ~750 mm); aqui se deja Z en [0, 700].
+# (Tras escribir una configuracion nueva en iRC hay que hacer "Restart Software"; si no, pueden
+# aparecer errores como "minimum joint position reached (-0.000250 < 0.000000)".)
+WORKSPACE_MIN_MM = (0.0, 0.0, 0.0)          # X, Y, Z minimos
+WORKSPACE_MAX_MM = (1400.0, 1400.0, 700.0)  # X, Y, Z maximos
 
 # --- Movimiento ----------------------------------------------
 VELOCITY_MM_S = 50.0             # velocidad cartesiana del movimiento [mm/s]
@@ -282,9 +286,9 @@ def monitor(robot):
 
 HELP = """
 Comandos:
-  X Y Z      mover a posicion absoluta en mm, p.ej.  700 700 -300
-             (Z = 0 arriba, negativa hacia abajo)
-             usa * para mantener un eje, p.ej.       * * -200
+  X Y Z      mover a posicion absoluta en mm, p.ej.  700 700 300
+             (Z = 0 abajo / referencia, positiva hacia arriba; Z entre 0 y 700)
+             usa * para mantener un eje, p.ej.       * * 200
   p          listar posiciones de prueba
   p N        mover a la posicion de prueba N
   t          recorrer TODAS las posiciones de prueba

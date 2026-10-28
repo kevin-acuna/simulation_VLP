@@ -11,7 +11,7 @@ import os
 
 import numpy as np
 
-from _common import load_settings, read_csv, resolve
+from _common import check_z_convention, load_settings, read_csv, resolve
 
 from geometry import TestbedGeometry       # noqa: E402
 from vlp import fit_lambertian, make_response   # noqa: E402
@@ -24,6 +24,7 @@ def main():
     ap.add_argument("--response", default=s["positioning"]["pd_response"])
     ap.add_argument("--csv", default=resolve(s["paths"]["calibration_csv"]))
     a = ap.parse_args()
+    check_z_convention(os.path.dirname(a.csv))
     p, g = s["positioning"], TestbedGeometry(**{k: v for k, v in s["geometry"].items()
                                                if k in TestbedGeometry.__dataclass_fields__})
     rows = read_csv(a.csv)

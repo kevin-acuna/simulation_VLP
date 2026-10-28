@@ -45,12 +45,12 @@
         "workspace_min_mm": [
           0.0,
           0.0,
-          -700.0
+          0.0
         ],
         "workspace_max_mm": [
           1400.0,
           1400.0,
-          0.0
+          420.0
         ],
         "velocity_mm_s": 50.0,
         "override_pct": 100.0,
@@ -95,7 +95,8 @@
       },
       "view": {
         "mtrs_zero_location": "N",
-        "mtrs_clockwise": false
+        "mtrs_clockwise": false,
+        "z_negative_up": false
       }
     },
     "gantry": {
@@ -110,12 +111,12 @@
       "workspace_min_mm": [
         0.0,
         0.0,
-        -700.0
+        0.0
       ],
       "workspace_max_mm": [
         1400.0,
         1400.0,
-        0.0
+        420.0
       ]
     },
     "mtrs": {
@@ -153,5 +154,11 @@
       "wgen_vpp_V": 2.0,
       "wgen_offset_V": 0.0
     }
+  },
+  "z_conversion": {
+    "date": "2026-10-28",
+    "formula": "z [mm] = -0.6 x z as recorded",
+    "reason": "recorded before the gantry Z repair of 2026-10-20 (robot Z GearScale 166.067 instead of 276.778, ratio 0.600, and Cartesian z negative upwards). Converted to the current convention: z in real mm, positive upwards, z = 0 at the reference (lowest photodetector position). Same physical positions; every z field (CSV columns, fft headers, session.json) and the folder name converted",
+    "previous_name": "exp01_20261012_122916"
   }
 }
