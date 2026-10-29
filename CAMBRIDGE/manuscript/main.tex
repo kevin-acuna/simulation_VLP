@@ -12,13 +12,15 @@
 \newcommand{\norm}[1]{\lVert#1\rVert}
 \newcommand{\R}{\mathbb R}
 \newcommand{\draftsubsection}[1]{\subsection{#1}\par\penalty0\relax}
+% Placeholder for schematics and photographs supplied by the author: \figplaceholder{height}{description}
+\newcommand{\figplaceholder}[2]{\fbox{\parbox[c][#1][c]{0.94\linewidth}{\centering\footnotesize\itshape #2}}}
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\Cov}{Cov}
 \begin{document}
-\title{Calibration-Aware Three-Dimensional Optical Positioning With a Fixed LED and a Tilt-Constrained Reorientable Photodiode}
+\title{Three-Dimensional Visible Light Positioning With a Single LED and a Single Reorientable Photodiode: Bounds, Calibration, and Experimental Validation}
 \author{Author names and affiliations to be confirmed}
-\markboth{IEEE Transactions on Instrumentation and Measurement --- Working Manuscript}{Fixed-LED Positioning With a Reorientable Photodiode}
+\markboth{IEEE Transactions on Instrumentation and Measurement --- Working Manuscript}{Single-LED, Single-PD 3D Positioning With a Reorientable Receiver}
 \maketitle
 \begin{abstract}
 \end{abstract}
@@ -34,52 +36,33 @@
 \section{System and Measurement Model}
 \label{sec:model}
 \input{sections/02_system_measurement_model}
-\FloatBarrier
 
-\section{Calibration and Uncertainty Characterization}
-\label{sec:calibration}
-%\draftsubsection{Radiometric Scale and Transmitter Pattern}
-%\draftsubsection{Receiver Angular Response and Model Selection}
-%\draftsubsection{Orientation Reference and Optical-Center Calibration}
-%\draftsubsection{Noise Statistics, Correlation, and Repeatability}
-
-\section{Identifiability and Position Error Bounds}
+\section{Identifiability and Position Error Bound}
 \label{sec:bounds}
-%\draftsubsection{Local Identifiability and Global Ambiguities}
-%\draftsubsection{Fisher Information With Known Orientations}
-%\draftsubsection{Effective Information With Orientation Uncertainty}
-%\draftsubsection{Position Error Bound and Coverage Criteria}
+\input{sections/03_identifiability_bounds}
 
-\section{Estimation and Tilt-Constrained Orientation Design}
+\section{Estimation and Calibration}
 \label{sec:estimation}
-%\draftsubsection{Estimation With a Calibrated Angular Response}
-%\draftsubsection{Cosine-Power Reference Estimators}
-%\draftsubsection{Initialization, Model Support, and Failure Detection}
-%\draftsubsection{Orientation-Set and Sample-Budget Design}
+\input{sections/04_estimation_calibration}
 
-\section{Experimental Platform and Evaluation Protocol}
-\label{sec:experiments}
-%\draftsubsection{Optical and Electromechanical Instrumentation}
-%\draftsubsection{Position Reference and Its Measurement Uncertainty}
-%\draftsubsection{Calibration and Independent Validation Datasets}
-%\draftsubsection{Acquisition Procedure, Baselines, and Performance Metrics}
+\section{Experimental Testbed and Protocol}
+\label{sec:testbed}
+\input{sections/05_testbed_protocol}
 
-\section{Numerical and Experimental Results}
+\section{Experimental Results}
 \label{sec:results}
-%\draftsubsection{Three-Dimensional Position Error and Information Bounds}
-%\draftsubsection{Inclination, Orientation Count, and Spatial Coverage}
-%\draftsubsection{Angular-Response Mismatch and Calibration Sensitivity}
-%\draftsubsection{Orientation Errors, Reflections, and Acquisition Time}
-%\draftsubsection{Limitations and Transferability}
+\input{sections/06_results}
+
+\section{Discussion}
+\label{sec:discussion}
+\input{sections/07_discussion}
 
 \section{Conclusion}
 \label{sec:conclusion}
+\input{sections/08_conclusion}
 
 \appendices
-\section{Channel Derivatives for the Considered Response Families}
-\label{app:derivatives}
-\section{Estimation and Orientation-Design Procedures}
-\label{app:algorithms}
+\input{sections/appendix_axial}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

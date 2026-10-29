@@ -1,6 +1,6 @@
 \subsection{System Geometry}
 \label{subsec:geometry}
-Consider a fixed LED at a known position $\vect t\in\R^3$, with unit optical axis $\vect n_t$ and constant transmitted power $P_t$. A single PD has an unknown position $\vect r=[x,y,z]\trans$ and acquires RSS measurements at $K$ orientations while its optical center remains stationary. The receiver normals $\vect n_i\in\mathbb S^2$, $i=1,\ldots,K$, are expressed in the same global coordinate frame and may be chosen arbitrarily. All three position coordinates are unknown.
+A single LED is installed at a known position $\vect t\in\R^3$ with unit optical axis $\vect n_t$, and a single photodiode (PD) is placed at an unknown position $\vect r=[x,y,z]\trans$. While its optical center remains stationary, the PD is reoriented to $K$ known unit normals $\vect n_i\in\mathbb S^2$, $i=1,\ldots,K$, expressed in the same global frame as $\vect t$, and one received-signal-strength (RSS) measurement is taken at each orientation (Fig.~\ref{fig:system}). All three coordinates of $\vect r$ are unknown.
 
 The LED--PD distance and the unit direction from the PD toward the LED are:
 \begin{equation}
@@ -8,67 +8,73 @@ The LED--PD distance and the unit direction from the PD toward the LED are:
  \vect u=\frac{\vect t-\vect r}{d}.
  \label{eq:geometry}
 \end{equation}
-The irradiance angle $\phi$ and incidence angle $\psi_i$ are determined by:
+The irradiance angle $\phi$ at the LED and the incidence angle $\psi_i$ at the PD follow from:
 \begin{equation}
  \cos\phi=-\vect n_t\trans\vect u,\qquad
  \cos\psi_i=\vect n_i\trans\vect u.
  \label{eq:incidence}
 \end{equation}
-Thus, receiver reorientation changes $\psi_i$, whereas $d$ and $\phi$ remain constant during the acquisition sequence. The inclination of $\vect n_i$ relative to the global vertical is distinct from the incidence angle $\psi_i$; no common inclination or azimuthal spacing is imposed.
+Reorienting the receiver therefore changes only $\psi_i$; the distance $d$ and the irradiance angle $\phi$ are common to the $K$ measurements of a position. The inclination of $\vect n_i$ with respect to the vertical must not be confused with $\psi_i$, and no particular orientation pattern is assumed in this section.
 
-\subsection{Received-Power Model}
+\begin{figure}[!t]
+ \centering
+ \includegraphics[width=\linewidth]{fig_inkscape/fig_schema.png}
+ \caption{Single-LED, single-PD positioning. The PD is reoriented about its optical center; the direction $\vect u$ and distance $d$ to the LED are common to the $K$ orientations, whereas the incidence angles $\psi_i$ change.}
+ \label{fig:system}
+\end{figure}
+
+\subsection{Received-Signal Model}
 \label{subsec:radiometry}
-Under line-of-sight (LOS) propagation and a Lambertian point-source model~\cite{Kahn1997,Wang2024}, the calibrated received-power observation at orientation $i$ is:
+Under line-of-sight (LOS) propagation and a Lambertian point source~\cite{Kahn1997,Komine2004}, an LED that emits the optical power $P_t$ delivers the power $P_tH_i$ to the PD at orientation $i$, with the channel gain:
 \begin{equation}
- P_{r,i,k}=P_t H_i(\vect r)+\epsilon_{i,k},
- \qquad k=1,\ldots,N_i,
- \label{eq:received-power}
-\end{equation}
-where $N_i$ is the number of observations, $\epsilon_{i,k}$ is additive noise, and $H_i$ is the effective LOS channel gain:
-\begin{equation}
- H_i(\vect r)=\frac{(m_T+1)A_{\mathrm{PD}}}{2\pi d^2}
- \cos^{m_T}(\phi)\,R(\psi_i).
+ H_i(\vect r)=\frac{(m+1)A_{\mathrm{PD}}}{2\pi d^2}\cos^{m}(\phi)\,T_s(\psi_i)\,g(\psi_i)\,R(\psi_i),
  \label{eq:channel}
 \end{equation}
-Here $A_{\mathrm{PD}}$ denotes the active detector area. The LED Lambertian order is $m_T=-\ln2/\ln(\cos\Phi_{1/2})$, where $\Phi_{1/2}$ is its semi-angle at half power. Equation~\eqref{eq:channel} applies for $0\leq\phi<\pi/2$ and $0\leq\psi_i<\Psi_{\mathrm{FOV}}\leq\pi/2$; otherwise, $H_i=0$. The receiver FOV is a half-angle. No optical concentrator is assumed, and the on-axis optical transmission is taken as unity. Received powers are expressed in optical-equivalent watts after background removal and gain/responsivity calibration.
+where $A_{\mathrm{PD}}$ is the active area of the detector, $m=-\ln2/\ln(\cos\Phi_{1/2})$ the Lambertian order of the LED with half-power semi-angle $\Phi_{1/2}$, $T_s(\psi)$ and $g(\psi)$ the gains of an optical filter and of an optical concentrator~\cite{Kahn1997}, and $R(\psi)$ the normalized angular response of the receiver introduced below. The model holds for $0\le\phi<\pi/2$ and $R(\psi_i)>0$; otherwise $H_i=0$. The receiver of this work has neither a filter nor a concentrator, so $T_s(\psi)=g(\psi)=1$ in the following; a constant transmission would in any case be absorbed by the calibrated gain introduced below.
+
+Each LED is intensity-modulated by a sinusoidal tone of frequency $f$, so that its optical power is $P_t(t)=\bar P_t+P_f\cos(2\pi ft)$, where $P_f$ is the amplitude of the modulated component. The PD converts the collected power into a photocurrent with responsivity $\gamma$ (in A/W), and its amplifier converts this current into a voltage with transimpedance gain $G_{\mathrm T}(f)$ (in V/A) at the tone frequency~\cite{Komine2004}. The quantity actually measured is the RMS amplitude of the tone in this voltage, extracted by a lock-in projection (Section~\ref{subsec:observations}). Its noiseless value at orientation $i$, the signal $s_i$, is:
+\begin{equation}
+ s_i(\vect r)=\frac{\gamma\,G_{\mathrm T}(f)\,P_f}{\sqrt2}\,H_i(\vect r)
+ =\frac{A\cos^{m}(\phi)}{d^2}\,R(\psi_i),
+ \label{eq:rss-model}
+\end{equation}
+with the lumped gain, in $\mathrm{V\,m^2}$:
+\begin{equation}
+ A=\frac{(m+1)A_{\mathrm{PD}}\,\gamma\,G_{\mathrm T}(f)\,P_f}{2\sqrt2\,\pi}.
+ \label{eq:gain}
+\end{equation}
+Each factor of~\eqref{eq:gain} could be measured separately; instead, $A$ and $m$ are calibrated together from RSS measurements at known positions (Section~\ref{subsec:led-calibration}), which also accounts for any gain of the receiver chain that is not modelled explicitly.
+
+Model~\eqref{eq:rss-model} has a separable structure that the rest of the paper exploits:
+\begin{equation}
+ s_i(\vect r)=\beta(\vect r)\,R(\psi_i),\qquad
+ \beta(\vect r)=\frac{A\cos^{m}(\phi)}{d^2}.
+ \label{eq:separable}
+\end{equation}
+The \emph{shape} of the $K$ signals, $R(\psi_i)$ up to a common factor, depends only on the direction $\vect u$, through $\cos\psi_i=\vect n_i\trans\vect u$; the common amplitude $\beta$ carries the distance. The LED gain and radiation pattern enter only through $\beta$. When the dependence on $\vect u$ must be explicit, we write $R(\vect n_i\trans\vect u)$ for the response at the incidence angle $\arccos(\vect n_i\trans\vect u)$.
 
 \subsection{Receiver Angular Response}
 \label{subsec:response}
-The dimensionless function $R(\psi)$ describes the normalized effective angular response, with $R(0)=1$. It includes the projected-area effect, so no additional factor $\cos\psi$ is required in~\eqref{eq:channel}. The receiver is assumed to have an axisymmetric response.
-
-The conventional model uses $R(\psi)=\cos\psi$~\cite{Kahn1997,Wang2024}. Experimental characterization of commercial PDs supports alternatives such as $R(\psi)=\cos^{m_R}\psi$, with $m_R>0$, and the SQ model~\cite{Bastiaens2020}:
+The dimensionless function $R(\psi)$, with $R(0)=1$, is the effective angular response of the receiver, including the projected-area effect; no additional $\cos\psi$ factor multiplies it. It is assumed axisymmetric. The conventional choice is $R(\psi)=\cos\psi$~\cite{Kahn1997,Wang2024}, and the generalized form $R(\psi)=\cos^{m_R}\psi$ is also common. These forms are adopted mostly for analytical convenience: measurements of commercial photodiodes show that their effective response can depart markedly from a cosine, and that ignoring the mismatch degrades RSS-based positioning~\cite{Bastiaens2020}. The method studied here depends on the response even more directly, because the direction is inferred from the variation of $R$ over the orientations. The formulation therefore keeps $R(\psi)$ general. As an analytical alternative to the cosine, we consider the SQ model, which described the two commercial PDs characterized in~\cite{Bastiaens2020} better than cosine models:
 \begin{equation}
  R_{\mathrm{SQ}}(\psi)=
- \left[1-\frac{1-1/\sqrt2}{\psi_{3\mathrm{dB}}^2}\,\psi^2\right]_+,
+ \left[1-a\,\psi^2\right]_+,\qquad
+ a=\frac{1-1/\sqrt2}{\psi_{3\mathrm{dB}}^2},
  \label{eq:sq-response}
 \end{equation}
-where $[a]_+=\max(a,0)$ and $\psi_{3\mathrm{dB}}$ is the angle at which the response equals $1/\sqrt2$. The order $m_R$ characterizes the receiver and is independent of $m_T$. The response model and its parameters are determined by calibration; the formulation retains $R(\psi)$ without selecting a particular family. Its response may vanish before the external FOV limit, whereas an angle of half response does not itself define a hard cutoff.
+where $[\cdot]_+=\max(\cdot,0)$ and $\psi_{3\mathrm{dB}}$ is the angle at which the response equals $1/\sqrt2$. For the Thorlabs PDA100A2 used here, $\psi_{3\mathrm{dB}}=0.61$~rad, so that the response vanishes at $\psi=a^{-1/2}=64.6^\circ$, and the fitted cosine order is $m_R=1.9$~\cite{Bastiaens2020}. The three families are compared on our data in Section~\ref{subsec:res-model}; none of them is assumed to be the true response a priori.
 
 \subsection{RSS Acquisition and Observation Statistics}
 \label{subsec:observations}
-At each orientation, observations are retained after the receiver has settled, as illustrated in Fig.~\ref{fig:acquisition}. The baseline assumes linear nonsaturated detection and independent Gaussian optical-equivalent noise, $\epsilon_{i,k}\sim\mathcal N(0,\sigma_0^2)$, with calibrated variance $\sigma_0^2$ in $\mathrm W^2$. Defining $\mu_i(\vect r)=P_tH_i(\vect r)$, the averaged observation satisfies:
+The PD output $v[n]$ is digitized at rate $f_s$ over a record of $N$ samples (duration $T=N/f_s$) at each orientation, after the receiver has settled. When several LEDs share the room, each is modulated by its own sinusoidal tone, and the RSS of the LED with frequency $f$ is the RMS amplitude of the corresponding discrete Fourier coefficient:
 \begin{equation}
- \bar P_{r,i}=\frac1{N_i}\sum_{k=1}^{N_i}P_{r,i,k}
- \sim\mathcal N\left(\mu_i(\vect r),\frac{\sigma_0^2}{N_i}\right).
- \label{eq:sample-mean}
+ y_i=\frac{\sqrt2}{N}\left|\sum_{n=0}^{N-1}v[n]\,e^{-j2\pi fn/f_s}\right|.
+ \label{eq:lockin}
 \end{equation}
-The observation vector $\bar{\vect P}_r=[\bar P_{r,1},\ldots,\bar P_{r,K}]\trans$ therefore has covariance:
+When $fT$ is an integer, this projection rejects the other tones and the ambient-light flicker at low frequencies, and its noise is set by the noise spectral density in a band of width $1/T$ around $f$. At the signal-to-noise ratios of this work (Section~\ref{subsec:res-noise}), the measurement is well modelled as:
 \begin{equation}
- \bm\Sigma_P=\diag\left(\frac{\sigma_0^2}{N_1},\ldots,
- \frac{\sigma_0^2}{N_K}\right).
- \label{eq:mean-covariance}
+ y_i=s_i(\vect r)+\epsilon_i,\qquad
+ \epsilon_i\sim\mathcal N\!\left(0,\sigma_i^2/L\right),
+ \label{eq:observation}
 \end{equation}
-The total sample budget is $M=\sum_i N_i$; increasing $K$ at fixed $N_i$ and at fixed $M$ are different comparisons. The per-observation and averaged-measurement SNRs are:
-\begin{equation}
- \mathrm{SNR}_{i,\mathrm{raw}}=\frac{\mu_i^2}{\sigma_0^2},\qquad
- \mathrm{SNR}_{i,\mathrm{mean}}=\frac{N_i\mu_i^2}{\sigma_0^2}.
- \label{eq:snr}
-\end{equation}
-The actual receiver normals are treated as known in this baseline; orientation uncertainty is introduced in Section~\ref{sec:bounds}. Noise correlation, calibration errors, and deviations from LOS propagation require separate characterization rather than being removed by averaging.
-
-\begin{figure*}[t]
- \centering
- \includegraphics[width=\textwidth]{fig02_acquisition.pdf}
- \caption{Sequential RSS acquisition and processing. Transition intervals are discarded; $N_i$ observations are retained at each stable orientation. Calibrated power means and globally referenced receiver normals form the inputs for position estimation.}
- \label{fig:acquisition}
-\end{figure*}
+with independent errors across orientations, where $\sigma_i$ is the standard deviation of one record at orientation $i$ and $L$ the number of records averaged per orientation ($L=1$ throughout the experiments; $N$ remains the number of samples of a record). In general $\sigma_i$ depends on the orientation, through the shot noise of the collected signal and ambient light~\cite{Komine2004}, and the formulation keeps it so. When the ambient light and the receiver electronics dominate, the noise becomes nearly independent of the signal~\cite{Kahn1997}; this is the case of our receiver (Section~\ref{subsec:res-noise}), and the experiments use a common value $\sigma$. The orientation-wise SNR is $\mathrm{SNR}_i=s_i/\sigma_i$. In this baseline the actual normals $\vect n_i$ are known; orientation errors are treated in Section~\ref{subsec:orientation-uncertainty}. Background, gain drift and deviations from the LOS model are not averaged out by repeated records and are discussed with the experimental results.

@@ -1,0 +1,74 @@
+\subsection{Fisher Information}
+\label{subsec:fim}
+Under~\eqref{eq:observation}, the Fisher information matrix (FIM) of the position is:
+\begin{equation}
+ \vect I(\vect r)=\vect J\trans\vect W\vect J,\qquad
+ \vect W=\diag\!\left(\frac{L}{\sigma_1^2},\ldots,\frac{L}{\sigma_K^2}\right),
+ \label{eq:fim}
+\end{equation}
+where the rows of $\vect J\in\R^{K\times3}$ are the gradients $\nabla s_i\trans$, and the position error bound (PEB) is $\mathrm{PEB}=\sqrt{\operatorname{tr}\vect I^{-1}}$. With the common noise level $\sigma$ used in the experiments, $\vect W=(L/\sigma^2)\,\vect I_K$. With $\vect P_{\vect u}=\vect I_3-\vect u\vect u\trans$, $\nabla d=-\vect u$ and $\partial\vect u/\partial\vect r=-\vect P_{\vect u}/d$, the separable form~\eqref{eq:separable} gives:
+\begin{equation}
+ \nabla s_i=R(\psi_i)\nabla\beta-\frac{\beta}{d}\dot R(\psi_i)\left(\vect n_i-\cos\psi_i\,\vect u\right),
+ \label{eq:gradient}
+\end{equation}
+where $\dot R(\psi)=\mathrm dR/\mathrm d(\cos\psi)$ is the derivative of the response with respect to the incidence cosine and, for the Lambertian pattern:
+\begin{equation}
+ \nabla\beta=\frac{\beta}{d}\left[(m+2)\,\vect u-\frac{m}{\cos\phi}\,(-\vect n_t)\right].
+ \label{eq:beta-gradient}
+\end{equation}
+The first term of~\eqref{eq:gradient} is common to all orientations and carries range information; the second depends on the orientation and carries direction information. For the SQ response, $\dot R(\psi)=2a\psi/\sin\psi$ inside its support, with $\dot R(0)=2a$; the information is therefore set by the \emph{slope} of the response, not by its value. A response model that reproduces the measured amplitudes but not their slope can produce misleading bounds and estimates.
+
+\subsection{Local Identifiability}
+\label{subsec:identifiability}
+Let $\vect E\in\R^{3\times2}$ be an orthonormal basis of the plane orthogonal to $\vect u$. In the illuminated region, the map from $\vect r$ to the local coordinates $(\ln\beta,\bm\omega)$, where $\bm\omega$ are two tangent coordinates of $\vect u$, is invertible, and therefore:
+\begin{equation}
+ \operatorname{rank}\vect J=\operatorname{rank}\left[\,\vect R,\ \diag(\dot{\vect R})\,\vect N\trans\vect E\,\right],
+ \label{eq:rank}
+\end{equation}
+with $\vect R=[R(\psi_1),\ldots,R(\psi_K)]\trans$, $\dot{\vect R}$ defined likewise and $\vect N=[\vect n_1,\ldots,\vect n_K]$. The position is locally identifiable if this $K\times3$ matrix has rank three. Three consequences guide the experiment.
+
+First, at least three illuminated orientations are needed, but they are not sufficient: the tangent projections $\vect E\trans\vect n_i$, weighted by the response slope, must span the plane orthogonal to $\vect u$. If the PD normal coincides with the rotation axis of the stage, all incidence angles are equal and~\eqref{eq:rank} has rank one; turning an untilted PD provides no information. The receiver must be \emph{tilted} with respect to the rotation axis. For the cosine family, homogeneity reduces~\eqref{eq:rank} to the rank of the illuminated normals; for a nonhomogeneous response such as SQ this reduction does not hold, and~\eqref{eq:rank} must be checked directly. Local identifiability does not imply global uniqueness either: with coplanar normals, the SQ model can admit two symmetric solutions with a finite bound, which is why the estimator of Section~\ref{subsec:estimator} uses several starting points.
+
+Second, the direction stage needs neither $A$ nor the LED pattern, which only scale the amplitude column. The distance, in contrast, is only available through $\beta$: if $A$ were unknown, $\beta$ and $d$ could not be separated, and reorientation alone cannot remove this distance--gain ambiguity. The calibration of $A$ and $m$ is therefore not a refinement but a condition for three-dimensional positioning.
+
+Third, the information depends on the response slope at the incidence angles actually visited, which links the tilt of the receiver to the attainable accuracy.
+
+\subsection{Role of the Receiver Tilt}
+\label{subsec:tilt}
+The axial case makes this link explicit. Consider a vertical LED, the PD on its axis at distance $d$, and $K\geq3$ normals uniformly spaced in azimuth on a cone of half-angle $\theta$ about the vertical, all illuminated, with a common noise level $\sigma$. The FIM is diagonal:
+\begin{equation}
+ \vect I=\frac{LKA^2}{\sigma^2d^6}\diag\!\left(\frac{\dot R^2\sin^2\theta}{2},\ \frac{\dot R^2\sin^2\theta}{2},\ 4R^2\right),
+ \label{eq:axial-fim}
+\end{equation}
+with $R$ and $\dot R$ evaluated at $\psi=\theta$, and the bound is:
+\begin{equation}
+ \mathrm{PEB}^2=\frac{\sigma^2d^6}{LKA^2}\left[\frac{4}{\dot R(\theta)^2\sin^2\theta}+\frac{1}{4R(\theta)^2}\right].
+ \label{eq:axial-peb}
+\end{equation}
+The horizontal terms decrease with $\sin\theta$ and with the response slope, and they diverge as $\theta\to0$; the vertical term is controlled by the response value, i.e., by the received amplitude. The bound grows as $d^3$, and repeating independent orientations improves it as $1/\sqrt{K}$ only when the records per orientation are fixed.
+
+\subsection{Orientation Uncertainty}
+\label{subsec:orientation-uncertainty}
+The normals are never known exactly. Suppose that each normal is perturbed by an independent angular error with standard deviation $\sigma_\theta$ per tangent component, measured by an auxiliary sensor (the stage encoder or an IMU) and persisting over all the records of that orientation. Eliminating the orientation errors from the joint likelihood gives the effective FIM:
+\begin{equation}
+ \vect I_e=\vect J\trans\left(\bm\Sigma_y+\vect D\bm\Sigma_\theta\vect D\trans\right)^{-1}\vect J,\qquad
+ \vect D_i=\beta\dot R(\psi_i)\,\vect u\trans\vect E_i,
+ \label{eq:fim-orientation}
+\end{equation}
+where $\bm\Sigma_y=\vect W^{-1}$, $\vect E_i$ is a tangent basis at $\vect n_i$, and $\vect D_i$ is the $i$th block row of $\vect D$. For isotropic, independent errors this amounts to replacing the noise variance of each orientation by:
+\begin{equation}
+ \sigma_{i,\mathrm{eff}}^2=\frac{\sigma_i^2}{L}+\sigma_\theta^2\,\beta^2\dot R(\psi_i)^2\sin^2\psi_i.
+ \label{eq:effective-variance}
+\end{equation}
+Orientation errors thus behave as signal-proportional noise that is not reduced by averaging records. At the high SNR of an amplified PD they dominate the bound, as shown next.
+
+\subsection{Bound-Based Design of the Orientation Set}
+\label{subsec:design}
+Fig.~\ref{fig:peb}(b) evaluates the bound for the actual testbed: the calibrated SQ model and LED (Sections~\ref{sec:estimation} and~\ref{sec:results}), the 125 PD positions of the grid dataset (heights from 0.955 to 1.315~m below an LED at 3.0~m), the measured noise of one 100-ms record ($\sigma=1.92~\mu$V, Section~\ref{subsec:res-noise}) and $K=5$ normals uniformly spaced on a cone of tilt $\theta$. With exactly known normals, the median bound decreases monotonically with the tilt, from 7.9~mm at $2^\circ$ to 1.1~mm at $15^\circ$ and 0.4~mm at $45^\circ$. With orientation uncertainty, the bound becomes one to two orders of magnitude larger and flattens above about $25^\circ$; for $\sigma_\theta=1^\circ$ its minimum (42~mm, at $35^\circ$) is only 27\,\% below the value at $15^\circ$. Large tilts also have a cost: beyond about $32^\circ$, some orientations of the farthest positions exceed the $64.6^\circ$ support of the SQ response and stop contributing. A tilt of $15^\circ$ captures most of the attainable improvement while keeping every orientation of every position at least $17^\circ$ inside the support; it was implemented with a 3D-printed adapter (Section~\ref{subsec:hardware}). The same conclusion follows from a generic study over a $2\times2\times1.4$~m volume with the published SQ response, in which a per-component orientation uncertainty of $1^\circ$ required tilts of at least $15.5^\circ$ for every point to have a PEB below 10~cm.
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[width=\linewidth]{fig_peb.pdf}
+ \caption{Position error bound of the testbed (calibrated SQ model, measured noise $\sigma=1.92~\mu$V per record). (a)~CDFs over the 125 grid sites ($K=10$) of the bound with exactly known normals, of the bound with an orientation uncertainty $\sigma_\theta$ per tangent component, and of the measured 3D error. (b)~Median bound over the same positions versus the tilt of a uniform cone of $K=5$ normals; the dotted line marks the $15^\circ$ adapter.}
+ \label{fig:peb}
+\end{figure}

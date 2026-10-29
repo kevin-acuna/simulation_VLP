@@ -1,0 +1,8 @@
+\section{Derivation of the Axial Bound}
+\label{app:axial}
+With the PD on the axis of a vertical LED, $\vect u$ is vertical, $\phi=0$ and $\psi_i=\theta$ for every normal of the cone. A vertical displacement $\delta$ of the PD changes only the distance, by $-\delta$, so that $\partial s_i/\partial z=2AR(\theta)/d^3$ for every $i$ and the vertical information is $4LKA^2R^2/(\sigma^2d^6)$. A horizontal displacement $\delta$ along $X$ rotates $\vect u$ by $-\delta/d$ to first order; the irradiance angle changes too, but $\cos^m\phi$ is stationary at $\phi=0$ and the distance changes only to second order. With $\vect n_i=[\sin\theta\cos\alpha_i,\sin\theta\sin\alpha_i,\cos\theta]\trans$:
+\begin{equation}
+ \frac{\partial s_i}{\partial x}=-\frac{A}{d^3}\dot R(\theta)\sin\theta\cos\alpha_i,
+ \label{eq:axial-derivative}
+\end{equation}
+and, for uniformly spaced azimuths, $\sum_i\cos^2\alpha_i=K/2$ and $\sum_i\cos\alpha_i\sin\alpha_i=\sum_i\cos\alpha_i=0$. This yields the diagonal FIM~\eqref{eq:axial-fim} and the bound~\eqref{eq:axial-peb}. For the SQ response, $R=1-a\psi^2$ and $\mathrm d(\cos\psi)/\mathrm d\psi=-\sin\psi$, so that $\dot R(\psi)=2a\psi/\sin\psi$, which tends to $2a$ at normal incidence and never vanishes inside the support.
