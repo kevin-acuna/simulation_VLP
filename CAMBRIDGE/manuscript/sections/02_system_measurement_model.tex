@@ -18,32 +18,32 @@ Reorienting the receiver therefore changes only $\psi_i$; the distance $d$ and t
 
 \begin{figure}[!t]
  \centering
- \includegraphics[width=\linewidth]{fig_inkscape/fig_schema.png}
+ \includegraphics[width=\linewidth]{fig_inkscape/figure1v2.png}
  \caption{Single-LED, single-PD positioning. The PD is reoriented about its optical center; the direction $\vect u$ and distance $d$ to the LED are common to the $K$ orientations, whereas the incidence angles $\psi_i$ change.}
  \label{fig:system}
 \end{figure}
 
 \subsection{Received-Signal Model}
 \label{subsec:radiometry}
-Under line-of-sight (LOS) propagation and a Lambertian point source~\cite{Kahn1997,Komine2004}, an LED that emits the optical power $P_t$ delivers the power $P_tH_i$ to the PD at orientation $i$, with the channel gain:
+Under line-of-sight (LOS) propagation and a Lambertian point source~\cite{Kahn1997,Komine2004}, the LED, emitting the optical power $P_t$, delivers through the direct path the noiseless power $P_tH_i$ to the PD at orientation $i$, with the channel gain:
 \begin{equation}
  H_i(\vect r)=\frac{(m+1)A_{\mathrm{PD}}}{2\pi d^2}\cos^{m}(\phi)\,T_s(\psi_i)\,g(\psi_i)\,R(\psi_i),
  \label{eq:channel}
 \end{equation}
-where $A_{\mathrm{PD}}$ is the active area of the detector, $m=-\ln2/\ln(\cos\Phi_{1/2})$ the Lambertian order of the LED with half-power semi-angle $\Phi_{1/2}$, $T_s(\psi)$ and $g(\psi)$ the gains of an optical filter and of an optical concentrator~\cite{Kahn1997}, and $R(\psi)$ the normalized angular response of the receiver introduced below. The model holds for $0\le\phi<\pi/2$ and $R(\psi_i)>0$; otherwise $H_i=0$. The receiver of this work has neither a filter nor a concentrator, so $T_s(\psi)=g(\psi)=1$ in the following; a constant transmission would in any case be absorbed by the calibrated gain introduced below.
+where $A_{\mathrm{PD}}$ is the active area of the detector, $m=-\ln2/\ln(\cos\Phi_{1/2})$ the Lambertian order of the LED with half-power semi-angle $\Phi_{1/2}$, $T_s(\psi)$ and $g(\psi)$ the gains of an optical filter and of an optical concentrator~\cite{Kahn1997}, and $R(\psi)$ the normalized angular response of the receiver introduced below. The model holds for $0\le\phi<\pi/2$ and $R(\psi_i)>0$; otherwise $H_i=0$. Reflections are neglected, and noise is introduced in Section~\ref{subsec:observations}. The receiver of this work has neither a filter nor a concentrator, so $T_s(\psi)=g(\psi)=1$ in the following; a constant transmission would in any case be absorbed by the calibrated gain introduced below.
 
-Each LED is intensity-modulated by a sinusoidal tone of frequency $f$, so that its optical power is $P_t(t)=\bar P_t+P_f\cos(2\pi ft)$, where $P_f$ is the amplitude of the modulated component. The PD converts the collected power into a photocurrent with responsivity $\gamma$ (in A/W), and its amplifier converts this current into a voltage with transimpedance gain $G_{\mathrm T}(f)$ (in V/A) at the tone frequency~\cite{Komine2004}. The quantity actually measured is the RMS amplitude of the tone in this voltage, extracted by a lock-in projection (Section~\ref{subsec:observations}). Its noiseless value at orientation $i$, the signal $s_i$, is:
+The LED is intensity-modulated by a sinusoidal tone of frequency $f$, so that its optical power is $P_t(t)=\bar P_t+P_f\cos(2\pi ft)$, where $P_f$ is the amplitude of the modulated component. The PD converts the collected power into a photocurrent with responsivity $\gamma$ (in A/W), and its amplifier converts this current into a voltage with transimpedance gain $G_{\mathrm T}(f)$ (in V/A) at the tone frequency~\cite{Komine2004}. The quantity actually measured is the RMS amplitude of the tone in this voltage, extracted by a lock-in projection (Section~\ref{subsec:observations}). Its noiseless value at orientation $i$, the signal $s_i$, is:
 \begin{equation}
  s_i(\vect r)=\frac{\gamma\,G_{\mathrm T}(f)\,P_f}{\sqrt2}\,H_i(\vect r)
  =\frac{A\cos^{m}(\phi)}{d^2}\,R(\psi_i),
  \label{eq:rss-model}
 \end{equation}
-with the lumped gain, in $\mathrm{V\,m^2}$:
+with the lumped gain $A$, in $\mathrm{V\,m^2}$:
 \begin{equation}
  A=\frac{(m+1)A_{\mathrm{PD}}\,\gamma\,G_{\mathrm T}(f)\,P_f}{2\sqrt2\,\pi}.
  \label{eq:gain}
 \end{equation}
-Each factor of~\eqref{eq:gain} could be measured separately; instead, $A$ and $m$ are calibrated together from RSS measurements at known positions (Section~\ref{subsec:led-calibration}), which also accounts for any gain of the receiver chain that is not modelled explicitly.
+Each factor of~\eqref{eq:gain} could be measured separately, but this would require several dedicated calibrations of the transmitter and of the receiver chain. Grouping them into $A$ reduces this effort to a single joint calibration of $A$ and $m$ from RSS measurements at known positions (Section~\ref{subsec:led-calibration}), which also absorbs any gain of the receiver chain that is not modelled explicitly.
 
 Model~\eqref{eq:rss-model} has a separable structure that the rest of the paper exploits:
 \begin{equation}
@@ -51,7 +51,7 @@ Model~\eqref{eq:rss-model} has a separable structure that the rest of the paper 
  \beta(\vect r)=\frac{A\cos^{m}(\phi)}{d^2}.
  \label{eq:separable}
 \end{equation}
-The \emph{shape} of the $K$ signals, $R(\psi_i)$ up to a common factor, depends only on the direction $\vect u$, through $\cos\psi_i=\vect n_i\trans\vect u$; the common amplitude $\beta$ carries the distance. The LED gain and radiation pattern enter only through $\beta$. When the dependence on $\vect u$ must be explicit, we write $R(\vect n_i\trans\vect u)$ for the response at the incidence angle $\arccos(\vect n_i\trans\vect u)$.
+The shape of the $K$ signals, $R(\psi_i)$ up to a common factor, depends only on the direction $\vect u$, through $\cos\psi_i=\vect n_i\trans\vect u$; the common amplitude $\beta$ carries the distance. The LED gain and radiation pattern enter only through $\beta$. When the dependence on $\vect u$ must be explicit, we write $R(\vect n_i\trans\vect u)$ for the response at the incidence angle $\arccos(\vect n_i\trans\vect u)$.
 
 \subsection{Receiver Angular Response}
 \label{subsec:response}
@@ -66,12 +66,12 @@ where $[\cdot]_+=\max(\cdot,0)$ and $\psi_{3\mathrm{dB}}$ is the angle at which 
 
 \subsection{RSS Acquisition and Observation Statistics}
 \label{subsec:observations}
-The PD output $v[n]$ is digitized at rate $f_s$ over a record of $N$ samples (duration $T=N/f_s$) at each orientation, after the receiver has settled. When several LEDs share the room, each is modulated by its own sinusoidal tone, and the RSS of the LED with frequency $f$ is the RMS amplitude of the corresponding discrete Fourier coefficient:
+The PD output $v[n]$ is digitized at rate $f_s$ over a record of $N$ samples (duration $T=N/f_s$) at each orientation, after the receiver has settled. The RSS is the RMS amplitude of the discrete Fourier coefficient at the tone frequency $f$:
 \begin{equation}
  y_i=\frac{\sqrt2}{N}\left|\sum_{n=0}^{N-1}v[n]\,e^{-j2\pi fn/f_s}\right|.
  \label{eq:lockin}
 \end{equation}
-When $fT$ is an integer, this projection rejects the other tones and the ambient-light flicker at low frequencies, and its noise is set by the noise spectral density in a band of width $1/T$ around $f$. At the signal-to-noise ratios of this work (Section~\ref{subsec:res-noise}), the measurement is well modelled as:
+When $fT$ is an integer, this projection rejects signals at other frequencies, such as the low-frequency flicker of the ambient light, and its noise is set by the noise spectral density in a band of width $1/T$ around $f$. At the signal-to-noise ratios of this work (Section~\ref{subsec:res-noise}), the measurement is well modelled as:
 \begin{equation}
  y_i=s_i(\vect r)+\epsilon_i,\qquad
  \epsilon_i\sim\mathcal N\!\left(0,\sigma_i^2/L\right),

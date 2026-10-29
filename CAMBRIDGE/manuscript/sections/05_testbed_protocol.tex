@@ -1,6 +1,6 @@
 \subsection{Instrumentation}
 \label{subsec:hardware}
-Fig.~\ref{fig:testbed} shows the testbed. Four LEDs are mounted on the ceiling, 3.0~m above the floor and facing down. Each is intensity-modulated by its own sinusoidal tone, at 300, 500, 700 and 900~kHz, so that the four contributions are separated in frequency at the receiver. The 500~kHz LED is the positioning transmitter of this work; the other three are recorded simultaneously and used in Section~\ref{subsec:res-leds} as independent single-LED systems.
+Fig.~\ref{fig:testbed} shows the testbed. Four LEDs are mounted on the ceiling, 3.0~m above the floor and facing down. Each is intensity-modulated by its own sinusoidal tone, at 300, 500, 700 and 900~kHz, so that the four contributions are separated in frequency at the receiver. The method uses a single LED: the 500~kHz LED is the positioning transmitter of this work. The other three are recorded simultaneously only to repeat the evaluation with different LEDs, each used alone as an independent single-LED system (Section~\ref{subsec:res-leds}).
 % AUTHOR: add the LED model, the LED drivers (bias and modulation depth) and the signal generators.
 
 The receiver is a Thorlabs PDA100A2 amplified silicon photodetector (active area 75.4~mm$^2$, gain set to 20~dB), AC-coupled to a Keysight MSO-X 4154A oscilloscope. It is reoriented by a Thorlabs MTRS motorized stage, whose rotation axis is vertical; the small tilt of the stage is kept at zero, and the inclination of the PD is provided by a 3D-printed adapter with $t=15^\circ$ (Section~\ref{subsec:design}), as shown in Fig.~\ref{fig:receiver}. At stage angle $\theta_i$, the normal of the PD is:
@@ -25,9 +25,8 @@ An in-house acquisition program coordinates the gantry, the stage and the oscill
 
 \begin{figure}[!t]
  \centering
- % PHOTO OR CAD TO BE PROVIDED BY THE AUTHOR: PDA100A2 on the MTRS with the 15-degree adapter, and a sketch of the normal
- % convention: rotation angle theta, zero theta_0 (tilt towards +Y), tilt t from the vertical, elevation e of the PD centre.
- \figplaceholder{4.2cm}{PD on the rotation stage with the $15^\circ$ adapter (photograph or CAD), and the normal convention of~\eqref{eq:normal}: stage angle $\theta_i$, zero $\theta_0$ (tilt towards $+Y$), tilt $t$ and elevation $e$ of the PD center above the gantry carriage.}
+ \includegraphics[width=\linewidth]{fig_inkscape/fig_PD.png}
+ %\figplaceholder{4.2cm}{PD on the rotation stage with the $15^\circ$ adapter (photograph or CAD), and the normal convention of~\eqref{eq:normal}: stage angle $\theta_i$, zero $\theta_0$ (tilt towards $+Y$), tilt $t$ and elevation $e$ of the PD center above the gantry carriage.}
  \caption{Receiver assembly. The adapter tilts the PD by $t=15^\circ$ with respect to the vertical rotation axis of the stage, so that turning the stage sweeps the PD normal over a cone.}
  \label{fig:receiver}
 \end{figure}
