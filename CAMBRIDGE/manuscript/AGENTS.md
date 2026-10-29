@@ -51,6 +51,45 @@
   Author TODO comments (% AUTHOR:) in 05: LED model/drivers/generators, tape uncertainty, gantry repeatability.
   Placeholders: fig:system (02), fig:testbed and fig:receiver (05).
 
+## Section III restructuring (user, 2026-10-29)
+- III.E must NOT use testbed data (reader does not know the testbed yet). Replace it by a GENERIC numerical
+  study of the bound: room 2 x 2 m (X, Y in [-1, 1] m), PD heights 0-1.8 m, LED at 3 m, SQ response (PDA100A2),
+  simulation-library radiometry (P_t 0.65 W, A_PD 75.4 mm^2, noise 3e-14 W^2 per sample, 1000 samples), uniform
+  cone of K normals; study tilt (main, justifies 15 deg), K, LED half-power angle, FOV aperture, A_PD (analytic:
+  PEB ~ 1/A_PD); coverage = fraction of points with PEB <= 0.1 m; with and without orientation uncertainty
+  sigma_theta = 1 deg. Compact figures (2 figures x 2 panels), MATLAB part 'sim' in make_paper_figures.m.
+- The testbed bound vs measured error (old fig_peb panel a) moves to Results VI-J as its own figure.
+- DONE (2026-10-29): part 'sim' -> fig_sim.pdf (figure*, 1 x 4: median PEB vs tilt K=5; coverage vs tilt
+  sigma_theta 1 deg for K 3/5/10 + "all lit"; coverage vs LED half-power angle; median PEB vs PD area; shared
+  colour legend = sigma_theta 0/0.5/1/2 deg), numbers in paper_numbers.json "sim" (SNR 475 floor nadir,
+  alpha_max 49.7 deg; full coverage K=5 sigma 1 deg from 14 deg, K=10 9.5, K=3 never (max 98.8 %); all lit up
+  to 64.6 - 49.7 = 14.9 deg -> tilt window, both edges ~15 deg). III-E renamed "Numerical Study of the Bound"
+  (label subsec:design kept). part 'peb' now exports fig_bound.pdf (CDF only, fig:bound in VI-J) and keeps
+  the testbed tilt curve as a number (median -27 % from 15 to 35 deg with sigma_theta 1 deg). fig_peb.pdf is
+  obsolete (no longer generated or included). Build: 12 pages (references alone on p. 12).
+
+## Observation-window experiment (user, 2026-10-29) - Results VI-K "Observation Window", fig_window.pdf
+- Page count: do NOT trim the text to hold a page budget (user: up to ~15 pages is fine for now, they adjust later).
+- MATLAB part 'window' (needs grid_results.mat + noise_results.mat; ~5 min): RSS of every D2 record recomputed on
+  windows cut from the 100 ms waveforms (0.01-100 ms), up to 10 disjoint segments per record: 'spread' (starts
+  evenly over the record = all phases of the 100 Hz flicker) and 'synced' (every 10 ms = one flicker phase);
+  rectangular (main) and Hann. A rescaled per window by the coherent gain of the nominal-frequency projection
+  (measured tone offsets -0.36 / -0.56 / +0.81 / +0.96 Hz -> 100 ms loss 0.21 / 0.52 / 1.07 / 1.49 %). WITHOUT
+  this rescaling short windows look better (3.44 cm) only because their RSS is 0.5 % higher than the 100-ms
+  calibration (vertical bias -1.6 -> -1.1 cm): an artefact, not a gain.
+- Results (K=10 mean): 3.66 (100 ms) = 3.67 (10 ms), 3.71 (5), 3.93 (1), 4.89 (0.1), 9.46 cm (0.01 ms); K=5 3.74 /
+  3.76 / 3.81 / 4.21. RSS spread: synced segments follow the off-tone noise floor * sqrt(100/T); spread segments
+  ~2x higher between 0.1 and 10 ms (flicker-level-dependent amplitude, ~0.4 % rms at 500 kHz, jagged vs level ->
+  8-bit digitizer, LSB 2.51 mV for all D2 records, tones 1.1-20.7 mV). Hann does not help (4.03 cm at 1 ms).
+
+## Processing time (user, 2026-10-29) - VI-L "Acquisition and Processing Time", Table VI (tab:proc)
+- MATLAB part 'proc' (~25 s): amplitude from a raw D2 record (codes -> volts -> projection at the tone, or full
+  FFT; 100 and 10 ms; all threads / 1 thread, timeit) and pd_fit_estimate NLS / GLS / WLS per D2 site (K 10 and 5,
+  median of 5 repetitions after warm-up). Machine: AMD Ryzen 9 8940HX, MATLAB R2026b. Run-to-run jitter ~10-20 %:
+  table numbers = the stored run (paper_numbers.json "proc"). Totals quoted: K=10 NLS one thread ~80 ms (100-ms
+  records), ~7 ms (10-ms records). ML comparison is framed by training data / training stage / retraining, NOT
+  by inference speed (trained ML models can also infer fast; no unsupported numbers about ML).
+
 ## Rebuild from this directory
 
 ```text

@@ -1,11 +1,11 @@
 function make_paper_figures(parts)
 % Figures and numbers of the manuscript, computed directly from the acquired datasets.
 %   make_paper_figures                      % every part
-%   make_paper_figures({'grid', 'random'})  % selected parts: grid | random | noise | peb | calib | leds
+%   make_paper_figures({'grid', 'random'})  % selected parts: grid | random | noise | peb | calib | leds | sim
 % Numbers are merged into paper_numbers.json (read when writing the manuscript); figures are vector PDF
 % (PNG previews in png/). Run with MATLAB R2026a or later.
 if nargin < 1 || isempty(parts)
-    parts = {'grid', 'random', 'noise', 'peb', 'calib', 'leds'};
+    parts = {'grid', 'random', 'noise', 'peb', 'calib', 'leds', 'sim'};
 end
 parts = cellstr(parts);
 here = fileparts(mfilename('fullpath'));
@@ -547,10 +547,9 @@ R.tilt_best_1deg = tilts(ib);
 R.tilt_curve = struct('tilt_deg', tilts, 'sigma_deg', sv, 'median_mm', 1e3*curve, 'p90_mm', 1e3*curve90);
 fprintf('  tilt minimising the median PEB with 1 deg orientation uncertainty: %g deg\n', R.tilt_best_1deg);
 save(fullfile(cfg.figdir, 'peb_results.mat'), 'peb10', 'peb5', 'peb_rel', 'pebo', 'sth', 'tilts', 'sv', 'curve', 'curve90');
-% figure: (a) CDF of measured error and bounds at the D2 sites, (b) median PEB versus tilt
-fig = pp_figure(3.5, 3.9);
-tl = tiledlayout(fig, 2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
-ax = nexttile(tl);
+% figure: CDF of the measured error and of the bounds at the D2 sites
+fig = pp_figure(3.5, 2.25);
+ax = axes(fig);
 hold(ax, 'on');
 cdfline = @(v, ls, c, name) stairs(ax, [min(v) sort(v)], (0:numel(v))/numel(v), ls, 'Color', c, ...
     'LineWidth', 1.0, 'DisplayName', name);
@@ -565,27 +564,440 @@ xlim(ax, [1e-2 20]);
 ylim(ax, [0 1]);
 xlabel(ax, '3D error or bound (cm)');
 ylabel(ax, 'Empirical CDF');
-legend(ax, 'Location', 'northwest', 'FontSize', 6.5);
-title(ax, '(a) Grid sites, $K=10$', 'FontWeight', 'normal');
-ax2 = nexttile(tl);
-hold(ax2, 'on');
-lc = [0.5 0.5 0.5; colors];
-for q = 1:numel(sv)
-    if sv(q) == 0
-        name = 'Measured noise only';
-    else
-        name = sprintf('$\\sigma_\\theta=%g^\\circ$', sv(q));
-    end
-    plot(ax2, tilts, 100*curve(q, :), '-', 'Color', lc(q, :), 'LineWidth', 1.0, 'DisplayName', name);
+legend(ax, 'Location', 'northoutside', 'NumColumns', 3, 'FontSize', 6.5);
+pp_export(fig, cfg, 'fig_bound');
 end
-xline(ax2, cfg.tilt_deg, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
-set(ax2, 'YScale', 'log');
-xlim(ax2, [0 45]);
-xlabel(ax2, 'Receiver tilt $\theta$ ($^\circ$)');
-ylabel(ax2, 'Median PEB (cm)');
-legend(ax2, 'Location', 'northeast', 'FontSize', 6.5);
-title(ax2, '(b) Uniform cone, $K=5$, grid positions', 'FontWeight', 'normal');
-pp_export(fig, cfg, 'fig_peb');
+
+%% ------------------------------------------------------------------------------------------------------
+function R = part_window(cfg)
+% Observation window: the lock-in RSS of every D2 record is recomputed over shorter windows cut from the
+% recorded 100 ms waveforms (same sample rate and vertical scale as the acquisition). Ten segments per window
+% length: 'spread' starts evenly over the record (all phases of the 100 Hz flicker), 'synced' starts every
+% 10 ms (one flicker phase). Calibration of Table I kept; A is only rescaled by the coherent gain of the
+% nominal-frequency projection, which depends on the window through the frequency offset of the generators.
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+D = G.D;
+freqs = cfg.led_freqs_khz*1e3;
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+Tms = [0.01 0.02 0.05 0.1 0.2 0.5 1 2 5 10 20 50 100];
+nseg = 10;
+[K, S] = size(D.theta);
+blank = nan(K, S, numel(Tms), nseg);
+rss = struct('spread', blank, 'synced', blank, 'hann', blank);
+dfreq = nan(K, S, 4);
+files = strings(K, S);
+for c = 1:numel(cfg.grid_dirs)
+    t = readtable(fullfile(cfg.grid_dirs{c}, 'points.csv'), 'VariableNamingRule', 'preserve');
+    for i = find(D.campaign == c)
+        for k = 1:K
+            files(k, i) = fullfile(cfg.grid_dirs{c}, t.wave_file{t.site_id == D.site(i) & t.k == k - 1});
+        end
+    end
+end
+for i = 1:S
+    for k = 1:K
+        z = pp_read_npz(files(k, i));
+        v = (double(z.codes(1, :)) - double(z.y_reference(1)))*double(z.y_increment(1)) + double(z.y_origin(1));
+        fs = double(z.fs);
+        N = numel(v);
+        for j = 1:4
+            p = v.*exp(-2i*pi*freqs(j)*(0:N - 1)/fs);
+            X = sum(reshape(p, [], 100), 1);
+            slope = polyfit((0:99)*N/fs/100, unwrap(angle(X)), 1);
+            dfreq(k, i, j) = slope(1)/(2*pi);
+            if j ~= jf
+                continue;
+            end
+            for it = 1:numel(Tms)
+                n = round(Tms(it)*1e-3*fs);
+                ns = min(nseg, floor(N/n));
+                start = round((0:ns - 1)*(N - n)/max(ns - 1, 1));
+                P = reshape(p(start + (1:n)'), n, ns);
+                w = 0.5 - 0.5*cos(2*pi*(0:n - 1)/n);
+                rss.spread(k, i, it, 1:ns) = sqrt(2)*abs(sum(P, 1))/n;
+                rss.hann(k, i, it, 1:ns) = sqrt(2)*abs(w*P)/sum(w);
+                if Tms(it) <= 10
+                    P = reshape(p((0:nseg - 1)*round(10e-3*fs) + (1:n)'), n, nseg);
+                    rss.synced(k, i, it, :) = sqrt(2)*abs(sum(P, 1))/n;
+                end
+            end
+        end
+    end
+    if mod(i, 25) == 0
+        fprintf('  %d / %d sites\n', i, S);
+    end
+end
+R.window_ms = Tms;
+R.check_100ms_max_rel = max(abs(rss.spread(:, :, end, 1) - D.rss(:, :, jf))./D.rss(:, :, jf), [], 'all');
+% coherent gain of the projection at the nominal frequency (rectangular and Hann windows), measured offsets
+df = squeeze(median(dfreq, [1 2]))';
+R.freq_offset_Hz = df;
+gain = @(n, w, f) abs(sum(w.*exp(2i*pi*f*(0:n - 1)/fs)))/sum(w);
+R.coherent_loss_100ms_pct = arrayfun(@(f) 100*(1 - gain(round(0.1*fs), ones(1, round(0.1*fs)), f)), df);
+g_rect = zeros(1, numel(Tms));
+g_hann = g_rect;
+for it = 1:numel(Tms)
+    n = round(Tms(it)*1e-3*fs);
+    g_rect(it) = gain(n, ones(1, n), df(jf));
+    g_hann(it) = gain(n, 0.5 - 0.5*cos(2*pi*(0:n - 1)/n), df(jf));
+end
+scaled = @(g) setfield(G.pf, 'transmitter', setfield(G.pf.transmitter, 'power_W', G.pf.transmitter.power_W*g/g_rect(end)));
+% RSS deviation from the true amplitude (100 ms record, frequency-corrected) and white-noise prediction
+ref = rss.spread(:, :, end, 1)/g_rect(end);
+sig100 = load(fullfile(cfg.figdir, 'noise_results.mat'), 'sigma_med').sigma_med(jf);
+for it = 1:numel(Tms)
+    for name = ["spread", "synced"]
+        x = squeeze(rss.(name)(:, :, it, :))/g_rect(it)./ref - 1;
+        R.rss.([char(name) '_spread_pct'])(it) = 100*median(std(x, 0, 3, 'omitnan'), 'all');
+        R.rss.([char(name) '_bias_pct'])(it) = 100*median(x, 'all', 'omitnan');
+    end
+    R.rss.white_pct(it) = 100*median(sig100*sqrt(100/Tms(it))./ref, 'all');
+end
+% positioning for every window length and segment: K = 10, the two uniform K = 5 subsets, Hann, synced
+run = @(x, p, sel) site_errors(pp_estimate('SQ', 'NLS', x(sel, :), D.theta(sel, :), G.OFF.SQ.fit.cross, ...
+    cfg.tilt_deg, p), D, p);
+sub5 = angle_subsets(K, 5);
+all10 = 1:K;
+err = struct('spread10', nan(numel(Tms), nseg), 'spread10_v', nan(numel(Tms), nseg), ...
+    'spread5', nan(numel(Tms), nseg, size(sub5, 1)), 'hann10', nan(numel(Tms), nseg), 'synced10', nan(numel(Tms), nseg));
+for it = 1:numel(Tms)
+    pr = scaled(g_rect(it));
+    ph = scaled(g_hann(it));
+    for s = 1:nseg
+        x = rss.spread(:, :, it, s);
+        if any(isnan(x), 'all')
+            continue;
+        end
+        e = run(x, pr, all10);
+        err.spread10(it, s) = mean(e.err3d);
+        err.spread10_v(it, s) = mean(e.ev);
+        for q = 1:size(sub5, 1)
+            err.spread5(it, s, q) = mean(run(x, pr, sub5(q, :)).err3d);
+        end
+        err.hann10(it, s) = mean(run(rss.hann(:, :, it, s), ph, all10).err3d);
+        if Tms(it) <= 10
+            err.synced10(it, s) = mean(run(rss.synced(:, :, it, s), pr, all10).err3d);
+        end
+    end
+    fprintf('  T = %6.2f ms: K=10 %.2f cm (%.2f-%.2f), synced %.2f, Hann %.2f, K=5 %.2f; RSS spread %.3f %% (synced %.3f, white %.3f)\n', ...
+        Tms(it), mean(err.spread10(it, :), 'omitnan'), min(err.spread10(it, :)), max(err.spread10(it, :)), ...
+        mean(err.synced10(it, :), 'omitnan'), mean(err.hann10(it, :), 'omitnan'), mean(err.spread5(it, :, :), 'all', 'omitnan'), ...
+        R.rss.spread_spread_pct(it), R.rss.synced_spread_pct(it), R.rss.white_pct(it));
+end
+R.err = struct('K10_mean_cm', mean(err.spread10, 2, 'omitnan')', 'K10_min_cm', min(err.spread10, [], 2)', ...
+    'K10_max_cm', max(err.spread10, [], 2)', 'K10_vbias_cm', mean(err.spread10_v, 2, 'omitnan')', ...
+    'K5_mean_cm', reshape(mean(err.spread5, [2 3], 'omitnan'), 1, []), 'hann_K10_mean_cm', mean(err.hann10, 2, 'omitnan')', ...
+    'synced_K10_mean_cm', mean(err.synced10, 2, 'omitnan')', 'segments', arrayfun(@(T) min(nseg, floor(100/T)), Tms));
+fprintf('frequency offsets %s Hz, coherent loss at 100 ms %s %%\n', mat2str(df, 3), mat2str(R.coherent_loss_100ms_pct, 3));
+save(fullfile(cfg.figdir, 'window_results.mat'), 'Tms', 'rss', 'err', 'R', 'g_rect', 'g_hann', 'dfreq');
+figure_window(cfg, R);
+end
+
+function figure_window(cfg, R)
+% (a) mean 3D error versus the window (K = 10 with the range over segments, K = 5, flicker-synchronized
+% segments), (b) spread of the 500 kHz RSS over segments, with the white-noise prediction
+T = R.window_ms;
+blue = [0 0.32 0.62];
+orange = [0.85 0.33 0.1];
+fig = pp_figure(3.5, 3.6);
+tl = tiledlayout(fig, 2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+ax = nexttile(tl);
+hold(ax, 'on');
+fill(ax, [T fliplr(T)], [R.err.K10_min_cm fliplr(R.err.K10_max_cm)], blue, 'FaceAlpha', 0.15, ...
+    'EdgeColor', 'none', 'HandleVisibility', 'off');
+plot(ax, T, R.err.K10_mean_cm, '-o', 'Color', blue, 'MarkerSize', 3, 'MarkerFaceColor', blue, 'DisplayName', '$K=10$');
+plot(ax, T, R.err.K5_mean_cm, '-s', 'Color', orange, 'MarkerSize', 3, 'DisplayName', '$K=5$');
+sel = T <= 10;
+plot(ax, T(sel), R.err.synced_K10_mean_cm(sel), '--', 'Color', blue, 'DisplayName', '$K=10$, one flicker phase');
+xline(ax, 10, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
+set(ax, 'XScale', 'log');
+xlim(ax, [0.01 100]);
+xticks(ax, 10.^(-2:2));
+xticklabels(ax, {'0.01', '0.1', '1', '10', '100'});
+xlabel(ax, 'Observation window (ms)');
+ylabel(ax, 'Mean 3D error (cm)');
+legend(ax, 'Location', 'northeast', 'FontSize', 6.5);
+title(ax, '(a) Positioning error, D2', 'FontWeight', 'normal');
+ax = nexttile(tl);
+hold(ax, 'on');
+plot(ax, T, R.rss.spread_spread_pct, '-o', 'Color', blue, 'MarkerSize', 3, 'MarkerFaceColor', blue, ...
+    'DisplayName', 'Segments over the record');
+plot(ax, T(sel), R.rss.synced_spread_pct(sel), '--', 'Color', blue, 'DisplayName', 'One flicker phase');
+plot(ax, T, R.rss.white_pct, '-.', 'Color', [0.5 0.5 0.5], 'DisplayName', 'Noise floor, $\propto T^{-1/2}$');
+xline(ax, 10, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
+set(ax, 'XScale', 'log', 'YScale', 'log');
+xlim(ax, [0.01 100]);
+xticks(ax, 10.^(-2:2));
+xticklabels(ax, {'0.01', '0.1', '1', '10', '100'});
+xlabel(ax, 'Observation window (ms)');
+ylabel(ax, 'RSS spread (\%)');
+legend(ax, 'Location', 'southwest', 'FontSize', 6.5);
+title(ax, '(b) Spread of the 500 kHz RSS over segments', 'FontWeight', 'normal');
+pp_export(fig, cfg, 'fig_window');
+end
+
+%% ------------------------------------------------------------------------------------------------------
+function R = part_proc(cfg)
+% Processing time once the K records of a position are available: amplitude of the tones from a raw record
+% (uint8 codes -> volts -> projection at the tone frequency, or full FFT), for 100 ms and 10 ms records, with
+% all and with one computational thread; position estimation (NLS, GLS, WLS) on the D2 sites, K = 10 and 5.
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+D = G.D;
+S = size(D.theta, 2);
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+[~, cpu] = system('powershell -NoProfile -Command "(Get-CimInstance Win32_Processor).Name"');
+R.machine = struct('cpu', strtrim(cpu), 'matlab', version, 'threads', maxNumCompThreads);
+t = readtable(fullfile(cfg.grid_dirs{1}, 'points.csv'), 'VariableNamingRule', 'preserve');
+z = pp_read_npz(fullfile(cfg.grid_dirs{1}, t.wave_file{1}));
+codes = z.codes(1, :);
+fs = double(z.fs);
+q = double(z.y_increment(1));
+c0 = double(z.y_reference(1));
+v0 = double(z.y_origin(1));
+freqs = cfg.led_freqs_khz*1e3;
+threads = maxNumCompThreads;
+for Tms = [100 10]
+    n = round(Tms*1e-3*fs);
+    x = codes(1:n);
+    E = exp(-2i*pi*(0:n - 1)'*freqs/fs);
+    k = round(freqs*n/fs) + 1;
+    volts = @() (double(x) - c0)*q + v0;
+    f1 = @() sqrt(2)*abs(volts()*E(:, jf))/n;
+    f4 = @() sqrt(2)*abs(volts()*E)/n;
+    ff = @() fft_bins(volts(), k, n);
+    assert(max(abs(f4() - ff())./ff()) < 1e-9);
+    for nt = [threads 1]
+        maxNumCompThreads(nt);
+        R.amplitude.(sprintf('T%gms_threads%d', Tms, nt)) = struct('projection_1tone_ms', 1e3*timeit(f1), ...
+            'projection_4tones_ms', 1e3*timeit(f4), 'fft_4tones_ms', 1e3*timeit(ff));
+    end
+    maxNumCompThreads(threads);
+end
+% estimators: median over repetitions per site, then median / P95 / max over the 125 sites
+sub5 = angle_subsets(D.K, 5);
+methods = {'NLS', 'GLS', 'WLS'};
+names = struct('NLS', 'joint_nls', 'GLS', 'ratio_gls', 'WLS', 'ratio_wls');
+reps = 5;
+for nt = [threads 1]
+    maxNumCompThreads(nt);
+    for K = [10 5]
+        sel = 1:D.K;
+        if K == 5
+            sel = sub5(1, :);
+        end
+        for im = 1:numel(methods)
+            tt = zeros(1, S);
+            for i = 1:S
+                y = D.rss(sel, i, jf);
+                run = @() pd_fit_estimate(names.(methods{im}), y, ...
+                    pp_normals(D.theta(sel, i), G.OFF.SQ.fit.cross(i), cfg.tilt_deg), G.pf, 1);
+                run();
+                r = zeros(1, reps);
+                for k = 1:reps
+                    t0 = tic;
+                    run();
+                    r(k) = toc(t0);
+                end
+                tt(i) = median(r);
+            end
+            R.estimator.(sprintf('K%d_threads%d', K, nt)).(methods{im}) = struct('median_ms', 1e3*median(tt), ...
+                'p95_ms', 1e3*prctile(tt, 95), 'max_ms', 1e3*max(tt));
+            fprintf('  %s K = %2d, %2d threads: median %.2f ms, P95 %.2f ms, max %.2f ms\n', methods{im}, K, nt, ...
+                1e3*median(tt), 1e3*prctile(tt, 95), 1e3*max(tt));
+        end
+    end
+end
+maxNumCompThreads(threads);
+for name = fieldnames(R.amplitude)'
+    a = R.amplitude.(name{1});
+    fprintf('  amplitude %s: projection 1 tone %.3f ms, 4 tones %.3f ms, FFT %.3f ms\n', name{1}, ...
+        a.projection_1tone_ms, a.projection_4tones_ms, a.fft_4tones_ms);
+end
+for m = methods
+    R.accuracy.(m{1}) = G.R.methods.SQ.(m{1}).err3d;
+end
+end
+
+function a = fft_bins(v, k, n)
+X = fft(v);
+a = sqrt(2)*abs(X(k))/n;
+end
+
+%% ------------------------------------------------------------------------------------------------------
+function R = part_sim(cfg)
+% Generic numerical study of the bound (Section III-E), independent of the testbed: LED 3 m above the floor
+% pointing down, PD anywhere over X, Y in [-1, 1] m (0.1 m grid) at heights 0-1.8 m (0.3 m), SQ response of
+% the PDA100A2 without aperture, K normals uniformly spaced on a cone of tilt theta, simulation-library
+% radiometry (optical-equivalent noise, same records per orientation). Coverage = % positions, PEB <= 10 cm.
+base = system_parameters();
+H = 3;
+p = sim_params(base, H, 45);
+[X, Y, Z] = ndgrid(-1:0.1:1, -1:0.1:1, 0:0.3:1.8);
+P = [X(:) Y(:) Z(:)]';
+cnt = base.acquisition.samples_per_orientation;
+sigma = sqrt(p.noise.variance_W2/cnt);
+cone = @(K, t) pp_normals((0:K-1)*360/K, 0, t);
+bnd = @(q, K, t, s) rx_pose_error_peb(P, cone(K, t), q, cnt, s^2, 'independent');
+covg = @(b) 100*mean(b <= 0.1);
+medb = @(b) median(b(~isnan(b)));
+full_at = @(x, c) min([x(c >= 100 - 1e-9) NaN]);
+R.scenario = struct('led_height_m', H, 'half_power_deg', 45, 'power_W', p.transmitter.power_W, ...
+    'area_mm2', 1e6*p.receiver.area_m2, 'psi3db_rad', p.receiver.response_parameters.psi_3db_rad, ...
+    'sigma_W', sigma, 'positions', size(P, 2), 'coverage_threshold_cm', 10, ...
+    'snr_floor_nadir', rx_channel([0; 0; 0], [0; 0; 1], p)/sigma, ...
+    'snr_1m_axis', rx_channel([0; 0; H - 1], [0; 0; 1], p)/sigma, ...
+    'offaxis_max_deg', max(atand(hypot(P(1, :), P(2, :))./(H - P(3, :)))));
+fprintf('generic scenario: %d positions, sigma %.3g W, SNR %.0f (floor, nadir), LED off-axis max %.1f deg\n', ...
+    size(P, 2), sigma, R.scenario.snr_floor_nadir, R.scenario.offaxis_max_deg);
+% (1) tilt sweep for several K and orientation uncertainties, and visibility of the K = 5 cone
+tilts = 0:0.5:45;
+Ks = [3 4 5 6 8 10];
+sv = [0 0.5 1 2];
+med_t = nan(numel(Ks), numel(sv), numel(tilts));
+cov_t = med_t;
+for iK = 1:numel(Ks)
+    for is = 1:numel(sv)
+        for it = 1:numel(tilts)
+            b = bnd(p, Ks(iK), tilts(it), sv(is));
+            med_t(iK, is, it) = medb(b);
+            cov_t(iK, is, it) = covg(b);
+        end
+    end
+end
+vis_t = nan(1, numel(tilts));
+for it = 1:numel(tilts)
+    [~, ~, info] = rx_channel(P, cone(5, tilts(it)), p);
+    vis_t(it) = 100*mean(all(info.visible, 1));
+end
+R.tilt.K = Ks;
+R.tilt.sigma_theta_deg = sv;
+R.tilt.full_coverage_tilt_deg = nan(numel(Ks), numel(sv));
+R.tilt.max_coverage_pct = nan(numel(Ks), numel(sv));
+for iK = 1:numel(Ks)
+    for is = 1:numel(sv)
+        c = squeeze(cov_t(iK, is, :))';
+        R.tilt.full_coverage_tilt_deg(iK, is) = full_at(tilts, c);
+        R.tilt.max_coverage_pct(iK, is) = max(c);
+    end
+end
+k5 = Ks == 5;
+m5 = squeeze(med_t(k5, :, :));
+[mn, imn] = min(m5(sv == 1, :));
+R.tilt.K5_median_cm_at_5_15_30_45 = 100*m5(:, ismember(tilts, [5 15 30 45]));
+R.tilt.K5_s1_min_median_cm = 100*mn;
+R.tilt.K5_s1_min_median_tilt_deg = tilts(imn);
+R.tilt.K5_s1_coverage_pct_at_30_45 = squeeze(cov_t(k5, sv == 1, ismember(tilts, [30 45])))';
+R.tilt.all_lit_max_tilt_deg = max(tilts(vis_t >= 100 - 1e-9));
+R.tilt.all_lit_pct_at_20_30_45 = vis_t(ismember(tilts, [20 30 45]));
+b = bnd(p, 5, 15, 1);
+R.tilt.K5_s1_15deg_by_height = zeros(0, 3);
+for z = unique(P(3, :))
+    sel = abs(P(3, :) - z) < 1e-9;
+    R.tilt.K5_s1_15deg_by_height(end + 1, :) = [z 100*medb(b(sel)) 100*max(b(sel))];
+end
+fprintf('full coverage (sigma_theta 1 deg) from tilt: %s deg for K = %s\n', mat2str(R.tilt.full_coverage_tilt_deg(:, sv == 1)'), mat2str(Ks));
+fprintf('K = 5, sigma_theta 1 deg: median %.2f cm at 15 deg, minimum %.2f cm at %g deg; all orientations lit up to %g deg\n', ...
+    100*m5(sv == 1, tilts == 15), R.tilt.K5_s1_min_median_cm, R.tilt.K5_s1_min_median_tilt_deg, R.tilt.all_lit_max_tilt_deg);
+% (2) LED half-power angle and (3) PD area, at theta = 15 deg, K = 5
+halves = 10:2.5:70;
+areas = logspace(0, log10(300), 41);
+cov_h = nan(numel(sv), numel(halves));
+med_a = nan(numel(sv), numel(areas));
+for is = 1:numel(sv)
+    for ih = 1:numel(halves)
+        cov_h(is, ih) = covg(bnd(sim_params(base, H, halves(ih)), 5, 15, sv(is)));
+    end
+    for ia = 1:numel(areas)
+        q = p;
+        q.receiver.area_m2 = areas(ia)*1e-6;
+        med_a(is, ia) = medb(bnd(q, 5, 15, sv(is)));
+    end
+end
+R.led.half_power_deg = halves;
+R.led.coverage_pct = cov_h;
+R.led.full_coverage_half_deg = arrayfun(@(is) full_at(halves, cov_h(is, :)), 1:numel(sv));
+R.area.area_mm2 = areas;
+R.area.median_cm = 100*med_a;
+fprintf('full coverage from LED half-power angle %s deg (sigma_theta %s)\n', mat2str(R.led.full_coverage_half_deg), mat2str(sv));
+save(fullfile(cfg.figdir, 'sim_results.mat'), 'tilts', 'Ks', 'sv', 'med_t', 'cov_t', 'vis_t', 'halves', 'cov_h', 'areas', 'med_a');
+% figure: (a) median PEB vs tilt (K = 5), (b) coverage vs tilt (sigma_theta = 1 deg) and lit positions,
+% (c) coverage vs LED half-power angle, (d) median PEB vs PD area (theta = 15 deg, K = 5)
+colors = [0.5 0.5 0.5; 0.47 0.67 0.19; 0.85 0.33 0.1; 0.49 0.18 0.56];
+names = [{'Noise only'}, arrayfun(@(s) sprintf('$\\sigma_\\theta=%g^\\circ$', s), sv(2:end), 'UniformOutput', false)];
+fig = pp_figure(7.16, 2.15);
+tl = tiledlayout(fig, 1, 4, 'TileSpacing', 'compact', 'Padding', 'compact');
+ax = nexttile(tl);
+hold(ax, 'on');
+for is = 1:numel(sv)
+    plot(ax, tilts, 100*m5(is, :), '-', 'Color', colors(is, :), 'DisplayName', names{is});
+end
+yline(ax, 10, '--', 'Color', [0.3 0.3 0.3], 'LineWidth', 0.5, 'HandleVisibility', 'off');
+xline(ax, 15, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
+set(ax, 'YScale', 'log');
+xlim(ax, [0 45]);
+ylim(ax, [0.1 100]);
+xticks(ax, 0:15:45);
+xlabel(ax, 'Tilt $\theta$ ($^\circ$)');
+ylabel(ax, 'Median PEB (cm)');
+title(ax, '(a) $K=5$', 'FontWeight', 'normal');
+lg = legend(ax, names, 'NumColumns', numel(sv), 'FontSize', 7);
+lg.Layout.Tile = 'north';
+ax = nexttile(tl);
+hold(ax, 'on');
+styles = {':', '-', '--'};
+kk = [3 5 10];
+for j = 1:numel(kk)
+    plot(ax, tilts, squeeze(cov_t(Ks == kk(j), sv == 1, :)), styles{j}, 'Color', colors(sv == 1, :), ...
+        'DisplayName', sprintf('$K=%d$', kk(j)));
+end
+plot(ax, tilts, vis_t, '-.', 'Color', [0.3 0.3 0.3], 'DisplayName', 'All lit');
+xline(ax, 15, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
+xlim(ax, [0 45]);
+ylim(ax, [0 102]);
+xticks(ax, 0:15:45);
+xlabel(ax, 'Tilt $\theta$ ($^\circ$)');
+ylabel(ax, 'Positions (\%)');
+lg = legend(ax, 'Location', 'southeast', 'FontSize', 6.5);
+if isprop(lg, 'IconColumnWidth')
+    lg.IconColumnWidth = 14;
+end
+title(ax, '(b) Coverage, $\sigma_\theta=1^\circ$', 'FontWeight', 'normal');
+ax = nexttile(tl);
+hold(ax, 'on');
+for is = 1:numel(sv)
+    plot(ax, halves, cov_h(is, :), '-', 'Color', colors(is, :));
+end
+xline(ax, 45, 'k:', 'LineWidth', 0.8);
+xlim(ax, [10 70]);
+ylim(ax, [0 102]);
+xticks(ax, 10:20:70);
+xlabel(ax, 'LED half-power angle ($^\circ$)');
+ylabel(ax, 'Coverage (\%)');
+title(ax, '(c) $\theta=15^\circ$, $K=5$', 'FontWeight', 'normal');
+ax = nexttile(tl);
+hold(ax, 'on');
+for is = 1:numel(sv)
+    plot(ax, areas, 100*med_a(is, :), '-', 'Color', colors(is, :), 'DisplayName', names{is});
+end
+yline(ax, 10, '--', 'Color', [0.3 0.3 0.3], 'LineWidth', 0.5, 'HandleVisibility', 'off');
+xline(ax, 1e6*base.receiver.area_m2, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
+set(ax, 'XScale', 'log', 'YScale', 'log');
+xlim(ax, [1 300]);
+ylim(ax, [0.1 100]);
+xticks(ax, [1 10 100]);
+xticklabels(ax, {'1', '10', '100'});
+xlabel(ax, 'PD area (mm$^2$)');
+ylabel(ax, 'Median PEB (cm)');
+title(ax, '(d) $\theta=15^\circ$, $K=5$', 'FontWeight', 'normal');
+pp_export(fig, cfg, 'fig_sim');
+end
+
+function p = sim_params(base, H, half_power_deg)
+% Generic scenario: SQ response of the PDA100A2 (published psi_3dB, no aperture), LED at height H pointing down.
+p = bastiaens2020_parameters(base, 'PDA100A2', 'SQ', 90);
+p.transmitter.position_m = [0; 0; H];
+p.transmitter.normal = [0; 0; -1];
+p.transmitter.half_angle_power_deg = half_power_deg;
 end
 
 %% ------------------------------------------------------------------------------------------------------
