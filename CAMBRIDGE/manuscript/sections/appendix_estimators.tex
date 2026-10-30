@@ -1,0 +1,60 @@
+\section{Estimators for a General Receiver Response}
+\label{app:estimators}
+This appendix details the estimators of Section~\ref{subsec:estimator} for an arbitrary response $R$, as used with the SQ model; Algorithm~\ref{alg:estimator} summarizes them. For a cosine-power response, the ratio estimators reduce to the closed form of~\cite{Acuna2026}, recalled at the end. The RSS are first divided by $\max_i|y_i|$, which leaves the estimates unchanged.
+
+\emph{Parameterization.} The direction is updated on the sphere through two tangent coordinates $\bm\omega$. With $\vect E$ an orthonormal basis of the plane orthogonal to the current $\vect u$, a step $\Delta\bm\omega$ gives:
+\begin{equation}
+ \vect u^+=\cos\rho\,\vect u+\frac{\sin\rho}{\rho}\,\vect E\,\Delta\bm\omega,\qquad\rho=\norm{\Delta\bm\omega},
+ \label{eq:sphere-step}
+\end{equation}
+and, since $\partial(\vect n_i\trans\vect u)/\partial\bm\omega\trans=\vect n_i\trans\vect E$, the response changes as $\partial R_i/\partial\bm\omega\trans=\dot R_i\,\vect n_i\trans\vect E$, where $R_i=R(\psi_i)$ and $\dot R_i=\dot R(\psi_i)$, given for SQ in Appendix~\ref{app:axial}.
+
+\emph{NLS.} With $b=\ln\beta$ and $\vect W=\diag(w_1,\ldots,w_K)$, the residual of~\eqref{eq:nls} and its Jacobian with respect to $(\bm\omega,b)$ are:
+\begin{equation}
+ \begin{aligned}
+  \vect e&=\vect W^{1/2}\left(\beta\vect R-\vect y\right),\\
+  \vect J&=\beta\,\vect W^{1/2}\left[\diag(\dot{\vect R})\,\vect N\trans\vect E,\ \vect R\right],
+ \end{aligned}
+ \label{eq:nls-jacobian}
+\end{equation}
+with $\vect R$, $\dot{\vect R}$ and $\vect N$ as in~\eqref{eq:rank}.
+
+\emph{Ratio GLS and WLS.} Let $j=\arg\max_iy_i$ be the reference orientation. The ratios $z_i=y_i/y_j$, $i\neq j$, do not depend on $\beta$, and their model is $q_i(\vect u)=R_i/R_j$. To first order, and evaluated at the observations, their covariance is, up to the common factor $y_j^{-2}$:
+\begin{equation}
+ \vect C_z=\diag\!\left(\frac{\sigma_i^2}{L}\right)_{i\neq j}+\frac{\sigma_j^2}{L}\,\vect z\vect z\trans,
+ \label{eq:ratio-cov}
+\end{equation}
+where the rank-one term comes from the shared reference. GLS minimizes $\norm{\vect C_z^{-1/2}(\vect q-\vect z)}^2$, with a Cholesky factor of $\vect C_z$, and WLS replaces $\vect C_z$ by its diagonal. The rows of the Jacobian of the ratios with respect to $\bm\omega$ are:
+\begin{equation}
+ \frac{\partial q_i}{\partial\bm\omega\trans}=\frac{\dot R_iR_j\,\vect n_i\trans\vect E-R_i\dot R_j\,\vect n_j\trans\vect E}{R_j^2}.
+ \label{eq:ratio-jacobian}
+\end{equation}
+For the SQ response, the ratios $(1-a\psi_i^2)/(1-a\psi_j^2)$ cannot be turned into linear constraints on $\vect u$, unlike the cosine case below, so they are fitted iteratively. After convergence, $\beta$ is profiled from all $K$ RSS, as in Section~\ref{subsec:estimator}.
+
+\emph{Solver.} The three fits use the same Levenberg--Marquardt iteration, $(\vect J\trans\vect J+\lambda\vect D)\Delta=-\vect J\trans\vect e$ with $\vect D=\diag(\vect J\trans\vect J)$, applied through~\eqref{eq:sphere-step} and, for NLS only, $\beta^+=\beta e^{\Delta b}$. A step is accepted if the cost does not increase, and $\lambda$ is then divided by 3; otherwise $\lambda$ is multiplied by 10 and the step is recomputed. The iteration stops when $\norm{\vect J\trans\vect e}_\infty\le10^{-10}(1+\norm{\vect e}^2)$ or $\norm{\Delta}\le10^{-9}$, after at most 80 iterations, starting from $\lambda=10^{-3}$. The cost is always evaluated with the exact response, including its zeros, so that an iterate may cross the boundary of the support; derivatives are used only within each smooth region.
+
+\emph{Initialization and checks.} The seed directions are the LED axis $\vect q=-\vect n_t$, the 32 directions at $20^\circ$, $40^\circ$, $60^\circ$ and $80^\circ$ from it every $45^\circ$ in azimuth, and the normals that face the LED ($\vect q\trans\vect n_i>0$); none uses the true position. Every seed with a positive conditional amplitude $\hat\beta(\vect u)$ is scored by the cost of the chosen fit, the iteration is run from the three best, and the converged solution with the lowest cost is kept. The estimate is flagged as ambiguous if another converged solution has the same cost, within a relative $10^{-12}$, more than $10^{-3}$~rad away. It is rejected if an orientation lies on the boundary of the support, if the profiled amplitude is not positive, or if $\vect W^{1/2}[\vect R,\ \diag(\dot{\vect R})\vect N\trans\vect E]$ is rank-deficient (Section~\ref{subsec:identifiability}). The same algorithm runs in the live demonstrator (Python) and in the offline analysis (MATLAB); their D3 estimates agree within 0.002~cm.
+
+\emph{Cosine-power response.} For $R=\cos^{m_R}\psi$, the roots $t_i=z_i^{1/m_R}=\vect n_i\trans\vect u/\vect n_j\trans\vect u$ turn each ratio into a linear constraint, $(\vect n_i-t_i\vect n_j)\trans\vect u=0$. With these constraints stacked as the rows of $\vect A$, GLS and WLS minimize $\vect u\trans\vect A\trans\vect C_t^{-1}\vect A\vect u$ over unit vectors: the solution is the eigenvector of the smallest eigenvalue, with the sign that gives $\vect q\trans\vect u>0$. The covariance $\vect C_t$ of the roots follows from~\eqref{eq:ratio-cov} with $y_i$ replaced by $y_i^{1/m_R}$ and $\sigma_i$ by $\sigma_iy_i^{1/m_R-1}/m_R$; WLS keeps its diagonal. This is the estimator derived in~\cite{Acuna2026} for a reoriented transmitter, with the normals and order of the receiver in place of the steering vectors and Lambertian order of the LED. For this family, the NLS~\eqref{eq:nls} is initialized from the linear least-squares fit of the roots, $y_i^{1/m_R}=\vect n_i\trans\vect v$ with $\vect v=\beta^{1/m_R}\vect u$.
+
+\begin{algorithm}[!t]
+ \caption{Position From the $K$ RSS of One Site}
+ \label{alg:estimator}
+ \small
+ \begin{algorithmic}[1]
+  \Require RSS $\vect y$; normals $\vect n_i$; response $R$, $\dot R$; weights $w_i$; LED $\vect t$, $\vect n_t$, $A$, $m$; method NLS, GLS or WLS
+  \Ensure Position $\hat{\vect r}$, direction $\hat{\vect u}$, distance $\hat d$, status
+  \State $\vect y\gets\vect y/\max_i|y_i|$
+  \If{GLS or WLS}
+   \State $j\gets\arg\max_iy_i$, $z_i\gets y_i/y_j$; $\vect C_z$ from~\eqref{eq:ratio-cov}, diagonal for WLS
+  \EndIf
+  \State Score the seed directions with their conditional amplitude
+  \For{each of the three best seeds}
+   \State Levenberg--Marquardt with~\eqref{eq:nls-jacobian} or~\eqref{eq:ratio-jacobian} and steps~\eqref{eq:sphere-step}
+  \EndFor
+  \State $\hat{\vect u}\gets$ lowest-cost solution; flag competing minima
+  \State Reject boundary, rank-deficient or nonpositive-amplitude solutions
+  \State $\hat\beta\gets\sum_iw_iy_iR_i/\sum_iw_iR_i^2$ on the original scale
+  \State $\hat d$ and $\hat{\vect r}$ from~\eqref{eq:range}
+ \end{algorithmic}
+\end{algorithm}

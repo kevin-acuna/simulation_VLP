@@ -90,6 +90,20 @@
   records), ~7 ms (10-ms records). ML comparison is framed by training data / training stage / retraining, NOT
   by inference speed (trained ML models can also infer fast; no unsupported numbers about ML).
 
+## Estimators (user, 2026-10-30) - Appendix B (sections/appendix_estimators.tex), Algorithm 1
+- Bib key of the published TCOM paper: Acuna2026 (IEEE Trans. Commun. 74, 2026, DOI 10.1109/TCOMM.2026.3742967).
+  Cosine-power GLS/WLS (root ratios -> eigenvector) and the NLS objective are CITED to Acuna2026 (transmitter
+  steering; receiver order/normals replace LED order/steering vectors); range there came from an extra aligned
+  measurement, here from the same K RSS. The general-response (SQ) estimators are the contribution and are
+  derived in Appendix B exactly as implemented in simulations/Receiver models/Bastiaens 2020/Estimators/
+  pd_fit_*.m (= demo/vlp/estimators.py): y / max|y|; seeds q = -n_t + 32 dirs (20/40/60/80 deg x 45 deg) +
+  normals facing the LED; 3 best seeds; LM on the sphere (lambda 1e-3, /3 accept, x10 reject, 80 it, gradient
+  1e-10 (1 + cost), step 1e-9); joint NLS in (omega, ln beta); ratio GLS/WLS with reference = argmax y, delta
+  covariance diag(var) + var_j z z^T (full / diagonal); ambiguity 1e-12 cost, 1e-3 rad; boundary / rank /
+  amplitude checks. If the code changes, update Appendix B.
+- Building: the user's editor auto-compiles into .latex-build at the same time (corrupted aux / missing bbl races).
+  Verify in a private directory: -output-directory=%TEMP%\zconv\build, and bibtex with env openout_any=a.
+
 ## Rebuild from this directory
 
 ```text
