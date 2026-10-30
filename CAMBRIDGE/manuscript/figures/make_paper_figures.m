@@ -737,6 +737,40 @@ pp_export(fig, cfg, 'fig_window');
 end
 
 %% ------------------------------------------------------------------------------------------------------
+function R = part_subsets(cfg)
+% Irregular orientation sets: every subset of K = 4, 5, 6 of the ten D2 angles (non-uniform azimuths), NLS
+% with the measured angles and the cross-height stage zero. Irregularity = largest azimuth gap of the subset.
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+D = G.D;
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+rss = D.rss(:, :, jf);
+for K = [4 5 6]
+    sub = nchoosek(1:D.K, K);
+    gap = zeros(1, size(sub, 1));
+    err = zeros(1, size(sub, 1));
+    fails = zeros(1, size(sub, 1));
+    for s = 1:size(sub, 1)
+        e = site_errors(pp_estimate('SQ', 'NLS', rss(sub(s, :), :), D.theta(sub(s, :), :), G.OFF.SQ.fit.cross, ...
+            cfg.tilt_deg, G.pf), D, G.pf);
+        err(s) = mean(e.err3d, 'omitnan');
+        fails(s) = nnz(~isfinite(e.err3d));
+        gap(s) = 36*max(diff([sub(s, :) sub(s, 1) + D.K]));
+    end
+    gaps = unique(gap);
+    R.(sprintf('K%d', K)) = struct('subsets', size(sub, 1), 'mean_cm', mean(err), 'median_cm', median(err), ...
+        'min_cm', min(err), 'max_cm', max(err), 'failures', sum(fails), 'gap_deg', gaps, ...
+        'mean_by_gap_cm', arrayfun(@(g) mean(err(gap == g)), gaps), 'count_by_gap', arrayfun(@(g) nnz(gap == g), gaps), ...
+        'max_by_gap_cm', arrayfun(@(g) max(err(gap == g)), gaps));
+    fprintf('  K = %d: %d subsets, mean %.2f cm (median %.2f, %.2f-%.2f), failures %d\n', K, size(sub, 1), mean(err), ...
+        median(err), min(err), max(err), sum(fails));
+    for g = gaps
+        fprintf('     largest gap %3d deg: %3d subsets, mean %.2f cm, worst %.2f cm\n', g, nnz(gap == g), ...
+            mean(err(gap == g)), max(err(gap == g)));
+    end
+end
+end
+
+%% ------------------------------------------------------------------------------------------------------
 function R = part_orient(cfg)
 % Sensitivity to orientation errors on D2 (K = 10): the recorded normals given to the estimators are
 % perturbed by Gaussian errors with standard deviation sigma_theta per tangent component, either independent

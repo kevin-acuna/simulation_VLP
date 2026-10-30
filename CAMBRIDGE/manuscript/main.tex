@@ -7,6 +7,8 @@
 \usepackage{placeins}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
 \usepackage[hidelinks]{hyperref}
 \graphicspath{{figures/}}
 \newcommand{\vect}[1]{\mathbf{#1}}
@@ -16,6 +18,9 @@
 \newcommand{\draftsubsection}[1]{\subsection{#1}\par\penalty0\relax}
 % Placeholder for schematics and photographs supplied by the author: \figplaceholder{height}{description}
 \newcommand{\figplaceholder}[2]{\fbox{\parbox[c][#1][c]{0.94\linewidth}{\centering\footnotesize\itshape #2}}}
+% Tracked changes for the author's review: \add{} new text (blue), \del{} removed text (red, struck out)
+\newcommand{\add}[1]{{\color{blue}#1}}
+\newcommand{\del}[1]{{\color{red}\sout{#1}}}
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\Cov}{Cov}
@@ -31,9 +36,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-\draftsubsection{Background and Motivation}
-\draftsubsection{Related Work and Research Gap}
-\draftsubsection{Contributions and Organization}
+\input{sections/01_introduction}
 
 \section{System and Measurement Model}
 \label{sec:model}
@@ -51,9 +54,13 @@
 \label{sec:testbed}
 \input{sections/05_testbed_protocol}
 
-\section{Experimental Results}
+\section[Characterization and Positioning Accuracy]{\texorpdfstring{\protect\del{Experimental Results}\protect\add{Characterization and Positioning Accuracy}}{Characterization and Positioning Accuracy}}
 \label{sec:results}
 \input{sections/06_results}
+
+\section[Error Analysis and Operating Requirements]{\texorpdfstring{\protect\add{Error Analysis and Operating Requirements}}{Error Analysis and Operating Requirements}}
+\label{sec:analysis}
+\input{sections/06b_error_analysis}
 
 \section{Discussion}
 \label{sec:discussion}

@@ -1,6 +1,8 @@
+\add{This section characterizes the testbed and reports the positioning accuracy on the three datasets; Section~\ref{sec:analysis} then analyzes what limits it and what the system requires.}
+
 \subsection{Measurement Noise}
 \label{subsec:res-noise}
-Fig.~\ref{fig:spectrum} shows the spectrum of a 100-ms record of D2: the four tones stand out over a flat floor, and the flicker of the room lights is confined to low frequencies. The noise of the RSS~\eqref{eq:lockin} was estimated from the same projection at off-tone frequencies, 20 to 40~kHz away from each tone, in the 1\,250 records of D2. Its standard deviation is $\sigma=1.92~\mu$V at 500~kHz; its 95th percentile over the records, which span all orientations and positions, is only 7\,\% higher (2.06~$\mu$V), which justifies a common value for all orientations, and 1.9--2.1~$\mu$V at the other tones. Over D2, the 500~kHz RSS ranges from 1.07 to 20.7~mV, so the SNR $s_i/\sigma$ lies between 573 and 10\,190 (median 4\,540). Consecutive records at the same pose, available for 47 poses, differ by a median relative standard deviation of 0.019\,\% (P90 0.037\,\%), as expected from this floor alone; within a record time, neither the LED nor the receiver chain adds noticeable fluctuations. Measurement noise is therefore small, and the question is whether it limits the accuracy (Section~\ref{subsec:res-bound}).
+Fig.~\ref{fig:spectrum} shows the spectrum of a 100-ms record of D2: the four tones stand out over a flat floor, and the flicker of the room lights is confined to low frequencies. The noise of the RSS~\eqref{eq:lockin} was estimated from the same projection at off-tone frequencies, 20 to 40~kHz away from each tone, in the 1\,250 records of D2. Its standard deviation is $\sigma=1.92~\mu$V at 500~kHz; its 95th percentile over the records, which span all orientations and positions, is only 7\,\% higher (2.06~$\mu$V), which justifies a common value for all orientations, and 1.9--2.1~$\mu$V at the other tones. Over D2, the 500~kHz RSS ranges from 1.07 to 20.7~mV, so the SNR $s_i/\sigma$ lies between 573 and 10\,190 (median 4\,540). Consecutive records at the same pose, available for 47 poses\add{ of three auxiliary flat-PD sessions}, differ by a median relative standard deviation of 0.019\,\% (P90 0.037\,\%), as expected from this floor alone; within a record time, neither the LED nor the receiver chain adds noticeable fluctuations. Measurement noise is therefore small, and the question is whether it limits the accuracy (Section~\ref{subsec:res-bound}).
 
 \begin{figure}[!t]
  \centering
@@ -54,7 +56,7 @@ With the SQ response, GLS and NLS agree within 0.01~cm, as expected at high SNR;
 
 \subsection{Accuracy on the Regular Grid}
 \label{subsec:res-grid}
-Table~\ref{tab:ablation} retraces how the final accuracy was reached on D2, adding one model element at a time; each row recalibrates $A$ and $m$ on D1 with the corresponding response and LED position. Starting from the conventional Lambertian receiver, the nominal stage zero and the LED placed at the maximum of the D1 map, the mean error is 77~cm. The calibrated cosine order brings it to 8.9~cm and the SQ response to 4.98~cm. Calibrating the zero of the stage with the shape test, which moves the zero set by eye ($65^\circ$) by about $2^\circ$, lowers it to 3.92~cm, mainly through the horizontal error. Finally, locating the LED by the joint fit of the D1 map gives 3.66~cm. With this model, the 125 positions are all estimated (median 3.40~cm, RMSE 3.96~cm, P90 6.06~cm, maximum 7.25~cm); the mean horizontal error is 2.46~cm, the mean vertical error $-1.60$~cm and the mean direction error $0.75^\circ$. Fitting the zero of the stage on all of D2 instead of leave-one-height-out gives the same mean.
+Table~\ref{tab:ablation} retraces how the final accuracy was reached on D2, adding one model element at a time; each row recalibrates $A$ and $m$ on D1 with the corresponding response and LED position. Starting from the conventional Lambertian receiver, the nominal stage zero and the LED placed at the maximum of the D1 map, the mean error is 77~cm. The calibrated cosine order brings it to 8.9~cm and the SQ response to 4.98~cm. Calibrating the zero of the stage with the shape test, which moves the zero set by eye ($65^\circ$) by about \del{$2^\circ$}\add{$1.5^\circ$}, lowers it to 3.92~cm, mainly through the horizontal error. Finally, locating the LED by the joint fit of the D1 map gives 3.66~cm\add{ (95\,\% bootstrap confidence interval of the mean, 3.40--3.93~cm)}. With this model, the 125 positions are all estimated (median 3.40~cm, RMSE 3.96~cm, P90 6.06~cm, maximum 7.25~cm); the mean horizontal error is 2.46~cm, the mean vertical error $-1.60$~cm and the mean direction error $0.75^\circ$. Fitting the zero of the stage on all of D2 instead of leave-one-height-out gives the same mean.
 
 \begin{table}[!t]
  \centering
@@ -67,7 +69,7 @@ Table~\ref{tab:ablation} retraces how the final accuracy was reached on D2, addi
  Model & Mean & Horiz. & Vert. & Dir.\\
  & (cm) & (cm) & (cm) & ($^\circ$)\\
  \midrule
- $\cos\psi$, nominal $\theta_0$, LED at map max. & 77.39 & 21.56 & $+72.55$ & 11.79\\
+ $\cos\psi$, nominal \del{$\theta_0$}\add{$\alpha_0$}, LED at map max. & 77.39 & 21.56 & $+72.55$ & 11.79\\
  $+$ cosine order $m_R=1.9$ & 8.89 & 4.58 & $-5.25$ & 1.62\\
  $+$ SQ response & 4.98 & 4.40 & $-1.23$ & 1.22\\
  $+$ stage zero from shape test & 3.92 & 3.01 & $-1.23$ & 0.86\\
@@ -87,7 +89,7 @@ The error depends on the height of the receiver (Fig.~\ref{fig:height}). It grow
 
 \subsection{Number of Orientations}
 \label{subsec:res-K}
-Subsampling the ten angles of D2 shows how few orientations suffice (Fig.~\ref{fig:cdf}). The mean error is 3.66~cm with $K=10$, 3.74~cm with $K=5$ (P90 5.98~cm), 3.97~cm with $K=4$ and 4.95~cm with $K=3$ (P90 8.07~cm), and no estimate fails, not even with three orientations. Beyond $K=5$ the additional orientations do not reduce an error that is dominated by model bias; with $K=3$ the problem is exactly determined and no redundancy is left against these biases, which shows mainly in the tail of the distribution.
+Subsampling the ten angles of D2 shows how few orientations suffice (Fig.~\ref{fig:cdf}). The mean error is 3.66~cm with $K=10$, 3.74~cm with $K=5$ (P90 5.98~cm), 3.97~cm with $K=4$ and 4.95~cm with $K=3$ (P90 8.07~cm), and no estimate fails, not even with three orientations. Beyond $K=5$ the additional orientations do not reduce an error that is dominated by model bias; with $K=3$ the problem is exactly determined and no redundancy is left against these biases, which shows mainly in the tail of the distribution. \add{The orientations need not be uniformly spaced either. Over all 252 subsets of five of the ten angles, most of them irregular, no estimate fails and the mean error is 4.57~cm. It grows with the largest azimuthal gap of the set: 3.74~cm for the two uniform subsets (gap of $72^\circ$), 4.06 and 4.52~cm for gaps of $108^\circ$ and $144^\circ$, and 5.40~cm when half a turn is missing; the best irregular subset reaches 3.55~cm. A receiver that turns irregularly, or only partially, thus remains usable, provided that its orientations are known.}
 
 \begin{figure}[!t]
  \centering
@@ -98,7 +100,7 @@ Subsampling the ten angles of D2 shows how few orientations suffice (Fig.~\ref{f
 
 \subsection{Calibration Budget}
 \label{subsec:res-budget}
-Because the direction and amplitude of every position do not depend on $A$ and $m$, the error on D2 can be recomputed exactly for any calibration. Fig.~\ref{fig:calibration}(b) does so for calibrations obtained from $N$ points of D1 with the LED position known. A regular $n\times n$ grid over the working area reaches the accuracy of the full map with very few points: 3.45, 3.54 and 3.57~cm for $2\times2$, $3\times3$ and $4\times4$, against 3.65~cm with all 19\,881 points. Random points over the area need about ten to approach it (median 3.86~cm for $N=10$). Concentrating the points around the LED, which looks natural, fails: a $3\times3$ grid with 0.1 or 0.2~m spacing centered on the LED gives 21.8 and 17.3~cm, and it recovers only when the spacing reaches 0.4~m (4.16~cm). The reason is the angle-dependent apparent order of Fig.~\ref{fig:calibration}(a): points near the axis push $m$ upwards, and the calibration must sample the emission angles at which the system operates. No pair $(A,m)$ does better than 3.15~cm on D2, even when chosen with the ground truth; this is the floor of the single-order pattern model, reached within 0.5~cm by nine well-placed points.
+Because the direction and amplitude of every position do not depend on $A$ and $m$, the error on D2 can be recomputed exactly for any calibration. Fig.~\ref{fig:calibration}(b) does so for calibrations obtained from $N$ points of D1 with the LED position known. A regular $n\times n$ grid over the working area reaches the accuracy of the full map with very few points: 3.45, 3.54 and 3.57~cm for $2\times2$, $3\times3$ and $4\times4$, against 3.65~cm with all 19\,881 points\add{ (3.66~cm with the staged calibration of Table~\ref{tab:parameters})}. Random points over the area need about ten to approach it (median 3.86~cm for $N=10$). Concentrating the points around the LED, which looks natural, fails: a $3\times3$ grid with 0.1 or 0.2~m spacing centered on the LED gives 21.8 and 17.3~cm, and it recovers only when the spacing reaches 0.4~m (4.16~cm). The reason is the angle-dependent apparent order of Fig.~\ref{fig:calibration}(a): points near the axis push $m$ upwards, and the calibration must sample the emission angles at which the system operates. No pair $(A,m)$ does better than 3.15~cm on D2, even when chosen with the ground truth; this is the floor of the single-order pattern model, reached within 0.5~cm by nine well-placed points.
 
 \begin{figure}[!t]
  \centering
@@ -109,7 +111,7 @@ Because the direction and amplitude of every position do not depend on $A$ and $
 
 \subsection{Blind Random Test}
 \label{subsec:res-blind}
-On the 131 random positions of D3, estimated live with $K=5$ and the calibration frozen beforehand, the mean 3D error is 4.10~cm (median 3.91~cm, RMSE 4.53~cm, P90 6.73~cm, maximum 12.5~cm), with a mean horizontal error of 2.64~cm, a mean vertical error of $-1.96$~cm and a mean direction error of $0.90^\circ$ (Figs.~\ref{fig:cdf} and~\ref{fig:random}). Recomputing these estimates offline from the stored RSS reproduces the live values within 0.002~cm. The result is close to the $K=5$ subsets of D2 (3.74~cm); the slightly larger error and tail come from positions near the edges of the area and near the lowest height, which the regular grid samples less densely, and from the stage zero, which in D3 is no longer refitted. The accuracy measured on the regular grid thus transfers to unseen positions.
+On the 131 random positions of D3, estimated live with $K=5$ and the calibration frozen beforehand, the mean 3D error is 4.10~cm (\add{95\,\% bootstrap confidence interval 3.77--4.43~cm, }median 3.91~cm, RMSE 4.53~cm, P90 6.73~cm, maximum 12.5~cm), with a mean horizontal error of 2.64~cm, a mean vertical error of $-1.96$~cm and a mean direction error of $0.90^\circ$ (Figs.~\ref{fig:cdf} and~\ref{fig:random}). Recomputing these estimates offline from the stored RSS reproduces the live values within 0.002~cm. The result is close to the $K=5$ subsets of D2 (3.74~cm); the slightly larger error and tail come from positions near the edges of the area and near the lowest height, which the regular grid samples less densely, and from the stage zero, which in D3 is no longer refitted. The accuracy measured on the regular grid thus transfers to unseen positions.
 
 \begin{figure*}[!t]
  \centering
@@ -117,17 +119,6 @@ On the 131 random positions of D3, estimated live with $K=5$ and the calibration
  \caption{Blind random test D3 (131 positions, $K=5$): true positions (hollow) and estimates (filled, colored by the 3D error), joined by their error vectors. (a)~3D view; (b)~top view, with the LED (star).}
  \label{fig:random}
 \end{figure*}
-
-\subsection{Integrity Monitoring}
-\label{subsec:res-integrity}
-During the first session of D3, the tilt axis of the stage moved by itself from the 48th position on, while it was not commanded; its encoder then reported up to $2.85^\circ$. Fig.~\ref{fig:integrity} shows the residual $\hat\rho$ of the fit at every position of that session. Its median rises from 0.42\,\% before the fault to 1.74\,\% after it, while the mean 3D error grows from 3.28 to 13.9~cm (maximum 25.1~cm). A threshold of 0.9\,\%, the largest residual observed on the fault-free grid D2, is exceeded by 82\,\% of the faulty positions but also by 11.5\,\% of the valid positions of D3, because five orientations give noisier residuals than ten. Requiring two consecutive exceedances removes all false alarms over the 131 valid positions and raises the alarm at the 51st position, four positions after the onset (three consecutive exceedances: 52nd). The residual therefore detects that the assumed orientations are wrong without any ground truth, which is why these 44 positions are excluded from D3. A later dense-grid campaign, in which the rotation stage slipped while its encoder kept reporting the commanded angles, was discarded for the same reason.
-
-\begin{figure}[!t]
- \centering
- \includegraphics[width=\linewidth]{fig_integrity.pdf}
- \caption{Session affected by a fault of the stage (tilt axis moving by itself from position 48, dotted line). Top: residual $\hat\rho$ of the fit and maximum tilt reported by the stage encoder; dashed line: threshold. Bottom: 3D error.}
- \label{fig:integrity}
-\end{figure}
 
 \subsection{The Other LEDs as Single-LED Systems}
 \label{subsec:res-leds}
@@ -158,79 +149,3 @@ The calibration budget holds for every LED: $3\times3$ and $4\times4$ grids give
  \bottomrule
  \end{tabular}
 \end{table*}
-
-\subsection{Comparison With the Position Error Bound}
-\label{subsec:res-bound}
-Fig.~\ref{fig:bound} compares the measured errors on D2 with the bound of the testbed, evaluated at the same positions and orientations with the calibrated SQ model and the measured noise. With exactly known normals, the median bound is 0.75~mm for $K=10$ (P90 1.61~mm) and 1.06~mm for $K=5$; including the relative fluctuation of consecutive records raises it to 0.94~mm. The median measured error is about 39 times larger: the system is far from noise-limited. The bound with orientation uncertainty indicates what this gap is made of. An uncertainty of only $0.1^\circ$ per tangent component already raises the median bound to 4.1~mm, $0.5^\circ$ to 2.0~cm and $1^\circ$ to 4.0~cm; the measured errors lie between the last two curves. Small angular errors in the model thus explain errors of a few centimeters, and the measurements show several such sources: the stage zero, fitted per height, drifts by about $0.5^\circ$ over the ten hours of D2; the estimated directions carry the small elevation bias revealed by the triangulated LED heights; and the single-order pattern model alone has a floor of 3.15~cm (Section~\ref{subsec:res-budget}), which~\eqref{eq:range-sensitivity} links to direction errors of the order of one degree. Further accuracy will come from better models of the LED and of the receiver orientation, not from more averaging, power or orientations.
-
-For the geometry of the testbed, the same bound also confirms the tilt chosen in Section~\ref{subsec:design}: with $K=5$ and $\sigma_\theta=1^\circ$, its median would decrease by only 27\,\% from $15^\circ$ to its minimum at $35^\circ$.
-
-\begin{figure}[!t]
- \centering
- \includegraphics[width=\linewidth]{fig_bound.pdf}
- \caption{Measured 3D error on the 125 grid sites ($K=10$) and position error bound of the testbed at the same positions and orientations (calibrated SQ model, measured noise $\sigma=1.92~\mu$V per record), with exactly known normals and with an orientation uncertainty $\sigma_\theta$ per tangent component.}
- \label{fig:bound}
-\end{figure}
-
-\subsection{Sensitivity to Orientation Errors}
-\label{subsec:res-orient}
-The bound attributes the gap between the noise and the measured errors to orientation errors of a fraction of a degree. Their effect on the estimators was measured directly on D2: the normals given to the estimators were perturbed by Gaussian errors with a standard deviation $\sigma_\theta$ per tangent component, either independent for each orientation, like the jitter of an encoder or an inertial sensor, or common to the ten orientations of a position, like an error of the angular zero or of the axis of the stage. The 125 positions were estimated again from the measured RSS, with 20 draws per error level.
-
-Fig.~\ref{fig:orient}(a) shows the result. Errors up to $0.2^\circ$ are negligible: the mean 3D error of NLS grows from 3.66 to 3.79~cm with independent errors and to 3.84~cm with common ones. It reaches 4.37 and 4.80~cm at $0.5^\circ$, and 6.02 and 6.98~cm at $1^\circ$. A common error is the more harmful, because it rotates all the normals together and is not averaged over the orientations. GLS follows NLS within 0.15~cm; WLS starts higher (4.10~cm without perturbation), but the difference fades as the orientation errors dominate. No estimate failed.
-
-Fig.~\ref{fig:orient}(b) isolates the effect of the perturbation through the RMS shift of the NLS estimates, and compares it with the PEB for the same orientation uncertainty~\eqref{eq:fim-orientation}, evaluated at the same positions. Both grow linearly with $\sigma_\theta$, by about 5.3~cm per degree for independent errors and 6.8~cm per degree for common ones. For common errors the shift coincides with the bound within 3\,\%: NLS is then efficient. For independent errors it lies 11--19\,\% above the bound, because NLS weights all orientations equally, whereas the bound weights each one by its effective variance~\eqref{eq:effective-variance}. In this testbed, the orientation must thus be known to about $0.2^\circ$ for its errors to remain small against the model bias, and an angular reference free of drift matters more than a low jitter.
-
-\begin{figure}[!t]
- \centering
- \includegraphics[width=\linewidth]{fig_orient.pdf}
- \caption{Sensitivity of the D2 estimates ($K=10$) to Gaussian errors of the normals, independent for each orientation (solid) or common to the orientations of a position (dashed), with 20 draws per level. (a)~Mean 3D error of NLS and WLS; GLS coincides with NLS within 0.15~cm. (b)~RMS shift of the NLS estimates with respect to the unperturbed ones, and PEB with the same orientation uncertainty at the same positions.}
- \label{fig:orient}
-\end{figure}
-
-\subsection{Observation Window}
-\label{subsec:res-window}
-All the RSS used so far integrate 100~ms of signal. To find how much signal is actually needed, the RSS of every D2 record was recomputed over shorter windows, from 10~$\mu$s to 100~ms, cut from the recorded waveforms. Each window is exactly what a shorter acquisition with the same sample rate and scale would have delivered, and up to ten disjoint segments of each record, spread over its 100~ms, give independent repetitions. The calibration of Table~\ref{tab:parameters} was kept with one correction: because of the frequency offsets of the tones (Section~\ref{subsec:hardware}), the projection at the nominal frequency loses 0.52\,\% of the 500~kHz amplitude over 100~ms but almost nothing over shorter windows, so $A$ was rescaled by this known coherent gain for each window length.
-
-Fig.~\ref{fig:window}(a) shows the result. The mean 3D error is unchanged down to a window of 10~ms (3.67~cm), and rises only to 3.71~cm at 5~ms and 3.93~cm at 1~ms; below 0.1~ms it degrades quickly, to 9.5~cm at 10~$\mu$s. Below 10~ms the error also depends on where the window falls within the flicker period of the room lights (shaded range). Five orientations follow the same curve slightly higher (3.76, 3.81 and 4.21~cm at 10, 5 and 1~ms). A tenth of the signal recorded in this work is thus enough, and a hundredth costs about 3~mm.
-
-Fig.~\ref{fig:window}(b) shows what sets this limit. When the segments are taken at a single phase of the 100~Hz flicker, one every 10~ms, the spread of the RSS follows the off-tone noise floor of Section~\ref{subsec:res-noise}, scaled as $T^{-1/2}$, over the whole range. Segments spread over the record, as an unsynchronized receiver would acquire them, show about twice that spread between 0.1 and 10~ms: within a flicker period, the amplitude measured over a short window changes with the instantaneous flicker level, by about 0.4\,\% rms at 500~kHz. The irregular shape of this dependence points to the 8-bit digitizer: its scale is set by the flicker, so that one quantization step (2.5~mV) is comparable to the tones themselves (1.1 to 20.7~mV). The excess vanishes once the window covers a whole flicker period, which is why 10~ms is the knee of both curves. A Hann window, which reduces spectral leakage, does not help (4.03~cm at 1~ms): the limit is not leakage of the flicker into the tone bin.
-
-The minimum window thus depends on the link, through three mechanisms. The noise term scales as $\sigma/(s_i\sqrt T)$, so the window required for a given accuracy grows as the inverse square of the SNR: a link with half the SNR needs four times the window. The flicker term depends on the ambient light and on the digitizer: windows of a whole number of flicker periods (10~ms with 50~Hz mains, 8.3~ms with 60~Hz) average it out, and a finer digitizer or a steadier ambient light would move the knee towards the noise limit. Finally, longer windows do not pay off: the noise is already negligible at 10~ms, while the coherent loss of the nominal projection grows as $(\pi\Delta f\,T)^2/6$ for a frequency offset $\Delta f$, reaching 1.5\,\% for the 900~kHz tone at 100~ms. Beyond a few hundred milliseconds the tone frequencies would have to be tracked, and in any case the calibration and the positioning must use the same window, or its coherent gain must be corrected as done here.
-
-\begin{figure}[!t]
- \centering
- \includegraphics[width=\linewidth]{fig_window.pdf}
- \caption{Effect of the observation window on D2, evaluated on windows cut from the recorded 100-ms waveforms. (a)~Mean 3D error; shaded: range over the ten segments of each window length ($K=10$). (b)~Spread of the 500~kHz RSS over the segments of each record (median over the records), for segments spread over the record and for segments at a single phase of the 100~Hz flicker, with the off-tone noise floor scaled as $T^{-1/2}$. Dotted line: one flicker period.}
- \label{fig:window}
-\end{figure}
-
-\subsection{Acquisition and Processing Time}
-\label{subsec:res-time}
-A position of D2 ($K=10$) took 4.2~min on average, and a position of the live test ($K=5$) 3.7~min. About 87\,\% of this time is the rotation of the stage at $1.5^\circ$/s; each record, including its transfer, takes about one second. The signal itself is not the bottleneck either, since 10~ms per orientation suffice (Section~\ref{subsec:res-window}). The duration is a property of the actuator, not of the method: a stage rotating at about $20^\circ$/s would bring a five-orientation position below one minute.
-
-Processing is faster still. Table~\ref{tab:proc} gives the computation time once the $K$ records are available, measured in MATLAB on the laptop that ran the experiments, with all its threads and with a single one. Extracting the amplitude of the tone from a 100-ms record, including the conversion of the raw samples to volts, takes 5.3~ms by projection at the tone frequency (7.6~ms on one thread); a full FFT, which delivers all the tones at once, takes 7.0~ms (8.7~ms). A 10-ms record needs less than 1~ms. Each estimator then takes about 2~ms per position, with a 95th percentile below 4~ms, for ten as for five orientations. With the SQ response, GLS and WLS are iterative as well (Section~\ref{subsec:estimator}), so the three methods cost the same and the choice among them can rest on accuracy alone (Table~\ref{tab:models}). A complete position with $K=10$ thus takes about 80~ms of computation on a single thread with 100-ms records, and about 7~ms with 10-ms records, against minutes of acquisition: computation does not limit the method. Learning-based estimators can also be evaluated quickly once trained, but they require a training database recorded over the working area and a training stage, and must be retrained when the installation changes; the estimators used here evaluate a physical model whose parameters come from the calibration of Section~\ref{subsec:led-calibration}.
-
-\begin{table}[!t]
-\centering
-\caption{Processing Time Once the Records Are Available\\(MATLAB R2026b, AMD Ryzen 9 8940HX Laptop)}
-\label{tab:proc}
-\begin{tabular}{@{}llcc@{}}
-\toprule
-Step & & All threads & One thread\\
-\midrule
-\multicolumn{4}{@{}l}{Tone amplitude, per record (ms):}\\
-\quad 100-ms record & Projection, one tone & 5.3 & 7.6\\
- & FFT, all tones & 7.0 & 8.7\\
-\quad 10-ms record & Projection, one tone & 0.56 & 0.48\\
- & FFT, all tones & 0.86 & 0.91\\
-\midrule
-\multicolumn{4}{@{}l}{Position estimate, median / P95 over D2 (ms):}\\
-\quad $K=10$ & NLS & 2.3 / 3.4 & 2.1 / 3.0\\
- & GLS & 2.4 / 3.6 & 2.3 / 3.1\\
- & WLS & 2.2 / 3.2 & 2.3 / 3.8\\
-\quad $K=5$ & NLS & 1.7 / 2.6 & 2.0 / 2.8\\
- & GLS & 1.9 / 2.9 & 1.8 / 2.7\\
- & WLS & 1.8 / 2.7 & 1.9 / 3.1\\
-\bottomrule
-\end{tabular}
-\end{table}

@@ -1,4 +1,4 @@
-# Cambridge TIM manuscript
+﻿# Cambridge TIM manuscript
 
 - This folder is the manuscript, not the MATLAB laboratory or the independent digital-twin application. Preserve the user-supplied `IEEEtran.cls` and the original reference papers.
 - `main.tex` uses the IEEE double-column journal format. The current authorized scope fills only Section II, `System and Measurement Model`, in `sections/02_system_measurement_model.tex`. All other sections/subsections, abstract and keywords are intentionally empty. Empty subsection headings in `main.tex` use `draftsubsection` to allow column breaks; replace that wrapper with ordinary `subsection` when adding their body text. Do not invent results, experiments, authorship, grant support, publication status or received dates.
@@ -113,6 +113,93 @@
   cm (2); GLS = NLS within 0.15 cm; WLS 4.10 at 0, gap fades; no failures. RMS shift ~5.3 (indep) and ~6.8 (common)
   cm per degree; common = PEB within 3 % (NLS efficient), independent 11-19 % above PEB (equal weights vs
   effective-variance weights). Discussion VII-C cites it (0.2 deg requirement, common errors worst).
+
+## Tracked changes and related work (user, 2026-10-30)
+- Convention requested by the user: every addition in \add{...} (blue), every removal in \del{...} (red,
+  struck out), macros in main.tex (xcolor + ulem[normalem]). Do not put \cite/\ref inside \del (ulem).
+  The user accepts/rejects them; remove the macros only when they say so.
+- Wang et al., TIM 2024 (Liang group, Chang'an Univ.; key Wang2024, cite only in the future Introduction):
+  single tilted rotatable PD, N = 4 rotations, tilt 20 deg chosen from a 2-D CRLB (x, y at KNOWN height) +
+  FoV check; LOS + first-order reflections, cos(psi) receiver; LS (linear ratios) + LS-initialized improved grey
+  wolf optimizer over a simulated RSS database; field test scaled to 50 x 50 x 30 cm, manual rotation stage
+  (2 deg scale), 25 positions, empirical curve-fitted RSS model; GWO time ~9.7 ms. Differences to stress (no
+  comparative wording): 3-D with unknown height, calibrated SQ response, deterministic two-stage ML estimators
+  (ms), room-scale automated testbed with blind test, measured-noise PEB, orientation-uncertainty design,
+  integrity residual, window/processing studies. Added in blue (2026-10-30): II-A unknown height; IV-A
+  deterministic estimator without database/training/stochastic search; V-C D2 distances 1.69-2.42 m and
+  <= 37.6 deg off axis; VII-D reflections not modelled.
+- CAMBRIDGE/papers/616273.pdf: UNPUBLISHED manuscript (Zhang, Wu, Wang, Xi'an Univ. of Technology). Never cite
+  it; the user authorized reading it (2026-10-30). Content: compact inclined PD array (central PD + 8 PDs tilted
+  45 deg, r = 2 cm) + IMU, snapshot RSS + 2-D AOA from a LINEAR LS inversion (cosine response), free attitude,
+  Mode A (IMU attitude fixed, R_eff = R + H Sigma H^T) / Mode B (joint position-attitude with IMU prior), CRLB/PEB
+  vs inclination and radius with a valid-sample (LOS) ratio, LOS only; experiments 7 x 6.4 x 3.2 m room, ~7 cm
+  on a plane, 5.65-15 cm in 3-D with few test points. Only used to stress OUR independent aspects, none of its
+  ideas imported (no IMU priors / joint attitude estimation added). Added: II-A the K normals may be sequential
+  (one PD) or simultaneous (several PDs), single detector = no matching; III-D common-rotation structure of the
+  orientation FIM (rows beta Rdot (n_i x u)^T, Sigma = sigma^2 I_3); VII-D removed "or a receiver with several
+  fixed PDs" from the actuator limitation and added that model/bounds/estimators apply to fixed multi-PD
+  receivers at the price of matching gains and responses.
+- For the future Introduction: single LED + single PD, full 3-D (no height assumption), no extra detectors or
+  LEDs; orientation known from the stage in the TESTBED, from an IMU in a DEPLOYMENT (user, 2026-10-30: the IMU
+  is not avoided, the testbed simply does not need one); device-specific response with general-response
+  estimators; room-scale automated testbed with blind live test. Key use case / motivation (user): a drone that
+  yaws in hover with ONE tilted PD recovers its 3-D position; size, weight and power matter on drones, unlike
+  multi-PD arrays aimed at robotics. Estimators accept ANY known normals (cone only for convenience).
+- Added in blue (2026-10-30): IV-A any set of known normals; V-A cone = convenience, IMU in deployment; VI-E
+  irregular subsets (MATLAB part 'subsets': all subsets of K = 4/5/6 of the 10 D2 angles, NLS; K = 5: 252
+  subsets, mean 4.57 cm, 3.55-7.85, no failures; by largest azimuth gap 72/108/144/180/216 deg: 3.74 / 4.06 /
+  4.52 / 5.40 / 6.84 cm); VI-K IMU -> common case; new VII-D "Towards Mobile Receivers" (drone, PD near the yaw
+  axis so its optical center barely moves).
+- Heading (yaw) reference (user, 2026-10-30, admit SUBTLY + future work): t, n_t and the normals n_i are ALL in one
+  global frame fixed to the room (Z up; = gantry frame in the experiments, stated in II-A). Never say "frame of
+  the LED" (an axisymmetric LED defines no azimuth: that is why the heading must come from the room frame). On a
+  platform the normals come from its attitude in that global frame: roll/pitch from gravity, heading from an
+  initial alignment with the room axes (shape test at a known position, like theta_0 here).
+  Verified on D2 (temp yaw_check.m): a common yaw error delta rotates the estimate EXACTLY about the vertical LED
+  axis (deviation 4 nm), |shift| = 2 rho sin(delta/2) (rho = horizontal distance to the axis), distance and height
+  unchanged; 1 deg -> 1.22 cm mean, 2.29 cm max on D2 (rho 0.16-1.31 m). Several LEDs make the heading observable
+  (future work; internal 2-LED unknown-yaw analysis in analysis/Estimation_with_2LEDs). Text added in blue in VII-D.
+
+## Results split into two sections (user, 2026-10-30)
+- VI "Characterization and Positioning Accuracy" (sections/06_results.tex, label sec:results): noise, LED
+  patterns, response model, grid accuracy, number of orientations (+ irregular subsets), calibration budget,
+  blind test, other LEDs. VII "Error Analysis and Operating Requirements" (sections/06b_error_analysis.tex, label
+  sec:analysis): PEB comparison, orientation sensitivity, integrity monitoring, observation window, acquisition
+  and processing time. Flat subsections (no subsubsections). Discussion = VIII, Conclusion = IX.
+- Former IV-D "Calibrated Parameters" (Table of model parameters, testbed values, D1/D2 before their definition)
+  merged into V-D "Calibration, Protocol and Metrics" (labels subsec:protocol + subsec:parameters); Section IV is
+  now purely methodological (estimator, shape test, flat-scan LED calibration). Kept on purpose: in VI the K study
+  and the calibration budget precede the blind test because they justify the K = 5 and the calibration used in D3.
+
+## Introduction (user, 2026-10-30) - sections/01_introduction.tex, all in \add{} (blue)
+- REWRITTEN 2026-10-30 after user feedback (too light; previous-work paragraph sounded self-critical): structure
+  inspired by the TCOM intro (GNSS/RF -> OWP/VLP -> multi-LED limits -> single-LED PD arrays -> single rotated PD +
+  infrastructure-side diversity (Chassagne2025, Acuna2026, ShiJin2025, one neutral sentence) -> gaps -> this work +
+  drone -> itemized contributions -> roadmap). Refs >= 2010 OK (Kahn & Barry allowed). Context/single-LED entries
+  copied verbatim from TCOM/Final_submission/IEEE_TCOM_FINAL/References.bib (published paper).
+- First version: concise, prose only (no tables, no bullet list), modern references only. Six paragraphs: VLP/single-LED
+  motivation; two receiver families (tilted-PD arrays: Qin2021, Ma2024; single reoriented PD: Liu2022, Shi2025,
+  Shi2026, Wang2024) + drone/SWaP motivation; open questions (2-D at known height, databases, cosine response,
+  small setups, Bastiaens2020, orientation errors); our dual of Acuna2026; four contributions; roadmap (II-IX).
+- New bib entries, DOIs verified on the web (2026-10-30): Rekkas2023 (OJ-COMS 4:2838-2869,
+  10.1109/OJCOMS.2023.3327211), Ma2024 (IoT-J 11(1):418-429, 10.1109/JIOT.2023.3285556), Qin2021 (Optik 241,
+  167190, 10.1016/j.ijleo.2021.167190), Shi2025 (PTL 37(18):1033-1036, 10.1109/LPT.2025.3578979), Shi2026 (PTL
+  38(2):129-132, 10.1109/LPT.2025.3623084). 616273.pdf is never cited. Qin et al. Optik 2019 not cited (older).
+
+## Notation decided in the reviewer pass (2026-10-30)
+- Receiver tilt (cone half-angle, adapter tilt): theta everywhere (III, V, App. A). Stage angle: alpha_i, stage zero:
+  alpha_0 (V, Table I, ablation table). Largest off-axis angle of the LED in III-E: phi_max. sigma_theta = orientation
+  uncertainty. Model sections (II-IV) must not mention gantry/stage specifics (they belong to V).
+- Reviewer-pass numbers: D2 mean 3.66 cm, bootstrap 95 % CI 3.40-3.93; D3 4.10, CI 3.77-4.43; stage zero fitted on each
+  height alone 66.73 / 66.56 / 66.47 / 66.30 / 66.25 deg in acquisition order (0.47 deg over 10.4 h); measured error
+  / PEB per site: median 39.3 (ratio of medians 45).
+
+## Results structure (user approved, 2026-10-30)
+- VI-A Testbed Characterization (1 noise, 2 LED patterns, 3 receiver model); VI-B Positioning Accuracy (1 grid,
+  2 number of orientations + irregular sets, 3 calibration budget, 4 blind test, 5 other LEDs); VI-C Error Analysis and
+  Integrity (1 PEB comparison, 2 orientation sensitivity, 3 integrity monitoring); VI-D Signal and Time Requirements
+  (1 observation window, 2 acquisition and processing time). Old subsections are \subsubsection (run-in headings);
+  labels unchanged (subsec:res-*), group labels subsec:res-char / -accuracy / -errors / -requirements.
 
 ## Rebuild from this directory
 

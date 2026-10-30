@@ -5,7 +5,7 @@ The separable structure~\eqref{eq:separable} suggests estimating the direction a
  (\hat{\vect u},\hat\beta)=\arg\min_{\vect u\in\mathbb S^2,\ \beta>0}\ \sum_{i=1}^{K}w_i\left(y_i-\beta R(\vect n_i\trans\vect u)\right)^2,
  \label{eq:nls}
 \end{equation}
-with $w_i=L/\sigma_i^2$, equal for all orientations in the experiments. For a fixed $\vect u$ the amplitude has the closed form $\hat\beta(\vect u)=\sum_iw_iy_iR_i/\sum_iw_iR_i^2$, $R_i=R(\vect n_i\trans\vect u)$, so~\eqref{eq:nls} reduces to a search over the unit sphere. It is solved by a Levenberg--Marquardt iteration on the sphere, started from the best three of a fixed set of seed directions; solutions with competing minima are flagged (Appendix~\ref{app:estimators}). This stage uses only the shape of the measurements: it does not depend on $A$, on $m$ or on the LED pattern. As alternatives, the ratios to the strongest orientation, $y_i/y_j=R(\vect n_i\trans\vect u)/R(\vect n_j\trans\vect u)$, which do not depend on $\beta$, can be fitted by generalized (GLS) or weighted (WLS) least squares, with the full or the diagonal first-order covariance of the ratios. For a cosine-power response, the roots of the ratios are linear in $\vect u$ and the GLS and WLS directions are eigenvectors, as derived in~\cite{Acuna2026} for a reoriented transmitter. The SQ response admits no such linearization, and its ratios are fitted iteratively on the sphere. Appendix~\ref{app:estimators} gives the estimators for an arbitrary response, as used here with SQ, together with Algorithm~\ref{alg:estimator}.
+with $w_i=L/\sigma_i^2$, equal for all orientations in the experiments. For a fixed $\vect u$ the amplitude has the closed form $\hat\beta(\vect u)=\sum_iw_iy_iR_i/\sum_iw_iR_i^2$, $R_i=R(\vect n_i\trans\vect u)$, so~\eqref{eq:nls} reduces to a search over the unit sphere. It is solved by a Levenberg--Marquardt iteration on the sphere, started from the best three of a fixed set of seed directions; solutions with competing minima are flagged (Appendix~\ref{app:estimators}). This stage uses only the shape of the measurements: it does not depend on $A$, on $m$ or on the LED pattern. As alternatives, the ratios to the strongest orientation, $y_i/y_j=R(\vect n_i\trans\vect u)/R(\vect n_j\trans\vect u)$, which do not depend on $\beta$, can be fitted by generalized (GLS) or weighted (WLS) least squares, with the full or the diagonal first-order covariance of the ratios. For a cosine-power response, the roots of the ratios are linear in $\vect u$ and the GLS and WLS directions are eigenvectors, as derived in~\cite{Acuna2026} for a reoriented transmitter. The SQ response admits no such linearization, and its ratios are fitted iteratively on the sphere. Appendix~\ref{app:estimators} gives the estimators for an arbitrary response, as used here with SQ, together with Algorithm~\ref{alg:estimator}. \add{All of them accept any set of known normals: they require neither a cone nor uniformly spaced or exactly commanded orientations, and they use the normals actually measured.}
 
 The distance then follows in closed form from the amplitude:
 \begin{equation}
@@ -14,7 +14,7 @@ The distance then follows in closed form from the amplitude:
  \hat{\vect r}=\vect t-\hat d\,\hat{\vect u}.
  \label{eq:range}
 \end{equation}
-Given $A$ and $m$, the map $(\vect u,\beta)\mapsto(\vect u,d)$ is one-to-one, so the two stages yield the maximum-likelihood position under~\eqref{eq:observation}. Unlike the transmitter-steering system of~\cite{Acuna2026}, which obtained the range from an additional measurement with the LED and PD aligned, no cooperative measurement is required: direction and range come from the same reorientation sequence.
+Given $A$ and $m$, the map $(\vect u,\beta)\mapsto(\vect u,d)$ is one-to-one, so the two stages yield the maximum-likelihood position under~\eqref{eq:observation}. Unlike the transmitter-steering system of~\cite{Acuna2026}, which obtained the range from an additional measurement with the LED and PD aligned, no cooperative measurement is required: direction and range come from the same reorientation sequence. \add{The estimator is deterministic and model-based: besides the $K$ RSS and the normals, it uses only the calibrated parameters of Table~\ref{tab:parameters}, without a fingerprint database, a training stage or a stochastic search, and it takes a few milliseconds per position (Section~\ref{subsec:res-time}).}
 
 The range inherits the errors of the direction through the LED pattern. Differentiating~\eqref{eq:range} with respect to the irradiance angle gives:
 \begin{equation}
@@ -31,7 +31,7 @@ At a known position, the ratios $q_i=y_i/R(\vect n_i\trans\vect u)$ must all equ
  \bar q=\frac1K\sum_{i=1}^{K}q_i,
  \label{eq:shape}
 \end{equation}
-pooled over several positions, tests the angular part of the model independently of $A$, $m$ and the LED pattern, which are common to the $K$ orientations. It serves three purposes. With known positions, it discriminates between candidate receiver responses, and it calibrates the angular zero $\theta_0$ of the rotation stage (and verifies the adapter tilt), by minimizing $\rho$ over the orientation parameters. With unknown positions, the same statistic evaluated at the estimate, $\hat\rho$, is the residual of~\eqref{eq:nls}; it requires no ground truth and is used as an integrity indicator (Section~\ref{subsec:res-integrity}).
+pooled over several positions, tests the angular part of the model independently of $A$, $m$ and the LED pattern, which are common to the $K$ orientations. It serves three purposes. With known positions, it discriminates between candidate receiver responses, and it calibrates \del{the angular zero $\theta_0$ of the rotation stage (and verifies the adapter tilt)}\add{the orientation parameters of the receiver, such as the angular zero of a rotation stage and the tilt of the PD (Section~\ref{subsec:hardware})}, by minimizing $\rho$ over \del{the orientation parameters}\add{them}. With unknown positions, the same statistic evaluated at the estimate, $\hat\rho$, is the residual of~\eqref{eq:nls}; it requires no ground truth and is used as an integrity indicator (Section~\ref{subsec:res-integrity}).
 
 \subsection{LED Calibration From a Flat Scan}
 \label{subsec:led-calibration}
@@ -43,31 +43,3 @@ With the PD facing up and scanning a horizontal plane at a vertical distance $h$
 Given the LED position, $A$ and $m$ follow from linear least squares over the scan points (joint estimate), or from the point closest to the LED axis for $A$ and least squares for $m$ (staged estimate). The horizontal position of the LED is found by minimizing the residual of the joint fit. Its height, however, is not identifiable from a single plane: a higher LED is seen at smaller angles and longer distances, and larger values of $A$ and $m$ reproduce almost the same map. It must be measured, or calibrated with a second plane.
 
 Because~\eqref{eq:led-calibration} is linear, the number and placement of calibration points can be studied exactly on measured data (Section~\ref{subsec:res-budget}). Points close to the LED axis determine $A$ well but carry little information on $m$; the calibration points must cover the emission angles at which the system operates.
-
-\subsection{Calibrated Parameters}
-\label{subsec:parameters}
-Table~\ref{tab:parameters} lists the parameters of the model, their values and how each was obtained. The receiver response is the published SQ model, selected by the shape test (Section~\ref{subsec:res-model}). The LED position, gain and order come exclusively from the flat-scan dataset; the angular zero of the rotation stage comes from the shape test on the grid dataset, either in a leave-one-height-out manner when the grid itself is evaluated, or from all its positions before the blind test.
-
-\begin{table}[!t]
- \centering
- \caption{Model Parameters and Their Origin}
- \label{tab:parameters}
- \footnotesize
- \setlength{\tabcolsep}{3pt}
- \begin{tabular}{@{}lll@{}}
- \toprule
- Parameter & Value & Origin\\
- \midrule
- LED height & 3.000~m & Tape\\
- LED $(x,y)$ & (281.1, 904.8)~mm & Joint fit of~\eqref{eq:led-calibration}, D1\\
- Gain $A$ & 0.06271~V\,m$^2$ & Staged fit of~\eqref{eq:led-calibration}, D1\\
- Lambertian order $m$ & 6.092 & Staged fit of~\eqref{eq:led-calibration}, D1\\
- PD height & $0.858~\mathrm m+z+e$ & Tape (base), CAD ($e$)\\
- PD elevation $e$ & 96.96~mm & CAD of stage and adapter\\
- Adapter tilt $t$ & $15^\circ$ & Design; shape test\\
- Stage zero $\theta_0$ & $66.5^\circ$ & Shape test~\eqref{eq:shape}, D2\\
- Response & SQ, $\psi_{3\mathrm{dB}}=0.61$~rad & \cite{Bastiaens2020}; shape test\\
- Noise $\sigma$ & 1.92~$\mu$V per record & Off-tone bins, D2\\
- \bottomrule
- \end{tabular}
-\end{table}

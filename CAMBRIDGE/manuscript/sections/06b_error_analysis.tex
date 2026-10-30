@@ -1,0 +1,88 @@
+\add{Section~\ref{sec:results} established the accuracy of the system. This section examines what limits it, how errors and faults of the orientation affect it, and how much signal and computation it needs.}
+
+\subsection{Comparison With the Position Error Bound}
+\label{subsec:res-bound}
+Fig.~\ref{fig:bound} compares the measured errors on D2 with the bound of the testbed, evaluated at the same positions and orientations with the calibrated SQ model and the measured noise. With exactly known normals, the median bound is 0.75~mm for $K=10$ (P90 1.61~mm) and 1.06~mm for $K=5$; including the relative fluctuation of consecutive records raises it to 0.94~mm. \del{The median measured error is about 39 times larger}\add{At each position the measured error is, in median, about 39 times the bound}: the system is far from noise-limited. The bound with orientation uncertainty indicates what this gap is made of. An uncertainty of only $0.1^\circ$ per tangent component already raises the median bound to 4.1~mm, $0.5^\circ$ to 2.0~cm and $1^\circ$ to 4.0~cm; the measured errors lie between the last two curves. Small angular errors in the model thus explain errors of a few centimeters, and the measurements show several such sources: the stage zero, fitted \del{per height}\add{on each height alone}, drifts by about $0.5^\circ$ over the ten hours of D2; the estimated directions carry the small elevation bias revealed by the triangulated LED heights; and the single-order pattern model alone has a floor of 3.15~cm (Section~\ref{subsec:res-budget}), which~\eqref{eq:range-sensitivity} links to direction errors of the order of one degree. Further accuracy will come from better models of the LED and of the receiver orientation, not from more averaging, power or orientations.
+
+For the geometry of the testbed, the same bound also confirms the tilt chosen in Section~\ref{subsec:design}: with $K=5$ and $\sigma_\theta=1^\circ$, its median would decrease by only 27\,\% from $15^\circ$ to its minimum at $35^\circ$.
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[width=\linewidth]{fig_bound.pdf}
+ \caption{Measured 3D error on the 125 grid sites ($K=10$) and position error bound of the testbed at the same positions and orientations (calibrated SQ model, measured noise $\sigma=1.92~\mu$V per record), with exactly known normals and with an orientation uncertainty $\sigma_\theta$ per tangent component.}
+ \label{fig:bound}
+\end{figure}
+
+\subsection{Sensitivity to Orientation Errors}
+\label{subsec:res-orient}
+The bound attributes the gap between the noise and the measured errors to orientation errors of a fraction of a degree. Their effect on the estimators was measured directly on D2: the normals given to the estimators were perturbed by Gaussian errors with a standard deviation $\sigma_\theta$ per tangent component, either independent for each orientation, like the jitter of an encoder or an inertial sensor, or common to the ten orientations of a position, like an error of the angular zero or of the axis of the stage. The 125 positions were estimated again from the measured RSS, with 20 draws per error level.
+
+Fig.~\ref{fig:orient}(a) shows the result. Errors up to $0.2^\circ$ are negligible: the mean 3D error of NLS grows from 3.66 to 3.79~cm with independent errors and to 3.84~cm with common ones. It reaches 4.37 and 4.80~cm at $0.5^\circ$, and 6.02 and 6.98~cm at $1^\circ$. A common error is the more harmful, because it rotates all the normals together and is not averaged over the orientations. GLS follows NLS within 0.15~cm; WLS starts higher (4.10~cm without perturbation), but the difference fades as the orientation errors dominate. No estimate failed.
+
+Fig.~\ref{fig:orient}(b) isolates the effect of the perturbation through the RMS shift of the NLS estimates, and compares it with the PEB for the same orientation uncertainty~\eqref{eq:fim-orientation}, evaluated at the same positions. Both grow linearly with $\sigma_\theta$, by about 5.3~cm per degree for independent errors and 6.8~cm per degree for common ones. For common errors the shift coincides with the bound within 3\,\%: NLS is then efficient. For independent errors it lies 11--19\,\% above the bound, because NLS weights all orientations equally, whereas the bound weights each one by its effective variance~\eqref{eq:effective-variance}. In this testbed, the orientation must thus be known to about $0.2^\circ$ for its errors to remain small against the model bias, and an angular reference free of drift matters more than a low jitter. \add{For an IMU, whose attitude error changes little during one rotation, the common case applies.}
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[width=\linewidth]{fig_orient.pdf}
+ \caption{Sensitivity of the D2 estimates ($K=10$) to Gaussian errors of the normals, independent for each orientation (solid) or common to the orientations of a position (dashed), with 20 draws per level. (a)~Mean 3D error of NLS and WLS; GLS coincides with NLS within 0.15~cm. (b)~RMS shift of the NLS estimates with respect to the unperturbed ones, and PEB with the same orientation uncertainty at the same positions.}
+ \label{fig:orient}
+\end{figure}
+
+\subsection{Integrity Monitoring}
+\label{subsec:res-integrity}
+During the first session of D3, the tilt axis of the stage moved by itself from the 48th position on, while it was not commanded; its encoder then reported up to $2.85^\circ$. Fig.~\ref{fig:integrity} shows the residual $\hat\rho$ of the fit at every position of that session. Its median rises from 0.42\,\% before the fault to 1.74\,\% after it, while the mean 3D error grows from 3.28 to 13.9~cm (maximum 25.1~cm). A threshold of 0.9\,\%, the largest residual observed on the fault-free grid D2, is exceeded by 82\,\% of the faulty positions but also by 11.5\,\% of the valid positions of D3, because five orientations give noisier residuals than ten. Requiring two consecutive exceedances removes all false alarms over the 131 valid positions and raises the alarm at the 51st position, four positions after the onset (three consecutive exceedances: 52nd). The residual therefore detects that the assumed orientations are wrong without any ground truth, which is why these 44 positions are excluded from D3. A later dense-grid campaign, in which the rotation stage slipped while its encoder kept reporting the commanded angles, was discarded for the same reason.
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[width=\linewidth]{fig_integrity.pdf}
+ \caption{Session affected by a fault of the stage (tilt axis moving by itself from position 48, dotted line). Top: residual $\hat\rho$ of the fit and maximum tilt reported by the stage encoder; dashed line: threshold. Bottom: 3D error.}
+ \label{fig:integrity}
+\end{figure}
+
+\subsection{Observation Window}
+\label{subsec:res-window}
+All the RSS used so far integrate 100~ms of signal. To find how much signal is actually needed, the RSS of every D2 record was recomputed over shorter windows, from 10~$\mu$s to 100~ms, cut from the recorded waveforms. Each window is exactly what a shorter acquisition with the same sample rate and scale would have delivered, and up to ten disjoint segments of each record, spread over its 100~ms, give independent repetitions. The calibration of Table~\ref{tab:parameters} was kept with one correction: because of the frequency offsets of the tones (Section~\ref{subsec:hardware}), the projection at the nominal frequency loses 0.52\,\% of the 500~kHz amplitude over 100~ms but almost nothing over shorter windows, so $A$ was rescaled by this known coherent gain for each window length.
+
+Fig.~\ref{fig:window}(a) shows the result. The mean 3D error is unchanged down to a window of 10~ms (3.67~cm), and rises only to 3.71~cm at 5~ms and 3.93~cm at 1~ms; below 0.1~ms it degrades quickly, to 9.5~cm at 10~$\mu$s. Below 10~ms the error also depends on where the window falls within the flicker period of the room lights (shaded range). Five orientations follow the same curve slightly higher (3.76, 3.81 and 4.21~cm at 10, 5 and 1~ms). A tenth of the signal recorded in this work is thus enough, and a hundredth costs about 3~mm.
+
+Fig.~\ref{fig:window}(b) shows what sets this limit. When the segments are taken at a single phase of the 100~Hz flicker, one every 10~ms, the spread of the RSS follows the off-tone noise floor of Section~\ref{subsec:res-noise}, scaled as $T^{-1/2}$, over the whole range. Segments spread over the record, as an unsynchronized receiver would acquire them, show about twice that spread between 0.1 and 10~ms: within a flicker period, the amplitude measured over a short window changes with the instantaneous flicker level, by about 0.4\,\% rms at 500~kHz. The irregular shape of this dependence points to the 8-bit digitizer: its scale is set by the flicker, so that one quantization step (2.5~mV) is comparable to the tones themselves (1.1 to 20.7~mV). The excess vanishes once the window covers a whole flicker period, which is why 10~ms is the knee of both curves. A Hann window, which reduces spectral leakage, does not help (4.03~cm at 1~ms): the limit is not leakage of the flicker into the tone bin.
+
+The minimum window thus depends on the link, through three mechanisms. The noise term scales as $\sigma/(s_i\sqrt T)$, so the window required for a given accuracy grows as the inverse square of the SNR: a link with half the SNR needs four times the window. The flicker term depends on the ambient light and on the digitizer: windows of a whole number of flicker periods (10~ms with 50~Hz mains, 8.3~ms with 60~Hz) average it out, and a finer digitizer or a steadier ambient light would move the knee towards the noise limit. Finally, longer windows do not pay off: the noise is already negligible at 10~ms, while the coherent loss of the nominal projection grows as $(\pi\Delta f\,T)^2/6$ for a frequency offset $\Delta f$, reaching 1.5\,\% for the 900~kHz tone at 100~ms. Beyond a few hundred milliseconds the tone frequencies would have to be tracked, and in any case the calibration and the positioning must use the same window, or its coherent gain must be corrected as done here.
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[width=\linewidth]{fig_window.pdf}
+ \caption{Effect of the observation window on D2, evaluated on windows cut from the recorded 100-ms waveforms. (a)~Mean 3D error; shaded: range over the ten segments of each window length ($K=10$). (b)~Spread of the 500~kHz RSS over the segments of each record (median over the records), for segments spread over the record and for segments at a single phase of the 100~Hz flicker, with the off-tone noise floor scaled as $T^{-1/2}$. Dotted line: one flicker period.}
+ \label{fig:window}
+\end{figure}
+
+\subsection{Acquisition and Processing Time}
+\label{subsec:res-time}
+A position of D2 ($K=10$) took 4.2~min on average, and a position of the live test ($K=5$) 3.7~min. About 87\,\% of this time is the rotation of the stage at $1.5^\circ$/s; each record, including its transfer, takes about one second. The signal itself is not the bottleneck either, since 10~ms per orientation suffice (Section~\ref{subsec:res-window}). The duration is a property of the actuator, not of the method: a stage rotating at about $20^\circ$/s would bring a five-orientation position below one minute.
+
+Processing is faster still. Table~\ref{tab:proc} gives the computation time once the $K$ records are available, measured in MATLAB on the laptop that ran the experiments, with all its threads and with a single one. Extracting the amplitude of the tone from a 100-ms record, including the conversion of the raw samples to volts, takes 5.3~ms by projection at the tone frequency (7.6~ms on one thread); a full FFT, which delivers all the tones at once, takes 7.0~ms (8.7~ms). A 10-ms record needs less than 1~ms. Each estimator then takes about 2~ms per position, with a 95th percentile below 4~ms, for ten as for five orientations. With the SQ response, GLS and WLS are iterative as well (Section~\ref{subsec:estimator}), so the three methods cost the same and the choice among them can rest on accuracy alone (Table~\ref{tab:models}). A complete position with $K=10$ thus takes about 80~ms of computation on a single thread with 100-ms records, and about 7~ms with 10-ms records, against minutes of acquisition: computation does not limit the method. Learning-based estimators can also be evaluated quickly once trained, but they require a training database recorded over the working area and a training stage, and must be retrained when the installation changes; the estimators used here evaluate a physical model whose parameters come from the calibration of Section~\ref{subsec:led-calibration}.
+
+\begin{table}[!t]
+\centering
+\caption{Processing Time Once the Records Are Available\\(MATLAB R2026b, AMD Ryzen 9 8940HX Laptop)}
+\label{tab:proc}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Step & & All threads & One thread\\
+\midrule
+\multicolumn{4}{@{}l}{Tone amplitude, per record (ms):}\\
+\quad 100-ms record & Projection, one tone & 5.3 & 7.6\\
+ & FFT, all tones & 7.0 & 8.7\\
+\quad 10-ms record & Projection, one tone & 0.56 & 0.48\\
+ & FFT, all tones & 0.86 & 0.91\\
+\midrule
+\multicolumn{4}{@{}l}{Position estimate, median / P95 over D2 (ms):}\\
+\quad $K=10$ & NLS & 2.3 / 3.4 & 2.1 / 3.0\\
+ & GLS & 2.4 / 3.6 & 2.3 / 3.1\\
+ & WLS & 2.2 / 3.2 & 2.3 / 3.8\\
+\quad $K=5$ & NLS & 1.7 / 2.6 & 2.0 / 2.8\\
+ & GLS & 1.9 / 2.9 & 1.8 / 2.7\\
+ & WLS & 1.8 / 2.7 & 1.9 / 3.1\\
+\bottomrule
+\end{tabular}
+\end{table}

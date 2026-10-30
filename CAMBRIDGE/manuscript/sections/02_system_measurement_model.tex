@@ -1,6 +1,6 @@
 \subsection{System Geometry}
 \label{subsec:geometry}
-A single LED is installed at a known position $\vect t\in\R^3$ with unit optical axis $\vect n_t$, and a single photodiode (PD) is placed at an unknown position $\vect r=[x,y,z]\trans$. While its optical center remains stationary, the PD is reoriented to $K$ known unit normals $\vect n_i\in\mathbb S^2$, $i=1,\ldots,K$, expressed in the same global frame as $\vect t$, and one received-signal-strength (RSS) measurement is taken at each orientation (Fig.~\ref{fig:system}). All three coordinates of $\vect r$ are unknown.
+A single LED is installed at a known position $\vect t\in\R^3$ with unit optical axis $\vect n_t$, and a single photodiode (PD) is placed at an unknown position $\vect r=[x,y,z]\trans$. While its optical center remains stationary, the PD is reoriented to $K$ known unit normals $\vect n_i\in\mathbb S^2$, $i=1,\ldots,K$, expressed in the same global frame as $\vect t$, and one received-signal-strength (RSS) measurement is taken at each orientation (Fig.~\ref{fig:system}). All three coordinates of $\vect r$ are unknown\add{, including the height of the receiver, which is not assumed to lie on a known plane}. \add{The global frame is fixed to the room, with its $Z$ axis pointing up.}
 
 The LED--PD distance and the unit direction from the PD toward the LED are:
 \begin{equation}
@@ -14,7 +14,7 @@ The irradiance angle $\phi$ at the LED and the incidence angle $\psi_i$ at the P
  \cos\psi_i=\vect n_i\trans\vect u.
  \label{eq:incidence}
 \end{equation}
-Reorienting the receiver therefore changes only $\psi_i$; the distance $d$ and the irradiance angle $\phi$ are common to the $K$ measurements of a position. The inclination of $\vect n_i$ with respect to the vertical must not be confused with $\psi_i$, and no particular orientation pattern is assumed in this section.
+Reorienting the receiver therefore changes only $\psi_i$; the distance $d$ and the irradiance angle $\phi$ are common to the $K$ measurements of a position. The inclination of $\vect n_i$ with respect to the vertical must not be confused with $\psi_i$, and no particular orientation pattern is assumed in this section. \add{The $K$ normals may be realized sequentially by a single reoriented PD, as in this work, or simultaneously by several PDs. With a single detector, the $K$ measurements share the same response, gain and acquisition chain, so that no matching between detectors is required.}
 
 \begin{figure}[!t]
  \centering
@@ -71,7 +71,7 @@ The PD output $v[n]$ is digitized at rate $f_s$ over a record of $N$ samples (du
  y_i=\frac{\sqrt2}{N}\left|\sum_{n=0}^{N-1}v[n]\,e^{-j2\pi fn/f_s}\right|.
  \label{eq:lockin}
 \end{equation}
-When $fT$ is an integer, this projection rejects signals at other frequencies, such as the low-frequency flicker of the ambient light, and its noise is set by the noise spectral density in a band of width $1/T$ around $f$. At the signal-to-noise ratios of this work (Section~\ref{subsec:res-noise}), the measurement is well modelled as:
+When $fT$ is an integer, this projection \del{rejects signals at other frequencies, such as}\add{rejects the other tones that also complete an integer number of cycles, and strongly attenuates slow components such as} the low-frequency flicker of the ambient light, and its noise is set by the noise spectral density in a band of width $1/T$ around $f$. At the signal-to-noise ratios of this work (Section~\ref{subsec:res-noise}), the measurement is well modelled as:
 \begin{equation}
  y_i=s_i(\vect r)+\epsilon_i,\qquad
  \epsilon_i\sim\mathcal N\!\left(0,\sigma_i^2/L\right),
