@@ -172,6 +172,21 @@ For the geometry of the testbed, the same bound also confirms the tilt chosen in
  \label{fig:bound}
 \end{figure}
 
+\subsection{Sensitivity to Orientation Errors}
+\label{subsec:res-orient}
+The bound attributes the gap between the noise and the measured errors to orientation errors of a fraction of a degree. Their effect on the estimators was measured directly on D2: the normals given to the estimators were perturbed by Gaussian errors with a standard deviation $\sigma_\theta$ per tangent component, either independent for each orientation, like the jitter of an encoder or an inertial sensor, or common to the ten orientations of a position, like an error of the angular zero or of the axis of the stage. The 125 positions were estimated again from the measured RSS, with 20 draws per error level.
+
+Fig.~\ref{fig:orient}(a) shows the result. Errors up to $0.2^\circ$ are negligible: the mean 3D error of NLS grows from 3.66 to 3.79~cm with independent errors and to 3.84~cm with common ones. It reaches 4.37 and 4.80~cm at $0.5^\circ$, and 6.02 and 6.98~cm at $1^\circ$. A common error is the more harmful, because it rotates all the normals together and is not averaged over the orientations. GLS follows NLS within 0.15~cm; WLS starts higher (4.10~cm without perturbation), but the difference fades as the orientation errors dominate. No estimate failed.
+
+Fig.~\ref{fig:orient}(b) isolates the effect of the perturbation through the RMS shift of the NLS estimates, and compares it with the PEB for the same orientation uncertainty~\eqref{eq:fim-orientation}, evaluated at the same positions. Both grow linearly with $\sigma_\theta$, by about 5.3~cm per degree for independent errors and 6.8~cm per degree for common ones. For common errors the shift coincides with the bound within 3\,\%: NLS is then efficient. For independent errors it lies 11--19\,\% above the bound, because NLS weights all orientations equally, whereas the bound weights each one by its effective variance~\eqref{eq:effective-variance}. In this testbed, the orientation must thus be known to about $0.2^\circ$ for its errors to remain small against the model bias, and an angular reference free of drift matters more than a low jitter.
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[width=\linewidth]{fig_orient.pdf}
+ \caption{Sensitivity of the D2 estimates ($K=10$) to Gaussian errors of the normals, independent for each orientation (solid) or common to the orientations of a position (dashed), with 20 draws per level. (a)~Mean 3D error of NLS and WLS; GLS coincides with NLS within 0.15~cm. (b)~RMS shift of the NLS estimates with respect to the unperturbed ones, and PEB with the same orientation uncertainty at the same positions.}
+ \label{fig:orient}
+\end{figure}
+
 \subsection{Observation Window}
 \label{subsec:res-window}
 All the RSS used so far integrate 100~ms of signal. To find how much signal is actually needed, the RSS of every D2 record was recomputed over shorter windows, from 10~$\mu$s to 100~ms, cut from the recorded waveforms. Each window is exactly what a shorter acquisition with the same sample rate and scale would have delivered, and up to ten disjoint segments of each record, spread over its 100~ms, give independent repetitions. The calibration of Table~\ref{tab:parameters} was kept with one correction: because of the frequency offsets of the tones (Section~\ref{subsec:hardware}), the projection at the nominal frequency loses 0.52\,\% of the 500~kHz amplitude over 100~ms but almost nothing over shorter windows, so $A$ was rescaled by this known coherent gain for each window length.

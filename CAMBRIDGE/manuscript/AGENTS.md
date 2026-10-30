@@ -104,6 +104,16 @@
 - Building: the user's editor auto-compiles into .latex-build at the same time (corrupted aux / missing bbl races).
   Verify in a private directory: -output-directory=%TEMP%\zconv\build, and bibtex with env openout_any=a.
 
+## Orientation sensitivity (user, 2026-10-30) - Results VI-K "Sensitivity to Orientation Errors", fig_orient.pdf
+- MATLAB part 'orient' (~3 min, rng(7)): D2 normals given to pd_fit_estimate perturbed by Gaussian errors,
+  sigma_theta 0.1/0.2/0.5/1/2 deg per tangent component, 'independent' (each normal, rx_tangent_basis) or
+  'common_rotation' (one rotation vector, sigma per component), 20 draws per site; NLS / GLS / WLS, K = 10, measured
+  RSS. Compared with rx_pose_error_peb (same structures, measured noise) at the true sites (RMS over sites).
+- Results: NLS mean 3.66 -> 3.79 / 3.84 (0.2 deg, indep / common), 4.37 / 4.80 (0.5), 6.02 / 6.98 (1), 10.0 / 12.6
+  cm (2); GLS = NLS within 0.15 cm; WLS 4.10 at 0, gap fades; no failures. RMS shift ~5.3 (indep) and ~6.8 (common)
+  cm per degree; common = PEB within 3 % (NLS efficient), independent 11-19 % above PEB (equal weights vs
+  effective-variance weights). Discussion VII-C cites it (0.2 deg requirement, common errors worst).
+
 ## Rebuild from this directory
 
 ```text

@@ -737,6 +737,130 @@ pp_export(fig, cfg, 'fig_window');
 end
 
 %% ------------------------------------------------------------------------------------------------------
+function R = part_orient(cfg)
+% Sensitivity to orientation errors on D2 (K = 10): the recorded normals given to the estimators are
+% perturbed by Gaussian errors with standard deviation sigma_theta per tangent component, either independent
+% for each orientation or common to the K orientations of a position (one random rotation), M draws per
+% site, for NLS, GLS and WLS. The RMS shift of the estimates is compared with the PEB of Section III-D
+% (same error model, measured noise) at the same sites.
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+Nz = load(fullfile(cfg.figdir, 'noise_results.mat'));
+D = G.D;
+p = G.pf;
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+S = size(D.theta, 2);
+sv = [0.1 0.2 0.5 1 2];
+M = 20;
+methods = {'NLS', 'GLS', 'WLS'};
+names = struct('NLS', 'joint_nls', 'GLS', 'ratio_gls', 'WLS', 'ratio_wls');
+types = {'independent', 'common_rotation'};
+N0 = arrayfun(@(i) pp_normals(D.theta(:, i), G.OFF.SQ.fit.cross(i), cfg.tilt_deg), 1:S, 'UniformOutput', false);
+r0 = nan(3, S, numel(methods));
+for im = 1:numel(methods)
+    for i = 1:S
+        r0(:, i, im) = pd_fit_estimate(names.(methods{im}), D.rss(:, i, jf), N0{i}, p, 1);
+    end
+end
+pn = p;
+pn.noise.variance_W2 = Nz.sigma_med(jf)^2;
+rng(7);
+R.sigma_deg = sv;
+R.draws = M;
+for it = 1:numel(types)
+    for is = 1:numel(sv)
+        s = sv(is)*pi/180;
+        est = nan(3, S, M, numel(methods));
+        for q = 1:M
+            for i = 1:S
+                Np = perturb_normals(N0{i}, s, types{it});
+                for im = 1:numel(methods)
+                    est(:, i, q, im) = pd_fit_estimate(names.(methods{im}), D.rss(:, i, jf), Np, p, 1);
+                end
+            end
+        end
+        for im = 1:numel(methods)
+            e = 100*squeeze(vecnorm(est(:, :, :, im) - D.truth));
+            shift = 100*squeeze(vecnorm(est(:, :, :, im) - r0(:, :, im)));
+            R.(types{it}).(methods{im}).mean_cm(is) = mean(e, 'all', 'omitnan');
+            R.(types{it}).(methods{im}).rms_shift_cm(is) = sqrt(mean(shift.^2, 'all', 'omitnan'));
+            R.(types{it}).(methods{im}).failures(is) = nnz(isnan(e));
+        end
+        b = arrayfun(@(i) rx_pose_error_peb(D.truth(:, i), N0{i}, pn, 1, sv(is)^2, types{it}), 1:S);
+        R.(types{it}).peb_rms_cm(is) = 100*sqrt(mean(b.^2));
+        fprintf('  %-15s sigma %.1f deg: mean error NLS %.2f / GLS %.2f / WLS %.2f cm; RMS shift NLS %.2f cm, PEB %.2f cm; failures %d/%d/%d\n', ...
+            types{it}, sv(is), R.(types{it}).NLS.mean_cm(is), R.(types{it}).GLS.mean_cm(is), R.(types{it}).WLS.mean_cm(is), ...
+            R.(types{it}).NLS.rms_shift_cm(is), R.(types{it}).peb_rms_cm(is), R.(types{it}).NLS.failures(is), ...
+            R.(types{it}).GLS.failures(is), R.(types{it}).WLS.failures(is));
+    end
+end
+for im = 1:numel(methods)
+    R.unperturbed_mean_cm.(methods{im}) = 100*mean(vecnorm(r0(:, :, im) - D.truth), 'omitnan');
+end
+save(fullfile(cfg.figdir, 'orient_results.mat'), 'R');
+figure_orient(cfg, R);
+end
+
+function N = perturb_normals(N, s, type)
+% Gaussian orientation errors, s rad per tangent component: independent rotation of every normal, or one
+% common rotation (rotation vector with s per component) of the K normals.
+if strcmp(type, 'independent')
+    for i = 1:size(N, 2)
+        w = s*randn(2, 1);
+        a = norm(w);
+        N(:, i) = cos(a)*N(:, i) + sin(a)/a*rx_tangent_basis(N(:, i))*w;
+    end
+else
+    w = s*randn(3, 1);
+    a = norm(w);
+    k = w/a;
+    X = [0 -k(3) k(2); k(3) 0 -k(1); -k(2) k(1) 0];
+    N = (eye(3) + sin(a)*X + (1 - cos(a))*X^2)*N;
+end
+N = N./vecnorm(N);
+end
+
+function figure_orient(cfg, R)
+% (a) mean 3D error versus sigma_theta for the three estimators and both error structures, (b) RMS shift of
+% the NLS estimates versus the PEB with the same orientation uncertainty
+s = [0 R.sigma_deg];
+colors = struct('NLS', [0 0.32 0.62], 'GLS', [0.85 0.33 0.1], 'WLS', [0.47 0.67 0.19]);
+fig = pp_figure(3.5, 3.6);
+tl = tiledlayout(fig, 2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+ax = nexttile(tl);
+hold(ax, 'on');
+for m = {'NLS', 'WLS'}
+    plot(ax, s, [R.unperturbed_mean_cm.(m{1}) R.independent.(m{1}).mean_cm], '-o', 'Color', colors.(m{1}), ...
+        'MarkerSize', 3, 'MarkerFaceColor', colors.(m{1}), 'DisplayName', [m{1} ', independent']);
+    plot(ax, s, [R.unperturbed_mean_cm.(m{1}) R.common_rotation.(m{1}).mean_cm], '--s', 'Color', colors.(m{1}), ...
+        'MarkerSize', 3, 'DisplayName', [m{1} ', common']);
+end
+xlim(ax, [0 2]);
+ylim(ax, [3 15]);
+xlabel(ax, 'Orientation error $\sigma_\theta$ ($^\circ$)');
+ylabel(ax, 'Mean 3D error (cm)');
+legend(ax, 'Location', 'northwest', 'NumColumns', 2, 'FontSize', 6.5);
+title(ax, '(a) Estimates on D2, $K=10$', 'FontWeight', 'normal');
+ax = nexttile(tl);
+hold(ax, 'on');
+plot(ax, R.sigma_deg, R.independent.NLS.rms_shift_cm, '-o', 'Color', colors.NLS, 'MarkerSize', 3, ...
+    'MarkerFaceColor', colors.NLS, 'DisplayName', 'NLS, independent');
+plot(ax, R.sigma_deg, R.common_rotation.NLS.rms_shift_cm, '--s', 'Color', colors.NLS, 'MarkerSize', 3, ...
+    'DisplayName', 'NLS, common');
+plot(ax, R.sigma_deg, R.independent.peb_rms_cm, '-', 'Color', [0.5 0.5 0.5], 'DisplayName', 'PEB, independent');
+plot(ax, R.sigma_deg, R.common_rotation.peb_rms_cm, '--', 'Color', [0.5 0.5 0.5], 'DisplayName', 'PEB, common');
+set(ax, 'XScale', 'log', 'YScale', 'log');
+xlim(ax, [0.1 2]);
+ylim(ax, [0.2 20]);
+xticks(ax, [0.1 0.2 0.5 1 2]);
+xticklabels(ax, {'0.1', '0.2', '0.5', '1', '2'});
+xlabel(ax, 'Orientation error $\sigma_\theta$ ($^\circ$)');
+ylabel(ax, 'RMS shift or PEB (cm)');
+legend(ax, 'Location', 'southeast', 'FontSize', 6.5);
+title(ax, '(b) Shift of the NLS estimates and bound', 'FontWeight', 'normal');
+pp_export(fig, cfg, 'fig_orient');
+end
+
+%% ------------------------------------------------------------------------------------------------------
 function R = part_proc(cfg)
 % Processing time once the K records of a position are available: amplitude of the tones from a raw record
 % (uint8 codes -> volts -> projection at the tone frequency, or full FFT), for 100 ms and 10 ms records, with
