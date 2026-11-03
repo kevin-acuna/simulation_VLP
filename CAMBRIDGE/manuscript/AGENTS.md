@@ -86,6 +86,14 @@
   error vs window, K = 10 with segment range + K = 5; no 'one flicker phase' curve, no RSS-spread panel); text
   changes tracked (\del/\add). Replot without recomputing: make_paper_figures({'window_fig'}) (reads window_results.mat).
 
+- 2026-11-02 (user): integrity monitoring REMOVED everywhere (it reported an unintended stage fault). Do NOT mention
+  the MTRS faults, the excluded 44 D3 positions, the discarded dense campaign or the residual as integrity
+  indicator. VII-C subsection + fig:integrity commented out in 06b_error_analysis.tex; other mentions in I, IV-B,
+  V-C, VIII-C and IX struck with \del (shape test now has two purposes).
+
+- 2026-11-02 (user): ALL tracked changes ACCEPTED (\add -> plain text, \del removed, blue equation in V-A uncolored;
+  script %TEMP%\zconv\accept_changes.py). The \add/\del macros stay in main.tex for future tracked edits.
+
 ## Processing time (user, 2026-10-29) - VI-L "Acquisition and Processing Time", Table VI (tab:proc)
 - MATLAB part 'proc' (~25 s): amplitude from a raw D2 record (codes -> volts -> projection at the tone, or full
   FFT; 100 and 10 ms; all threads / 1 thread, timeit) and pd_fit_estimate NLS / GLS / WLS per D2 site (K 10 and 5,

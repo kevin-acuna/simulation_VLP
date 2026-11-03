@@ -25,18 +25,22 @@
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\Cov}{Cov}
 \begin{document}
-\title{Three-Dimensional Visible Light Positioning With a Single LED and a Single Reorientable Photodiode: Bounds, Calibration, and Experimental Validation}
+\title{3-D Visible Light Positioning With a Single LED and a Single Reorientable Photodiode: Bounds, Calibration, and Experimental Validation}
 \author{Author names and affiliations to be confirmed}
 \markboth{IEEE Transactions on Instrumentation and Measurement --- Working Manuscript}{Single-LED, Single-PD 3D Positioning With a Reorientable Receiver}
 \maketitle
 \begin{abstract}
+% Commented for later review (user, 2026-11-02)
+% \add{Single-LED visible light positioning (VLP) is attractive where only one luminaire is in view and for lightweight receivers such as drones, but a single received signal strength (RSS) cannot fix a three-dimensional (3D) position. This paper estimates the 3D position of a tilted photodiode (PD) reoriented to a few known orientations under one fixed LED: the shape of the RSS over the orientations gives the direction to the LED, and their common amplitude gives the distance through a calibrated LED model. A Fisher-information analysis for an arbitrary receiver response guides the choice of the tilt, and maximum-likelihood and ratio-based estimators are derived for a general response, including the SQ model of commercial PDs. On a room-scale testbed with the LED at 3~m, the mean 3D error is 3.66~cm over 125 positions at five heights and 4.10~cm over 131 blind random positions with five orientations. Nine calibration points, 10~ms of signal per orientation and a few milliseconds of computation per position suffice.}
 \end{abstract}
 \begin{IEEEkeywords}
+% Commented for later review (user, 2026-11-02)
+% \add{Cram\'er--Rao bound, photodiode, received signal strength (RSS), single LED, visible light positioning (VLP).}
 \end{IEEEkeywords}
 
 \section{Introduction}
 \label{sec:introduction}
-\input{sections/01_introduction}
+% \input{sections/01_introduction}  % commented for later review (user, 2026-11-02)
 
 \section{System and Measurement Model}
 \label{sec:model}
@@ -54,11 +58,11 @@
 \label{sec:testbed}
 \input{sections/05_testbed_protocol}
 
-\section[Characterization and Positioning Accuracy]{\texorpdfstring{\protect\del{Experimental Results}\protect\add{Characterization and Positioning Accuracy}}{Characterization and Positioning Accuracy}}
+\section[Characterization and Positioning Accuracy]{Characterization and Positioning Accuracy}
 \label{sec:results}
 \input{sections/06_results}
 
-\section[Error Analysis and Operating Requirements]{\texorpdfstring{\protect\add{Error Analysis and Operating Requirements}}{Error Analysis and Operating Requirements}}
+\section[Error Analysis and Operating Requirements]{Error Analysis and Operating Requirements}
 \label{sec:analysis}
 \input{sections/06b_error_analysis}
 
