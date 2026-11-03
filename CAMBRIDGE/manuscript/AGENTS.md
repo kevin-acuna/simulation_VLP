@@ -94,6 +94,11 @@
 - 2026-11-02 (user): ALL tracked changes ACCEPTED (\add -> plain text, \del removed, blue equation in V-A uncolored;
   script %TEMP%\zconv\accept_changes.py). The \add/\del macros stay in main.tex for future tracked edits.
 
+- 2026-11-02 (user): NO per-height (leave-one-height-out) stage zero anywhere. The pipeline now uses ONE stage zero
+  per model/LED fitted on all of D2 (SQ: 66.5 deg, same as D3); OFF.*.cross = repmat(all). All D2 numbers were
+  regenerated (grid, peb, calib, leds, subsets, orient, window) and the text updated (changes of 0.01 cm, e.g.
+  K = 5: 3.73 cm, oracle floor 3.14 cm). Text says only: 'The value 66.5 deg is used for D2 and D3.'
+
 ## Processing time (user, 2026-10-29) - VI-L "Acquisition and Processing Time", Table VI (tab:proc)
 - MATLAB part 'proc' (~25 s): amplitude from a raw D2 record (codes -> volts -> projection at the tone, or full
   FFT; 100 and 10 ms; all threads / 1 thread, timeit) and pd_fit_estimate NLS / GLS / WLS per D2 site (K 10 and 5,

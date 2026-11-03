@@ -75,7 +75,8 @@ for im = 1:numel(models)
             [~, per_level(l)] = pp_shape('fit', D.truth, D.theta, rss, D.level ~= l, nominal, cfg.tilt_deg, p);
             cross(D.level == l) = per_level(l);
         end
-        OFF.(models{im}).(led{1}) = struct('all', off_all, 'cross', cross);
+        % one stage zero per model and LED position, fitted on all of D2 (66.5 deg for SQ), used at every height
+        OFF.(models{im}).(led{1}) = struct('all', off_all, 'cross', repmat(off_all, 1, numel(cross)));
         R.shape.(models{im}).(led{1}) = struct('rms_nominal_pct', rms_nom, 'rms_fitted_pct', rms_all, ...
             'offset_all_deg', off_all, 'offset_cross_deg', per_level);
         fprintf('  shape %-10s LED %-3s: nominal %.2f %%, fitted %.2f %% at %.2f deg; cross %s\n', models{im}, ...
