@@ -82,6 +82,10 @@
   ~2x higher between 0.1 and 10 ms (flicker-level-dependent amplitude, ~0.4 % rms at 500 kHz, jagged vs level ->
   8-bit digitizer, LSB 2.51 mV for all D2 records, tones 1.1-20.7 mV). Hann does not help (4.03 cm at 1 ms).
 
+- 2026-11-02 (user): flicker analysis REMOVED from VII-D (too specific/forced): fig_window is now ONE panel (mean
+  error vs window, K = 10 with segment range + K = 5; no 'one flicker phase' curve, no RSS-spread panel); text
+  changes tracked (\del/\add). Replot without recomputing: make_paper_figures({'window_fig'}) (reads window_results.mat).
+
 ## Processing time (user, 2026-10-29) - VI-L "Acquisition and Processing Time", Table VI (tab:proc)
 - MATLAB part 'proc' (~25 s): amplitude from a raw D2 record (codes -> volts -> projection at the tone, or full
   FFT; 100 and 10 ms; all threads / 1 thread, timeit) and pd_fit_estimate NLS / GLS / WLS per D2 site (K 10 and 5,

@@ -694,22 +694,21 @@ figure_window(cfg, R);
 end
 
 function figure_window(cfg, R)
-% (a) mean 3D error versus the window (K = 10 with the range over segments, K = 5, flicker-synchronized
-% segments), (b) spread of the 500 kHz RSS over segments, with the white-noise prediction
+% Mean 3D error versus the observation window: K = 10 (range over the segments shaded) and K = 5
 T = R.window_ms;
 blue = [0 0.32 0.62];
 orange = [0.85 0.33 0.1];
-fig = pp_figure(3.5, 3.6);
-tl = tiledlayout(fig, 2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
-ax = nexttile(tl);
+fig = pp_figure(3.5, 2.2);
+ax = axes(fig);
 hold(ax, 'on');
 fill(ax, [T fliplr(T)], [R.err.K10_min_cm fliplr(R.err.K10_max_cm)], blue, 'FaceAlpha', 0.15, ...
     'EdgeColor', 'none', 'HandleVisibility', 'off');
+if isfield(R.err, 'K5_min_cm')
+    fill(ax, [T fliplr(T)], [R.err.K5_min_cm fliplr(R.err.K5_max_cm)], orange, 'FaceAlpha', 0.15, ...
+        'EdgeColor', 'none', 'HandleVisibility', 'off');
+end
 plot(ax, T, R.err.K10_mean_cm, '-o', 'Color', blue, 'MarkerSize', 3, 'MarkerFaceColor', blue, 'DisplayName', '$K=10$');
 plot(ax, T, R.err.K5_mean_cm, '-s', 'Color', orange, 'MarkerSize', 3, 'DisplayName', '$K=5$');
-sel = T <= 10;
-plot(ax, T(sel), R.err.synced_K10_mean_cm(sel), '--', 'Color', blue, 'DisplayName', '$K=10$, one flicker phase');
-xline(ax, 10, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
 set(ax, 'XScale', 'log');
 xlim(ax, [0.01 100]);
 xticks(ax, 10.^(-2:2));
@@ -717,23 +716,17 @@ xticklabels(ax, {'0.01', '0.1', '1', '10', '100'});
 xlabel(ax, 'Observation window (ms)');
 ylabel(ax, 'Mean 3D error (cm)');
 legend(ax, 'Location', 'northeast', 'FontSize', 6.5);
-title(ax, '(a) Positioning error, D2', 'FontWeight', 'normal');
-ax = nexttile(tl);
-hold(ax, 'on');
-plot(ax, T, R.rss.spread_spread_pct, '-o', 'Color', blue, 'MarkerSize', 3, 'MarkerFaceColor', blue, ...
-    'DisplayName', 'Segments over the record');
-plot(ax, T(sel), R.rss.synced_spread_pct(sel), '--', 'Color', blue, 'DisplayName', 'One flicker phase');
-plot(ax, T, R.rss.white_pct, '-.', 'Color', [0.5 0.5 0.5], 'DisplayName', 'Noise floor, $\propto T^{-1/2}$');
-xline(ax, 10, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
-set(ax, 'XScale', 'log', 'YScale', 'log');
-xlim(ax, [0.01 100]);
-xticks(ax, 10.^(-2:2));
-xticklabels(ax, {'0.01', '0.1', '1', '10', '100'});
-xlabel(ax, 'Observation window (ms)');
-ylabel(ax, 'RSS spread (\%)');
-legend(ax, 'Location', 'southwest', 'FontSize', 6.5);
-title(ax, '(b) Spread of the 500 kHz RSS over segments', 'FontWeight', 'normal');
 pp_export(fig, cfg, 'fig_window');
+end
+
+function R = part_window_fig(cfg)
+% Redraws fig_window from window_results.mat (no recomputation); returns the stored numbers unchanged
+S = load(fullfile(cfg.figdir, 'window_results.mat'), 'R', 'err');
+R = S.R;
+e5 = mean(S.err.spread5, 3);                         % K = 5: mean of the two uniform subsets, per segment
+R.err.K5_min_cm = min(e5, [], 2, 'omitnan')';
+R.err.K5_max_cm = max(e5, [], 2, 'omitnan')';
+figure_window(cfg, R);
 end
 
 %% ------------------------------------------------------------------------------------------------------
