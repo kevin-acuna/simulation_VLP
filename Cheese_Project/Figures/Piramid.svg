@@ -1,41 +1,132 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="829"
+   height="576"
+   viewBox="0 0 829 576"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
-   sodipodi:docname="Piramid.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview1"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:document-units="mm"
-     inkscape:zoom="1.0806047"
-     inkscape:cx="396.53725"
-     inkscape:cy="561.25984"
-     inkscape:window-width="2560"
-     inkscape:window-height="1494"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
-  <defs
-     id="defs1" />
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1" />
+   xmlns:svg="http://www.w3.org/2000/svg" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTplY2I5MzZmNS1lNzJiLTRjMTAtOTYwOS01YjcxZmM0YjA4NjYAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaJ4GaGUawMu5FrU2UfgyICwAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDo2NjIxNGM3NC0yM2Y3LTQzMDEtYmZkNi0xYjhhZjE0NjQwYzVscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoh8kbHAQeITcItdAyI86jgQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggQbDf6dTU88XfNJb4rRLZX37/4GoPZ72RVTIqFcRrUimkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaE6xiu7OMRPQcAyqZqHiIFgAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIEo/AvFmz0g3PsJXWRF/zSjREMU2zsjLg601Ind2gpS9ZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GQGoZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmVjYjkzNmY1LWU3MmItNGMxMC05NjA5LTViNzFmYzRiMDg2Ni9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjI1OGM4NTk3LTAxYmQtNGRiNy04YzkzLTI1YjUwMjE4ZTJlOHJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCBBsN/p1NTzxd80lvitEtlffv/gag9nvZFVMioVxGtSKaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggXRj5l4N+das/lUuQkDfLVzIzAtE5IqnhV7B/UwUG6waiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggyeF40Iqr9D51FzW3zKlxuxf99QIoj9kD1vvyHx7YiMh0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQGC5GjWccyLufxZlZ6Gu35+vsLOGsrSLbQJXBxtRYKcqMb24csVjIfzNEBdtiYVTfNC7bAxocx8ZuRLyMUMdejc=</c2pa:manifest></metadata>
+  <sodipodi:namedview id="namedview1" pagecolor="#ffffff" bordercolor="#000000" borderopacity="0.25"
+     inkscape:showpageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" inkscape:document-units="px"/>
+  <defs id="defs1"/>
+  <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1">
+<g id="room" inkscape:label="Room">
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 16.00,559.98 L 16.00,160.98"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 281.19,436.32 L 281.19,37.32"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 548.00,559.98 L 548.00,160.98"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 813.19,436.32 L 813.19,37.32"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 16.00,559.98 L 281.19,436.32"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 16.00,160.98 L 281.19,37.32"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 548.00,559.98 L 813.19,436.32"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 548.00,160.98 L 813.19,37.32"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 16.00,559.98 L 548.00,559.98"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 16.00,160.98 L 548.00,160.98"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 281.19,436.32 L 813.19,436.32"/>
+<path  style="fill:none;stroke:#8c8c8c;stroke-width:1.6;stroke-linecap:round" d="M 281.19,37.32 L 813.19,37.32"/>
+</g>
+<g id="pd_projection" inkscape:label="PD height reference">
+<path  style="fill:none;stroke:#7a7a7a;stroke-width:1.2;stroke-dasharray:4,3" d="M 221.89,519.79 L 221.89,406.74"/>
+<path  style="fill:none;stroke:#7a7a7a;stroke-width:1.4" d="M 209.92,519.79 L 233.86,519.79"/>
+<path  style="fill:none;stroke:#7a7a7a;stroke-width:1.4" d="M 215.92,522.57 L 227.85,517.01"/>
+</g>
+<g id="los" inkscape:label="Line of sight">
+<path  style="fill:none;stroke:#555555;stroke-width:1.6;stroke-dasharray:6,4" d="M 221.89,401.42 L 414.59,132.67"/>
+</g>
+<g id="angles" inkscape:label="Angles">
+<path inkscape:label="phi arc" style="fill:none;stroke:#000000;stroke-width:1.3" d="M 414.59,153.67 A 21.00,21.00 0 0 1 402.36,149.73"/>
+</g>
+<g id="led_normals_hidden" inkscape:label="LED normals (behind module)">
+<g inkscape:label="n_5">
+<path style="fill:none;stroke:#e377c2;stroke-width:2.8;stroke-linecap:butt" d="M 426.35,114.84 L 448.67,156.73"/>
+<path style="fill:#e377c2;stroke:none" d="M 454.08,166.88 L 443.38,157.85 L 452.55,152.96 Z"/>
+</g>
+<g inkscape:label="n_2">
+<path style="fill:none;stroke:#d62728;stroke-width:2.8;stroke-linecap:butt" d="M 384.73,122.08 L 322.54,183.11"/>
+<path style="fill:#d62728;stroke:none" d="M 314.33,191.16 L 319.97,178.34 L 327.25,185.77 Z"/>
+</g>
+<g inkscape:label="n_1">
+<path style="fill:none;stroke:#2ca02c;stroke-width:2.8;stroke-linecap:butt" d="M 414.59,132.67 L 414.59,216.93"/>
+<path style="fill:#2ca02c;stroke:none" d="M 414.59,228.43 L 409.39,215.43 L 419.79,215.43 Z"/>
+</g>
+</g>
+<g id="adt" inkscape:label="Transmitter module body">
+<path  style="fill:#828282;stroke:#262626;stroke-width:1.1;stroke-linejoin:round" d="M 356.78,109.20 439.74,107.58 472.41,89.10 389.45,90.72 Z"/>
+<path  style="fill:#464646;stroke:#262626;stroke-width:1.1;stroke-linejoin:round" d="M 439.74,118.75 472.41,100.27 440.03,128.25 425.66,136.38 Z"/>
+<path  style="fill:#464646;stroke:#262626;stroke-width:1.1;stroke-linejoin:round" d="M 439.74,107.58 472.41,89.10 472.41,100.27 439.74,118.75 Z"/>
+<path  style="fill:#535353;stroke:#262626;stroke-width:1.1;stroke-linejoin:round" d="M 356.78,120.37 439.74,118.75 425.66,136.38 389.15,137.09 Z"/>
+<path  style="fill:#959595;stroke:#262626;stroke-width:1.1;stroke-linejoin:round" d="M 356.78,109.20 439.74,107.58 439.74,118.75 356.78,120.37 Z"/>
+</g>
+<g id="leds" inkscape:label="LEDs">
+<path inkscape:label="LED 3" style="fill:#f28e1c;stroke:#111111;stroke-width:0.9" d="M 395.23,128.29 395.66,128.93 396.29,129.55 397.08,130.12 398.02,130.65 399.09,131.12 400.25,131.50 401.48,131.80 402.75,132.01 404.02,132.11 405.25,132.11 406.43,132.01 407.51,131.81 408.47,131.51 409.28,131.13 409.93,130.67 410.39,130.15 410.66,129.57 410.72,128.95 410.58,128.32 410.24,127.68 409.71,127.05 409.00,126.45 408.13,125.90 407.12,125.40 406.00,124.97 404.80,124.63 403.55,124.38 402.28,124.22 401.02,124.17 399.81,124.22 398.68,124.37 397.66,124.62 396.77,124.96 396.04,125.38 395.48,125.88 395.11,126.43 394.95,127.03 394.98,127.65 Z"/>
+<path inkscape:label="LED 4" style="fill:#8e44ad;stroke:#111111;stroke-width:0.9" d="M 441.46,122.61 440.64,123.43 439.92,124.19 439.31,124.86 438.83,125.44 438.51,125.89 438.33,126.22 438.32,126.41 438.46,126.45 438.76,126.35 439.21,126.12 439.79,125.74 440.49,125.25 441.30,124.64 442.19,123.93 443.14,123.14 444.12,122.30 445.11,121.42 446.08,120.53 447.01,119.65 447.88,118.80 448.65,118.00 449.32,117.29 449.86,116.66 450.27,116.14 450.52,115.75 450.61,115.49 450.55,115.38 450.33,115.40 449.95,115.57 449.44,115.88 448.79,116.31 448.03,116.87 447.18,117.53 446.26,118.28 445.30,119.10 444.31,119.96 443.32,120.85 442.37,121.74 Z"/>
+</g>
+<g id="led_normals_front" inkscape:label="LED normals (in front of module)">
+<g inkscape:label="n_4">
+<path style="fill:none;stroke:#8e44ad;stroke-width:2.8;stroke-linecap:butt" d="M 444.46,120.91 L 506.49,179.37"/>
+<path style="fill:#8e44ad;stroke:none" d="M 514.86,187.25 L 501.83,182.12 L 508.96,174.55 Z"/>
+</g>
+<g inkscape:label="n_3">
+<path style="fill:none;stroke:#f28e1c;stroke-width:2.8;stroke-linecap:butt" d="M 402.83,128.15 L 378.74,200.63"/>
+<path style="fill:#f28e1c;stroke:none" d="M 375.11,211.54 L 374.28,197.56 L 384.14,200.84 Z"/>
+</g>
+</g>
+<g id="axes" inkscape:label="Axes (origin at module top centre)">
+<g inkscape:label="axis x">
+<path style="fill:none;stroke:#000000;stroke-width:2.2;stroke-linecap:butt" d="M 414.59,99.15 L 499.19,99.15"/>
+<path style="fill:#000000;stroke:none" d="M 507.69,99.15 L 497.69,103.35 L 497.69,94.95 Z"/>
+</g>
+<text inkscape:label="label x" xml:space="preserve" x="517.7" y="107.2" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:italic;font-weight:normal">x</tspan></text>
+<g inkscape:label="axis y">
+<path style="fill:none;stroke:#000000;stroke-width:2.2;stroke-linecap:butt" d="M 414.59,99.15 L 483.13,67.19"/>
+<path style="fill:#000000;stroke:none" d="M 490.83,63.60 L 483.55,71.63 L 480.00,64.02 Z"/>
+</g>
+<text inkscape:label="label y" xml:space="preserve" x="494.8" y="55.6" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:italic;font-weight:normal">y</tspan></text>
+<g inkscape:label="axis z">
+<path style="fill:none;stroke:#000000;stroke-width:2.2;stroke-linecap:butt" d="M 414.59,99.15 L 414.59,34.50"/>
+<path style="fill:#000000;stroke:none" d="M 414.59,26.00 L 418.79,36.00 L 410.39,36.00 Z"/>
+</g>
+<text inkscape:label="label z" xml:space="preserve" x="400.6" y="28.0" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:italic;font-weight:normal">z</tspan></text>
+<circle cx="414.59" cy="99.15" r="3.2" style="fill:#000000"/>
+<text inkscape:label="label O" xml:space="preserve" x="394.6" y="91.2" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:italic;font-weight:normal">O</tspan></text>
+</g>
+<g id="pd" inkscape:label="PD">
+<path  style="fill:#ffffff;stroke:#000000;stroke-width:1.2;stroke-linejoin:round" d="M 191.99,406.06 231.89,406.06 251.78,396.78 211.88,396.78 Z"/>
+<path  style="fill:#ffffff;stroke:#000000;stroke-width:1.2;stroke-linejoin:round" d="M 191.99,411.38 231.89,411.38 231.89,406.06 191.99,406.06 Z"/>
+<path  style="fill:#ffffff;stroke:#000000;stroke-width:1.2;stroke-linejoin:round" d="M 231.89,411.38 251.78,402.10 251.78,396.78 231.89,406.06 Z"/>
+<circle cx="221.89" cy="401.42" r="3.4" style="fill:#000000"/>
+</g>
+<g id="pd_vectors" inkscape:label="PD normal and u">
+<g inkscape:label="n_r">
+<path style="fill:none;stroke:#000000;stroke-width:2.8;stroke-linecap:butt" d="M 221.89,401.42 L 221.89,317.16"/>
+<path style="fill:#000000;stroke:none" d="M 221.89,305.66 L 227.09,318.66 L 216.69,318.66 Z"/>
+</g>
+<g inkscape:label="u">
+<path style="fill:none;stroke:#1f4e9c;stroke-width:2.8;stroke-linecap:butt" d="M 221.89,401.42 L 276.31,325.52"/>
+<path style="fill:#1f4e9c;stroke:none" d="M 283.01,316.17 L 279.66,329.77 L 271.21,323.71 Z"/>
+</g>
+</g>
+<g id="psi" inkscape:label="psi">
+<path inkscape:label="psi arc" style="fill:none;stroke:#000000;stroke-width:1.3" d="M 221.89,351.42 A 50.00,50.00 0 0 1 251.02,360.79"/>
+</g>
+<g id="labels" inkscape:label="Labels">
+<text inkscape:label="label n_1" xml:space="preserve" x="414.6" y="255.8" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#2ca02c"><tspan style="font-weight:bold;font-style:normal">n</tspan><tspan style="font-size:16.8px;font-weight:normal;font-style:normal" dy="6.0">1</tspan></text>
+<text inkscape:label="label n_2" xml:space="preserve" x="300.8" y="212.9" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#d62728"><tspan style="font-weight:bold;font-style:normal">n</tspan><tspan style="font-size:16.8px;font-weight:normal;font-style:normal" dy="6.0">2</tspan></text>
+<text inkscape:label="label n_3" xml:space="preserve" x="369.1" y="238.0" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#f28e1c"><tspan style="font-weight:bold;font-style:normal">n</tspan><tspan style="font-size:16.8px;font-weight:normal;font-style:normal" dy="6.0">3</tspan></text>
+<text inkscape:label="label n_4" xml:space="preserve" x="528.7" y="208.7" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#8e44ad"><tspan style="font-weight:bold;font-style:normal">n</tspan><tspan style="font-size:16.8px;font-weight:normal;font-style:normal" dy="6.0">4</tspan></text>
+<text inkscape:label="label n_5" xml:space="preserve" x="463.0" y="192.0" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#e377c2"><tspan style="font-weight:bold;font-style:normal">n</tspan><tspan style="font-size:16.8px;font-weight:normal;font-style:normal" dy="6.0">5</tspan></text>
+<text inkscape:label="label n_r" xml:space="preserve" x="217.9" y="293.7" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-weight:bold;font-style:normal">n</tspan><tspan style="font-size:16.8px;font-weight:normal;font-style:italic" dy="6.0">r</tspan></text>
+<text inkscape:label="label u" xml:space="preserve" x="305.0" y="330.2" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#1f4e9c"><tspan style="font-weight:bold;font-style:normal">u</tspan></text>
+<text inkscape:label="label psi" xml:space="preserve" x="242.7" y="344.7" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:italic;font-weight:normal">ψ</tspan></text>
+<text inkscape:label="label phi" xml:space="preserve" x="395.4" y="195.6" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:italic;font-weight:normal">φ</tspan><tspan style="font-size:16.8px;font-weight:normal;font-style:normal" dy="6.0">1</tspan></text>
+<text inkscape:label="label d" xml:space="preserve" x="332.9" y="285.5" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:italic;font-weight:normal">d</tspan></text>
+<text inkscape:label="label t" xml:space="preserve" x="430.6" y="158.7" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-weight:bold;font-style:normal">t</tspan></text>
+<text inkscape:label="label PD" xml:space="preserve" x="173.9" y="418.7" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:middle;fill:#000000"><tspan style="font-style:normal;font-weight:normal">PD</tspan></text>
+<text inkscape:label="label r" xml:space="preserve" x="71.9" y="452.7" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:start;fill:#000000"><tspan style="font-weight:bold;font-style:normal">r</tspan><tspan style="font-style:normal;font-weight:normal"> = [</tspan><tspan style="font-style:italic;font-weight:normal">x</tspan><tspan style="font-style:normal;font-weight:normal">, </tspan><tspan style="font-style:italic;font-weight:normal">y</tspan><tspan style="font-style:normal;font-weight:normal">, </tspan><tspan style="font-style:italic;font-weight:normal">z</tspan><tspan style="font-style:normal;font-weight:normal">]</tspan><tspan style="font-size:14.4px;font-family:sans-serif;font-style:normal;font-weight:normal" dy="-9.6">T</tspan></text>
+<text inkscape:label="label Tx module" xml:space="preserve" x="342.8" y="123.2" style="font-family:CMU Serif, Latin Modern Roman, Times New Roman, serif;font-weight:normal;font-style:normal;font-size:24px;text-anchor:end;fill:#000000"><tspan style="font-style:normal;font-weight:normal">Transmitter module</tspan></text>
+</g>
+  </g>
 </svg>

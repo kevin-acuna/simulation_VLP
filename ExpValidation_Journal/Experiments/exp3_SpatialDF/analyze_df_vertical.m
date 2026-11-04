@@ -103,7 +103,7 @@ cfg.profileDir    = '';      % '' -> default exp1 sub0_axis_sweep session
 cfg.profileVdark  = 0.05;      % [] -> read v_dark from the profile metadata.txt
 
 cfg.autoRefMax  = true;   % use the brightest orientation as ratio reference
-cfg.saveFigures = true;
+cfg.saveFigures = false;
 cfg.fontName    = 'Times New Roman';
 cfg.fontSize    = 13;
 
