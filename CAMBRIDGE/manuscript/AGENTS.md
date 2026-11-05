@@ -99,6 +99,13 @@
   regenerated (grid, peb, calib, leds, subsets, orient, window) and the text updated (changes of 0.01 cm, e.g.
   K = 5: 3.73 cm, oracle floor 3.14 cm). Text says only: 'The value 66.5 deg is used for D2 and D3.'
 
+- 2026-11-04 (user): V-A renamed 'Experimental Setup'. Transmitter = ceiling-mounted LUCICUP LED, DC supply 16 V /
+  0.65 A (illumination) + 2 Vpp sinusoidal tone added through a bias tee. Present ONE LED (500 kHz); the other three
+  (same type, same drive, 300/700/900 kHz) only repeat the evaluation, each used alone. Do NOT write the commanded
+  angles with 65 deg (alpha_i spaced by 360/K over a full turn; D2 36 deg apart, D3 72 deg apart); NO 65 deg anywhere
+  (arbitrary start): alpha_0 is calibrated (66.5 deg); ablation says 'uncalibrated alpha_0', 'corrects it by about 1.5 deg'.
+  Other three LEDs = complementary check only (tones recorded in D1, D2); D3 and all other results use only 500 kHz.
+
 ## Processing time (user, 2026-10-29) - VI-L "Acquisition and Processing Time", Table VI (tab:proc)
 - MATLAB part 'proc' (~25 s): amplitude from a raw D2 record (codes -> volts -> projection at the tone, or full
   FFT; 100 and 10 ms; all threads / 1 thread, timeit) and pd_fit_estimate NLS / GLS / WLS per D2 site (K 10 and 5,

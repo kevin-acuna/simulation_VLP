@@ -1,18 +1,16 @@
-\subsection{Instrumentation}
+\subsection{Experimental Setup}
 \label{subsec:hardware}
-Fig.~\ref{fig:testbed} shows the testbed. Four LEDs are mounted on the ceiling, 3.0~m above the floor and facing down. Each is intensity-modulated by its own sinusoidal tone, at 300, 500, 700 and 900~kHz, so that the four contributions are separated in frequency at the receiver. The method uses a single LED: the 500~kHz LED is the positioning transmitter of this work. The other three are recorded simultaneously only to repeat the evaluation with different LEDs, each used alone as an independent single-LED system (Section~\ref{subsec:res-leds}).
-% AUTHOR: add the LED model, the LED drivers (bias and modulation depth) and the signal generators.
+Fig.~\ref{fig:testbed} shows the testbed. The transmitter is a ceiling-mounted LUCICUP LED, 3.0~m above the floor and facing down. A DC supply biases it at 16~V and 0.65~A, which provides the illumination, and a 500~kHz sinusoidal tone of 2~V peak-to-peak, superimposed on this bias through a bias tee, provides the intensity modulation. Three other LEDs of the same type, on the same ceiling and modulated at 300, 700 and 900~kHz, are used only for a complementary validation: their tones, separated in frequency from that of the positioning LED, are recorded with it, so that the evaluation can be repeated with each of them as an independent single-LED system (Section~\ref{subsec:res-leds}). Unless stated otherwise, all results use only the 500~kHz LED.
+% AUTHOR: optionally add the models of the signal generators and of the bias tees.
 
-The receiver is a Thorlabs PDA100A2 amplified silicon photodetector (active area 75.4~mm$^2$, gain set to 20~dB), AC-coupled to a Keysight MSO-X 4154A oscilloscope. It is reoriented by a Thorlabs MTRS motorized stage, whose rotation axis is vertical; the small tilt of the stage is kept at zero, and the inclination of the PD is provided by a 3D-printed adapter with $\theta$$=15^\circ$ (Section~\ref{subsec:design}), as shown in Fig.~\ref{fig:receiver}. At stage angle $\alpha_i$, the normal of the PD is:
+The receiver is a Thorlabs PDA100A2 amplified silicon photodetector (active area 75.4~mm$^2$, gain set to 20~dB), connected to a Keysight MSO-X 4154A oscilloscope. It is reoriented by a Thorlabs MTRS motorized stage, whose rotation axis is vertical; the small tilt of the stage is kept at zero, and the inclination of the PD is provided by a 3D-printed adapter with $\theta$$=15^\circ$ (Section~\ref{subsec:design}), as shown in Fig.~\ref{fig:receiver}. At stage angle $\alpha_i$, the normal of the PD is:
 \begin{equation}
  \vect n_i=\left[\sin\theta\sin(\alpha_i-\alpha_0),\ \sin\theta\cos(\alpha_i-\alpha_0),\ \cos\theta\right]\trans,
  \label{eq:normal}
 \end{equation}
-where $\alpha_0$ is the stage angle at which the PD tilts towards $+Y$; the stage turns at $1.5^\circ$/s. The angles are commanded as $\alpha_i$$=(65^\circ+360^\circ k/K)\bmod360^\circ$, $k=0,\ldots,K-1$, visited in increasing order, and the encoder readings are used in the estimator. This uniform cone is a convenience of the testbed, not a requirement of the method (Section~\ref{subsec:res-K}). Likewise, the stage reports its own orientation here; in a deployment, the normals would be given by an inertial measurement unit (IMU) of the receiver. The stage and PD are carried by an igus DLE-RG-0012-BLDC Cartesian gantry, which positions the receiver over $1.4\times1.4$~m horizontally and provides the ground truth.
+where $\alpha_0$, calibrated in Section~\ref{subsec:protocol}, is the stage angle at which the PD tilts towards $+Y$; the stage turns at $1.5^\circ$/s. At each position, the stage visits $K$ angles $\alpha_i$ spaced by $360^\circ/K$ over a full turn, in increasing order, and the encoder readings are used in the estimator. This uniform cone is a convenience of the testbed, not a requirement of the method (Section~\ref{subsec:res-K}). Likewise, the stage reports its own orientation here; in a deployment, the normals would be given by an inertial measurement unit (IMU) of the receiver. The stage and PD are carried by an igus DLE-RG-0012-BLDC three-axis Cartesian gantry, which positions the receiver along $X$, $Y$ and $Z$ over a working volume of $1.4\times1.4\times0.7$~m and provides the ground truth.
 
-At every orientation, after a settling time of 1~s, the oscilloscope records 100~ms of the PD output at 10~MSa/s ($N=10^6$ samples) in digitizer mode, and the record is transferred over the local network. The RSS of each LED is the projection~\eqref{eq:lockin} at its nominal frequency, with a resolution of 10~Hz. The raw record of every measurement is kept, which allows shorter windows to be evaluated afterwards (Section~\ref{subsec:res-window}). The raw PD signal is dominated by the 100~Hz flicker of the room lights (about 120~mV rms against LED tones of 1--21~mV); the projection rejects it, but the flicker sets the vertical scale of the oscilloscope.
-
-An in-house acquisition program coordinates the gantry, the stage and the oscilloscope, and stores the commanded and measured poses, the RSS and the raw records. The same estimation code runs in a real-time demonstrator that moves the receiver to a position, acquires the $K$ orientations and displays the estimate; it produced the blind test of Section~\ref{subsec:res-blind}.
+At every orientation, after a settling time of 1~s, the oscilloscope records 100~ms of the PD output at 10~MSa/s ($N=10^6$ samples). The RSS of each LED is the projection~\eqref{eq:lockin} at its nominal frequency. The raw record of every measurement is kept, which allows shorter windows to be evaluated afterwards (Section~\ref{subsec:res-window}). 
 
 \begin{figure}[!t]
  \centering
@@ -20,7 +18,7 @@ An in-house acquisition program coordinates the gantry, the stage and the oscill
  % PHOTO TO BE TAKEN BY THE AUTHOR: overall view of the testbed (ceiling LEDs, gantry, stage with the PD, oscilloscope),
  % ideally with the X, Y, Z axes of the global frame overlaid.
  %\figplaceholder{4.8cm}{Photograph of the testbed: four ceiling LEDs, Cartesian gantry carrying the rotation stage and the PD, and oscilloscope; global axes $X$, $Y$ (gantry) and $Z$ (up) overlaid.}
- \caption{Experimental testbed. The gantry moves the receiver over $1.4\times1.4$~m; the LEDs are 3.0~m above the floor.}
+ \caption{Experimental testbed. The gantry moves the receiver \add{in three dimensions}; \add{the positioning LED is mounted on the ceiling, 3.0~m above the floor}.}
  \label{fig:testbed}
 \end{figure}
 
@@ -32,20 +30,18 @@ An in-house acquisition program coordinates the gantry, the stage and the oscill
  \label{fig:receiver}
 \end{figure}
 
-\subsection{Reference Frame and Ground Truth}
-\label{subsec:groundtruth}
-Positions are expressed in the gantry axes $X$ and $Y$ and in the height $Z$ above the floor. The center of the PD is at height $Z=0.858~\mathrm m+z+e$, where $z$ is the vertical coordinate of the gantry, 0.858~m the height of the gantry carriage at $z=0$ (measured with a tape, 1.038~m at $z=180$~mm) and $e=96.96$~mm the elevation of the PD center above the carriage, taken from the CAD model of the stage and adapter. The rotation axis of the stage passes through the PD center, which therefore does not move during a reorientation. The LED plane, at 3.000~m, was measured with a tape; the horizontal position of the LED was not surveyed and is obtained from the calibration (Table~\ref{tab:parameters}).
+Positions are expressed in the gantry axes $X$ and $Y$ and in the height $Z$ above the floor. The center of the PD is at height $Z=0.858~\mathrm m+z+e$, where $z$ is the vertical coordinate of the gantry, 0.858~m the height of the gantry carriage at $z=0$ and $e=96.96$~mm the elevation of the PD center above the carriage, taken from the CAD model of the stage and adapter. The rotation axis of the stage passes through the PD center, which therefore does not move during a reorientation. The horizontal position of the LED was not surveyed and is obtained from the calibration (Table~\ref{tab:parameters}).
 % AUTHOR: state the resolution/uncertainty of the tape measurements and the positioning repeatability of the gantry.
 
 \subsection{Datasets}
 \label{subsec:datasets}
 Three datasets were acquired with the same instrumentation (Table~\ref{tab:datasets}).
 
-\emph{D1, calibration and environment.} The PD, on a $0^\circ$ adapter and facing up ($K=1$), scanned a $141\times141$ grid with 10~mm spacing over the whole $1.4\times1.4$~m area, at a PD height of 1.135~m, i.e., $h=1.865$~m below the LED plane. The 19\,881 records contain the four LEDs and serve two purposes: they characterize the radiation patterns of the LEDs (Section~\ref{subsec:res-env}), and they calibrate the LED model through~\eqref{eq:led-calibration}. The values of Table~\ref{tab:parameters} were obtained from the first 14\,294 points (the region within 1.16~m of the LED); a joint fit over the whole map gives the same accuracy (Section~\ref{subsec:res-budget}).
+\emph{D1, calibration and environment.} The PD, on a $0^\circ$ adapter and facing up ($K=1$), scanned a $141\times141$ grid with 10~mm spacing over the whole $1.4\times1.4$~m area, at a PD height of 1.135~m, i.e., $h=1.865$~m below the LED plane. The 19\,881 records contain the \add{tones of all} four LEDs and serve two purposes: they characterize the radiation patterns of the LEDs (Section~\ref{subsec:res-env}), and they calibrate the LED model through~\eqref{eq:led-calibration}. The values of Table~\ref{tab:parameters} were obtained from the first 14\,294 points (the region within 1.16~m of the LED); a joint fit over the whole map gives the same accuracy (Section~\ref{subsec:res-budget}).
 
-\emph{D2, regular grid.} With the $15^\circ$ adapter, the receiver visited a $5\times5$ horizontal grid ($X,Y$ from 0.1 to 1.3~m, step 0.3~m) at five heights ($Z=0.955$, 1.015, 1.075, 1.135 and 1.315~m), i.e., 125 positions, with $K=10$ orientations each ($\alpha_i$$=65^\circ+36^\circ k$). The positions lie 1.69 to 2.42~m from the LED and up to $37.6^\circ$ off its axis, at the scale of an ordinary room.
+\emph{D2, regular grid.} With the $15^\circ$ adapter, the receiver visited a $5\times5$ horizontal grid ($X,Y$ from 0.1 to 1.3~m, step 0.3~m) at five heights ($Z=0.955$, 1.015, 1.075, 1.135 and 1.315~m), i.e., 125 positions, with $K=10$ orientations each (\add{$36^\circ$ apart}). The positions lie 1.69 to 2.42~m from the LED and up to $37.6^\circ$ off its axis, at the scale of an ordinary room.
 
-\emph{D3, blind random test.} The real-time demonstrator drew random positions uniformly in $X,Y\in[0.1,1.3]$~m and $Z\in[0.955,1.315]$~m and estimated each one live with $K=5$ ($\alpha_i$$=65^\circ+72^\circ k$), using the parameters of Table~\ref{tab:parameters} fixed beforehand. The test contains 131 positions acquired in two sessions.
+\emph{D3, blind random test.} \add{A real-time demonstrator, running the same estimation code,} drew random positions uniformly in $X,Y\in[0.1,1.3]$~m and $Z\in[0.955,1.315]$~m and estimated each one live with $K=5$ (\add{$72^\circ$ apart}), using the parameters of Table~\ref{tab:parameters} fixed beforehand. The test contains 131 positions acquired in two sessions.
 
 \begin{table}[!t]
  \centering
@@ -71,7 +67,7 @@ Three datasets were acquired with the same instrumentation (Table~\ref{tab:datas
 \subsection{Calibration, Protocol and Metrics}
 \label{subsec:protocol}
 \label{subsec:parameters}
-Table~\ref{tab:parameters} lists the parameters of the model, their values and how each was obtained. The LED parameters come only from D1. The receiver response is the published SQ model, selected by the shape test (Section~\ref{subsec:res-model}). The angular zero $\alpha_0$ of the stage is a property of the receiver assembly and is calibrated with the shape test~\eqref{eq:shape} at known positions. The value $66.5^\circ$ is used for D2 and D3. No parameter is adjusted on D3. Unless stated otherwise, positions are estimated with the SQ response and the NLS estimator~\eqref{eq:nls}--\eqref{eq:range}.
+Table~\ref{tab:parameters} lists the parameters of the model, their values and how each was obtained. The LED parameters come only from D1. The receiver response is the published SQ model, selected by the shape test (Section~\ref{subsec:res-model}). The angular zero $\alpha_0$ of the stage \add{depends on how the adapter is mounted and} is calibrated with the shape test~\eqref{eq:shape} at known positions\add{; the resulting value, $66.5^\circ$, is used for D2 and D3}. No parameter is adjusted on D3. Unless stated otherwise, positions are estimated with the SQ response and the NLS estimator~\eqref{eq:nls}--\eqref{eq:range}.
 
 \begin{table}[!t]
  \centering
