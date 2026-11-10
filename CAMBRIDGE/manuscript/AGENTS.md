@@ -106,6 +106,13 @@
   (arbitrary start): alpha_0 is calibrated (66.5 deg); ablation says 'uncalibrated alpha_0', 'corrects it by about 1.5 deg'.
   Other three LEDs = complementary check only (tones recorded in D1, D2); D3 and all other results use only 500 kHz.
 
+- 2026-11-04 (user): RSS noise sigma now from REPEATED RECORDS at fixed poses (47 poses x 2-10 consecutive 100-ms
+  records, 230 records, flat-PD sessions of 13/10, cfg.repeat_dirs; RSS per record by (8); pooled std, dof 183):
+  3.22 uV at 500 kHz (CI95 2.92-3.59), other tones 2.3-3.0; halves 2.65 / 3.52 uV (median RSS 7.4 / 14.0 mV).
+  The off-tone method (20-40 kHz bins, 1.92 uV) is NOT described in the paper (diagnostic only in part_noise).
+  peb and orient use sigma_rep: PEB K=10 1.26 mm (P90 2.69), K=5 1.78 mm, err/PEB 23x, 0.1 deg -> 4.3 mm; SNR over D2
+  50-76 dB (median 69 dB), reported in dB only. Spectrum figure without the off-tone dashed line.
+
 ## Processing time (user, 2026-10-29) - VI-L "Acquisition and Processing Time", Table VI (tab:proc)
 - MATLAB part 'proc' (~25 s): amplitude from a raw D2 record (codes -> volts -> projection at the tone, or full
   FFT; 100 and 10 ms; all threads / 1 thread, timeit) and pd_fit_estimate NLS / GLS / WLS per D2 site (K 10 and 5,

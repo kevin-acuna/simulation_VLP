@@ -406,8 +406,9 @@ end
 
 %% ------------------------------------------------------------------------------------------------------
 function R = part_noise(cfg)
-% Noise of the lock-in RSS from the raw D2 records (100 ms at 10 MSa/s): additive floor from off-tone DFT
-% bins 20-40 kHz away from every tone, check of the stored RSS, and record-to-record repeatability.
+% Noise of the lock-in RSS: standard deviation over consecutive 100-ms records at the same pose (the value
+% used in the paper), check of the stored D2 RSS, spectrum figure; the off-tone floor of the D2 records
+% (DFT bins 20-40 kHz away from every tone) is kept as a diagnostic only.
 freqs = cfg.led_freqs_khz*1e3;
 band = [20e3 40e3];
 nrec = 0;
@@ -443,11 +444,9 @@ R.n_records = nrec;
 R.sigma_median_uV = 1e6*median(sigma);
 R.sigma_p95_uV = 1e6*prctile(sigma, 95);
 R.rss_check_max_rel = max(abs(rss_dft(:) - rss_csv(:))./rss_csv(:));
-snr = rss_dft(:, 2)./sigma(:, 2);
-R.snr500 = struct('min', min(snr), 'median', median(snr), 'max', max(snr));
 R.rss500_mV = 1e3*[min(rss_dft(:, 2)) median(rss_dft(:, 2)) max(rss_dft(:, 2))];
-fprintf('noise floor (median, uV): %s; RSS check max rel diff %.2g; SNR500 %.0f / %.0f / %.0f\n', ...
-    mat2str(R.sigma_median_uV, 3), R.rss_check_max_rel, R.snr500.min, R.snr500.median, R.snr500.max);
+fprintf('off-tone floor (median, uV, diagnostic only): %s; RSS check max rel diff %.2g\n', ...
+    mat2str(R.sigma_median_uV, 3), R.rss_check_max_rel);
 % repeatability: consecutive records at the same pose (n_samples > 1, flat PD)
 rel = [];
 for c = 1:numel(cfg.repeat_dirs)
@@ -461,7 +460,44 @@ fprintf('repeatability (500 kHz, %d poses): relative std median %.3f %%, P90 %.3
     R.repeat_rel_median_pct, R.repeat_rel_p90_pct);
 sigma_med = median(sigma);
 rel_med = median(rel);
-save(fullfile(cfg.figdir, 'noise_results.mat'), 'sigma', 'rss_dft', 'sigma_med', 'rel_med', 'rel');
+% noise of the RSS used in the paper: standard deviation over consecutive 100-ms records at the same pose
+% (2-10 records at each pose of cfg.repeat_dirs), RSS of every record from the projection (8), pooled over poses
+ss = zeros(1, 4); dof = 0; mrep = []; srep = []; nrep = [];
+for c = 1:numel(cfg.repeat_dirs)
+    t = readtable(fullfile(cfg.repeat_dirs{c}, 'points.csv'), 'VariableNamingRule', 'preserve');
+    for i = 1:height(t)
+        z = pp_read_npz(fullfile(cfg.repeat_dirs{c}, t.wave_file{i}));
+        ns = size(z.codes, 1);
+        x = zeros(ns, 4);
+        for s = 1:ns
+            q = min(s, numel(z.y_reference));
+            v = (double(z.codes(s, :)) - double(z.y_reference(q)))*double(z.y_increment(q)) + double(z.y_origin(q));
+            a = sqrt(2)*abs(fft(v))/numel(v);
+            x(s, :) = a(round(freqs/(double(z.fs)/numel(v))) + 1);
+        end
+        ss = ss + (ns - 1)*var(x, 0, 1);
+        dof = dof + ns - 1;
+        mrep(end + 1, :) = mean(x, 1); srep(end + 1, :) = std(x, 0, 1); nrep(end + 1, 1) = ns; %#ok<AGROW>
+    end
+end
+sigma_rep = sqrt(ss/dof);
+[~, order] = sort(mrep(:, 2));
+h = {order(1:floor(end/2)), order(floor(end/2) + 1:end)};
+R.sigma_rep_uV = 1e6*sigma_rep;
+R.sigma_rep_poses = numel(nrep);
+R.sigma_rep_records = sum(nrep);
+R.sigma_rep_dof = dof;
+R.sigma_rep_ci95_uV = 1e6*sigma_rep(2)*sqrt(dof./(2*gammaincinv([0.975 0.025], dof/2)));
+R.sigma_rep_halves_uV = 1e6*cellfun(@(k) sqrt(sum((nrep(k) - 1).*srep(k, 2).^2)/sum(nrep(k) - 1)), h);
+R.sigma_rep_halves_rss_mV = 1e3*cellfun(@(k) median(mrep(k, 2)), h);
+snr = rss_dft(:, 2)./sigma_rep(2);
+R.snr500 = struct('min', min(snr), 'median', median(snr), 'max', max(snr), ...
+    'dB', 20*log10([min(snr) median(snr) max(snr)]));
+fprintf('RSS noise, repeated records (%d poses, %d records, dof %d): %s uV; 500 kHz CI95 %s uV; halves %s uV\n', ...
+    R.sigma_rep_poses, R.sigma_rep_records, dof, mat2str(R.sigma_rep_uV, 3), mat2str(R.sigma_rep_ci95_uV, 3), ...
+    mat2str(R.sigma_rep_halves_uV, 3));
+fprintf('SNR500 over D2 with this noise (min / median / max): %s dB\n', mat2str(R.snr500.dB, 3));
+save(fullfile(cfg.figdir, 'noise_results.mat'), 'sigma', 'rss_dft', 'sigma_med', 'rel_med', 'rel', 'sigma_rep');
 % spectrum of the record with the strongest 500 kHz tone (maximum over 1 kHz groups)
 group = round(1e3/best.df);
 n = floor(numel(best.a)/2/group)*group;
@@ -475,7 +511,6 @@ for j = 1:4
     text(ax, cfg.led_freqs_khz(j), 2.2*max(env(abs(fk - cfg.led_freqs_khz(j)) < 2)), sprintf('%d kHz', ...
         cfg.led_freqs_khz(j)), 'HorizontalAlignment', 'center', 'FontSize', 7);
 end
-yline(ax, median(sigma(:, 2))*sqrt(2), 'k--', 'LineWidth', 0.5);
 xlim(ax, [0 1000]);
 ylim(ax, [1e-6 1]);
 xlabel(ax, 'Frequency (kHz)');
@@ -490,7 +525,7 @@ function R = part_peb(cfg)
 G = load(fullfile(cfg.figdir, 'grid_results.mat'));
 Nz = load(fullfile(cfg.figdir, 'noise_results.mat'));
 jf = find(cfg.led_freqs_khz == cfg.freq_khz);
-sigma = Nz.sigma_med(jf);
+sigma = Nz.sigma_rep(jf);
 p = G.pf;
 p.noise.variance_W2 = sigma^2;
 S = size(G.D.truth, 2);
@@ -790,7 +825,7 @@ for im = 1:numel(methods)
     end
 end
 pn = p;
-pn.noise.variance_W2 = Nz.sigma_med(jf)^2;
+pn.noise.variance_W2 = Nz.sigma_rep(jf)^2;
 rng(7);
 R.sigma_deg = sv;
 R.draws = M;
