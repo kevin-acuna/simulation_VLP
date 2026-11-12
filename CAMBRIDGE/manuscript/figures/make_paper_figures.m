@@ -1,11 +1,11 @@
 function make_paper_figures(parts)
 % Figures and numbers of the manuscript, computed directly from the acquired datasets.
 %   make_paper_figures                      % every part
-%   make_paper_figures({'grid', 'random'})  % selected parts: grid | random | noise | peb | calib | leds | sim
+%   make_paper_figures({'grid', 'random'})  % selected parts: grid | random | noise | peb | calib | leds | sim | response | axis | zero
 % Numbers are merged into paper_numbers.json (read when writing the manuscript); figures are vector PDF
 % (PNG previews in png/). Run with MATLAB R2026a or later.
 if nargin < 1 || isempty(parts)
-    parts = {'grid', 'random', 'noise', 'peb', 'calib', 'leds', 'sim'};
+    parts = {'grid', 'random', 'noise', 'peb', 'calib', 'leds', 'sim', 'response', 'axis', 'zero'};
 end
 parts = cellstr(parts);
 here = fileparts(mfilename('fullpath'));
@@ -223,6 +223,10 @@ E = pp_estimate('SQ', 'NLS', D.rss(:, :, jf), D.theta, cfg.offset_deg, cfg.tilt_
 e = site_errors(E, D, p);
 R.test = e.summary;
 R.test_pd_height_range_m = [min(D.truth(3, :)) max(D.truth(3, :))];
+R.test_xy_range_m = [min(D.truth(1:2, :), [], 'all') max(D.truth(1:2, :), [], 'all')];
+border = min([D.truth(1:2, :) - 0.1; 1.3 - D.truth(1:2, :)]) < 0.15;   % within 0.15 m of the border of [0.1, 1.3] m
+R.test_border = struct('width_m', 0.15, 'n_border', nnz(border), 'mean_border_cm', mean(e.err3d(border)), ...
+    'mean_interior_cm', mean(e.err3d(~border)));
 live = [];
 for c = 1:numel(cfg.random_dirs)
     t = readtable(fullfile(cfg.random_dirs{c}, 'estimates.csv'), 'VariableNamingRule', 'preserve');
@@ -313,10 +317,10 @@ function figure_cdf(cfg, cdf)
 fig = pp_figure(3.5, 2.3);
 ax = axes(fig);
 hold(ax, 'on');
-specs = {'K10', '-', [0 0.32 0.62], sprintf('Grid, $K=10$ (%d sites)', numel(cdf.K10)); ...
+specs = {'K10', '-', [0 0.32 0.62], sprintf('Grid, $K=10$ (%d positions)', numel(cdf.K10)); ...
          'K5', '-', [0.85 0.33 0.1], 'Grid, $K=5$ (subsets)'; ...
          'K3', '-', [0.47 0.67 0.19], 'Grid, $K=3$ (subsets)'; ...
-         'D3', '--', [0 0 0], sprintf('Blind random test, $K=5$ (%d points)', numel(cdf.D3))};
+         'D3', '--', [0 0 0], sprintf('Blind random test, $K=5$ (%d positions)', numel(cdf.D3))};
 for s = 1:size(specs, 1)
     v = sort(cdf.(specs{s, 1})(isfinite(cdf.(specs{s, 1}))));
     stairs(ax, [0 v], (0:numel(v))/numel(v), specs{s, 2}, 'Color', specs{s, 3}, 'LineWidth', 1.1, ...
@@ -582,6 +586,38 @@ end
 R.tilt_best_1deg = tilts(ib);
 R.tilt_curve = struct('tilt_deg', tilts, 'sigma_deg', sv, 'median_mm', 1e3*curve, 'p90_mm', 1e3*curve90);
 fprintf('  tilt minimising the median PEB with 1 deg orientation uncertainty: %g deg\n', R.tilt_best_1deg);
+% tilt window of the testbed geometry (uniform cones of K = 5 and 10, D2 positions): largest tilt at which every
+% orientation still sees the LED, and coverage (PEB <= 10 cm) with orientation uncertainty
+led = p.transmitter.position_m;
+tw = 1:0.5:45;
+sw = [0.5 1];
+Kw = [5 10];
+lit = false(numel(Kw), numel(tw));
+cw = nan(numel(Kw), numel(sw), numel(tw));
+for ik = 1:numel(Kw)
+    for it = 1:numel(tw)
+        N = pp_normals((0:Kw(ik) - 1)*360/Kw(ik), 0, tw(it));
+        [~, ~, info] = rx_channel(G.D.truth, N, p);
+        lit(ik, it) = all(info.visible, 'all');
+        for q = 1:numel(sw)
+            cw(ik, q, it) = 100*mean(rx_pose_error_peb(G.D.truth, N, p, 1, sw(q)^2, 'independent') <= 0.1);
+        end
+    end
+end
+offaxis = max(atand(hypot(G.D.truth(1, :) - led(1), G.D.truth(2, :) - led(2))./(led(3) - G.D.truth(3, :))));
+support = p.receiver.response_parameters.psi_3db_rad/sqrt(1 - 1/sqrt(2))*180/pi;
+R.tilt_window = struct('led_half_power_deg', p.transmitter.half_angle_power_deg, 'offaxis_max_deg', offaxis, ...
+    'support_minus_offaxis_deg', support - offaxis, 'K', Kw, 'sigma_deg', sw, ...
+    'all_lit_max_tilt_deg', arrayfun(@(ik) max(tw(lit(ik, :))), 1:numel(Kw)), ...
+    'full_coverage_from_deg', arrayfun(@(i) min([tw(cw(mod(i - 1, numel(Kw)) + 1, ceil(i/numel(Kw)), :) >= 100 - 1e-9) NaN]), ...
+        reshape(1:numel(Kw)*numel(sw), numel(Kw), numel(sw))), ...
+    'coverage_pct_at_15deg', cw(:, :, tw == 15));
+fprintf('  testbed tilt window: LED half-power %.1f deg seen up to %.1f deg (support - off-axis %.1f deg), all lit up to %s deg (K = %s)\n', ...
+    R.tilt_window.led_half_power_deg, offaxis, support - offaxis, mat2str(R.tilt_window.all_lit_max_tilt_deg), mat2str(Kw));
+for ik = 1:numel(Kw)
+    fprintf('    K = %2d: full coverage from %s deg, coverage at 15 deg %s %% (sigma_theta %s deg)\n', Kw(ik), ...
+        mat2str(R.tilt_window.full_coverage_from_deg(ik, :)), mat2str(R.tilt_window.coverage_pct_at_15deg(ik, :), 4), mat2str(sw));
+end
 save(fullfile(cfg.figdir, 'peb_results.mat'), 'peb10', 'peb5', 'peb_rel', 'pebo', 'sth', 'tilts', 'sv', 'curve', 'curve90');
 % figure: CDF of the measured error and of the bounds at the D2 sites
 fig = pp_figure(3.5, 2.25);
@@ -1079,30 +1115,35 @@ end
 
 %% ------------------------------------------------------------------------------------------------------
 function R = part_sim(cfg)
-% Generic numerical study of the bound (Section III-E), independent of the testbed: LED 3 m above the floor
-% pointing down, PD anywhere over X, Y in [-1, 1] m (0.1 m grid) at heights 0-1.8 m (0.3 m), SQ response of
-% the PDA100A2 without aperture, K normals uniformly spaced on a cone of tilt theta, simulation-library
-% radiometry (optical-equivalent noise, same records per orientation). Coverage = % positions, PEB <= 10 cm.
+% Nominal numerical study of the bound (Section III-E), independent of the testbed: LED 3 m above the floor
+% pointing down (half-power angle 45 deg), PD anywhere over X, Y in [-1, 1] m (0.1 m grid) at heights 0-1.8 m
+% (0.3 m), published SQ response of a commercial PD without aperture, K normals uniformly spaced on a cone of
+% tilt theta. The link budget is fixed by the reference SNR alone (untilted PD on the floor below the LED,
+% 50 dB): power, PD area and noise enter the bound only through it. Coverage = % positions, PEB <= 10 cm.
 base = system_parameters();
 H = 3;
-p = sim_params(base, H, 45);
+half = 45;
+snr_ref_db = 50;
+cnt = base.acquisition.samples_per_orientation;
+p = sim_params(base, H, half);
+p.noise.variance_W2 = cnt*(rx_channel([0; 0; 0], [0; 0; 1], p)/10^(snr_ref_db/20))^2;
 [X, Y, Z] = ndgrid(-1:0.1:1, -1:0.1:1, 0:0.3:1.8);
 P = [X(:) Y(:) Z(:)]';
-cnt = base.acquisition.samples_per_orientation;
 sigma = sqrt(p.noise.variance_W2/cnt);
 cone = @(K, t) pp_normals((0:K-1)*360/K, 0, t);
 bnd = @(q, K, t, s) rx_pose_error_peb(P, cone(K, t), q, cnt, s^2, 'independent');
 covg = @(b) 100*mean(b <= 0.1);
 medb = @(b) median(b(~isnan(b)));
 full_at = @(x, c) min([x(c >= 100 - 1e-9) NaN]);
-R.scenario = struct('led_height_m', H, 'half_power_deg', 45, 'power_W', p.transmitter.power_W, ...
-    'area_mm2', 1e6*p.receiver.area_m2, 'psi3db_rad', p.receiver.response_parameters.psi_3db_rad, ...
-    'sigma_W', sigma, 'positions', size(P, 2), 'coverage_threshold_cm', 10, ...
-    'snr_floor_nadir', rx_channel([0; 0; 0], [0; 0; 1], p)/sigma, ...
-    'snr_1m_axis', rx_channel([0; 0; H - 1], [0; 0; 1], p)/sigma, ...
+flat = rx_channel(P, [0; 0; 1], p);
+R.scenario = struct('led_height_m', H, 'half_power_deg', half, 'lambertian_order', -log(2)/log(cosd(half)), ...
+    'psi3db_rad', p.receiver.response_parameters.psi_3db_rad, ...
+    'snr_ref_db', 20*log10(rx_channel([0; 0; 0], [0; 0; 1], p)/sigma), ...
+    'snr_flat_range_db', 20*log10([min(flat(flat > 0)) max(flat)]/sigma), ...
+    'positions', size(P, 2), 'coverage_threshold_cm', 10, ...
     'offaxis_max_deg', max(atand(hypot(P(1, :), P(2, :))./(H - P(3, :)))));
-fprintf('generic scenario: %d positions, sigma %.3g W, SNR %.0f (floor, nadir), LED off-axis max %.1f deg\n', ...
-    size(P, 2), sigma, R.scenario.snr_floor_nadir, R.scenario.offaxis_max_deg);
+fprintf('nominal scenario: %d positions, reference SNR %.1f dB (flat PD over the volume %.1f-%.1f dB), LED off-axis max %.1f deg\n', ...
+    size(P, 2), R.scenario.snr_ref_db, R.scenario.snr_flat_range_db, R.scenario.offaxis_max_deg);
 % (1) tilt sweep for several K and orientation uncertainties, and visibility of the K = 5 cone
 tilts = 0:0.5:45;
 Ks = [3 4 5 6 8 10];
@@ -1126,11 +1167,13 @@ end
 R.tilt.K = Ks;
 R.tilt.sigma_theta_deg = sv;
 R.tilt.full_coverage_tilt_deg = nan(numel(Ks), numel(sv));
+R.tilt.full_coverage_tilt_max_deg = nan(numel(Ks), numel(sv));
 R.tilt.max_coverage_pct = nan(numel(Ks), numel(sv));
 for iK = 1:numel(Ks)
     for is = 1:numel(sv)
         c = squeeze(cov_t(iK, is, :))';
         R.tilt.full_coverage_tilt_deg(iK, is) = full_at(tilts, c);
+        R.tilt.full_coverage_tilt_max_deg(iK, is) = max([tilts(c >= 100 - 1e-9) NaN]);
         R.tilt.max_coverage_pct(iK, is) = max(c);
     end
 end
@@ -1144,6 +1187,7 @@ R.tilt.K5_s1_coverage_pct_at_30_45 = squeeze(cov_t(k5, sv == 1, ismember(tilts, 
 R.tilt.all_lit_max_tilt_deg = max(tilts(vis_t >= 100 - 1e-9));
 R.tilt.all_lit_pct_at_20_30_45 = vis_t(ismember(tilts, [20 30 45]));
 b = bnd(p, 5, 15, 1);
+R.tilt.K5_s1_15deg_max_cm = 100*max(b);
 R.tilt.K5_s1_15deg_by_height = zeros(0, 3);
 for z = unique(P(3, :))
     sel = abs(P(3, :) - z) < 1e-9;
@@ -1152,32 +1196,38 @@ end
 fprintf('full coverage (sigma_theta 1 deg) from tilt: %s deg for K = %s\n', mat2str(R.tilt.full_coverage_tilt_deg(:, sv == 1)'), mat2str(Ks));
 fprintf('K = 5, sigma_theta 1 deg: median %.2f cm at 15 deg, minimum %.2f cm at %g deg; all orientations lit up to %g deg\n', ...
     100*m5(sv == 1, tilts == 15), R.tilt.K5_s1_min_median_cm, R.tilt.K5_s1_min_median_tilt_deg, R.tilt.all_lit_max_tilt_deg);
-% (2) LED half-power angle and (3) PD area, at theta = 15 deg, K = 5
+% (2) LED half-power angle and (3) reference SNR, at theta = 15 deg, K = 5. The LED power and the noise level
+% of the scenario are kept in (2); in (3) the noise level is scaled, which is equivalent to scaling the power
+% or the PD area.
 halves = 10:2.5:70;
-areas = logspace(0, log10(300), 41);
+snrs = 20:1:70;
 cov_h = nan(numel(sv), numel(halves));
-med_a = nan(numel(sv), numel(areas));
+med_s = nan(numel(sv), numel(snrs));
 for is = 1:numel(sv)
     for ih = 1:numel(halves)
-        cov_h(is, ih) = covg(bnd(sim_params(base, H, halves(ih)), 5, 15, sv(is)));
-    end
-    for ia = 1:numel(areas)
         q = p;
-        q.receiver.area_m2 = areas(ia)*1e-6;
-        med_a(is, ia) = medb(bnd(q, 5, 15, sv(is)));
+        q.transmitter.half_angle_power_deg = halves(ih);
+        cov_h(is, ih) = covg(bnd(q, 5, 15, sv(is)));
+    end
+    for j = 1:numel(snrs)
+        q = p;
+        q.noise.variance_W2 = p.noise.variance_W2*10^((snr_ref_db - snrs(j))/10);
+        med_s(is, j) = medb(bnd(q, 5, 15, sv(is)));
     end
 end
 R.led.half_power_deg = halves;
 R.led.coverage_pct = cov_h;
 R.led.full_coverage_half_deg = arrayfun(@(is) full_at(halves, cov_h(is, :)), 1:numel(sv));
-R.area.area_mm2 = areas;
-R.area.median_cm = 100*med_a;
+R.snr.snr_db = snrs;
+R.snr.median_cm = 100*med_s;
+R.snr.median_cm_at_30_40_50_60_70 = 100*med_s(:, ismember(snrs, 30:10:70));
 fprintf('full coverage from LED half-power angle %s deg (sigma_theta %s)\n', mat2str(R.led.full_coverage_half_deg), mat2str(sv));
-save(fullfile(cfg.figdir, 'sim_results.mat'), 'tilts', 'Ks', 'sv', 'med_t', 'cov_t', 'vis_t', 'halves', 'cov_h', 'areas', 'med_a');
+fprintf('median PEB (cm) at 30/40/50/60/70 dB, sigma_theta 1 deg: %s\n', mat2str(R.snr.median_cm_at_30_40_50_60_70(sv == 1, :), 3));
+save(fullfile(cfg.figdir, 'sim_results.mat'), 'tilts', 'Ks', 'sv', 'med_t', 'cov_t', 'vis_t', 'halves', 'cov_h', 'snrs', 'med_s');
 % figure: (a) median PEB vs tilt (K = 5), (b) coverage vs tilt (sigma_theta = 1 deg) and lit positions,
-% (c) coverage vs LED half-power angle, (d) median PEB vs PD area (theta = 15 deg, K = 5)
+% (c) coverage vs LED half-power angle, (d) median PEB vs reference SNR (theta = 15 deg, K = 5)
 colors = [0.5 0.5 0.5; 0.47 0.67 0.19; 0.85 0.33 0.1; 0.49 0.18 0.56];
-names = [{'Noise only'}, arrayfun(@(s) sprintf('$\\sigma_\\theta=%g^\\circ$', s), sv(2:end), 'UniformOutput', false)];
+names = arrayfun(@(s) sprintf('$\\sigma_\\theta=%g^\\circ$', s), sv, 'UniformOutput', false);
 fig = pp_figure(7.16, 2.15);
 tl = tiledlayout(fig, 1, 4, 'TileSpacing', 'compact', 'Padding', 'compact');
 ax = nexttile(tl);
@@ -1215,13 +1265,13 @@ lg = legend(ax, 'Location', 'southeast', 'FontSize', 6.5);
 if isprop(lg, 'IconColumnWidth')
     lg.IconColumnWidth = 14;
 end
-title(ax, '(b) Coverage, $\sigma_\theta=1^\circ$', 'FontWeight', 'normal');
+title(ax, '(b) $\sigma_\theta=1^\circ$', 'FontWeight', 'normal');
 ax = nexttile(tl);
 hold(ax, 'on');
 for is = 1:numel(sv)
     plot(ax, halves, cov_h(is, :), '-', 'Color', colors(is, :));
 end
-xline(ax, 45, 'k:', 'LineWidth', 0.8);
+xline(ax, half, 'k:', 'LineWidth', 0.8);
 xlim(ax, [10 70]);
 ylim(ax, [0 102]);
 xticks(ax, 10:20:70);
@@ -1231,27 +1281,204 @@ title(ax, '(c) $\theta=15^\circ$, $K=5$', 'FontWeight', 'normal');
 ax = nexttile(tl);
 hold(ax, 'on');
 for is = 1:numel(sv)
-    plot(ax, areas, 100*med_a(is, :), '-', 'Color', colors(is, :), 'DisplayName', names{is});
+    plot(ax, snrs, 100*med_s(is, :), '-', 'Color', colors(is, :), 'DisplayName', names{is});
 end
 yline(ax, 10, '--', 'Color', [0.3 0.3 0.3], 'LineWidth', 0.5, 'HandleVisibility', 'off');
-xline(ax, 1e6*base.receiver.area_m2, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
-set(ax, 'XScale', 'log', 'YScale', 'log');
-xlim(ax, [1 300]);
+xline(ax, snr_ref_db, 'k:', 'LineWidth', 0.8, 'HandleVisibility', 'off');
+set(ax, 'YScale', 'log');
+xlim(ax, [20 70]);
 ylim(ax, [0.1 100]);
-xticks(ax, [1 10 100]);
-xticklabels(ax, {'1', '10', '100'});
-xlabel(ax, 'PD area (mm$^2$)');
+xticks(ax, 20:10:70);
+xlabel(ax, 'Reference SNR (dB)');
 ylabel(ax, 'Median PEB (cm)');
 title(ax, '(d) $\theta=15^\circ$, $K=5$', 'FontWeight', 'normal');
 pp_export(fig, cfg, 'fig_sim');
 end
 
 function p = sim_params(base, H, half_power_deg)
-% Generic scenario: SQ response of the PDA100A2 (published psi_3dB, no aperture), LED at height H pointing down.
+% Nominal scenario: published SQ response of a commercial PD (psi_3dB of the PDA100A2, no aperture), LED at
+% height H pointing down.
 p = bastiaens2020_parameters(base, 'PDA100A2', 'SQ', 90);
 p.transmitter.position_m = [0; 0; H];
 p.transmitter.normal = [0; 0; -1];
 p.transmitter.half_angle_power_deg = half_power_deg;
+end
+
+%% ------------------------------------------------------------------------------------------------------
+function R = part_response(cfg)
+% Receiver response models of Section VI-C (cos, cos^m_R and SQ with the published parameters) and RSS of D2
+% divided by the amplitude fitted at each position with the SQ response (true positions, calibrated stage zero).
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+D = G.D;
+p = G.pf;
+S = size(D.truth, 2);
+psi = zeros(D.K, S);
+q = zeros(D.K, S);
+for i = 1:S
+    N = pp_normals(D.theta(:, i), G.OFF.SQ.fit.cross(i), cfg.tilt_deg);
+    v = p.transmitter.position_m - D.truth(:, i);
+    c = N'*(v/norm(v));
+    Rs = rx_receiver_response(c, p);
+    y = D.rss(:, i, jf);
+    psi(:, i) = acosd(c);
+    q(:, i) = y/((y'*Rs)/(Rs'*Rs));
+end
+a = (1 - 1/sqrt(2))/cfg.psi3db^2;
+sq = @(x) max(1 - a*(x*pi/180).^2, 0);
+R.incidence_deg = struct('min', min(psi(:)), 'median', median(psi(:)), 'max', max(psi(:)));
+R.support_deg = 1/sqrt(a)*180/pi;
+R.deviation_from_sq_pct = struct('rms', 100*sqrt(mean((q(:)./sq(psi(:)) - 1).^2)), 'max_abs', 100*max(abs(q(:)./sq(psi(:)) - 1)));
+fprintf('incidence angles of D2: %.1f to %.1f deg (median %.1f); normalized RSS / SQ - 1: rms %.2f %%, max %.2f %%\n', ...
+    R.incidence_deg.min, R.incidence_deg.max, R.incidence_deg.median, R.deviation_from_sq_pct.rms, R.deviation_from_sq_pct.max_abs);
+x = linspace(0, 90, 721);
+fig = pp_figure(3.5, 2.05);
+ax = axes(fig);
+hold(ax, 'on');
+plot(ax, x, cosd(x), ':', 'Color', [0.47 0.67 0.19], 'LineWidth', 1.1, 'DisplayName', '$\cos\psi$');
+plot(ax, x, cosd(x).^cfg.m_R, '--', 'Color', [0.85 0.33 0.1], 'DisplayName', sprintf('$\\cos^{%g}\\psi$', cfg.m_R));
+plot(ax, x, sq(x), '-', 'Color', [0 0.32 0.62], 'DisplayName', 'SQ');
+plot(ax, psi(:), q(:), '.', 'Color', [0.1 0.1 0.1], 'MarkerSize', 2.5, 'DisplayName', 'Measured (D2)');
+xlim(ax, [0 90]);
+ylim(ax, [0 1.05]);
+xticks(ax, 0:15:90);
+xlabel(ax, 'Incidence angle $\psi$ ($^\circ$)');
+ylabel(ax, 'Response $R(\psi)$');
+legend(ax, 'Location', 'northeast');
+pp_export(fig, cfg, 'fig_response');
+end
+
+%% ------------------------------------------------------------------------------------------------------
+function R = part_axis(cfg)
+% Error on D2 against the angle at which the LED is seen (Section VI-D): 3D / horizontal / vertical / direction
+% errors, contrast of the normalized RSS profile, and deviation of the LED pattern from the calibrated cosine
+% power, seen by the tilted PD on D2 (fitted amplitude over the model at the true position) and by the flat PD
+% on D1 (same emission angles). Needs grid_results.mat and peb_results.mat.
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+D = G.D; E = G.Ef; p = G.pf;
+A = p.calibration.A; m = p.calibration.m;
+t = p.transmitter.position_m;
+v = t - D.truth;
+d = vecnorm(v);
+u = v./d;
+phi = acosd(-p.transmitter.normal'*u);
+e = E.r - D.truth;
+err = 100*vecnorm(e);
+eh = 100*vecnorm(e(1:2, :));
+ev = 100*e(3, :);
+dir = acosd(min(1, sum(E.u.*u)));
+range_err = 100*(E.d - d);
+amp = E.beta./(A*cosd(phi).^m./d.^2);                      % fitted amplitude / LED model at the true position
+range_pattern = 100*d.*(1./sqrt(amp) - 1);                 % range error that this deviation alone would cause
+contrast = zeros(1, numel(d));
+for i = 1:numel(d)
+    Rs = rx_receiver_response(pp_normals(D.theta(:, i), G.OFF.SQ.fit.cross(i), cfg.tilt_deg)'*u(:, i), p);
+    contrast(i) = 100*(max(Rs) - min(Rs))/mean(Rs);
+end
+% flat scan D1: measured pattern over the calibrated model, median per emission angle
+[x, y, rss, h] = load_full_scan(cfg);
+r1 = hypot(x - cfg.led_xy_mm(1), y - cfg.led_xy_mm(2))/1e3;
+c1 = h./hypot(r1, h);
+ratio1 = rss(:, jf).*hypot(r1, h).^2./rx_receiver_response(c1, p)./(A*c1.^m);
+pe = 0:2.5:40;
+ctr = (pe(1:end - 1) + pe(2:end))/2;
+med1 = arrayfun(@(k) median(ratio1(acosd(c1) >= pe(k) & acosd(c1) < pe(k + 1))), 1:numel(ctr));
+amp1 = interp1(ctr, med1, min(max(phi, ctr(1)), ctr(end)), 'pchip');   % D1 deviation at the D2 emission angles
+stat = @(s) struct('n', nnz(s), 'err3d_cm', mean(err(s)), 'horizontal_cm', mean(eh(s)), 'vertical_cm', mean(ev(s)), ...
+    'direction_deg', mean(dir(s)), 'range_cm', mean(range_err(s)), 'contrast_pct', mean(contrast(s)), ...
+    'pattern_dev_D2_pct', 100*(mean(amp(s)) - 1), 'pattern_dev_D1_pct', 100*(mean(amp1(s)) - 1), ...
+    'range_from_pattern_cm', mean(range_pattern(s)));
+edges = [0 10 15 20 25 30 40];
+R.edges_deg = edges;
+fprintf(' phi (deg)    n  err3D  horiz   vert  dir(deg)  range  contrast  pattern D2 / D1 (%%)  range from pattern\n');
+for k = 1:numel(edges) - 1
+    b = stat(phi >= edges(k) & phi < edges(k + 1));
+    R.bins(k) = b;
+    fprintf('  %2d-%2d    %3d  %5.2f  %5.2f  %+5.2f   %5.2f   %+5.2f   %5.1f     %+5.2f / %+5.2f        %+5.2f cm\n', edges(k), edges(k + 1), b.n, ...
+        b.err3d_cm, b.horizontal_cm, b.vertical_cm, b.direction_deg, b.range_cm, b.contrast_pct, b.pattern_dev_D2_pct, ...
+        b.pattern_dev_D1_pct, b.range_from_pattern_cm);
+end
+R.near = stat(phi < 15);
+R.far = stat(phi >= 20);
+R.heights_m = arrayfun(@(l) D.truth(3, find(D.level == l, 1)), 1:numel(D.levels));
+R.positions_within_15deg_by_height = arrayfun(@(l) nnz(phi(D.level == l) < 15), 1:numel(D.levels));
+% noise-limited bound (K = 10, measured noise) in the same two regions, from part 'peb'
+B = load(fullfile(cfg.figdir, 'peb_results.mat'), 'peb10');
+R.peb_noise_mm = struct('near', 1e3*median(B.peb10(phi < 15)), 'far', 1e3*median(B.peb10(phi >= 20)));
+fprintf('noise-limited bound (median): %.2f mm within 15 deg of the axis, %.2f mm beyond 20 deg\n', R.peb_noise_mm.near, R.peb_noise_mm.far);
+R.pattern_dev_corr_D1_D2 = corr(amp(:), amp1(:));
+R.err_direction_only_cm = mean(100*vecnorm((t - d.*E.u) - D.truth));     % true distance, estimated direction
+R.err_range_only_cm = mean(100*abs(E.d - d));                            % estimated distance, true direction
+fprintf('within 15 deg of the LED axis: %.2f cm (horizontal %.2f, direction %.2f deg, contrast %.1f %%); beyond 20 deg: %.2f cm (%.2f, %.2f deg, %.1f %%)\n', ...
+    R.near.err3d_cm, R.near.horizontal_cm, R.near.direction_deg, R.near.contrast_pct, R.far.err3d_cm, R.far.horizontal_cm, ...
+    R.far.direction_deg, R.far.contrast_pct);
+fprintf('pattern deviation D2 against D1 at the same emission angles: correlation %.2f; direction alone %.2f cm, range alone %.2f cm\n', ...
+    R.pattern_dev_corr_D1_D2, R.err_direction_only_cm, R.err_range_only_cm);
+end
+
+%% ------------------------------------------------------------------------------------------------------
+function R = part_zero(cfg)
+% Calibration budget of the stage zero (Section VI-F): the zero fitted with the profile-consistency test on a
+% few known positions of D2 instead of all of them, and the mean error that this value gives on the blind test
+% D3 (K = 5, all the other parameters as in the paper). Needs grid_results.mat and random_results.mat.
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+Rn = load(fullfile(cfg.figdir, 'random_results.mat'));
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+D = G.D;
+rss = D.rss(:, :, jf);
+S = size(D.truth, 2);
+p3 = pp_params(cfg, 'SQ', cfg.A, cfg.m, cfg.led_xy_mm);
+fit = @(sel) zero_fit(D, rss, sel, cfg, G.pf);
+err3 = @(a) zero_d3_error(a, Rn.D, jf, cfg, p3);
+R.all_deg = fit(true(1, S));
+R.d3_mean_cm_paper_zero = err3(cfg.offset_deg);
+% (1) nine positions: the 3 x 3 grid X, Y = 0.1, 0.7, 1.3 m at one height
+xy = round(D.truth(1:2, :)*1e3);
+g3 = ismember(xy(1, :), [100 700 1300]) & ismember(xy(2, :), [100 700 1300]);
+for l = 1:numel(D.levels)
+    sel = D.level == l & g3;
+    R.grid3x3.height_m(l) = D.truth(3, find(sel, 1));
+    R.grid3x3.positions(l) = nnz(sel);
+    R.grid3x3.zero_deg(l) = fit(sel);
+    R.grid3x3.d3_mean_cm(l) = err3(R.grid3x3.zero_deg(l));
+    fprintf('  3 x 3 grid at %.3f m (%d positions): stage zero %.2f deg, D3 mean error %.2f cm\n', R.grid3x3.height_m(l), ...
+        R.grid3x3.positions(l), R.grid3x3.zero_deg(l), R.grid3x3.d3_mean_cm(l));
+end
+R.grid3x3.max_abs_dev_deg = max(abs(R.grid3x3.zero_deg - cfg.offset_deg));
+% (2) N positions drawn at random (300 draws); D3 error interpolated on a 0.1-deg grid of the stage zero
+grid = 64:0.1:69;
+e3 = arrayfun(err3, grid);
+R.sensitivity = struct('zero_deg', grid, 'd3_mean_cm', e3);
+rng(11);
+M = 300;
+Ns = [5 9 25];
+for k = 1:numel(Ns)
+    a = zeros(1, M);
+    for q = 1:M
+        sel = false(1, S);
+        sel(randperm(S, Ns(k))) = true;
+        a(q) = fit(sel);
+    end
+    d3 = interp1(grid, e3, min(max(a, grid(1)), grid(end)));
+    R.random(k) = struct('positions', Ns(k), 'draws', M, 'zero_std_deg', std(a), ...
+        'zero_abs_dev_p95_deg', prctile(abs(a - cfg.offset_deg), 95), 'zero_abs_dev_max_deg', max(abs(a - cfg.offset_deg)), ...
+        'd3_median_cm', median(d3), 'd3_p95_cm', prctile(d3, 95), 'd3_max_cm', max(d3));
+    fprintf('  %2d random positions: stage zero std %.2f deg, |deviation| P95 %.2f deg (max %.2f); D3 mean error median %.2f, P95 %.2f, max %.2f cm\n', ...
+        Ns(k), R.random(k).zero_std_deg, R.random(k).zero_abs_dev_p95_deg, R.random(k).zero_abs_dev_max_deg, ...
+        R.random(k).d3_median_cm, R.random(k).d3_p95_cm, R.random(k).d3_max_cm);
+end
+fprintf('  all %d positions: %.2f deg; D3 with the stage zero of the paper (%.1f deg): %.2f cm; D3 at +/-0.5 deg: %.2f / %.2f cm\n', S, R.all_deg, ...
+    cfg.offset_deg, R.d3_mean_cm_paper_zero, interp1(grid, e3, cfg.offset_deg - 0.5), interp1(grid, e3, cfg.offset_deg + 0.5));
+end
+
+function a = zero_fit(D, rss, sel, cfg, p)
+[~, a] = pp_shape('fit', D.truth, D.theta, rss, sel, cfg.nominal_offset_deg, cfg.tilt_deg, p);
+end
+
+function e = zero_d3_error(a, D3, jf, cfg, p3)
+E = pp_estimate('SQ', 'NLS', D3.rss(:, :, jf), D3.theta, a, cfg.tilt_deg, p3);
+e = mean(100*vecnorm(E.r - D3.truth), 'omitnan');
 end
 
 %% ------------------------------------------------------------------------------------------------------

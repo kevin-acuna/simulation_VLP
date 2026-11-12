@@ -27,20 +27,18 @@
 \begin{document}
 \title{3-D Visible Light Positioning With a Single LED and a Single Reorientable Photodiode: Bounds, Calibration, and Experimental Validation}
 \author{Author names and affiliations to be confirmed}
-\markboth{IEEE Transactions on Instrumentation and Measurement --- Working Manuscript}{Single-LED, Single-PD 3D Positioning With a Reorientable Receiver}
+\markboth{IEEE Transactions on Instrumentation and Measurement}{Single-LED, Single-PD 3D Positioning With a Reorientable Receiver}
 \maketitle
 \begin{abstract}
-% Commented for later review (user, 2026-11-02)
-% Single-LED visible light positioning (VLP) is attractive where only one luminaire is in view and for lightweight receivers such as drones, but a single received signal strength (RSS) cannot fix a three-dimensional (3D) position. This paper estimates the 3D position of a tilted photodiode (PD) reoriented to a few known orientations under one fixed LED: the shape of the RSS over the orientations gives the direction to the LED, and their common amplitude gives the distance through a calibrated LED model. A Fisher-information analysis for an arbitrary receiver response guides the choice of the tilt, and maximum-likelihood and ratio-based estimators are derived for a general response, including the SQ model of commercial PDs. On a room-scale testbed with the LED at 3~m, the mean 3D error is 3.66~cm over 125 positions at five heights and 4.10~cm over 131 blind random positions with five orientations. Nine calibration points, 10~ms of signal per orientation and a few milliseconds of computation per position suffice.
+Visible light positioning (VLP) with a single light-emitting diode (LED) is attractive where only one luminaire is in view, but a single received signal strength (RSS) measurement cannot determine a three-dimensional (3D) position. Existing centimeter-level systems that reorient a single photodiode (PD) estimate a two-dimensional position at a known height and assume a cosine response. This paper estimates the 3D position of a tilted PD from the RSS measured at a few known orientations under one fixed LED: their normalized profile gives the direction to the LED, and their common amplitude gives the distance through a calibrated LED model. A position error bound for an arbitrary receiver response, extended to orientation errors, yields two rules for the tilt of the PD. Maximum-likelihood and ratio-based least-squares estimators are derived for a general response, including the Square model of commercial PDs. Being model-based, they require neither fingerprints nor training: nine measurements calibrate the LED model, and nine known positions the orientation reference. On an automated testbed with a ceiling-mounted LED 3~m above the floor, the mean 3D error is 3.66~cm over 125 positions at five heights, and 4.10~cm over 131 random positions estimated live with five orientations. The response model is decisive (77~cm with the cosine response), the remaining error stems from model mismatch, notably the non-Lambertian LED pattern, rather than from noise, and 10~ms of signal per orientation suffice.
 \end{abstract}
 \begin{IEEEkeywords}
-% Commented for later review (user, 2026-11-02)
-% Cram\'er--Rao bound, photodiode, received signal strength (RSS), single LED, visible light positioning (VLP).
+Cram\'er--Rao bound, photodiode, received signal strength (RSS), single LED, visible light positioning (VLP).
 \end{IEEEkeywords}
 
 \section{Introduction}
 \label{sec:introduction}
-% \input{sections/01_introduction}  % commented for later review (user, 2026-11-02)
+\input{sections/01_introduction}
 
 \section{System and Measurement Model}
 \label{sec:model}

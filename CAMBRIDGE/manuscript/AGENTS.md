@@ -249,8 +249,8 @@
 - L (records averaged per orientation) REMOVED everywhere: one RSS per orientation, sigma_i = standard deviation of
   the RSS at orientation i; W = diag(1/sigma_i^2), w_i = 1/sigma_i^2. Do not reintroduce L.
 - "shape" is no longer used: concept = "normalized RSS profile" (the K signals divided by their common amplitude
-  beta, defined once in II-B); test = "profile-consistency test" (IV-B; "consistency test" in Table II; Fig. 12
-  legend "Profile residual"). Do not use "pattern" for it (reserved for the LED radiation pattern). Labels
+  beta, defined once in II-B); test = "profile-consistency test" (IV-B; "consistency test" in Table II). fig_integrity
+  (legend "Profile residual") is commented out of the paper since 2026-11-02. Do not use "pattern" for it (reserved for the LED radiation pattern). Labels
   eq:shape / subsec:shape unchanged.
 - SNR_i = s_i^2 / sigma_i^2 (power ratio), 10 log10 in dB (dB values unchanged); the required window is inversely
   proportional to the SNR.
@@ -268,8 +268,276 @@
   Woodbury form, joint ML Monte Carlo attains the bound (ratio 1.01 / 0.99); taking the reported normals as exact
   is 17 % above the bound for independent errors and equal to it for common ones (consistent with VII-B).
   Matches rx_pose_error_peb.m ('independent' in III-E and VII-A, both structures in VII-B).
+- Fixed after the L removal (2026-11-11): III-C "only when the record duration per orientation is fixed"; Appendix C
+  LM scaling matrix renamed S = diag(J'J) (D is the orientation sensitivity of III-D / Appendix B).
+- III-E REWRITTEN (user approved, 2026-11-11: keep 45 deg, add a table, panel (d) versus SNR). It is a NOMINAL design
+  scenario, not the testbed: Table I (tab:scenario) = LED 3 m pointing down, half-power 45 deg (m = 2), PD over
+  X, Y in [-1, 1] m (0.1 m) and Z 0-1.8 m (0.3 m), 3,087 positions, phi_max 49.7 deg, SQ psi_3dB 0.61 rad
+  (Bastiaens2020, "a commercial amplified PD"), reference SNR 50 dB (untilted PD on the floor below the LED; power,
+  PD area and noise enter the bound only through A/sigma, so NO P_f and NO PD area in III-E), K = 5 uniform cone,
+  sigma_theta 0 / 0.5 / 1 / 2 deg independent, coverage PEB <= 10 cm. part_sim sets the noise from snr_ref_db = 50;
+  panel (d) = median PEB versus reference SNR 20-70 dB (R.snr), legend sigma_theta = 0 (no "Noise only"), panel (b)
+  titled sigma_theta = 1 deg; caption: dotted = theta 15 deg in (a), (b) and nominal values in (c), (d).
+  Numbers (paper_numbers.json "sim"): K = 5 full coverage from 5 / 8.5 / 14.5 deg (sigma 0 / 0.5 / 1), K = 10 from
+  10 deg, K = 3 max 98.5 %, sigma 2 deg never for K <= 10; median at 15 deg 1.06 (sigma 0) / 5.69 cm (1 deg), max
+  9.59 cm, by height 6.46 (floor) - 5.07 cm (1.8 m); all lit up to 15 deg (64.6 - 49.7), 90 % at 30 deg; coverage
+  98.3 % at 45 deg; minimum median 4.20 cm at 30.5 deg (26 % below 15 deg); LED half-power >= 40 deg (22.5 with
+  sigma 0); SNR sweep sigma 1 deg: 12.2 / 6.91 / 5.69 / 5.44 / 5.39 cm at 30 / 40 / 50 / 60 / 70 dB (sigma 0: factor
+  sqrt(10) per 10 dB). Text ends with two DESIGN RULES (tilt large enough for the orientation uncertainty; theta <=
+  response support - phi_max) and "the receiver of the experiments is built with theta = 15 deg".
+  Sensitivity checked in %TEMP%/zconv/sim_alt.m: 45 deg / 53.5 dB (old) and 60 deg / 50 dB give the same picture.
+- III-E, second pass (user, 2026-11-11): the first paragraph must NOT repeat the values of Table I (it only explains
+  the choices: published SQ response, SNR as the single link-budget number, uniform cone, coverage); Table I gained
+  "Support of the response 64.6 deg" and "Number of orientations K: 3 to 10 (nominal: 5)". KEPT.
+- III-E, third pass (user, 2026-11-12): the panel "smallest tilt with full coverage versus K", its paragraph on the
+  number of orientations and the third design rule were REMOVED (the user preferred the previous version and could
+  not restore it). Do NOT add them again. Current state: fig_sim = 1 x 4 panels (a median vs tilt, b coverage vs tilt
+  for K = 3 / 5 / 10 + all lit, c coverage vs LED half-power angle, d median vs reference SNR); K is only discussed
+  in the tilt paragraph ("More orientations relax this requirement, down to 10 deg for K = 10, whereas three
+  orientations never cover more than 98.5 %"); TWO design rules; part_sim uses Ks = [3 4 5 6 8 10] and has no
+  R.orientations. Restore script: %TEMP%/zconv/revert_kpanel.py.
+- VII-A now applies the rules to the TESTBED (paper_numbers.json peb.tilt_window, D2 positions, calibrated model,
+  measured noise): LED half-power 26.8 deg (m 6.09), seen up to 37.6 deg -> all lit up to ~27 deg; K = 5: bound
+  <= 10 cm everywhere from 8.5 deg (sigma 0.5) / 18.5 deg (sigma 1); at 15 deg and sigma 1: 95.2 % with K = 5,
+  100 % with K = 10; median only 27 % lower at 35 deg. Never claim that the nominal scenario IS the testbed or that
+  15 deg gives full coverage of the testbed with K = 5 at 1 deg.
+- Tables are now: I scenario (III-E), II datasets, III model parameters, IV response models, V ablation, VI LEDs,
+  VII timing (all via \ref).
 - IEEEtran appendices: \section[short]{title} FAILS (no optional argument); for a blue title use
   \section{\texorpdfstring{\add{Title}}{Title}}.
+
+## Readability polish (user, 2026-11-12) - tracked with \add / \del, script %TEMP%/zconv/polish_text.py
+- Request: paper readable for a newcomer, no undefined term, no unjustified equation, NOT ultra-detailed (reads as
+  AI-generated), human style, length under control, add a figure only if it helps. Before this pass the user had
+  accepted every earlier tracked change (files were free of \add / \del).
+- Terms now defined at first use: S^2 (unit sphere), RMS, Square (SQ) model of Bastiaens2020 ("a function of the
+  square of the incidence angle"), support of the response, SNR, PEB (lower bound on the RMS position error of any
+  unbiased estimator), IMU (first use is III-D), CAD, FFT, CDF, apparent order. "site" -> "position" everywhere
+  (text, captions, fig_cdf legend).
+- Justifications added: (9) holds "for a tone well above this noise"; III-A direction information is proportional
+  to the slope Rdot (the old "therefore" after the SQ formula was a non sequitur); III-B rank condition now derived
+  (ds_i/dln beta = beta R, ds_i/d omega' = beta Rdot n_i'E, map r -> (ln beta, omega) invertible); "homogeneity"
+  jargon removed.
+- FACTUAL FIXES: D3 random positions were drawn in X, Y in [0.1, 1.3] m (NOT [0, 1.4]; data 0.115-1.291 m,
+  paper_numbers.json random.test_xy_range_m). VI-G: the old explanation ("edges ... which the regular grid samples
+  less densely") was not supported (D2 has MORE border points than D3); now a measured statement: 5.2 cm on average
+  within 0.15 m of the border against 3.4 cm elsewhere (random.test_border), stage zero not refitted on D3.
+  (For reference: D2 K = 10 border 3.88 / interior 3.26 cm.) VII-A "several such sources" -> "two".
+- NEW FIGURE fig_response.pdf (part 'response', needs grid_results.mat; Fig. 8 in VI-C, label fig:response): cos,
+  cos^1.9 and SQ curves + the 1,250 RSS of D2 divided by the amplitude fitted at each position with SQ. Incidence
+  angles of D2 1.8-52.3 deg (median 22.3); normalized RSS / SQ - 1: rms 0.81 %, max 5.0 % (paper_numbers.json
+  response).
+- Order of floats: fig:calibration is first cited in VI-B, so its float now sits after fig:maps (Fig. 7); V-A cites
+  Section V-C instead of Table III (which was cited before Table II). Figures: 1 system, 2 sim, 3 testbed,
+  4 receiver, 5 spectrum, 6 maps, 7 calibration, 8 response, 9 height, 10 cdf, 11 random, 12 bound, 13 orient,
+  14 window.
+- Appendix C notation (clashes removed): sphere step norm kappa (rho is the profile residual), LM Jacobian G (J is
+  the position Jacobian), scaling S, model ratios z_bar_i(u) (q_i is used in IV-B), constraint matrix B (A is the
+  gain), LED axis written -n_t (no symbol q). Solver constants (lambda schedule, tolerances, 80 iterations, seed
+  angles, ambiguity thresholds) and the Python/MATLAB agreement sentence struck out as over-detailed.
+- Other trims: VI-C "(without this fit ...)", V-C index formula of the subsets, VII-D timing numbers that repeat
+  Table VII; rhetorical phrases removed ("Read in reverse, the method diagnoses the installation", "not a
+  refinement but", "a property of the actuator, not of the method"). The user dislikes semicolons used to glue
+  clauses (they replaced one by a comma): prefer "whereas" / a new sentence.
+- Not touched: abstract and Introduction are still commented out in main.tex (only "an profile" -> "a profile",
+  SQ defined, and "shape" -> "normalized RSS profile" inside the commented abstract).
+
+## Error under the LED, contributions vs Wang2024, ISAC (user, 2026-11-12) - script %TEMP%/zconv/contrib_edit.py
+- USER QUESTION: why is the error LARGER close to the LED axis and smaller far from it? Study = MATLAB part 'axis'
+  (paper_numbers.json "axis", needs grid_results.mat + peb_results.mat) + temp scripts %TEMP%/zconv/axis_study*.m.
+  D2 (K = 10) by emission angle phi (0-10 / 10-15 / 15-20 / 20-25 / 25-30 / 30-40 deg): 3D error 5.23 / 5.13 /
+  3.17 / 2.79 / 2.70 / 3.03 cm; horizontal 4.22 / 4.20 / 2.20 / 1.49 / 1.32 / 1.27 cm; direction 1.23 / 1.17 /
+  0.63 / 0.56 / 0.49 / 0.35 deg; vertical bias about the same everywhere (-0.7 to -2.0 cm). phi < 15 deg: 5.18 cm
+  (42 positions), phi >= 20 deg: 2.81 cm (65). Noise-limited bound is LOWEST near the axis (0.72 vs 1.84 mm).
+  Two mechanisms (both in VI-D, new blue paragraph):
+  (1) LED pattern mismatch (the user's hypothesis, CONFIRMED): fitted amplitude / calibrated cos^m model at the true
+      positions of D2 = -3.5 / -3.6 / -1.9 / +0.6 / +1.5 / -0.8 %; the flat scan D1 gives the same curve at the same
+      emission angles (-2.0 / -3.6 / -1.8 / +1.3 / +1.7 / +0.4 %, correlation 0.81 over the 125 positions); -3.6 %
+      alone = +3.8 cm in range.
+  (2) Weak profile contrast near the axis (NOT a pattern effect, the direction does not use the LED model): all the
+      orientations see the LED at about the tilt angle, the normalized RSS profile varies by 15 % (phi < 15) vs 49 %
+      (phi >= 20), so the same sub-percent model errors (response, stage zero, LED position) give 1.2 deg instead of
+      0.5 deg. Direction error alone = 2.63 cm on average, range error alone = 2.07 cm.
+  Height trend = same thing: 10 / 9 / 8 / 8 / 7 of 25 positions within 15 deg from the lowest to the highest level.
+  Diagnostics NOT in the paper: empirical D1 pattern in the range stage does not help overall (3.82 vs 3.66 cm;
+  better below 20 deg, worse beyond); LED at the geometric position (305.6, 890.3) mm: 3.06 cm, near-axis 5.2 -> 3.5 /
+  4.3 cm; empirical response correction c(psi) learned on D2 (normalized RSS / SQ = +1.5 % below 5 deg, -0.7 % at
+  20-25 deg, -4.3 % above 50 deg): D2 3.39 cm, D3 4.00 cm. Cited Ding2016 (IEEE Photon. J. 8(1), real LED patterns
+  are not Lambertian; DOI verified).
+- CONTRIBUTIONS vs Wang2024 (TIM, single tilted rotatable PD): they have a 2-D CRLB at KNOWN height with cos(psi),
+  N = 4 uniform rotations, linear LS on ratios + grey-wolf search over a simulated fingerprint database, 50 x 50 x
+  30 cm scaled setup, manual stage (2 deg), 25 positions, and an empirical RSS model C2 (u1.u2) / d^C1 fitted to
+  the test data (they note themselves that real lamps are not Lambertian). Ours: 3-D with unknown height; bound for
+  a GENERAL response (SQ) + orientation uncertainty (independent / common) + design rules; estimators NLS (ML),
+  ratio GLS / WLS for SQ (nonlinear) and closed form for cos / cos^n (adapted from Acuna2026: say "adapted", do not
+  claim them as new); direction available without LED calibration (pointing toward the LED: stated as a use, NOT
+  demonstrated); any known normals (252 irregular subsets); room-scale automated testbed, blind live test, four
+  LEDs; calibration budget; measured LED-pattern mismatch.
+- IV-A now PRESENTS the ratio estimators with a displayed equation (eq:ratio-fit, u = argmin (z - zbar(u))' Cz^-1
+  (z - zbar(u))), GLS = full Cz, WLS = diagonal; cosine power (incl. Lambertian m_R = 1) = eigenvectors [Acuna2026],
+  SQ = minimized on the sphere like NLS. Appendix C gained the first-order expansion behind Cz and "for m_R = 1
+  with equal weights the linear fit is the NLS solution itself". Non-uniform orientations: verified, stated in
+  II-A, IV-A, V-A, VI-E and VIII (no change needed).
+- ISAC: VII-D says the ~10 ms tone could be embedded as a pilot in the frames of an optical wireless link (ISAC,
+  cites Ma2022, IEEE TCOM 70(10), DOI verified), future work; one clause in the conclusion.
+- Introduction (still commented out in main.tex): contribution 2 rewritten (NLS / GLS / WLS, SQ nonlinear, closed
+  form for cosine powers, direction without LED calibration, pointing), contribution 4 mentions the pattern
+  mismatch. Old item kept as a LaTeX comment.
+
+## Introduction REWRITTEN FROM SCRATCH (user, 2026-11-12) - sections/01_introduction.tex, all in \add{}
+- Request: do not reuse the previous introduction; natural, human prose; context -> problem -> our solution; list the
+  most relevant contributions; brief (reference for length and level of explanation: the introduction of Wang2024,
+  about 1,100 words); based on a new literature search and on CAMBRIDGE/papers. Scripts %TEMP%/zconv/intro_rewrite*.py;
+  the previous text is in git (commit 51754b36) and in %TEMP%/zconv/01_introduction_before_rewrite.tex.
+- main.tex: \input{sections/01_introduction} is ACTIVE again (abstract and keywords are still commented out by the
+  user). Section II no longer redefines PD, RSS and SQ (defined in the introduction). The introduction has NO
+  semicolons (the user replaces them) and no table.
+- Structure (about 1,220 words, 28 references, 1.4 pages): (1) indoor positioning, radio vs VLP, RSS of a PD;
+  (2) trilateration needs 3-4 lamps in view -> single LED is useful but one RSS cannot give three coordinates;
+  (3) camera [Hussain2022] and multi-PD receivers [Yang2014, Yu2018, Qin2020, Qin2021, Chen2021, Li2024, Ma2024]:
+  experimental errors about 1-9 cm, price = several detectors/channels to match; (4) single reoriented PD: origin
+  Huang2015 (tilted PD on a rotating platform, < 2.5 cm in 0.6 x 0.6 x 1.1 m), rotating arm [Liu2022, Shi2025],
+  tilted PD in place [Wang2024, Shi2026], smartphone turned by hand [Zhuang2024, sub-meter], diversity at the lamp
+  [Chassagne2025, Acuna2026] in ONE neutral clause; (5) open questions: 2-D at known height, cosine response vs
+  commercial PDs [Bastiaens2020] and non-Lambertian lamps [Ding2016], uniform and exactly known orientations,
+  learned models / stochastic search, bench-scale experiments (about 0.5 m areas, about 1 m or less to the lamp, a
+  few tens of positions); (6) this paper + drone [Bastiaens2021: a single PD is inherently lightweight];
+  FIVE contributions (itemize): 3-D formulation and bound with orientation errors and two tilt rules; estimators
+  for a general response (ML NLS + ratio GLS / WLS, closed form of Acuna2026 for cosine powers, iterative for SQ,
+  direction without LED calibration -> the receiver can turn toward the lamp); calibration with little data
+  (profile-consistency test + nine flat-PD points); experimental validation (3.66 / 4.10 cm, three other lamps,
+  position and tilt of each lamp revealed); analysis of limits and requirements (77 cm with cosine, model errors and
+  non-Lambertian lamp rather than noise, non-uniform orientations, 0.2 deg, 10 ms); outline.
+- New bib entries, metadata verified on the web (2026-11-12): Huang2015 (ICOCN, 10.1109/ICOCN.2015.7203770),
+  Yang2014 (JLT 32(14) 2480-2485), Yu2018 (IEEE Photon. J. 10(6)), Zhuang2024 (Opt. Lett. 49(8) 2105-2108),
+  Hussain2022 (IEEE TIM 71, Art. no. 8505511), Bastiaens2021 (IPIN, drone landing), Bastiaens2024 (COMST 26(4)
+  2867-2913, VLP tutorial). Facts checked in the PDFs of CAMBRIDGE/papers: Liu2022 / Shi2025 / Wang2024 / Shi2026
+  all estimate (x, y) at known height with cos(psi) and uniformly spaced rotations; Shi2025 experiment h = 0.59 m,
+  36 points, 4.96 cm; Wang2024 field test 50 x 50 x 30 cm, 25 positions, manual stage; Shi2026 simulation only.
+- Other contributions checked: the installation diagnosis (LED position / tilt, VI-H) was added to item 4; the
+  dataset itself would be a further contribution ONLY if the user decides to release it (not claimed).
+- Unused bib entries of the previous introduction remain in references.bib (harmless).
+
+## Introduction, revision after the user's comments (2026-11-12, second round) - %TEMP%/zconv/intro_revise.py
+- The user APPROVED the rewritten introduction ("me parece muy bien") and asked for: (0) more formal / technical
+  wording for TIM; (1, 3) say that fingerprinting / ML / neural networks need an extensive training phase tied to
+  one environment (retraining when it changes), whereas we use a basic calibration of few parameters -> fast
+  deployment; (2) with one LED only one luminaire has to be calibrated; (4) make clear which works are 2D and which
+  are 3D, and why 3D matters.
+- MARKING: the text the user had read is now BLACK; only this round is tracked (red \del / blue \add). The script
+  asserts that the text without the additions equals the version read (copy in
+  %TEMP%/zconv/01_introduction_v1_read_by_user.tex). If the user prefers the whole introduction in blue, re-wrap.
+- Content now (about 1,500 words, 30 references, 7 paragraphs + 5 items + outline): "lamp" -> "luminaire" (fixture)
+  or "LED"; P2 each luminaire needs "its own identifier and its own calibration" [Bastiaens2020: per-LED fit], with
+  one LED "only one luminaire has to be visible, identified and calibrated"; P3 multi-PD receivers split into 3D
+  (Yang2014, Qin2020 simulation, Li2024 < 6 cm, Ma2024 1.77 cm) and 2D on a known plane (Qin2021 9.27 cm,
+  Chen2021 0.92 cm); P4 the four single-PD systems are 2D at known height, Zhuang2024 3D sub-meter, beam steering
+  2D [Chassagne2025] / 3D [Acuna2026]; P5 THREE LIMITATIONS: (i) dimension (2D fine for a floor vehicle, not for a
+  drone / hand-held device [Plets2019], height error propagates to x, y); (ii) training data (Glass2021: ML better
+  with a large data set, model-based better with few measurements; Ma2024: 45,000 samples at 2,250 positions;
+  Plets2019: cm-granularity fingerprint map impractical in 3D; re-recording when luminaire / receiver / surroundings
+  change; Rekkas2023: cost of training) = "a major obstacle to deployment outside the laboratory" (NOT "infeasible":
+  Glass2021 automates the collection and ML wins with large data, do not overclaim); (iii) models and validation
+  (cosine response, non-Lambertian luminaires, uniform and exact orientations, bench scale); P6 this paper:
+  model-based, no fingerprints / training, few parameters calibrated from a few measurements under one luminaire.
+- 2D / 3D classification: verified in the PDFs for Qin2020 (3D, simulation), Qin2021 (2D, (x_r, y_r) on a floor
+  grid of 361 points), Ma2024 (3D), Liu2022 / Shi2025 / Wang2024 / Shi2026 (2D, known height), abstracts for
+  Yang2014 (3D incl. height) and Zhuang2024 (3D); Chen2021 (2D) and Li2024 (3D) are taken from Table I of the
+  published TCOM paper (full texts not accessible) -> the user was asked to confirm.
+- NEW RESULT backing "few measurements": the stage zero was calibrated on all 125 positions of D2, which a reviewer
+  could call a survey of the volume. MATLAB part 'zero' (paper_numbers.json "zero", needs grid_results.mat and
+  random_results.mat): fitted on the 3 x 3 grid (X, Y = 0.1 / 0.7 / 1.3 m) at ONE height: 66.22 / 66.53 / 66.48 /
+  66.80 / 66.76 deg, D3 mean error 4.12 / 4.10 / 4.10 / 4.11 / 4.10 cm; 9 random positions: std 0.30 deg, D3 P95
+  4.18 cm (max 4.37); 5 random: P95 4.30, max 4.99 cm; 25 random: P95 4.12 cm; D3 at 66.5 +/- 0.5 deg: 4.15 /
+  4.13 cm. A single position is NOT enough (std 2.3 deg, worse near the LED axis). Added: VI-F (new paragraph),
+  VIII (one sentence), contribution 3 ("the orientation reference from nine known positions"). Complete calibration
+  = 9 flat-PD points (LED x, y, A, m: Table VI, 3.47 cm) + 9 known positions (stage zero) + tape for the heights.
+
+## Abstract, conclusion, introduction accepted (user, 2026-11-12) - %TEMP%/zconv/abstract_conclusion.py
+- Introduction: the user APPROVED it; every \add / \del was accepted (plain black text, about 1,520 words, no
+  semicolons). Do not re-mark it; track only future edits.
+- Abstract written in main.tex (in \add{}, 248 words: IEEE limit 250; one paragraph, no citations): single-LED problem ->
+  existing centimeter-level single-PD systems are 2D at known height, cosine response, bench scale ("centimeter-level"
+  on purpose: Zhuang2024 is 3D but sub-meter) -> method (normalized RSS profile = direction, common amplitude =
+  distance) -> bound for arbitrary response and orientation errors, two tilt rules -> ML and ratio-based LS
+  estimators for a general response incl. the Square model -> model-based, no fingerprints / training; nine flat-PD
+  measurements suffice for the LED model and nine known positions for the orientation reference (stated as what
+  SUFFICES, the reported 3.66 / 4.10 cm use the full calibration of Table III) -> 3.66 cm (125 positions, five
+  heights) and 4.10 cm (131 random positions, live, five orientations), LED 3 m above the floor -> 77 cm with the
+  cosine response, error from model mismatch (non-Lambertian LED) rather than noise, 10 ms per orientation.
+  The previous draft is kept as a LaTeX comment inside the abstract environment. Index Terms are STILL commented
+  out by the user (not touched).
+- Conclusion (tracked, 3 paragraphs): added "including its height", the two tilt rules, model-based estimators
+  without fingerprints / training, "LED 3 m above the floor", nine known positions for the angular zero, error
+  largest below the LED (pattern departs from the Lambertian model + weak contrast of the profile), orientations
+  need not be uniform but must be known to about 0.2 deg; "averaging" -> "a longer observation" (L was removed);
+  the two semicolons replaced by full stops. The pending addition on the pilot tone (ISAC) is kept in blue.
+
+## Introduction: third round (trim) and contribution list without exact values (user, 2026-11-12)
+- Scripts %TEMP%/zconv/intro_trim.py (third round) and intro_contrib.py (fourth round).
+- Third round = optional remarks of the user ("the simplest" wording, layout dependence of multi-LED systems, "Some
+  of these receivers resolve the 3D position [one ref]" too open, slightly shorter introduction and abstract).
+  intro_trim.py wrote the tracked edits and then crashed on the abstract check (the user had already accepted the
+  abstract, no \add wrapper), so that round was NOT compiled or reported. The user then resolved the marks BY HAND:
+  - ACCEPTED: "places the lowest demands on the hardware, as" (was "is the simplest, since"); satellite clause
+    removed; ", which makes the positioning dependent on the lighting layout"; "and only one at a time is visible
+    along a corridor or to a receiver with a narrow field of view"; ", regardless of the layout of the existing
+    installation"; the Shi2026 comparison sentence removed; "as provided by the single-PD systems above" removed;
+    "but not when only a few measurements are"; "and recorded again whenever"; ": its few parameters are".
+  - REJECTED (do not propose again): deleting ", so that positioning and communication can share one
+    infrastructure" (P1, the ISAC link stays) and the shorter replacement of the 3D multi-PD sentences of P3 (the
+    original three sentences stay, starting with "Some of these receivers resolve the 3D position [Yang2014]").
+  - Abstract: approved by the user (black), 233 words, without the bench-scale clause, "with the PD facing up" and
+    "of the receiver". Index Terms are active. The title now starts with "3-D" (user).
+- Fourth round: the user doubted that a contribution list should give exact values as if they were results.
+  Checked in CAMBRIDGE/papers: Wang2024 (TIM, five items), Liu2022, Shi2025, Shi2026 and Bastiaens2020 give NO
+  figures in their lists (at most "centimeter-level"); only Ma2024 does. Items 3-5 re-marked relative to the
+  approved text: item 3 without "nine ... nine" and without "Only one luminaire has to be calibrated" (already in
+  P2 and P7) -> "..., which are then calibrated with the PD facing up"; item 4 "Centimeter-level 3D accuracy is
+  obtained on a grid of positions at several heights and in a blind test at random positions estimated live"
+  instead of 3.66 / 4.10 cm and 125 / 131 positions; item 5 without 77 cm, 0.2 deg and 10 ms -> "The requirements
+  on the orientations, which need not be uniformly spaced, and on the observation time are quantified". Kept:
+  "LED 3 m above the floor" (scale of the setup, answers the bench-scale limitation, not a result), items 1-2.
+  All the figures remain in the abstract and in the conclusion.
+- Leftover \mbox{\cite{..}} of the rejected \del in P3 removed (no visible change).
+- Papers ASKED from the user (claims that rest on abstracts / Table I of the TCOM paper; full texts blocked: Optica
+  captcha, ScienceDirect 403): Huang2015 (ICOCN: 2D or 3D? method? Wang2024 calls it KNN fingerprinting, its
+  abstract says "angle gain difference"; < 25 mm in 600 x 600 x 1135 mm confirmed by the abstract), Chen2021 (Opt.
+  Express: 0.92 cm, single LED and multiple PDs, LSTM-FCN confirmed by the abstract, "2D" not stated there),
+  Li2024 (Opt. Commun.: experiment < 6 cm, multiple tilted PDs confirmed by the abstract, "accuracy across varying
+  heights" does not prove a 3D estimate). Lower priority: Yang2014, Yu2018.
+
+## Prior work verified in the full texts supplied by the user (2026-11-12) - %TEMP%/zconv/intro_verify.py
+- PDFs added to CAMBRIDGE/papers: Visible_light_indoor_positioning_fashioned_with_a_single_tilted_optical_receiver.pdf
+  (Huang2015), oe-29-25-41109.pdf (Chen2021), 1-s2.0-S0030401824001032-main.pdf (Li2024). Text extracts:
+  %TEMP%/zconv/ptxt/*_flow.txt.
+- Huang2015 (ICOCN, 4 pages): LED 1 W at (300, 300, 1135) mm over a 600 x 600 mm optical breadboard; Si PIN PD
+  (Hamamatsu S6968) with its amplifier on a 10 deg tilted stage on a Thorlabs CRM1P rotation mount (5 arcmin);
+  200 kHz tone, RF power read on a spectrum analyzer at azimuths 0 / 90 / 180 deg. The receiver z is KNOWN
+  (97.3 mm) -> only (x, y) is estimated = 2D; LED about 1.04 m above the PD. Method: dB differences between the
+  three powers (the LED power and pattern cancel), each difference is a contour line on a gain-difference map
+  CALCULATED from the model, position = centre of the crossing area (model-based map matching, NOT fingerprints /
+  KNN as Wang2024 describes it). Receiver gain G_r(beta) = exp(-beta^Sr / Kr) (lens, half-power semi-angle), NOT
+  the cosine. 25 points: mean error < 25 mm, max < 68 mm, larger at the corners.
+- Chen2021 (Opt. Express): 1 LED (20 W), receiver with 3 PDs (centre + tilted, receiver of Yu2018), Raspberry Pi;
+  BiLSTM + fully connected network, x and y predicted by two separate networks, error = sqrt(dx^2 + dy^2) -> 2D on
+  one plane ("2-D plane", compared with "2D VLP techniques"); platform 1.0 x 1.1 x 1.75 m, 69 grid points, 42 of
+  them used for training, all 69 tested 6 times: mean 0.92 cm, max < 5 cm (FCN 2.17, SVR 3.17 cm). Its Table 2
+  lists the 9.27 cm of Qin2021 as "simulation": in Qin2021 it is the EXPERIMENTAL result (3 x 3 m, 361 grid points;
+  simulation 4.38 cm), as the introduction implies.
+- Li2024 (Opt. Commun.): 1 LED, 4 PDs (1 horizontal + 3 tilted 20 deg), STM32; fingerprint library + deep residual
+  shrinkage network; loss and error defined with (x, y, z); simulation 3.6 x 3.6 x 3 m: 1.02 cm; experiment at FOUR
+  receiver heights 0 / 0.6 / 1.2 / 1.8 m: mean 5.85 cm at h = 0 (the "below 6 cm" of its abstract; training grid
+  15 cm, test grid 20 cm), about 6.5 / 7.4 / 8.2 cm at the other heights (its Fig. 8b); 7.58 cm with a 20 cm
+  training grid. Not stated whether one network covers all the heights.
+- Consequences (tracked): abstract "..., and most assume a cosine response" (Huang2015 does not); P3 Li2024 "mean
+  3D errors of 6 to 8 cm at four receiver heights" (was "below 6 cm"); P4 Huang2015 "from the ratios of the RSS
+  measured at three rotation angles" and "All five systems estimate a 2D position ..." (was "These four"); P6 "In
+  most single-PD systems [Liu2022, Shi2025, Wang2024, Shi2026], the receiver is described by the ideal cosine
+  response". Unchanged and now verified: the Chen2021 sentence (2D, 0.92 cm, recurrent network), the fingerprint /
+  network list of P5, the bench-scale sentence of P6 (Huang2015: 0.6 m area, about 1 m to the LED, 25 positions).
+- Still resting on abstracts only: Yang2014 (3D, multiple tilted receivers) and Yu2018 (one horizontal + two tilted
+  PDs); both descriptions agree with the introductions of Huang2015, Li2024 and Chen2021.
 
 ## Rebuild from this directory
 
