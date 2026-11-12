@@ -65,7 +65,7 @@ A real-time demonstrator, running the same estimation code, drew random position
 \subsection{Calibration, Protocol and Metrics}
 \label{subsec:protocol}
 \label{subsec:parameters}
-Table~\ref{tab:parameters} lists the parameters of the model, their values and how each was obtained. The LED parameters come only from D1. The receiver response is the published SQ model, selected by the shape test (Section~\ref{subsec:res-model}). The angular zero $\alpha_0$ of the stage is calibrated with the shape test~\eqref{eq:shape} at known positions; the resulting value, $66.5^\circ$, is used for D2 and D3. No parameter is adjusted on D3. Unless stated otherwise, positions are estimated with the SQ response and the NLS estimator~\eqref{eq:nls}--\eqref{eq:range}.
+Table~\ref{tab:parameters} lists the parameters of the model, their values and how each was obtained. The LED parameters come only from D1. The receiver response is the published SQ model, selected by the profile-consistency test (Section~\ref{subsec:res-model}). The angular zero $\alpha_0$ of the stage is calibrated with the profile-consistency test~\eqref{eq:shape} at known positions; the resulting value, $66.5^\circ$, is used for D2 and D3. No parameter is adjusted on D3. Unless stated otherwise, positions are estimated with the SQ response and the NLS estimator~\eqref{eq:nls}--\eqref{eq:range}.
 
 \begin{table}[!t]
  \centering
@@ -83,9 +83,9 @@ Table~\ref{tab:parameters} lists the parameters of the model, their values and h
  Lambertian order $m$ & 6.092 & Staged fit of~\eqref{eq:led-calibration}, D1\\
  PD height & $0.858~\mathrm m+z+e$ & Tape (base), CAD ($e$)\\
  PD elevation $e$ & 96.96~mm & CAD of stage and adapter\\
- Adapter tilt $\theta$ & $15^\circ$ & Design; shape test\\
- Stage zero $\alpha_0$ & $66.5^\circ$ & Shape test~\eqref{eq:shape}, D2\\
- Response & SQ, $\psi_{3\mathrm{dB}}=0.61$~rad & \cite{Bastiaens2020}; shape test\\
+ Adapter tilt $\theta$ & $15^\circ$ & Design; consistency test\\
+ Stage zero $\alpha_0$ & $66.5^\circ$ & Consistency test~\eqref{eq:shape}, D2\\
+ Response & SQ, $\psi_{3\mathrm{dB}}=0.61$~rad & \cite{Bastiaens2020}; consistency test\\
  Noise $\sigma$ & 3.2~$\mu$V per record & Repeated records\\
  \bottomrule
  \end{tabular}

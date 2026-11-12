@@ -113,6 +113,19 @@
   peb and orient use sigma_rep: PEB K=10 1.26 mm (P90 2.69), K=5 1.78 mm, err/PEB 23x, 0.1 deg -> 4.3 mm; SNR over D2
   50-76 dB (median 69 dB), reported in dB only. Spectrum figure without the off-tone dashed line.
 
+- 2026-11-11 (user): NO per-window adjustment of A (calibration never adapted after D1 = no overfitting). part_window
+  now uses G.pf unchanged for every window. K=10: 100 ms 3.66, 50 ms 3.48, 20/10 ms 3.43, 5 ms 3.47, 2 ms 3.59,
+  1 ms 3.73, 10 us 9.38 cm; K=5: 3.73 / 3.54 / 4.04 cm at 100 / 10 / 1 ms. The dip below 100 ms is explained in VII-C
+  in one sentence (projection at nominal frequency loses ~0.5 % over 100 ms; with the 100-ms calibration shorter
+  windows shorten d by ~0.25 % and offset part of the vertical bias) - not a precision gain.
+
+- 2026-11-11 (user, final): observation window = part_window_cal: for each window, A and m are calibrated ONCE on D1
+  processed with the same window (staged fit, LED XY of Table II; cache window_d1_rss.mat), D2 evaluated with it
+  (never adjusted on D2). 100 ms reproduces Table II exactly. K=10: 3.66 (100/50/20 ms), 3.67 (10), 3.69 (5),
+  3.77 (2), 3.81 (1), 9.23 cm (10 us); K=5: 3.73 / 3.75 / 3.79 / 4.11 at 100 / 10 / 5 / 1 ms. Monotonic curve, no
+  frequency-offset explanation needed. Figure from part_window_cal (do NOT rerun part_window_fig, it redraws the
+  fixed-A numbers).
+
 ## Processing time (user, 2026-10-29) - VI-L "Acquisition and Processing Time", Table VI (tab:proc)
 - MATLAB part 'proc' (~25 s): amplitude from a raw D2 record (codes -> volts -> projection at the tone, or full
   FFT; 100 and 10 ms; all threads / 1 thread, timeit) and pd_fit_estimate NLS / GLS / WLS per D2 site (K 10 and 5,
@@ -121,17 +134,17 @@
   records), ~7 ms (10-ms records). ML comparison is framed by training data / training stage / retraining, NOT
   by inference speed (trained ML models can also infer fast; no unsupported numbers about ML).
 
-## Estimators (user, 2026-10-30) - Appendix B (sections/appendix_estimators.tex), Algorithm 1
+## Estimators (user, 2026-10-30) - Appendix C (B until 2026-11-11; sections/appendix_estimators.tex), Algorithm 1
 - Bib key of the published TCOM paper: Acuna2026 (IEEE Trans. Commun. 74, 2026, DOI 10.1109/TCOMM.2026.3742967).
   Cosine-power GLS/WLS (root ratios -> eigenvector) and the NLS objective are CITED to Acuna2026 (transmitter
   steering; receiver order/normals replace LED order/steering vectors); range there came from an extra aligned
   measurement, here from the same K RSS. The general-response (SQ) estimators are the contribution and are
-  derived in Appendix B exactly as implemented in simulations/Receiver models/Bastiaens 2020/Estimators/
+  derived in Appendix C exactly as implemented in simulations/Receiver models/Bastiaens 2020/Estimators/
   pd_fit_*.m (= demo/vlp/estimators.py): y / max|y|; seeds q = -n_t + 32 dirs (20/40/60/80 deg x 45 deg) +
   normals facing the LED; 3 best seeds; LM on the sphere (lambda 1e-3, /3 accept, x10 reject, 80 it, gradient
   1e-10 (1 + cost), step 1e-9); joint NLS in (omega, ln beta); ratio GLS/WLS with reference = argmax y, delta
   covariance diag(var) + var_j z z^T (full / diagonal); ambiguity 1e-12 cost, 1e-3 rad; boundary / rank /
-  amplitude checks. If the code changes, update Appendix B.
+  amplitude checks. If the code changes, update Appendix C.
 - Building: the user's editor auto-compiles into .latex-build at the same time (corrupted aux / missing bbl races).
   Verify in a private directory: -output-directory=%TEMP%\zconv\build, and bibtex with env openout_any=a.
 
@@ -231,6 +244,32 @@
   Integrity (1 PEB comparison, 2 orientation sensitivity, 3 integrity monitoring); VI-D Signal and Time Requirements
   (1 observation window, 2 acquisition and processing time). Old subsections are \subsubsection (run-in headings);
   labels unchanged (subsec:res-*), group labels subsec:res-char / -accuracy / -errors / -requirements.
+
+## Notation / wording decisions (user, 2026-11-11)
+- L (records averaged per orientation) REMOVED everywhere: one RSS per orientation, sigma_i = standard deviation of
+  the RSS at orientation i; W = diag(1/sigma_i^2), w_i = 1/sigma_i^2. Do not reintroduce L.
+- "shape" is no longer used: concept = "normalized RSS profile" (the K signals divided by their common amplitude
+  beta, defined once in II-B); test = "profile-consistency test" (IV-B; "consistency test" in Table II; Fig. 12
+  legend "Profile residual"). Do not use "pattern" for it (reserved for the LED radiation pattern). Labels
+  eq:shape / subsec:shape unchanged.
+- SNR_i = s_i^2 / sigma_i^2 (power ratio), 10 log10 in dB (dB values unchanged); the required window is inversely
+  proportional to the SNR.
+- Sections II-IV stay generic: device values of the PDA100A2 (psi_3dB 0.61 rad, zero at 64.6 deg, m_R 1.9) are in
+  VI-C, NOT in II-C or V-A (V-A = hardware only); III-E quotes 0.61 rad / 64.6 deg as "a commercial amplified PD".
+  Kept on purpose in II-B: "The receiver of this work has neither a filter nor a concentrator" (user wants it so).
+- III-D rewritten + NEW Appendix B (sections/appendix_orientation.tex, label app:orientation): true normals =
+  unknown small rotations eta (NOT omega = tangent coordinates of u, NOT delta = displacement of App. A), sensor
+  reading eta_hat = eta + e, e ~ N(0, Sigma_theta); joint FIM of (r, eta), Schur complement + matrix inversion lemma
+  -> I_e = J'(W^-1 + D Sigma_theta D')^-1 J, D = ds/d eta'. Independent: row block beta Rdot u'E_i -> effective
+  variance sigma_i^2 + sigma_theta^2 beta^2 Rdot^2 sin^2 psi (= sigma_theta^2 (ds_i/dpsi_i)^2); common rotation:
+  rows beta Rdot (n_i x u)', Sigma_theta = sigma_theta^2 I_3, full matrix. Cited: Kay1993 (also at the FIM of
+  III-A) and Shen2022 (TWC, VLP with prior information on the orientation, HCRB), both copied from the TCOM bib.
+  Verified numerically (%TEMP%/zconv/check_orient_fim.py): gradients and D vs finite differences (1e-10), Schur =
+  Woodbury form, joint ML Monte Carlo attains the bound (ratio 1.01 / 0.99); taking the reported normals as exact
+  is 17 % above the bound for independent errors and equal to it for common ones (consistent with VII-B).
+  Matches rx_pose_error_peb.m ('independent' in III-E and VII-A, both structures in VII-B).
+- IEEEtran appendices: \section[short]{title} FAILS (no optional argument); for a blue title use
+  \section{\texorpdfstring{\add{Title}}{Title}}.
 
 ## Rebuild from this directory
 

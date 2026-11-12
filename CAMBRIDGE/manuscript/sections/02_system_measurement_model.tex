@@ -30,9 +30,9 @@ Under line-of-sight (LOS) propagation and a Lambertian point source~\cite{Kahn19
  H_i(\vect r)=\frac{(m+1)A_{\mathrm{PD}}}{2\pi d^2}\cos^{m}(\phi)\,T_s(\psi_i)\,g(\psi_i)\,R(\psi_i),
  \label{eq:channel}
 \end{equation}
-where $A_{\mathrm{PD}}$ is the active area of the detector, $m=-\ln2/\ln(\cos\Phi_{1/2})$ the Lambertian order of the LED with half-power semi-angle $\Phi_{1/2}$, $T_s(\psi)$ and $g(\psi)$ the gains of an optical filter and of an optical concentrator~\cite{Kahn1997}, and $R(\psi)$ the normalized angular response of the receiver introduced below. The model holds for $0\le\phi<\pi/2$ and $R(\psi_i)>0$; otherwise $H_i=0$. Reflections are neglected, and noise is introduced in Section~\ref{subsec:observations}. The receiver of this work has neither a filter nor a concentrator, so $T_s(\psi)=g(\psi)=1$ in the following; a constant transmission would in any case be absorbed by the calibrated gain introduced below.
+where $A_{\mathrm{PD}}$ is the active area of the detector, $m=-\ln2/\ln(\cos\Phi_{1/2})$ the Lambertian order of the LED with half-power semi-angle $\Phi_{1/2}$, $T_s(\psi)$ and $g(\psi)$ the gains of an optical filter and of an optical concentrator~\cite{Kahn1997}, and $R(\psi)$ the normalized angular response of the receiver introduced below. The model holds for $0\le\phi<\pi/2$ and $R(\psi_i)>0$; otherwise $H_i=0$. Reflections are neglected, and noise is introduced in Section~\ref{subsec:observations}. The receiver of this work has neither a filter nor a concentrator, so $T_s(\psi)=g(\psi)=1$ in the following.
 
-The LED is intensity-modulated by a sinusoidal tone of frequency $f$, so that its optical power is $P_t(t)=\bar P_t+P_f\cos(2\pi ft)$, where $P_f$ is the amplitude of the modulated component. The PD converts the collected power into a photocurrent with responsivity $\gamma$ (in A/W), and its amplifier converts this current into a voltage with transimpedance gain $G_{\mathrm T}(f)$ (in V/A) at the tone frequency~\cite{Komine2004}. The quantity actually measured is the RMS amplitude of the tone in this voltage, extracted by a lock-in projection (Section~\ref{subsec:observations}). Its noiseless value at orientation $i$, the signal $s_i$, is:
+The LED is intensity-modulated by a sinusoidal tone of frequency $f$, so that its optical power is $P_t(t)=\bar P_t+P_f\cos(2\pi ft)$, where $P_f$ is the amplitude of the modulated component. The PD converts the collected power into a photocurrent with responsivity $\gamma$ (in A/W), and its amplifier converts this current into a voltage with transimpedance gain $G_{\mathrm T}(f)$ (in V/A) at the tone frequency. The quantity actually measured is the RMS amplitude of the tone in this voltage, extracted by digital lock-in detection (Section~\ref{subsec:observations}). Its noiseless value at orientation $i$, the signal $s_i$, is:
 \begin{equation}
  s_i(\vect r)=\frac{\gamma\,G_{\mathrm T}(f)\,P_f}{\sqrt2}\,H_i(\vect r)
  =\frac{A\cos^{m}(\phi)}{d^2}\,R(\psi_i),
@@ -51,7 +51,7 @@ Model~\eqref{eq:rss-model} has a separable structure that the rest of the paper 
  \beta(\vect r)=\frac{A\cos^{m}(\phi)}{d^2}.
  \label{eq:separable}
 \end{equation}
-The shape of the $K$ signals, $R(\psi_i)$ up to a common factor, depends only on the direction $\vect u$, through $\cos\psi_i=\vect n_i\trans\vect u$; the common amplitude $\beta$ carries the distance. The LED gain and radiation pattern enter only through $\beta$. When the dependence on $\vect u$ must be explicit, we write $R(\vect n_i\trans\vect u)$ for the response at the incidence angle $\arccos(\vect n_i\trans\vect u)$.
+The normalized RSS profile, that is, the $K$ signals divided by their common amplitude $\beta$, equals $[R(\psi_1),\ldots,R(\psi_K)]\trans$ and depends only on the direction $\vect u$, through $\cos\psi_i=\vect n_i\trans\vect u$; the common amplitude $\beta$ carries the distance. The LED gain and radiation pattern enter only through $\beta$. When the dependence on $\vect u$ must be explicit, we write $R(\vect n_i\trans\vect u)$ for the response at the incidence angle $\arccos(\vect n_i\trans\vect u)$.
 
 \subsection{Receiver Angular Response}
 \label{subsec:response}
@@ -62,19 +62,19 @@ The dimensionless function $R(\psi)$, with $R(0)=1$, is the effective angular re
  a=\frac{1-1/\sqrt2}{\psi_{3\mathrm{dB}}^2},
  \label{eq:sq-response}
 \end{equation}
-where $[\cdot]_+=\max(\cdot,0)$ and $\psi_{3\mathrm{dB}}$ is the angle at which the response equals $1/\sqrt2$. For the Thorlabs PDA100A2 used here, $\psi_{3\mathrm{dB}}=0.61$~rad, so that the response vanishes at $\psi=a^{-1/2}=64.6^\circ$, and the fitted cosine order is $m_R=1.9$~\cite{Bastiaens2020}. The three families are compared on our data in Section~\ref{subsec:res-model}; none of them is assumed to be the true response a priori.
+where $[\cdot]_+=\max(\cdot,0)$ and $\psi_{3\mathrm{dB}}$ is the angle at which the response equals $1/\sqrt2$. The response vanishes at $\psi=a^{-1/2}\approx1.85\,\psi_{3\mathrm{dB}}$, which bounds the field of view of the receiver. None of these models is assumed a priori: the response of a given receiver is selected from measurements with the profile-consistency test of Section~\ref{subsec:shape}.
 
 \subsection{RSS Acquisition and Observation Statistics}
 \label{subsec:observations}
-The PD output $v[n]$ is digitized at rate $f_s$ over a record of $N$ samples (duration $T=N/f_s$) at each orientation, after the receiver has settled. The RSS is the RMS amplitude of the discrete Fourier coefficient at the tone frequency $f$:
+The PD output $v[n]$ is digitized at rate $f_s$ over a record of $N$ samples (duration $T=N/f_s$) at each orientation, after the receiver has settled. The RSS is obtained by digital lock-in detection, as the RMS amplitude of the discrete Fourier coefficient at the tone frequency $f$:
 \begin{equation}
  y_i=\frac{\sqrt2}{N}\left|\sum_{n=0}^{N-1}v[n]\,e^{-j2\pi fn/f_s}\right|.
  \label{eq:lockin}
 \end{equation}
-When $fT$ is an integer, this projection rejects the other tones that also complete an integer number of cycles, and strongly attenuates slow components such as the low-frequency flicker of the ambient light, and its noise is set by the noise spectral density in a band of width $1/T$ around $f$. At the signal-to-noise ratios of this work (Section~\ref{subsec:res-noise}), the measurement is well modelled as:
+When $fT$ is an integer, this projection rejects the other tones that also complete an integer number of cycles, and strongly attenuates slow components such as the low-frequency flicker of the ambient light, and its noise is set by the noise spectral density in a band of width $1/T$ around $f$. The measurement is well modelled as:
 \begin{equation}
  y_i=s_i(\vect r)+\epsilon_i,\qquad
- \epsilon_i\sim\mathcal N\!\left(0,\sigma_i^2/L\right),
+ \epsilon_i\sim\mathcal N\!\left(0,\sigma_i^2\right),
  \label{eq:observation}
 \end{equation}
-with independent errors across orientations, where $\sigma_i$ is the standard deviation of one record at orientation $i$ and $L$ the number of records averaged per orientation ($L=1$ throughout the experiments; $N$ remains the number of samples of a record). In general $\sigma_i$ depends on the orientation, through the shot noise of the collected signal and ambient light~\cite{Komine2004}, and the formulation keeps it so. When the ambient light and the receiver electronics dominate, the noise \add{depends only weakly on} the signal~\cite{Kahn1997}\add{, and} the experiments use a common value $\sigma$ \add{(Section~\ref{subsec:res-noise})}. The orientation-wise SNR is $\mathrm{SNR}_i=s_i/\sigma_i$. In this baseline the actual normals $\vect n_i$ are known; orientation errors are treated in Section~\ref{subsec:orientation-uncertainty}. Background, gain drift and deviations from the LOS model are not averaged out by repeated records and are discussed with the experimental results.
+with independent errors across orientations, where $\sigma_i$ is the standard deviation of the RSS at orientation $i$. In general $\sigma_i$ depends on the orientation, through the shot noise of the collected signal and ambient light~\cite{Komine2004}, and the formulation keeps it so. When the ambient light and the receiver electronics dominate, the noise depends only weakly on the signal~\cite{Kahn1997}. The orientation-wise SNR is the power ratio $\mathrm{SNR}_i=s_i^2/\sigma_i^2$, given in decibels as $10\log_{10}\mathrm{SNR}_i$.

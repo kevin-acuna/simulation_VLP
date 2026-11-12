@@ -42,13 +42,13 @@ Fig.~\ref{fig:orient}(b) isolates the effect of the perturbation through the RMS
 
 \subsection{Observation Window}
 \label{subsec:res-window}
-All the RSS used so far integrate 100~ms of signal. To find how much signal is actually needed, the RSS of every D2 record was recomputed over shorter windows, from 10~$\mu$s to 100~ms, cut from the recorded waveforms. Each window is exactly what a shorter acquisition with the same sample rate and scale would have delivered, and up to ten disjoint segments of each record, spread over its 100~ms, give independent repetitions. The calibration of Table~\ref{tab:parameters} was kept, with its gain $A$ adjusted to each window length.
+All the RSS used so far integrate 100~ms of signal. To find how much signal is actually needed, the RSS of every D2 record was recomputed over shorter windows, from 10~$\mu$s to 100~ms, cut from the recorded waveforms. Each window is exactly what a shorter acquisition with the same sample rate and scale would have delivered, and up to ten disjoint segments of each record, spread over its 100~ms, give independent repetitions. \add{As a system acquiring shorter windows would be calibrated with them, the LED calibration of Section~\ref{subsec:led-calibration} is made, for each window length, on the D1 records processed with the same window, and D2 is evaluated with that calibration; for 100~ms it is the calibration of Table~\ref{tab:parameters}.}
 
-Fig.~\ref{fig:window} shows the result. The mean 3D error is unchanged down to a window of 10~ms (3.67~cm), and rises only to 3.70~cm at 5~ms and 3.92~cm at 1~ms; below 0.1~ms it degrades quickly, to 9.5~cm at 10~$\mu$s. Below 10~ms it also varies between the segments of a record (shaded range). Five orientations follow the same curve slightly higher (3.75, 3.80 and 4.21~cm at 10, 5 and 1~ms). A tenth of the signal recorded in this work is thus enough, and a hundredth costs about 3~mm.
+Fig.~\ref{fig:window} shows the result. \add{The mean 3D error is unchanged down to a window of 10~ms (3.67~cm), and rises only to 3.69~cm at 5~ms and 3.81~cm at 1~ms; below 0.1~ms it} degrades quickly, to \add{9.2}~cm at 10~$\mu$s. Below 10~ms it also varies between the segments of a record (shaded range). Five orientations follow the same curve slightly higher (\add{3.75, 3.79 and 4.11~cm at 10, 5 and 1~ms}). A tenth of the signal recorded in this work is thus enough, and a hundredth costs \add{about 1.5~mm}.
 
 
 
-The minimum window depends on the link through the noise, which scales as $\sigma/(s_i\sqrt T)$, so the window required for a given accuracy grows as the inverse square of the SNR: a link with half the SNR needs four times the window. Longer windows do not pay off, since the noise is already negligible at 10~ms.
+The minimum window depends on the link through the noise, which scales as $\sigma/(s_i\sqrt T)$, so the window required for a given accuracy is inversely proportional to the SNR: a link with half the SNR (3~dB less) needs twice the window. Longer windows do not pay off, since the noise is already negligible at 10~ms.
 
 \begin{figure}[!t]
  \centering

@@ -21,7 +21,7 @@ with $\vect R$, $\dot{\vect R}$ and $\vect N$ as in~\eqref{eq:rank}.
 
 \emph{Ratio GLS and WLS.} Let $j=\arg\max_iy_i$ be the reference orientation. The ratios $z_i=y_i/y_j$, $i\neq j$, do not depend on $\beta$, and their model is $q_i(\vect u)=R_i/R_j$. To first order, and evaluated at the observations, their covariance is, up to the common factor $y_j^{-2}$:
 \begin{equation}
- \vect C_z=\diag\!\left(\frac{\sigma_i^2}{L}\right)_{i\neq j}+\frac{\sigma_j^2}{L}\,\vect z\vect z\trans,
+ {\color{blue}\vect C_z=\diag\!\left(\sigma_i^2\right)_{i\neq j}+\sigma_j^2\,\vect z\vect z\trans},
  \label{eq:ratio-cov}
 \end{equation}
 where the rank-one term comes from the shared reference. GLS minimizes $\norm{\vect C_z^{-1/2}(\vect q-\vect z)}^2$, with a Cholesky factor of $\vect C_z$, and WLS replaces $\vect C_z$ by its diagonal. The rows of the Jacobian of the ratios with respect to $\bm\omega$ are:

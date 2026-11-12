@@ -374,7 +374,7 @@ pp_export(fig, cfg, 'fig_random');
 end
 
 function figure_integrity(cfg, F, EF, eF, threshold)
-% RSS-shape residual of every point of the 16/10 session: the rotation-stage tilt fault appears at point 48
+% Profile residual of every point of the 16/10 session: the rotation-stage tilt fault appears at point 48
 fig = pp_figure(3.5, 2.9);
 tl = tiledlayout(fig, 2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
 k = F.site;
@@ -382,7 +382,7 @@ onset = 47.5;
 ax = nexttile(tl);
 hold(ax, 'on');
 plot(ax, k, EF.shape_rms, 'o-', 'Color', [0 0.32 0.62], 'MarkerSize', 2.5, 'MarkerFaceColor', [0 0.32 0.62], ...
-    'LineWidth', 0.7, 'DisplayName', 'RSS-shape residual');
+    'LineWidth', 0.7, 'DisplayName', 'Profile residual');
 yline(ax, threshold, 'k--', 'LineWidth', 0.6, 'DisplayName', sprintf('Threshold %g\\,\\%%', threshold));
 xline(ax, onset, ':', 'Color', [0.6 0 0], 'LineWidth', 0.9, 'HandleVisibility', 'off');
 ylabel(ax, 'Residual (\%)');
@@ -609,8 +609,7 @@ function R = part_window(cfg)
 % Observation window: the lock-in RSS of every D2 record is recomputed over shorter windows cut from the
 % recorded 100 ms waveforms (same sample rate and vertical scale as the acquisition). Ten segments per window
 % length: 'spread' starts evenly over the record (all phases of the 100 Hz flicker), 'synced' starts every
-% 10 ms (one flicker phase). Calibration of Table I kept; A is only rescaled by the coherent gain of the
-% nominal-frequency projection, which depends on the window through the frequency offset of the generators.
+% 10 ms (one flicker phase). The calibration of Table II (100-ms records) is used unchanged for every window.
 G = load(fullfile(cfg.figdir, 'grid_results.mat'));
 D = G.D;
 freqs = cfg.led_freqs_khz*1e3;
@@ -697,8 +696,8 @@ all10 = 1:K;
 err = struct('spread10', nan(numel(Tms), nseg), 'spread10_v', nan(numel(Tms), nseg), ...
     'spread5', nan(numel(Tms), nseg, size(sub5, 1)), 'hann10', nan(numel(Tms), nseg), 'synced10', nan(numel(Tms), nseg));
 for it = 1:numel(Tms)
-    pr = scaled(g_rect(it));
-    ph = scaled(g_hann(it));
+    pr = G.pf;                                   % calibration of Table II, unchanged for every window
+    ph = G.pf;
     for s = 1:nseg
         x = rss.spread(:, :, it, s);
         if any(isnan(x), 'all')
@@ -762,6 +761,74 @@ R = S.R;
 e5 = mean(S.err.spread5, 3);                         % K = 5: mean of the two uniform subsets, per segment
 R.err.K5_min_cm = min(e5, [], 2, 'omitnan')';
 R.err.K5_max_cm = max(e5, [], 2, 'omitnan')';
+figure_window(cfg, R);
+end
+
+function R = part_window_cal(cfg)
+% Observation window with a calibration made in the same acquisition configuration: for every window length,
+% A and m come from the D1 calibration subset processed with that window (staged fit, LED XY of Table II),
+% and D2 is evaluated with that calibration. D2 window RSS from window_results.mat (run 'window' first); the
+% D1 window RSS are cached in window_d1_rss.mat.
+W = load(fullfile(cfg.figdir, 'window_results.mat'), 'Tms', 'rss', 'R');
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+D = G.D;
+Tms = W.Tms;
+f0 = cfg.freq_khz*1e3;
+[cal, h_cal] = load_calibration_scan(cfg);
+cache = fullfile(cfg.figdir, 'window_d1_rss.mat');
+if isfile(cache)
+    rssT = load(cache, 'rssT').rssT;
+else
+    t = readtable(fullfile(cfg.scan_dir, 'points.csv'), 'VariableNamingRule', 'preserve');
+    t = t(t.meas_id <= cfg.cal_n, :);
+    rssT = nan(height(t), numel(Tms));
+    for i = 1:height(t)
+        z = pp_read_npz(fullfile(cfg.scan_dir, t.wave_file{i}));
+        v = (double(z.codes(1, :)) - double(z.y_reference(1)))*double(z.y_increment(1)) + double(z.y_origin(1));
+        fs = double(z.fs);
+        cs = cumsum(v.*exp(-2i*pi*f0*(0:numel(v) - 1)/fs));
+        n = round(Tms*1e-3*fs);
+        rssT(i, :) = sqrt(2)*abs(cs(n))./n;
+        if mod(i, 2000) == 0
+            fprintf('  D1: %d / %d records\n', i, height(t));
+        end
+    end
+    save(cache, 'rssT', 'Tms');
+end
+pm = pp_params(cfg, 'SQ', 1, 6, cfg.led_xy_mm);
+[K, ~] = size(D.theta);
+sub5 = angle_subsets(K, 5);
+nseg = size(W.rss.spread, 4);
+run = @(x, p, sel) site_errors(pp_estimate('SQ', 'NLS', x(sel, :), D.theta(sel, :), G.OFF.SQ.fit.cross, ...
+    cfg.tilt_deg, p), D, p);
+err = struct('spread10', nan(numel(Tms), nseg), 'spread5', nan(numel(Tms), nseg, size(sub5, 1)));
+A = nan(1, numel(Tms));
+m = A;
+for it = 1:numel(Tms)
+    [A(it), m(it)] = pp_calibrate(cal.x, cal.y, rssT(:, it), cfg.led_xy_mm, h_cal, pm, 'staged');
+    p = pp_params(cfg, 'SQ', A(it), m(it), cfg.led_xy_mm);
+    for s = 1:nseg
+        x = W.rss.spread(:, :, it, s);
+        if any(isnan(x), 'all')
+            continue;
+        end
+        err.spread10(it, s) = mean(run(x, p, 1:K).err3d);
+        for q = 1:size(sub5, 1)
+            err.spread5(it, s, q) = mean(run(x, p, sub5(q, :)).err3d);
+        end
+    end
+    fprintf('  T = %6.2f ms: A %.5g, m %.4f | K=10 %.2f cm (%.2f-%.2f), K=5 %.2f cm\n', Tms(it), A(it), m(it), ...
+        mean(err.spread10(it, :), 'omitnan'), min(err.spread10(it, :)), max(err.spread10(it, :)), ...
+        mean(err.spread5(it, :, :), 'all', 'omitnan'));
+end
+e5 = mean(err.spread5, 3);
+R = W.R;
+R.window_ms = Tms;
+R.calibration = struct('A', A, 'm', m);
+R.err = struct('K10_mean_cm', mean(err.spread10, 2, 'omitnan')', 'K10_min_cm', min(err.spread10, [], 2)', ...
+    'K10_max_cm', max(err.spread10, [], 2)', 'K5_mean_cm', mean(e5, 2, 'omitnan')', ...
+    'K5_min_cm', min(e5, [], 2, 'omitnan')', 'K5_max_cm', max(e5, [], 2, 'omitnan')');
+save(fullfile(cfg.figdir, 'window_cal_results.mat'), 'Tms', 'err', 'R', 'A', 'm');
 figure_window(cfg, R);
 end
 
