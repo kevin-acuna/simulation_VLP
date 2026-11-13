@@ -19,7 +19,7 @@ Reorienting the receiver therefore changes only $\psi_i$, whereas the distance $
 \begin{figure}[!t]
  \centering
  \includegraphics[width=\linewidth]{fig_inkscape/figure1v2.png}
- \caption{Single-LED, single-PD positioning. The PD is reoriented about its optical center; the direction $\vect u$ and distance $d$ to the LED are common to the $K$ orientations, whereas the incidence angles $\psi_i$ change.}
+ \caption{Single-LED, single-PD positioning. The PD is reoriented about its optical center: the direction $\vect u$ and distance $d$ to the LED are common to the $K$ orientations, whereas the incidence angles $\psi_i$ change.}
  \label{fig:system}
 \end{figure}
 
@@ -30,7 +30,7 @@ Under line-of-sight (LOS) propagation and a Lambertian point source~\cite{Kahn19
  H_i(\vect r)=\frac{(m+1)A_{\mathrm{PD}}}{2\pi d^2}\cos^{m}(\phi)\,T_s(\psi_i)\,g(\psi_i)\,R(\psi_i),
  \label{eq:channel}
 \end{equation}
-where $A_{\mathrm{PD}}$ is the active area of the detector, $m=-\ln2/\ln(\cos\Phi_{1/2})$ the Lambertian order of the LED with half-power semi-angle $\Phi_{1/2}$, $T_s(\psi)$ and $g(\psi)$ the gains of an optical filter and of an optical concentrator~\cite{Kahn1997}, and $R(\psi)$ the normalized angular response of the receiver introduced below. The model holds for $0\le\phi<\pi/2$ and $R(\psi_i)>0$; otherwise $H_i=0$. Reflections are neglected, and noise is introduced in Section~\ref{subsec:observations}. The receiver of this work has neither a filter nor a concentrator, so $T_s(\psi)=g(\psi)=1$ in the following.
+where $A_{\mathrm{PD}}$ is the active area of the detector, $m=-\ln2/\ln(\cos\Phi_{1/2})$ the Lambertian order of the LED with half-power semi-angle $\Phi_{1/2}$, $T_s(\psi)$ and $g(\psi)$ the gains of an optical filter and of an optical concentrator~\cite{Kahn1997}, and $R(\psi)$ the normalized angular response of the receiver introduced below. The model holds for $0\le\phi<\pi/2$ and $R(\psi_i)>0$, and $H_i=0$ otherwise. Reflections are neglected, and noise is introduced in Section~\ref{subsec:observations}. The receiver of this work has neither a filter nor a concentrator, so $T_s(\psi)=g(\psi)=1$ in the following.
 
 The LED is intensity-modulated by a sinusoidal tone of frequency $f$, so that its optical power is $P_t(t)=\bar P_t+P_f\cos(2\pi ft)$, where $P_f$ is the amplitude of the modulated component. The PD converts the collected power into a photocurrent with responsivity $\gamma$ (in A/W), and its amplifier converts this current into a voltage with transimpedance gain $G_{\mathrm T}(f)$ (in V/A) at the tone frequency. The quantity actually measured is the root-mean-square (RMS) amplitude of the tone in this voltage, extracted by digital lock-in detection (Section~\ref{subsec:observations}). Its noiseless value at orientation $i$, the signal $s_i$, is:
 \begin{equation}
@@ -43,7 +43,7 @@ with the lumped gain $A$, in $\mathrm{V\,m^2}$:
  A=\frac{(m+1)A_{\mathrm{PD}}\,\gamma\,G_{\mathrm T}(f)\,P_f}{2\sqrt2\,\pi}.
  \label{eq:gain}
 \end{equation}
-Each factor of~\eqref{eq:gain} could be measured separately, but this would require several dedicated calibrations of the transmitter and of the receiver chain. Grouping them into $A$ reduces this effort to a single joint calibration of $A$ and $m$ from RSS measurements at known positions (Section~\ref{subsec:led-calibration}), which also absorbs any gain of the receiver chain that is not modelled explicitly.
+Each factor of~\eqref{eq:gain} could be measured separately, but this would require several dedicated calibrations of the transmitter and of the receiver chain. Grouping them into $A$ reduces this effort to a single joint calibration of $A$ and $m$ from RSS measurements at known positions (Section~\ref{subsec:led-calibration}), which also absorbs any gain of the receiver chain that is not modeled explicitly.
 
 Model~\eqref{eq:rss-model} has a separable structure that the rest of the paper exploits:
 \begin{equation}
@@ -51,18 +51,18 @@ Model~\eqref{eq:rss-model} has a separable structure that the rest of the paper 
  \beta(\vect r)=\frac{A\cos^{m}(\phi)}{d^2}.
  \label{eq:separable}
 \end{equation}
-The normalized RSS profile, that is, the $K$ signals divided by their common amplitude $\beta$, equals $[R(\psi_1),\ldots,R(\psi_K)]\trans$ and depends only on the direction $\vect u$, through $\cos\psi_i=\vect n_i\trans\vect u$; the common amplitude $\beta$ carries the distance. The LED gain and radiation pattern enter only through $\beta$. When the dependence on $\vect u$ must be explicit, we write $R(\vect n_i\trans\vect u)$ for the response at the incidence angle $\arccos(\vect n_i\trans\vect u)$.
+The normalized RSS profile, that is, the $K$ signals divided by their common amplitude $\beta$, equals $[R(\psi_1),\ldots,R(\psi_K)]\trans$ and depends only on the direction $\vect u$, through $\cos\psi_i=\vect n_i\trans\vect u$, whereas the common amplitude $\beta$ carries the distance. The LED gain and radiation pattern enter only through $\beta$. When the dependence on $\vect u$ must be explicit, we write $R(\vect n_i\trans\vect u)$ for the response at the incidence angle $\arccos(\vect n_i\trans\vect u)$.
 
 \subsection{Receiver Angular Response}
 \label{subsec:response}
-The dimensionless function $R(\psi)$, with $R(0)=1$, is the effective angular response of the receiver, including the projected-area effect; no additional $\cos\psi$ factor multiplies it. It is assumed axisymmetric. The conventional choice is $R(\psi)=\cos\psi$~\cite{Kahn1997,Wang2024}, and the generalized form $R(\psi)=\cos^{m_R}\psi$ is also common. These forms are adopted mostly for analytical convenience: measurements of commercial photodiodes show that their effective response can depart markedly from a cosine, and that ignoring the mismatch degrades RSS-based positioning~\cite{Bastiaens2020}. The method studied here depends on the response even more directly, because the direction is inferred from the variation of $R$ over the orientations. The formulation therefore keeps $R(\psi)$ general. As an analytical alternative to the cosine, we consider the SQ model of~\cite{Bastiaens2020}, a function of the square of the incidence angle, which described the two commercial PDs characterized there better than cosine models:
+The dimensionless function $R(\psi)$, with $R(0)=1$, is the effective angular response of the receiver, including the projected-area effect, so that no additional $\cos\psi$ factor multiplies it. It is assumed axisymmetric. The conventional choice is $R(\psi)=\cos\psi$~\cite{Kahn1997,Wang2024}, and the generalized form $R(\psi)=\cos^{m_R}\psi$ is also common. These forms are adopted mostly for analytical convenience: measurements of commercial PDs show that their effective response can depart markedly from a cosine, and that ignoring the mismatch degrades RSS-based positioning~\cite{Bastiaens2020}. The formulation therefore keeps $R(\psi)$ general. As an analytical alternative to the cosine, we consider the SQ model of~\cite{Bastiaens2020}, a function of the square of the incidence angle, which described the two commercial PDs characterized there better than cosine models:
 \begin{equation}
  R_{\mathrm{SQ}}(\psi)=
  \left[1-a\,\psi^2\right]_+,\qquad
  a=\frac{1-1/\sqrt2}{\psi_{3\mathrm{dB}}^2},
  \label{eq:sq-response}
 \end{equation}
-where $[\cdot]_+=\max(\cdot,0)$ and $\psi_{3\mathrm{dB}}$ is the angle at which the response equals $1/\sqrt2$. The response vanishes at $\psi=a^{-1/2}\approx1.85\,\psi_{3\mathrm{dB}}$, which bounds the field of view of the receiver. None of these models is assumed a priori: the response of a given receiver is selected from measurements with the profile-consistency test of Section~\ref{subsec:shape}.
+where $[\cdot]_+=\max(\cdot,0)$ and $\psi_{3\mathrm{dB}}$ is the angle at which the response equals $1/\sqrt2$. The response vanishes at $\psi=a^{-1/2}\approx1.85\,\psi_{3\mathrm{dB}}$, which bounds the field of view of the receiver. The incidence angles below this value form the support of the response. None of these models is assumed a priori: the response of a given receiver is selected from measurements with the profile-consistency test of Section~\ref{subsec:shape}.
 
 \subsection{RSS Acquisition and Observation Statistics}
 \label{subsec:observations}
@@ -71,7 +71,7 @@ The PD output $v[n]$ is digitized at rate $f_s$ over a record of $N$ samples (du
  y_i=\frac{\sqrt2}{N}\left|\sum_{n=0}^{N-1}v[n]\,e^{-j2\pi fn/f_s}\right|.
  \label{eq:lockin}
 \end{equation}
-When $fT$ is an integer, this projection rejects the other tones that also complete an integer number of cycles, and strongly attenuates slow components such as the low-frequency flicker of the ambient light. Its noise is set by the noise spectral density in a band of width $1/T$ around $f$. For a tone well above this noise, the measurement is well modelled as:
+When $fT$ is an integer, this projection rejects the other tones that also complete an integer number of cycles, and strongly attenuates slow components such as the low-frequency flicker of the ambient light. Its noise is set by the noise spectral density in a band of width $1/T$ around $f$. For a tone well above this noise, the measurement is well modeled as:
 \begin{equation}
  y_i=s_i(\vect r)+\epsilon_i,\qquad
  \epsilon_i\sim\mathcal N\!\left(0,\sigma_i^2\right),

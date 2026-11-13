@@ -1,11 +1,12 @@
 function make_paper_figures(parts)
 % Figures and numbers of the manuscript, computed directly from the acquired datasets.
 %   make_paper_figures                      % every part
-%   make_paper_figures({'grid', 'random'})  % selected parts: grid | random | noise | peb | calib | leds | sim | response | axis | zero
+%   make_paper_figures({'grid', 'random'})  % selected parts: grid | random | noise | peb | calib | leds | sim | axis | zero | nine
+%   (on request only: 'response', whose figure is no longer in the manuscript; 'redraw' = figures from saved results)
 % Numbers are merged into paper_numbers.json (read when writing the manuscript); figures are vector PDF
 % (PNG previews in png/). Run with MATLAB R2026a or later.
 if nargin < 1 || isempty(parts)
-    parts = {'grid', 'random', 'noise', 'peb', 'calib', 'leds', 'sim', 'response', 'axis', 'zero'};
+    parts = {'grid', 'random', 'noise', 'peb', 'calib', 'leds', 'sim', 'axis', 'zero', 'nine'};
 end
 parts = cellstr(parts);
 here = fileparts(mfilename('fullpath'));
@@ -24,7 +25,10 @@ end
 for k = 1:numel(parts)
     fprintf('\n=== %s ===\n', parts{k});
     t0 = tic;
-    NUM.(parts{k}) = feval(['part_' parts{k}], cfg);
+    out = feval(['part_' parts{k}], cfg);
+    if ~isempty(out)
+        NUM.(parts{k}) = out;
+    end
     fprintf('    (%.0f s)\n', toc(t0));
     fid = fopen(numbers_file, 'w');
     fprintf(fid, '%s', jsonencode(NUM, 'PrettyPrint', true));
@@ -187,28 +191,34 @@ cal.rss = t{:, 4:end};
 h = cfg.H_led - (cfg.H_base0 + cfg.scan_z_mm/1e3 + cfg.pd_elev);
 end
 
-function figure_grid(cfg, D, ef, R)
-% (a) error per height: 3D, horizontal, vertical bias; (b) top view of the horizontal error vectors
-fig = pp_figure(3.5, 2.3);
+function figure_grid(cfg, D, ef, R) %#ok<INUSL>
+% mean error per height of D2: 3D, horizontal and signed vertical (ticks at the five heights, curves labelled
+% directly in the gap between the two highest levels)
+fig = pp_figure(3.5, 1.45);
 H = arrayfun(@(s) s.pd_height_m, R.final_per_level);
 m3 = arrayfun(@(s) s.err3d.mean, R.final_per_level);
-p90 = arrayfun(@(s) s.err3d.p90, R.final_per_level);
 mh = arrayfun(@(s) s.horizontal_mean, R.final_per_level);
 vb = arrayfun(@(s) s.vertical_bias, R.final_per_level);
+col = [0 0.32 0.62; 0.85 0.33 0.1; 0.38 0.58 0.12];
 ax = axes(fig);
 hold(ax, 'on');
-plot(ax, H, m3, 'o-', 'Color', [0 0.32 0.62], 'MarkerFaceColor', [0 0.32 0.62], 'MarkerSize', 3.5, ...
-    'DisplayName', 'Mean 3D error');
-plot(ax, H, p90, 's--', 'Color', [0 0.32 0.62], 'MarkerSize', 3.5, 'DisplayName', '90th percentile');
-plot(ax, H, mh, '^-', 'Color', [0.85 0.33 0.1], 'MarkerFaceColor', [0.85 0.33 0.1], 'MarkerSize', 3.5, ...
-    'DisplayName', 'Mean horizontal error');
-plot(ax, H, vb, 'v-', 'Color', [0.47 0.67 0.19], 'MarkerFaceColor', [0.47 0.67 0.19], 'MarkerSize', 3.5, ...
-    'DisplayName', 'Mean vertical error');
-yline(ax, 0, 'k-', 'LineWidth', 0.4, 'HandleVisibility', 'off');
+yline(ax, 0, 'k-', 'LineWidth', 0.4);
+plot(ax, H, m3, 'o-', 'Color', col(1, :), 'MarkerFaceColor', col(1, :), 'MarkerSize', 3.5);
+plot(ax, H, mh, '^-', 'Color', col(2, :), 'MarkerFaceColor', col(2, :), 'MarkerSize', 3.5);
+plot(ax, H, vb, 'v-', 'Color', col(3, :), 'MarkerFaceColor', col(3, :), 'MarkerSize', 3.5);
+xt = 1.235;
+label = @(y, s, k, va) text(ax, xt, y, s, 'Color', col(k, :), 'FontSize', 7, 'HorizontalAlignment', 'center', ...
+    'VerticalAlignment', va);
+label(interp1(H, m3, xt) + 0.3, '3-D', 1, 'bottom');
+label(interp1(H, mh, xt) - 0.3, 'Horizontal', 2, 'top');
+label(interp1(H, vb, xt) - 1.0, 'Vertical (signed)', 3, 'top');
 xlabel(ax, 'PD height above the floor (m)');
-ylabel(ax, 'Error (cm)');
+ylabel(ax, 'Mean error (cm)');
 xlim(ax, [0.93 1.34]);
-legend(ax, 'Location', 'northeast', 'NumColumns', 2);
+xticks(ax, sort(H));
+xticklabels(ax, compose('%.3f', sort(H)));
+ylim(ax, [-3.2 5.2]);
+yticks(ax, -2:2:4);
 pp_export(fig, cfg, 'fig_grid_height');
 end
 
@@ -317,10 +327,11 @@ function figure_cdf(cfg, cdf)
 fig = pp_figure(3.5, 2.3);
 ax = axes(fig);
 hold(ax, 'on');
-specs = {'K10', '-', [0 0.32 0.62], sprintf('Grid, $K=10$ (%d positions)', numel(cdf.K10)); ...
-         'K5', '-', [0.85 0.33 0.1], 'Grid, $K=5$ (subsets)'; ...
-         'K3', '-', [0.47 0.67 0.19], 'Grid, $K=3$ (subsets)'; ...
-         'D3', '--', [0 0 0], sprintf('Blind random test, $K=5$ (%d positions)', numel(cdf.D3))};
+% short labels (the caption gives the details) so that the legend does not cover the curves
+specs = {'K10', '-', [0 0.32 0.62], 'D2, $K=10$'; ...
+         'K5', '-', [0.85 0.33 0.1], 'D2, $K=5$'; ...
+         'K3', '-', [0.47 0.67 0.19], 'D2, $K=3$'; ...
+         'D3', '--', [0 0 0], 'D3, $K=5$'};
 for s = 1:size(specs, 1)
     v = sort(cdf.(specs{s, 1})(isfinite(cdf.(specs{s, 1}))));
     stairs(ax, [0 v], (0:numel(v))/numel(v), specs{s, 2}, 'Color', specs{s, 3}, 'LineWidth', 1.1, ...
@@ -328,7 +339,7 @@ for s = 1:size(specs, 1)
 end
 xlim(ax, [0 12]);
 ylim(ax, [0 1]);
-xlabel(ax, '3D position error (cm)');
+xlabel(ax, '3-D position error (cm)');
 ylabel(ax, 'Empirical CDF');
 legend(ax, 'Location', 'southeast');
 pp_export(fig, cfg, 'fig_cdf');
@@ -356,7 +367,7 @@ xlabel(ax, '$X$ (m)'); ylabel(ax, '$Y$ (m)'); zlabel(ax, '$Z$ (m)');
 view(ax, -50, 22);
 daspect(ax, [1 1 0.6]);
 grid(ax, 'on');
-title(ax, '(a) 3D view', 'FontWeight', 'normal');
+title(ax, '(a) 3-D view', 'FontWeight', 'normal');
 ax2 = nexttile(tl);
 hold(ax2, 'on');
 for i = 1:size(D.truth, 2)
@@ -372,7 +383,7 @@ xlim(ax2, [0 1.4]); ylim(ax2, [0 1.4]);
 xlabel(ax2, '$X$ (m)'); ylabel(ax2, '$Y$ (m)');
 title(ax2, '(b) Top view (star: LED)', 'FontWeight', 'normal');
 cb = colorbar(ax2);
-cb.Label.String = '3D error (cm)';
+cb.Label.String = '3-D error (cm)';
 cb.Label.Interpreter = 'latex';
 pp_export(fig, cfg, 'fig_random');
 end
@@ -404,7 +415,7 @@ plot(ax2, k, eF.err3d, 's-', 'Color', [0.2 0.2 0.2], 'MarkerSize', 2.5, 'MarkerF
 xline(ax2, onset, ':', 'Color', [0.6 0 0], 'LineWidth', 0.9);
 xlim(ax2, [0 max(k) + 1]);
 xlabel(ax2, 'Point index (acquisition order)');
-ylabel(ax2, '3D error (cm)');
+ylabel(ax2, '3-D error (cm)');
 pp_export(fig, cfg, 'fig_integrity');
 end
 
@@ -625,7 +636,7 @@ ax = axes(fig);
 hold(ax, 'on');
 cdfline = @(v, ls, c, name) stairs(ax, [min(v) sort(v)], (0:numel(v))/numel(v), ls, 'Color', c, ...
     'LineWidth', 1.0, 'DisplayName', name);
-cdfline(100*peb10, '-', [0.5 0.5 0.5], 'PEB, measured noise');
+cdfline(100*peb10, '-', [0.5 0.5 0.5], 'PEB, $\sigma_\theta=0^\circ$');   % same naming as fig_sim (exactly known normals)
 colors = [0.47 0.67 0.19; 0.85 0.33 0.1; 0.49 0.18 0.56];
 for q = 1:numel(sth)
     cdfline(100*pebo(q, :), '-', colors(q, :), sprintf('PEB, $\\sigma_\\theta=%g^\\circ$', sth(q)));
@@ -634,7 +645,7 @@ cdfline(G.ef.err3d, '-', [0 0.32 0.62], 'Measured error');
 set(ax, 'XScale', 'log');
 xlim(ax, [1e-2 20]);
 ylim(ax, [0 1]);
-xlabel(ax, '3D error or bound (cm)');
+xlabel(ax, '3-D error or bound (cm)');
 ylabel(ax, 'Empirical CDF');
 legend(ax, 'Location', 'northoutside', 'NumColumns', 3, 'FontSize', 6.5);
 pp_export(fig, cfg, 'fig_bound');
@@ -785,7 +796,7 @@ xlim(ax, [0.01 100]);
 xticks(ax, 10.^(-2:2));
 xticklabels(ax, {'0.01', '0.1', '1', '10', '100'});
 xlabel(ax, 'Observation window (ms)');
-ylabel(ax, 'Mean 3D error (cm)');
+ylabel(ax, 'Mean 3-D error (cm)');
 legend(ax, 'Location', 'northeast', 'FontSize', 6.5);
 pp_export(fig, cfg, 'fig_window');
 end
@@ -1003,7 +1014,7 @@ end
 xlim(ax, [0 2]);
 ylim(ax, [3 15]);
 xlabel(ax, 'Orientation error $\sigma_\theta$ ($^\circ$)');
-ylabel(ax, 'Mean 3D error (cm)');
+ylabel(ax, 'Mean 3-D error (cm)');
 legend(ax, 'Location', 'northwest', 'NumColumns', 2, 'FontSize', 6.5);
 title(ax, '(a) Estimates on D2, $K=10$', 'FontWeight', 'normal');
 ax = nexttile(tl);
@@ -1306,39 +1317,72 @@ end
 
 %% ------------------------------------------------------------------------------------------------------
 function R = part_response(cfg)
-% Receiver response models of Section VI-C (cos, cos^m_R and SQ with the published parameters) and RSS of D2
-% divided by the amplitude fitted at each position with the SQ response (true positions, calibrated stage zero).
+% Receiver response models of Section VI (cos, cos^m_R and SQ with the published parameters) and RSS of D2 divided
+% by the amplitude of its position (true positions, calibrated stage zero).
+% The amplitudes are estimated WITHOUT a response model: ln y_ik = b_i + r(psi_ik), where r is a free piecewise-
+% linear function of the incidence angle (nodes every 5 degrees); the amplitudes b_i and r are obtained together by
+% linear least squares. D2 has almost no data within 2 degrees of normal incidence, so this fixes the measured
+% response only up to ONE common factor (125 amplitudes -> 1). The figure sets it by a least-squares match to the
+% SQ curve; the deviations are reported for every model with its own best factor.
 G = load(fullfile(cfg.figdir, 'grid_results.mat'));
 jf = find(cfg.led_freqs_khz == cfg.freq_khz);
 D = G.D;
 p = G.pf;
 S = size(D.truth, 2);
+Y = D.rss(:, :, jf);
 psi = zeros(D.K, S);
-q = zeros(D.K, S);
+beta_sq = zeros(1, S);
 for i = 1:S
     N = pp_normals(D.theta(:, i), G.OFF.SQ.fit.cross(i), cfg.tilt_deg);
     v = p.transmitter.position_m - D.truth(:, i);
     c = N'*(v/norm(v));
     Rs = rx_receiver_response(c, p);
-    y = D.rss(:, i, jf);
     psi(:, i) = acosd(c);
-    q(:, i) = y/((y'*Rs)/(Rs'*Rs));
+    beta_sq(i) = (Y(:, i)'*Rs)/(Rs'*Rs);              % amplitude fitted with the SQ response (comparison only)
 end
+step = 5;
+nodes = 0:step:55;
+n = numel(psi);
+j = min(floor(psi(:)/step) + 1, numel(nodes) - 1);
+w = (psi(:) - nodes(j)')/step;
+site = reshape(repmat(1:S, D.K, 1), [], 1);
+M = sparse([(1:n)'; (1:n)'; (1:n)'], [site; S + j; S + j + 1], [ones(n, 1); 1 - w; w], n, S + numel(nodes));
+M(:, S + 1) = [];                                      % gauge of the fit: r(0) = 0
+sol = M \ log(Y(:));
+beta0 = exp(sol(1:S))';
+free0 = exp([0; sol(S + 1:end)])';
+q0 = Y./beta0;
 a = (1 - 1/sqrt(2))/cfg.psi3db^2;
 sq = @(x) max(1 - a*(x*pi/180).^2, 0);
+cmr = @(x) cosd(x).^cfg.m_R;
+factor = @(f) exp(-mean(log(q0(:)./f(psi(:)))));       % common factor that best matches a model
+dev = @(f) 100*std(log(q0(:)./f(psi(:))), 1);          % rms deviation from the model with that factor (%)
+c_sq = factor(sq);
+q = c_sq*q0;
+ratio = c_sq*beta_sq./beta0;                           % SQ-fitted amplitude over the model-free one (same factor)
 R.incidence_deg = struct('min', min(psi(:)), 'median', median(psi(:)), 'max', max(psi(:)));
 R.support_deg = 1/sqrt(a)*180/pi;
-R.deviation_from_sq_pct = struct('rms', 100*sqrt(mean((q(:)./sq(psi(:)) - 1).^2)), 'max_abs', 100*max(abs(q(:)./sq(psi(:)) - 1)));
-fprintf('incidence angles of D2: %.1f to %.1f deg (median %.1f); normalized RSS / SQ - 1: rms %.2f %%, max %.2f %%\n', ...
-    R.incidence_deg.min, R.incidence_deg.max, R.incidence_deg.median, R.deviation_from_sq_pct.rms, R.deviation_from_sq_pct.max_abs);
+R.common_factor = struct('SQ', c_sq, 'cos_mR', factor(cmr), 'cos', factor(@cosd));
+R.deviation_pct = struct('free', 100*std(log(q0(:)./interp1(nodes, free0, psi(:))), 1), 'SQ', dev(sq), 'cos_mR', dev(cmr), ...
+    'cos', dev(@cosd), 'SQ_max_abs', 100*max(abs(q(:)./sq(psi(:)) - 1)));
+R.free_response = struct('nodes_deg', nodes, 'value', c_sq*free0, 'SQ', sq(nodes), 'cos_mR', cmr(nodes), 'cos', cosd(nodes));
+R.sq_fitted_amplitude_vs_free_pct = struct('rms', 100*sqrt(mean((ratio - 1).^2)), 'max_abs', 100*max(abs(ratio - 1)));
+fprintf('incidence angles of D2: %.1f to %.1f deg (median %.1f)\n', R.incidence_deg.min, R.incidence_deg.max, R.incidence_deg.median);
+fprintf('points vs model with the best common factor (rms): SQ %.2f %% (factor %.4f, max %.2f %%), cos^%g %.2f %% (%.4f), cos %.2f %% (%.4f); free fit %.2f %%\n', ...
+    R.deviation_pct.SQ, R.common_factor.SQ, R.deviation_pct.SQ_max_abs, cfg.m_R, R.deviation_pct.cos_mR, R.common_factor.cos_mR, ...
+    R.deviation_pct.cos, R.common_factor.cos, R.deviation_pct.free);
+fprintf('amplitudes fitted with SQ vs model-free amplitudes (same common factor): rms %.2f %%, max %.2f %%\n', ...
+    R.sq_fitted_amplitude_vs_free_pct.rms, R.sq_fitted_amplitude_vs_free_pct.max_abs);
+% measured points in front, model curves fainter and wider behind them
 x = linspace(0, 90, 721);
-fig = pp_figure(3.5, 2.05);
+tint = @(c) c + 0.55*(1 - c);
+fig = pp_figure(3.5, 1.85);
 ax = axes(fig);
 hold(ax, 'on');
-plot(ax, x, cosd(x), ':', 'Color', [0.47 0.67 0.19], 'LineWidth', 1.1, 'DisplayName', '$\cos\psi$');
-plot(ax, x, cosd(x).^cfg.m_R, '--', 'Color', [0.85 0.33 0.1], 'DisplayName', sprintf('$\\cos^{%g}\\psi$', cfg.m_R));
-plot(ax, x, sq(x), '-', 'Color', [0 0.32 0.62], 'DisplayName', 'SQ');
-plot(ax, psi(:), q(:), '.', 'Color', [0.1 0.1 0.1], 'MarkerSize', 2.5, 'DisplayName', 'Measured (D2)');
+plot(ax, x, cosd(x), ':', 'Color', tint([0.47 0.67 0.19]), 'LineWidth', 1.4, 'DisplayName', '$\cos\psi$');
+plot(ax, x, cmr(x), '--', 'Color', tint([0.85 0.33 0.1]), 'LineWidth', 1.4, 'DisplayName', ['$\cos^{' num2str(cfg.m_R) '}\psi$']);
+plot(ax, x, sq(x), '-', 'Color', tint([0 0.32 0.62]), 'LineWidth', 2.0, 'DisplayName', 'SQ');
+plot(ax, psi(:), q(:), '.', 'Color', [0.05 0.05 0.05], 'MarkerSize', 3.5, 'DisplayName', 'Measured (D2)');
 xlim(ax, [0 90]);
 ylim(ax, [0 1.05]);
 xticks(ax, 0:15:90);
@@ -1482,6 +1526,42 @@ e = mean(100*vecnorm(E.r - D3.truth), 'omitnan');
 end
 
 %% ------------------------------------------------------------------------------------------------------
+function R = part_redraw(cfg)
+% Redraws fig_grid_height, fig_window and fig_orient from the saved results (no recomputation, no numbers).
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+figure_grid(cfg, G.D, G.ef, G.R);
+W = load(fullfile(cfg.figdir, 'window_cal_results.mat'), 'R');
+figure_window(cfg, W.R);
+O = load(fullfile(cfg.figdir, 'orient_results.mat'), 'R');
+figure_orient(cfg, O.R);
+R = [];
+end
+
+%% ------------------------------------------------------------------------------------------------------
+function R = part_nine(cfg)
+% Complete calibration of the positioning LED (LED XY, A and m by the joint fit) from nine points of D1 (3 x 3
+% grid, X, Y = 0.1, 0.7, 1.3 m): error on D2 (same number as part 'leds', pattern centre, 3 x 3) and, recomputed
+% offline, on the blind test D3 (stage zero of the paper). Needs grid_results.mat and random_results.mat.
+G = load(fullfile(cfg.figdir, 'grid_results.mat'));
+Rn = load(fullfile(cfg.figdir, 'random_results.mat'));
+jf = find(cfg.led_freqs_khz == cfg.freq_khz);
+[x, y, rss, h] = load_full_scan(cfg);
+v = linspace(100, 1300, 3);
+[X, Y] = meshgrid(v, v);
+idx = arrayfun(@(a, b) find_nearest(x, y, a, b), X(:), Y(:));
+[~, k] = max(rss(idx, jf));
+start = [x(idx(k)) y(idx(k))];                 % strongest of the nine points: no prior knowledge of the LED position
+p0 = pp_params(cfg, 'SQ', 1, 6, start);
+[A, m, xy] = pp_calibrate(x(idx), y(idx), rss(idx, jf), start, h, p0, 'joint_xy');
+p = pp_params(cfg, 'SQ', A, m, xy);
+e2 = site_errors(pp_estimate('SQ', 'NLS', G.D.rss(:, :, jf), G.D.theta, G.OFF.SQ.fit.cross, cfg.tilt_deg, p), G.D, p);
+e3 = site_errors(pp_estimate('SQ', 'NLS', Rn.D.rss(:, :, jf), Rn.D.theta, cfg.offset_deg, cfg.tilt_deg, p), Rn.D, p);
+R = struct('start_xy_mm', start, 'led_xy_mm', xy, 'A', A, 'm', m, 'D2', e2.summary, 'D3', e3.summary);
+fprintf('nine-point calibration: LED (%.1f, %.1f) mm, A %.5f, m %.3f; D2 mean %.2f cm, D3 mean %.2f cm\n', xy, A, m, ...
+    e2.summary.err3d.mean, e3.summary.err3d.mean);
+end
+
+%% ------------------------------------------------------------------------------------------------------
 function R = part_calib(cfg)
 % D1: apparent Lambertian order versus emission angle (500 kHz) and calibration budget: error on the D2
 % sites when A and m come from N points of D1 (the direction and amplitude of every site do not depend on
@@ -1510,6 +1590,16 @@ end
 [A_all, m_all] = pp_calibrate(x, y, y500, cfg.led_xy_mm, h, pSQ, 'joint');
 R.full_map = struct('A', A_all, 'm', m_all, 'phi_max_deg', max(phi));
 R.apparent_m = struct('phi_deg', centre, 'median', med, 'q25', q1, 'q75', q3);
+% the order is a property of the LED: beyond about 20 degrees the apparent order is stable, and the staged
+% calibration (A on the axis, m from the scan points up to a maximum emission angle) must not depend on the
+% extent of the scan once it reaches those angles
+far = centre > 20 & isfinite(med);
+ext = [20 25 30 35 ceil(max(phi))];
+m_ext = arrayfun(@(pm) staged_order(x(phi <= pm), y(phi <= pm), y500(phi <= pm), cfg.led_xy_mm, h, pSQ), ext);
+R.apparent_m_beyond_20deg = struct('min', min(med(far)), 'max', max(med(far)), 'phi_max_deg', max(phi));
+R.staged_m_vs_extent = struct('phi_max_deg', ext, 'm', m_ext, 'calibration_subset_m', cfg.m);
+fprintf('apparent m beyond 20 deg: %.2f to %.2f (scan up to %.1f deg); staged m with the scan limited to %s deg: %s (subset of the paper: %.3f)\n', ...
+    R.apparent_m_beyond_20deg.min, R.apparent_m_beyond_20deg.max, max(phi), mat2str(ext), mat2str(m_ext, 4), cfg.m);
 fprintf('full-map joint calibration: A %.5g, m %.3f; apparent m %.1f (phi 2-3 deg) -> %.1f (phi 25-35 deg)\n', ...
     A_all, m_all, med(3), median(med(centre > 25 & centre < 35), 'omitnan'));
 % calibration budget
@@ -1592,10 +1682,14 @@ set(ax2, 'XScale', 'log', 'YScale', 'log', 'YTick', [3 4 5 7 10 15 20 30]);
 xlim(ax2, [2 100]);
 ylim(ax2, [2.8 30]);
 xlabel(ax2, 'Number of calibration points $N$');
-ylabel(ax2, 'Mean 3D error on the grid (cm)');
+ylabel(ax2, 'Mean 3-D error on the grid (cm)');
 legend(ax2, 'Location', 'northeast', 'FontSize', 6.5);
 title(ax2, '(b) Calibration budget', 'FontWeight', 'normal');
 pp_export(fig, cfg, 'fig_calibration');
+end
+
+function m = staged_order(x, y, rss, xy, h, p)
+[~, m] = pp_calibrate(x, y, rss, xy, h, p, 'staged');
 end
 
 function e = err_of_cal(x, y, rss, xy, h, p, err_of)
@@ -1673,9 +1767,58 @@ for j = 1:numel(cfg.led_freqs_khz)
     fprintf('     pattern XY: 3x3 %.2f, 4x4 %.2f, all %.2f cm | geometric XY: 3x3 %.2f, 4x4 %.2f, all %.2f cm\n', ...
         L.pattern_g3.err3d.mean, L.pattern_g4.err3d.mean, L.pattern_all.err3d.mean, ...
         L.geometric_g3.err3d.mean, L.geometric_g4.err3d.mean, L.geometric_all.err3d.mean);
+    L.nine = nine_point_system(cfg, D, x, y, rss(:, j), D.rss(:, :, j), sets.g3, h);
     R.(sprintf('led%d', f)) = L;
 end
 figure_maps(cfg, x, y, rss, R);
+end
+
+function N = nine_point_system(cfg, D, x, y, rss, rss2, idx, h)
+% One LED calibrated from scratch as a single-LED system (Section VI-E): LED XY, A and m by the joint fit on the nine
+% points idx of D1, search started at the strongest of them; receiver as calibrated (SQ, stage zero cfg.offset_deg);
+% positions of D2 (rss2, K x S) estimated with NLS. Diagnosis: geometric position of the LED from the estimated
+% directions at the known positions (all heights; from the other heights when it is used to evaluate a height).
+S = size(D.truth, 2);
+[~, k] = max(rss(idx));
+start = [x(idx(k)) y(idx(k))];
+p0 = pp_params(cfg, 'SQ', 1, 6, start);
+[A, m, xy] = pp_calibrate(x(idx), y(idx), rss(idx), start, h, p0, 'joint_xy');
+p = pp_params(cfg, 'SQ', A, m, xy);
+E = pp_estimate('SQ', 'NLS', rss2, D.theta, cfg.offset_deg, cfg.tilt_deg, p);
+e = site_errors(E, D, p);
+t = p.transmitter.position_m;
+u = (t - D.truth)./vecnorm(t - D.truth);
+geo = triangulate_rays(D.truth, E.u, true(1, S));
+geo_cross = zeros(3, S);
+for l = 1:numel(D.levels)
+    geo_cross(:, D.level == l) = repmat(triangulate_rays(D.truth, E.u, D.level ~= l), 1, nnz(D.level == l));
+end
+ug = (geo_cross - D.truth)./vecnorm(geo_cross - D.truth);
+shift = norm(xy(:) - 1e3*geo(1:2));
+Eg = E;
+for l = 1:numel(D.levels)
+    sel = D.level == l;
+    xyg = 1e3*geo_cross(1:2, find(sel, 1))';
+    [Ag, mg] = pp_calibrate(x(idx), y(idx), rss(idx), xyg, h, p0, 'joint');
+    pg = pp_params(cfg, 'SQ', Ag, mg, xyg);
+    Es = pp_estimate('SQ', 'NLS', rss2(:, sel), D.theta(:, sel), cfg.offset_deg, cfg.tilt_deg, pg);
+    Eg.r(:, sel) = Es.r;
+    Eg.u(:, sel) = Es.u;
+end
+eg = site_errors(Eg, D, p);
+far = acosd(u(3, :)) >= 35;
+N = struct('start_xy_mm', start, 'led_xy_mm', xy, 'A', A, 'm', m, 'D2', e.summary, 'failures', nnz(~E.ok), ...
+    'irradiance_deg', [min(acosd(u(3, :))) max(acosd(u(3, :)))], 'rss_mV', 1e3*[min(rss2, [], 'all') max(rss2, [], 'all')], ...
+    'geometric_xyz_m', geo, 'shift_cm', shift/10, 'tilt_deg', atand(shift/1e3/h), ...
+    'direction_from_calibrated_deg', mean(acosd(min(1, sum(E.u.*u))), 'omitnan'), ...
+    'direction_from_geometric_deg', mean(acosd(min(1, sum(E.u.*ug))), 'omitnan'), ...
+    'geometric', struct('err3d', eg.summary.err3d, 'horizontal_mean', eg.summary.horizontal_mean, ...
+        'vertical_bias', eg.summary.vertical_bias), ...
+    'beyond_35deg', struct('n', nnz(far), 'mean_cm', mean(e.err3d(far)), 'mean_geometric_cm', mean(eg.err3d(far)), ...
+        'mean_within_cm', mean(e.err3d(~far)), 'mean_geometric_within_cm', mean(eg.err3d(~far))));
+fprintf('     nine points from scratch: LED (%.1f, %.1f) mm, A %.5f, m %.3f; D2 mean %.2f cm (horizontal %.2f, vertical %+.2f); geometric (%.1f, %.1f) mm, %.3f m, shift %.1f cm, tilt %.2f deg; directions %.2f deg from it; LED at the geometric position %.2f cm\n', ...
+    xy, A, m, e.summary.err3d.mean, e.summary.horizontal_mean, e.summary.vertical_bias, 1e3*geo(1:2), geo(3), shift/10, N.tilt_deg, ...
+    N.direction_from_geometric_deg, eg.summary.err3d.mean);
 end
 
 function c = triangulate_rays(truth, U, sel)
@@ -1713,7 +1856,7 @@ for j = 1:numel(cfg.led_freqs_khz)
         cb.Label.String = 'RSS / max';
         cb.Label.Interpreter = 'latex';
     end
-    title(ax, sprintf('%d kHz (max %.1f mV)', cfg.led_freqs_khz(j), 1e3*max(rss(:, j))), 'FontWeight', 'normal');
+    title(ax, sprintf('%d kHz', cfg.led_freqs_khz(j)), 'FontWeight', 'normal');
     xlabel(ax, '$X$ (m)');
     if j == 1
         ylabel(ax, '$Y$ (m)');

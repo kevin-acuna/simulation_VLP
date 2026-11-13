@@ -539,6 +539,430 @@
 - Still resting on abstracts only: Yang2014 (3D, multiple tilted receivers) and Yu2018 (one horizontal + two tilted
   PDs); both descriptions agree with the introductions of Huang2015, Li2024 and Chen2021.
 
+## SNR, figures, processing time, Discussion, 16 pages (user, 2026-11-12) - %TEMP%/zconv/shorten.py
+- State found: the user had committed (83998dff) and was editing Section VI by hand: the subsection headings
+  "Measurement Noise", "LED Radiation Patterns" and "Receiver Response Model" are GONE (the first block of VI has no
+  subsection; A = Accuracy on the Regular Grid, ..., E = The Other LEDs). Their labels no longer exist: the two
+  references in Section V now point to sec:results ("Section VI"). Do not restore the headings.
+- (1) SNR: one figure only. VI: "the 500 kHz RSS ranges from 1.07 to 20.7 mV, which corresponds to an SNR of at least
+  50 dB" (was "50 to 76 dB"; 50.5 dB at the weakest RSS). Consistent with the reference SNR of III-E (50 dB) and the
+  Discussion ("at an SNR above 50 dB"). Do not report the 50-76 dB range again.
+- (2) fig_maps: titles are only "300 kHz" ... (no "(max .. mV)").
+- (3) fig_calibration is NO LONGER IN THE PAPER (commented out in 06_results.tex; part 'calib' still writes the file
+  and the numbers). Its content is in the text: apparent order from about 11 near the axis to 6.0 beyond 20 deg
+  (VI, first block) and the calibration-budget numbers (VI-C). No text may cite fig:calibration.
+- (4) fig_response: SUPERSEDED the same day (see "Fig. 7 (receiver response) without the SQ assumption"): the
+  binned circles with error bars were rejected by the user, the points are back.
+- (5) fig_grid_height: 3.5 x 1.45 in, three curves (3D, horizontal, signed vertical) labelled directly on the plot,
+  no legend, no P90 (it was not drawn), x ticks at the five heights.
+- (6) Table VII (processing time) REMOVED (commented out in 06b). Text of VII-D: MATLAB, single thread of the laptop
+  (AMD Ryzen 9 8940HX): projection (8) 7.6 ms per 100-ms record, 0.5 ms per 10-ms record, NLS about 2 ms per
+  position -> about 80 ms (100-ms records) and 7 ms (10-ms records) for K = 10. Only this case is reported (the user
+  found the all-threads / one-thread / FFT / GLS / WLS table over-detailed); the comparison with learning-based
+  estimators was removed there (it is in the introduction).
+- (8) Discussion and Limitations: 772 -> 329 words, two paragraphs. P1 = limits of the accuracy (models, not noise;
+  single Lambertian order floor 3.14 cm, tilted LED; next step = pattern model with angle-dependent order and LED
+  tilt, two planes) and of the validation (one room, one LED height, 1.2 x 1.2 x 0.36 m; response from the
+  literature, not measured on the device; ground truth = gantry, two tape measurements, CAD; reflections not
+  modelled). P2 = practice: acquisition time set by the stage; yawing platform / drone with one tilted PD and an
+  IMU; heading from an initial alignment; 1.7 cm per degree at 1 m; future work (heading references, moving
+  receivers, several LEDs). Removed as repetitions: calibration effort (VI-C, conclusion), 0.2 deg requirement
+  (VII-B), minimal-hardware motivation (introduction), several fixed PDs (II-A). Do NOT write "the largest remaining
+  term is the LED pattern": an empirical pattern alone does not lower the overall error (see the 'axis' notes).
+- (7) Other cuts: II-C sentence repeating the introduction (direction inferred from the variation of R), first
+  sentence of VII, "for 100 ms it is the calibration of Table III" (VII-C), joint-fit values A = 0.0611, m = 5.79
+  (VI), shorter pending paragraph on the error under the LED (VI-A).
+- LENGTH: tracked PDF 17 pages; with every \add / \del accepted, 16 pages (references end on page 16, about 0.4 page
+  free). Clean build without touching the sources:
+  pdflatex -jobname=clean "\AtBeginDocument{\renewcommand{\add}[1]{#1}\renewcommand{\del}[1]{}}\input{main.tex}"
+  (+ bibtex clean, two more passes). Script %TEMP%/zconv/build_both.ps1 builds both and copies main.pdf (tracked) and
+  main_accepted.pdf (clean) to .latex-build/. Optional further cuts NOT applied: Table II (datasets, repeats the
+  text), Algorithm 1 (repeats Appendix C).
+- USER DECISIONS in this round (do not undo silently): abstract and introduction keep "assume a cosine response" /
+  "In the single-PD systems, the receiver is described by the ideal cosine response" (the "most" fix was rejected,
+  although Huang2015 uses an exponential lens gain); "ratios of the" rejected in the Huang2015 sentence; Table I no
+  longer lists phi_max = 49.7 deg (the text of III-E still uses it). OPEN: the user restored "X, Y in [0, 1.4] m" for
+  the random positions of D3; the sessions were recorded with xy100to1300 (data 0.115-1.291 m) -> flagged again.
+
+## Fig. 7 (receiver response) without the SQ assumption (user, 2026-11-12) - part 'response'
+- SUPERSEDED the same day: the figure was removed from the paper (see "Lambertian order as a stable value; receiver-
+  response figure removed"). The analysis below remains valid and the part 'response' still produces the figure.
+- The user asked whether dividing the RSS by an amplitude fitted with SQ makes the points fit SQ by construction:
+  YES (each of the 125 amplitudes was a least-squares fit with SQ, which centres every position on the SQ curve).
+  The user wanted this "not highlighted"; instead of hiding it, the assumption was REMOVED: ln y_ik = b_i + r(psi_ik)
+  with r a free piecewise-linear function (nodes every 5 deg), amplitudes b_i and r solved together by linear least
+  squares. D2 then fixes the measured response up to ONE common factor (no data within 1.8 deg of the normal; the
+  anchor R(0) = 1 moves the level by 1-3 % depending on the node spacing), set by a least-squares match to SQ
+  (factor 1.0266; the model-free amplitudes differ from the SQ-fitted ones by 0.14 % rms, max 0.37 %).
+  Deviation of the points with each model's OWN best factor: SQ 0.82 %, cos^1.9 1.58 %, cos 8.41 % (free fit 0.50 %)
+  = same ranking as the profile-consistency residuals 0.80 / 1.42 / 6.63 %. paper_numbers.json "response".
+- Figure: the 1250 points again (the user did not like the bins with error bars), black, IN FRONT; the three model
+  curves in pale tints and wider lines BEHIND. 3.5 x 1.85 in. Caption: "... and RSS of D2 divided by the amplitude
+  of its position." Text (VI): "The amplitudes are estimated together with a free piecewise-linear response,
+  without assuming any of the models, and only their common scale is set on the SQ curve."
+- Real feature seen without the assumption: within 6 deg of normal incidence the RSS is 1.5 +/- 0.4 % above SQ
+  (43 positions, LED 9-21 deg off the vertical); residual vs SQ by 5-deg bin: +1.6, +0.8, 0, -0.5, -0.7, -0.3, +0.6,
+  +0.7, +0.6, +0.3 %. It supports the cautious sentence of VI ("... or the response of the PD near normal incidence").
+  Scratch check (%TEMP%/zconv/response_study2.m): with the free response the single-order misfit of D1 between 10 and
+  37 deg stays (+/-2 %, rms 1.6 -> 1.9 %), only the excess within 3 deg of the axis goes (2.4 -> 0.4 %): the LED
+  pattern is still not a single cosine power, the on-axis peak is ambiguous (LED or PD).
+- LED calibration: (23) divides the flat-PD RSS by R(phi) (SQ in the final model, each model's own response in
+  Tables IV-V). Inherent to a flat scan (it measures the product); not circular for the choice of the response,
+  which rests on the profile-consistency test (no A, no m). Left as written: do NOT remove "each row recalibrates A
+  and m ... with the corresponding response" (the table would become ambiguous).
+- User edit: VI now says "which corresponds to an SNR of 50 dB" (the user removed "at least"). Exact alternative
+  proposed, not applied: "Over D2, the weakest 500 kHz RSS is 1.07 mV, which corresponds to an SNR of 50 dB".
+
+## Lambertian order as a stable value; receiver-response figure removed (user, 2026-11-12)
+- Scripts %TEMP%/zconv/order_and_response.py, sober.py, order_final.py; scratch study order_study.m.
+- (1) User: "m decreases from 11 near the axis to 6 beyond 20 deg ... where most positions are seen" suggests that
+  the calibrated order depends on the working area, which it must not. CHECKED on D1 (part 'calib', numbers in
+  paper_numbers.json calib.apparent_m_beyond_20deg / calib.staged_m_vs_extent):
+  - apparent order (A fixed on the axis), median per degree, beyond 20 deg: 5.88 to 6.11 up to 37.7 deg (scan limit);
+  - staged m with the scan limited to 20 / 25 / 30 / 35 / 38 deg: 6.66 / 6.13 / 6.02 / 6.03 / 6.03 (subset of the
+    paper, up to 31.8 deg: 6.092) -> stable once the scan reaches about 25 deg; too high if it stops before;
+  - nothing is selected by distance to the axis for m (all the points of the subset are fitted); only A comes from
+    the point on the axis, by definition of the staged fit;
+  - "11 near the axis" was an artefact of the definition: within 5 deg the RSS is less than 1 % below the model and
+    the apparent order divides by ln cos(phi) ~ 0. The real departure is in amplitude: D1 / model of Table III - 1 =
+    -0.3, -0.9, -1.8, -2.9, -3.9, -3.5, -2.3, -0.7 % in 2.5-deg bins up to 20 deg, then +1.3, +1.8, +0.4, +0.4 %.
+  Text of VI (tracked): "Beyond an emission angle of about 20 deg, the pattern follows a single cosine power: the
+  apparent order ... stays between 5.9 and 6.1 up to 38 deg, the limit of the scan. The staged calibration gives
+  m = 6.09, and this value does not depend on the extent of the scan, since it remains between 6.0 and 6.1 when the
+  scan is limited to any angle from 25 to 38 deg. Closer to the axis, the measured product lies up to 4 % below the
+  calibrated model." Do NOT write "from about 11 near the axis" or "where most positions of the working area are
+  seen" again. Related wording: VI-C "The reason is the higher apparent order near the axis: points there push m
+  upwards, and the calibration must extend to the angles at which the order is stable"; IV-C "the calibration
+  points must therefore extend away from the axis"; conclusion "provided they extend away from its axis" (the old
+  "cover the emission angles in use / at which the system operates" tied the calibration to the working area).
+- (2) fig_response is NO LONGER IN THE PAPER (float commented out in 06_results.tex): the user found it redundant
+  with Fig. 8(b) of Bastiaens2020 (measured acceptance of the PDA100A2 with the models; psi_3dB = 0.61 rad, fitted
+  m_R = 1.9, checked in the PDF) and did not want to expose the circularity question. Part 'response' is no longer
+  in the default parts (run on request). The paragraph is sober: "For the PDA100A2, whose angular response was
+  measured in [Bastiaens2020], the published parameters are ..."; then Table IV, the profile-consistency residuals
+  (0.80 / 1.42 / 6.63 %) and the positioning errors. Removed: the sentences on the figure, "To explain the measured
+  contrast between orientations", "the only failures in Table IV", "with a vertical bias of -5.6 cm". KEPT: "A model
+  that fits amplitudes reasonably well can still misrepresent their slopes (Section III-A) ..." (our own point).
+  The evidence for SQ in the paper is now the profile-consistency test and the positioning results only.
+- User edit kept: "Over D2, the weakest 500 kHz RSS is 1.07 mV, which corresponds to an SNR of 50 dB" (non-breaking
+  spaces added). Figures now: 6 maps, 7 error vs height, 8 CDF, 9 random test, 10 bound, 11 orientation, 12 window.
+
+## Stage zero / orientation reference presented briefly (user, 2026-11-12) - %TEMP%/zconv/stage_zero.py
+- The user found the profile-consistency test "left in the air" (when / how would a drone do it?). Agreed position:
+  knowing the orientation of the receiver in the frame of the room is a REQUIREMENT of the method (Section II:
+  known normals), not a step of it; the stage zero is a one-off calibration made BEFORE positioning. The user wants
+  it kept but short and without emphasis ("no darle tanta luz").
+- Where it is now: V-A, right after the normal (24): "alpha_0, the stage zero, is the stage angle at which the PD
+  tilts towards +Y. It must be known for the normals to be expressed in the frame of the room. Its nominal value,
+  65 deg, was obtained by aligning the PD with the Y axis, and the residual misalignment was calibrated once at
+  known positions (Section V-C)." [65 deg = cfg.nominal_offset_deg / "off65" of the campaigns; "aligning the PD with
+  the Y axis" follows the user's own description - asked to confirm.] V-C: "The stage zero alpha_0 is the value
+  that minimizes the residual of the profile-consistency test (22) at the known positions of D2: 66.5 deg, that
+  is, 1.5 deg from the nominal one (a 3 x 3 grid at a single height gives the same value within 0.3 deg). This
+  value is used for D2 and D3." IV-B: the test "is used here, at known positions, to compare candidate receiver
+  responses and to calibrate the azimuth reference of the receiver (Section V-A)". VI-A: "The calibrated stage
+  zero lowers it to 3.91 cm". Discussion: "Roll and pitch then follow from gravity, whereas the heading must be
+  referred to the room, as the stage zero was here" + heading references for such platforms = future work.
+- REMOVED: "and nine known positions the orientation reference" (abstract), "and calibrates its orientation
+  reference" (contribution 3), the VI-C paragraph on calibrating the stage zero with nine positions (its only
+  surviving trace is the parenthesis of V-C), "nine known positions calibrate the angular zero" (conclusion), the
+  drone alignment "which the profile-consistency test can provide at a known position" (Discussion).
+- Do NOT claim that sigma_theta covers a wrong stage zero: sigma_theta models zero-mean random errors, a constant
+  offset is a bias (measured effect: 4.98 -> 3.91 cm on D2, Table V; D3 4.48 cm with 65 deg vs 4.10 cm).
+- Facts for later (not in the paper): with ONE LED the heading cannot be obtained from the RSS (rotating the receiver
+  about the vertical through the LED leaves every RSS unchanged); one known position gives the zero only to about
+  2.3 deg, nine positions to about 0.3 deg; per-height fits of D2: 66.41-66.54 deg.
+- Table V keeps the approved row label "+ stage zero from profile-consistency test" (a tracked relabel overflowed
+  the column).
+- State found at the start of this round (changes made by the user, keep them): the receiver-response figure
+  (fig_response.pdf) is NO LONGER in the paper (commented out; text: "For the PDA100A2, whose angular response was
+  measured in [Bastiaens2020], ..."), so the model-free version of that figure is unused; VI now says "The pattern
+  follows a single cosine power beyond an emission angle of about 20 deg ... apparent order between 5.9 and 6.1
+  from 20 to 38 deg ... m = 6.09 ... stays between 6.0 and 6.1 when the scan is limited to 25 deg or more" (the
+  5.9-6.1 range agrees with the scratch study; the 6.0-6.1 statement was NOT re-verified here); "calibration points
+  must therefore extend away from the axis" (IV-C, conclusion); SNR sentence = "the weakest 500 kHz RSS is 1.07 mV,
+  which corresponds to an SNR of 50 dB".
+- Length: tracked 17 pages, accepted 16 pages, no warnings.
+
+## Bastiaens2026, TIM review of the quality of positioning service of VLP (user, 2026-11-12)
+- PDF: CAMBRIDGE/papers/A_Review_of_the_Quality_of_Positioning_Service_of_VLP_Within_the_Indoor_Positioning_System_Landscape.pdf
+  (S. Bastiaens, M. Alijani, W. Joseph, D. Plets, IEEE TIM vol. 75, 2026, Art. no. 7000733, doi 10.1109/TIM.2026.3655932,
+  33 pages, same group as Bastiaens2020 / Bastiaens2024). Text extract: %TEMP%/zconv/ptxt/qops_flow.txt. Bib key
+  Bastiaens2026 (added). The user asked whether it helps the introduction / the arguments / as a reference: YES.
+- What it says that supports OUR arguments (checked in the text):
+  - II-A: ToA / TDoA need precise synchronization, AoA needs a more complex receiver, "RSS is the most widely adopted
+    thanks to its low implementation cost and simplicity ... usually using a single PD receiver".
+  - III-C, V-B: "Enabling the VLP service is sometimes also impeded, e.g., with single-row lighting deployments"; "In
+    a warehouse ... the hallway is typically only covered with a single row of LED fixtures ... localizing in the
+    transversal dimension then requires a helper sensor and/or other lamp modifications" (open problem "intricate
+    transmitter deployments").
+  - III (Table III text): fingerprinting "in principle has the highest accuracy ... but it is usually not feasible in
+    practice, due to the costly data collection phase, and the unfavorably high storage and latency"; II-E3: fitting
+    the distance-RSS relation "is definitely not feasible for large-scale VLP roll-outs" (laborious fingerprint
+    gathering, no accurate-enough temporary ground truth); "these manual measurements are superfluous when properly
+    modeling [= Bastiaens2020]". -> the introduction can now say "usually infeasible in practice" WITH this citation
+    (the user had asked for "inviable"; Glass2021 alone did not support it).
+  - II-C: reported accuracies come "mostly i) for 2-D (and thus not 3-D) positioning; ii) in the absence of both
+    receiver and transmitter tilt; ... iv) make use of prior propagation calibration measurements"; small studies up
+    to 2 x 2 x 2 m, idealized environments, limited receiver-LED distances. V-B: "More extensive 3-D accuracy
+    evaluations and algorithms" (drones); conclusion: "Rigorous 2.5-D and full 3-D localization evaluations are needed".
+  - II-E, Table II: LED pattern diverging from the tabulated one, non-Lambertian luminaires, "even small, unnoticeable
+    tilts impact VLP" (mitigation: hang precisely or calibrate in situ and integrate the tilt in the propagation
+    model); "Improper R_P model -> bias; good characterisation of R_P" (receiver responsivity).
+  - V-A6: "a VLP receiver that consists of a single PD with a nonzero angle of inclination ... will allow
+    unambiguously determining a receiver's (e.g., a drone's) yaw" (our receiver concept named as a direction).
+  - III-B: RSS VLP update rates above 100 Hz are easily supported. III: p50 / p90 suffice as summary metrics (p75 is
+    the most informative single one).
+- CAUTION: the review says industrial ceilings are ">> 3 m" (its conclusion; the symbol is lost in the text extract,
+  checked on the rendered page). Our LED at 3 m is ROOM scale: never present it as industrial scale.
+- Tracked edits made: citations in the introduction (P1 RSS of a PD; P2 one added sentence after the approved one: "Even when several
+  are in view, a single row of luminaires, as in a warehouse aisle, leaves the position across the row unresolved"
+  (kept separate on purpose: there the condition 'several luminaires in view' is met and still not sufficient);
+  P5 3D need; P5 "... makes fingerprint-based positioning usually infeasible in practice" instead of "is a major
+  obstacle to deployment outside the laboratory") and in VI (non-Lambertian luminaires; LED tilt remedy).
+- Its Section V-C is a reporting checklist that a TIM reviewer may apply. Already covered by the paper: LED type,
+  pattern, modulation, position and orientation; PD type, area, height, orientation, field of view, noise;
+  calibration procedures; measurement locations; sampling and processing; errors (median, P90), latency. MISSING and
+  only the user can provide: accuracy / resolution of the ground truth (gantry repeatability, tape uncertainty: the
+  "% AUTHOR" note of V-A), room dimensions, surfaces and ambient lighting during the measurements. Not needed:
+  optical power and responsivity (lumped in A), cost. The review also calls for open data sets and reference
+  testbeds: releasing the database would be a further contribution (user's decision, not claimed).
+- User edits seen in this round (do not undo): the paragraph on calibrating the stage zero with nine positions was
+  removed from VI-C; the abstract no longer claims "nine known positions the orientation reference"; contribution 3
+  no longer says "and calibrates its orientation reference"; V-A / V-C now present alpha_0 as a nominal alignment
+  (65 deg) plus a residual misalignment found with the profile-consistency test (66.5 deg; "a 3 x 3 grid at a single
+  height gives the same value within 0.3 deg"); IV-B reworded by the user.
+
+## Full-paper polish and coherence pass (user, 2026-11-13) - %TEMP%/zconv/polish_pass2.py ... polish_pass6.py
+- Request: read the whole paper once more, polish it, check coherence, make sure a reader can follow it. All edits
+  tracked (about 95 small ones, cumulative with the pending marks of the earlier rounds); backup of the sources before
+  the pass in %TEMP%/zconv/backup_polish_20261113-003557. Result: tracked 17 pages, accepted 16 pages, no warnings.
+- `\add` in main.tex is now `{\color{blue}\ifmmode\else{}\fi#1}`: `\color` ends with `\ignorespaces`, so an addition
+  that starts with a space lost it in the tracked PDF ("(21)of Section"). Table cells: a struck word can overflow the
+  column of the tracked build; Table V uses `\del{\fontsize{4.5}{5}\selectfont uncalibrated}\add{nominal}`.
+- TOOLING: heredocs passed through the exec tool collapse `\\` into `\` (a Python heredoc with `'\\theta'` wrote a TAB
+  into make_paper_figures.m; fixed). Write scripts that contain `\\` with the write tool, or use raw single backslashes.
+- FACTUAL FIXES (checked against paper_numbers.json / the data):
+  - D3 region: X, Y in [0.1, 1.3] m (third time: folder names xy100to1300, data 0.115-1.291 m; the user had restored
+    [0, 1.4] twice without answering). VI-D now says "the border of the test region".
+  - D1 calibration subset: the first 14,294 points are the serpentine scan up to X = 1.01 m (irradiance angles up to
+    31.8 deg), NOT "the region within 1.16 m of the LED". Recorded 13-14 Oct until 17:26, before D2 started (18:56);
+    the scan finished on 15 Oct. Text: "the first 14 294 points of the scan (X <= 1.01 m, irradiance angles up to 31.8 deg)".
+  - VI-C: full-map joint calibration gives 3.66 cm (3.6594; "3.65" was a rounding slip), random N = 10 median 3.85 cm.
+  - VI: staged m stays between 6.0 and 6.1 when the scan is limited to any angle from 26 (not 25) to 38 deg
+    (%TEMP%/zconv/staged_m_extent.m: 6.66 / 6.13 / 6.08 / 6.05 / 6.03 / 6.02 at 20 / 25 / 26 / 27 / 28 / 29 deg, then
+    6.01-6.03 up to 38 deg).
+  - VI-E / VII-A: the sentence "triangulated LED heights 3-5 cm below the tape value, consistent with the small negative
+    vertical errors" was REMOVED. Check (%TEMP%/zconv/vert_check.m): vertical error -1.60 cm = range part -1.49 cm
+    (range overestimated by 1.58 cm, 0.76 %) + direction part -0.11 cm; an LED lower than assumed would by itself give
+    POSITIVE vertical errors. Now: VI-E "... a discrepancy discussed in Section VII-A"; VII-A "The estimated directions
+    converge 3-5 cm below the tape-measured height of the LEDs (Section VI-E), a fraction of a degree in elevation".
+  - III-A "the first term of (11) is common to all orientations" -> "has the same direction for all orientations" (its
+    magnitude scales with R(psi_i)); III-B "A and the LED pattern only scale the first column of (13)" -> "enter only
+    through the amplitude beta" (the matrix of (13) does not contain them); IV-A "the two stages, with the NLS fit (18),
+    yield the ML position" (GLS / WLS are not ML); V-C "NLS estimator (18), followed by (20)" (was "(18)-(20)", which
+    included the ratio fit (19)).
+- NEW RESULT (MATLAB part 'nine', paper_numbers.json "nine", needs grid_results.mat + random_results.mat): COMPLETE
+  calibration of the 500 kHz LED (x, y, A, m by the joint fit) from the 3 x 3 grid of D1 (X, Y = 0.1 / 0.7 / 1.3 m),
+  search started at the strongest of the nine points (same result from (700, 700) mm): LED (280.9, 902.1) mm, A 0.06086,
+  m 5.800 -> D2 3.47 cm (= Table VI, pattern centre, 3 x 3), D3 3.97 cm recomputed offline with the stage zero of the
+  paper (paper calibration: 4.10 cm). It backs "nine measurements calibrate the LED model" (abstract) including the LED
+  position; stated in VI-E (and one pointer at the end of VI-C, whose budget assumes the LED position known). VI-E also
+  explains why Table VI (pattern centre (284, 905), fitted on the whole map) differs from Table III ((281.1, 904.8),
+  fitted on the subset): 3 mm apart, hence 3.42 vs 3.66 cm with all points.
+- Table III: adapter tilt origin is now "Design" (the text no longer says that the test calibrates the tilt, user edit of
+  IV-B). For the record (%TEMP%/zconv/tilt_check.m): with the tilt left free the profile-consistency test on D2 gives
+  14.86 deg (residual 0.780 % vs 0.796 % at 15 deg; stage zero unchanged, 66.50 deg). Offered to the user as one clause.
+- Terms defined / unified: unit sphere S^2 (II-A), support of the response (II-C: incidence angles below a^-1/2),
+  identity matrix I_n (III-A; bold I is also the FIM: I(r), I_e, I_{r,eta}), "Cramer-Rao" in the definition of the PEB,
+  phi_max = 49.7 deg defined in the text of III-E, global frame = gantry axes X, Y and height Z (V-A), gantry vertical
+  coordinate z_g (z is the height of the receiver in II), azimuth alpha_i in Appendix A (stage angle in V).
+  "irradiance angle" everywhere (no "emission angle"), "stage zero" (no "angular zero", except the self-contained
+  conclusion), "dataset", American spelling (modeled, toward, afterward, upward), "PDs", "3D positioning", LOS acronym
+  dropped (used once), "profiled" (jargon) removed from Appendix C, "averaging" -> "a longer record / observation"
+  (L no longer exists), Table V "nominal alpha_0" / text "the nominal stage zero", "the published cosine order".
+- Semicolons gluing clauses replaced by a full stop, "whereas" or "and" in all sections (user preference). Left: lists
+  in captions, Table III origins, Algorithm 1.
+- Figures: fig_cdf legend shortened to "D2, K = 10: 3.66 cm" ... "D3, K = 5: 4.10 cm" (the long labels covered the
+  curves; the caption carries the details); fig_bound legend "PEB, sigma_theta = 0 deg" instead of "PEB, measured noise"
+  (every bound uses the measured noise), caption "(sigma_theta = 0)"; float of fig:random moved before the subsection
+  "Blind Random Test" (it used to land two pages after its text; do NOT move fig:maps the same way, it pushes Fig. 9
+  and the floats of VI back). Parts rerun: 'random', 'peb' (numbers unchanged, checked against the previous JSON).
+- references.bib: Bastiaens2026 without the page range, note "{A}rt. no. 7000733" like the other entries.
+- NOT changed, reported to the user for a decision: "3-D" in the title versus "3D" in the running head, text and figure
+  labels (IEEE style is 3-D / 2-D; about 27 occurrences plus six figures); the "% AUTHOR" note of V-A (tape
+  uncertainty, gantry repeatability), room dimensions and ambient lighting; authors and affiliations.
+- Underfull \vbox warnings on pages 5 and 10 of the accepted build are stretched column glue (cosmetic); the build
+  script does not report them.
+
+## Accepted up to VI-A; 3-D everywhere; Fig. 4(b); D3 region kept by the user (user, 2026-11-13, second round)
+- Scripts %TEMP%/zconv/accept_until_VIA.py, round_3d.py, nobreak_3d.py; backup %TEMP%/zconv/backup_accept_20261113-114728.
+- The user read everything up to (not including) VI-A "Accuracy on the Regular Grid" and ACCEPTED it: main.tex,
+  sections 01-05 and the head of 06_results.tex (spectrum, LED patterns, receiver models, Table IV) are black again.
+  Everything from VI-A on (rest of 06, 06b, 07, 08, appendices) is still pending with its marks. Hand decisions seen:
+  II-A keeps "n_i in S^2" (the "on the unit sphere" wording was rejected); the introduction cites Bastiaens2026 three times.
+- USER DECISIONS, do not raise again:
+  - D3 region stays "X, Y in [0, 1.4] m" (V-B). Do NOT change it or flag it any more (the sessions were recorded with
+    xy100to1300; the user knows). Consequence: VI-D no longer says "within 0.15 m of the border of the area"; it says
+    "at the outermost positions (5.2 cm on average where X or Y is below 0.25 m or above 1.15 m, against 3.4 cm
+    elsewhere)", which is the same split (random.test_border) written with coordinates and true for any stated region.
+  - The adapter tilt is 15 deg everywhere; nothing may mention the 14.86 deg of the free-tilt check. Table III: "Design".
+  - "3-D" / "2-D" everywhere, never "3D" / "2D" (text, captions, tables, running head, figure labels). In the sources
+    the new form is written \mbox{3-D} (a line break after the hyphen gave "2-" / "D position"); "3-D printed adapter".
+    Only exception: the title of Plets2019 in the bibliography ("Efficient 3D trilateration ...", its real title).
+    Figures relabelled: fig_grid_height, fig_cdf, fig_random, fig_bound, fig_window, fig_orient (also fig_integrity and
+    fig_calibration in the code, not in the paper). New part 'redraw' redraws fig_grid_height / fig_window / fig_orient
+    from the saved .mat files without recomputation; a part that returns [] is not written to paper_numbers.json.
+- V-A: "Its nominal value, 65 deg on the scale of the stage (Fig. 4(b)), was obtained by aligning the PD with the Y
+  axis". Checked on fig_inkscape/fig_PD.png: the index of the stage scale sits midway between the 60 and 70 marks.
+  Fig. 4 now has "(a)" / "(b)" set by LaTeX under the two panels (\makebox 0.565 / 0.435 \linewidth; the image itself
+  has no labels) and the caption "(a) CAD model and (b) photograph ... In (b), the stage is at 65 deg, the nominal
+  stage zero."
+- Build: tracked 17 pages, accepted 16 pages, no warnings.
+
+## Accepted up to VI-D; VI-E = the other LEDs calibrated from scratch with the nine-point procedure (user, 2026-11-13, third round)
+- Scripts %TEMP%/zconv/accept_until_VIE.py, rewrite_VIE.py; scratch study other_leds_study.m; backup backup_vie_20261113-133930.
+- The user ACCEPTED everything before VI-E (VI-A to VI-D are black). Pending: VI-E (rewritten, below), VII, VIII, IX,
+  appendices, plus two new tracked sentences in VI-C and VI-D.
+- USER'S IDEA FOR VI-E (keep it): the subsection is NOT about the full D1 map and NOT about the 500 kHz LED. It shows
+  that the procedure already presented (nine flat-PD points of the 3 x 3 grid of D1 -> LED x, y, A, m by the joint fit;
+  SQ response and stage zero 66.5 deg already calibrated, they belong to the receiver) works when repeated FROM SCRATCH
+  with the three other LEDs (300 / 700 / 900 kHz), each used alone on D2. It is an extension of the blind test: no
+  parameter is adjusted on the RSS that these LEDs give on D2. The 500 kHz LED appears only as a reference column /
+  comparison. The other LEDs were OFF during D3 (RSS about 0.003 mV), so D2 (125 positions, K = 10) is their only test.
+- Numbers: MATLAB part 'leds' now also returns leds.ledXXX.nine (function nine_point_system: search started at the
+  strongest of the nine points, stage zero cfg.offset_deg; the old fields are unchanged). Nine-point calibration ->
+  LED (x, y) mm, A, m | D2 mean 3-D (horizontal / vertical) | geometric position, shift / tilt | LED at the geometric
+  position (triangulated at each height from the other four):
+    300 kHz: (1188, 1185), 0.0321, 5.97 |  7.08 (3.00 / +6.08)  | (1205, 1176), 2.0 cm / 0.6 deg  |  6.22 cm
+    700 kHz: (192, 509),   0.0305, 6.36 | 24.49 (16.32 / -2.47) | (317, 368),  18.9 cm / 5.8 deg  | 17.00 cm
+    900 kHz: (1169, 232),  0.0264, 5.77 | 12.96 (5.13 / +11.03) | (1195, 181),  5.7 cm / 1.7 deg  |  6.57 cm
+    500 kHz: (281, 902),   0.0609, 5.80 |  3.47 (2.40 / -0.73)  | (306, 890),   2.7 cm / 0.8 deg  |  2.92 cm  (reference)
+  Directions: 0.59 / 0.59 / 0.57 / 0.56 deg on average from the geometric position (other heights) for the FOUR LEDs
+  -> the receiver model (SQ + stage zero calibrated with the 500 kHz tone) transfers unchanged; the differences come
+  from the LED model (tilt). Seen at up to 42.4 / 38.9 / 41.9 deg (500 kHz: 37.6); weakest RSS 0.12 / 0.33 / 0.11 mV
+  (500 kHz: 1.07). Beyond 35 deg: 300 kHz 11 positions 15.6 cm (13.4 with the geometric position), 900 kHz 9 positions
+  29.9 (16.1) cm; within 35 deg: 6.3 (5.5) and 11.6 (5.8) cm. Table VI (table*): columns 300 / 700 / 900 / 500 kHz
+  (reference); the old table (pattern centre from the whole map, 3 x 3 vs all points) is commented out. The tilts of
+  the old text (5.5 deg, 0.8-1.9 deg, shift 17.9 cm) used the whole-map pattern centre: do not quote them any more.
+  Fig. 6 is unchanged (its "+" are the whole-map centres, within 1.5 cm of the nine-point ones).
+- Not explained by the tilt and said so only through measured facts: the 300 kHz LED (tilt 0.6 deg) keeps 6.2 cm with
+  a vertical bias of +5 cm. Best possible (A, m) on D2 with the LED at its geometric XY: 4.25 / 16.85 / 4.47 cm
+  (500 kHz 2.82). Untested hypothesis mentioned to the user, NOT in the paper: the four tones are 200 kHz apart, so
+  900 kHz is the third harmonic of 300 kHz and third-order products fall on the other tones.
+- The nine-point calibration of the 500 kHz LED is now stated BEFORE VI-E: VI-C ends with "The position of the LED need
+  not be known beforehand either. Fitted on the same nine points together with A and m, it lies 3 mm from that of
+  Table III, and the error on D2 is 3.47 cm. Nine flat-PD measurements thus provide the complete calibration of an
+  LED."; VI-D: "With the nine-point calibration of Section VI-C, the same RSS give 3.97 cm."
+- Build: tracked 17 pages, accepted 16 pages, no warnings.
+
+## ALL changes accepted; Table VI removed; Discussion = subsection VII-E; acquisition time reframed (user, 2026-11-13, fourth round)
+- Scripts %TEMP%/zconv/accept_all.py (accepts every \add / \del / {\color{blue}} of the live text; `--check` counts what
+  is left), round_final.py, round_final2.py, run_with_root.py (runs an edit script on a copy of the manuscript);
+  backup of the sources before the acceptance: %TEMP%/zconv/backup_final_accept_20261113-145639.
+- STATE: the sources contain NO tracked mark (the user: "no tendremos nada en azul o rojo"). The \add / \del macros
+  stay defined in the preamble of main.tex. The acceptance was verified: the PDF built after it has exactly the text
+  and layout of the "accepted" build made before it. The edits of this round were applied directly (no marks in the
+  manuscript); a PDF with only this round marked is .latex-build/main_last_round_marked.pdf (built from a temporary
+  copy, %TEMP%/zconv/round_marked; its accepted sources are byte-identical to the manuscript). main.pdf and
+  main_accepted.pdf are now the same document. Convention for later rounds was not restated: track new edits with
+  \add / \del as before unless the user asks again for a clean manuscript.
+- Table VI (other LEDs) REMOVED at the user's request (it drew attention to a complementary check); the float is
+  commented out in 06_results.tex and nothing cites tab:leds. VI-E is self-contained in the text: errors 7.1 / 13.0 /
+  24.5 cm (300 / 900 / 700 kHz) against 3.5 cm for the positioning LED "calibrated in the same way (Section VI-C)";
+  directions within 0.6 deg of the geometric position for the four LEDs; 700 kHz: 18.9 cm, 5.8 deg; "the tilts of the
+  300 and 900 kHz LEDs are 0.6 and 1.7 deg, and that of the positioning LED 0.8 deg"; LED at the geometric position:
+  "6.2 cm (300 kHz), 6.6 cm (900 kHz) and 17.0 cm (700 kHz)"; beyond 35 deg the 300 / 900 kHz errors exceed 13 cm.
+  Tables are now I scenario, II datasets, III parameters, IV response models, V ablation.
+- "Discussion and Limitations" is NO LONGER a section: it is subsection VII-E (label subsec:discussion; the label
+  sec:discussion no longer exists), input right after 06b_error_analysis.tex in main.tex; the Conclusion is Section
+  VIII. Reason given to the user: it draws on VII-A (models, not noise), VII-B (orientation), VII-C (10 ms) and VII-D
+  (acquisition time), so it closes that section; merging it into the Conclusion would have made the Conclusion too
+  long. The title of Section VII ("Error Analysis and Operating Requirements") was left unchanged. Section VII opens
+  with "... It ends with the limitations of the study."; the introduction says "Section VI reports the positioning
+  accuracy, Section VII analyzes the errors and discusses the limitations, and Section VIII concludes the paper."
+- ACQUISITION TIME (user's framing, keep it): the slow MTRS stage is part of the LABORATORY setup used to explore the
+  method with controlled orientations; it is NOT presented as a limitation of the method. In an implementation the
+  receiver is reoriented by the platform that carries it (a mobile robot turning about its own axis, a drone yawing
+  in hover) or by a fast motor. Never write again "the main limitation is the acquisition time". Text: VII-D "The
+  duration is thus set by the rotation stage of the testbed, not by the method: a stage rotating at about 20 deg/s
+  would already bring a five-orientation position below one minute, and faster rotating platforms are discussed in
+  Section VII-E."; VII-E second paragraph "The rotation stage belongs to the laboratory setup. It served to study the
+  method with controlled orientations, and its slow rotation sets the duration of an acquisition (Section VII-D),
+  which is therefore not a limitation of the method. In an implementation, the receiver would be reoriented by the
+  platform that carries it, for instance a mobile robot that turns about its own axis or a drone that yaws while it
+  hovers, or by a motor much faster than the stage. The duration of an acquisition is then governed by the rotation
+  of that platform, since the signal requires only 10 ms per orientation (Section VII-C). One tilted PD mounted close
+  to the rotation axis suffices, with the normals given by an IMU or by the encoder of the motor. With an IMU, roll
+  and pitch follow from gravity, ..."; future work list = heading references, acquisition during a continuous
+  rotation (added: every record of the paper was taken with the receiver at rest after 1 s of settling), moving
+  receivers, several LEDs. Conclusion: next steps include "a receiver reoriented by the platform that carries it, such
+  as a mobile robot or a drone" (was "faster reorientation").
+- For later (not in the paper): with on-the-fly sampling the RSS averaged over an angular sweep Delta centred on the
+  reported angle differs from the static one only to second order (Delta^2 / 24 times the curvature), so 10-ms windows
+  tolerate fast rotation if the mid-window angle is known; the constraint is the timing between the orientation
+  sensor and the record (0.2 deg at 360 deg/s = 0.56 ms).
+- Build: 16 pages, no warnings, no tracked marks.
+
+## Sections V / VI reorganized, conclusion shortened (user, 2026-11-13, fifth round) - %TEMP%/zconv/restructure_v_vi.py
+- Backup of the sources before the round: %TEMP%/zconv/backup_restructure_20261113-170447.
+- User's remark: the start of Section VI looked odd: its first part (spectrum / noise, LED patterns) is still
+  characterization and belongs to Section V, and the first results (receiver models, Table IV) appeared in passing in
+  an untitled block. Goal: sections and subsections that divide the paper properly, no unnecessary subsection.
+- NEW STRUCTURE:
+  V "Experimental Testbed and Protocol": A Experimental Setup, B Datasets, C "Characterization and Calibration" (was
+    "Calibration, Protocol and Metrics"; labels subsec:protocol / subsec:parameters kept). V-C = noise paragraph +
+    Fig. 5 (spectrum), LED-pattern paragraph + Fig. 6 (maps), then the Table III paragraph (LED from D1, SQ response
+    selected by the test -> Section VI-A, stage zero 66.5 deg, nothing adjusted on D3).
+  VI "Positioning Results" (was "Characterization and Positioning Accuracy"; label sec:results kept): lead paragraph =
+    what is reported + the METRICS (moved from V-C) + pointer to VII; A "Receiver Models and Estimators" (new heading,
+    label subsec:res-models: the PDA100A2 paragraph, Table IV, GLS / NLS / WLS, and the default "Unless stated
+    otherwise, positions are estimated in the following with the SQ response and the NLS estimator (18), followed by
+    (20)", moved from V-C); B Accuracy on the Regular Grid; C Number of Orientations (its first sentence now carries
+    the subsampling rule: "into near-uniform subsets of K angles, with all their rotations"); D Calibration Budget;
+    E Blind Random Test; F The Other LEDs as Single-LED Systems.
+  VII unchanged (A-E), VIII Conclusion. Figure and table numbers are unchanged (Fig. 5 spectrum, Fig. 6 maps, Tables
+    I-V). Introduction: "Section V the testbed, the datasets and the calibration".
+  Do NOT recreate separate subsections "Measurement Noise" / "LED Radiation Patterns" (the user removed those headings
+  on 2026-11-12); the single-paragraph subsections of VI were kept because other sections cite them by number.
+- MARKING of this round: moved text is NOT marked (black at its new place); only new or changed wording is tracked
+  (new headings in blue, "Section VI" -> "Section V-C" / "Section VI-A", the merged sentences). The user was told.
+- Conclusion: 429 -> 340 words, two paragraphs. Removed: "On these grounds the testbed used a 15 deg tilt and the
+  published response model ...", "3.73 cm with five", "the computation of a position then takes about 7 ms", "Each
+  element of the model mattered ... angular zero of the rotation stage and the position of the LED ... provided they
+  extend away from its axis", "The comparison with the position error bound showed that", "and the normalized RSS
+  profile varies least between orientations". New: "The receiver response is decisive (77 cm with a Lambertian
+  receiver), and nine flat-PD points over the working area calibrate the LED as well as a dense map."
+- USER'S HAND EDITS seen at the start of this round (keep them): abstract without "rather than from noise" (a comma was
+  added, tracked, before "and 10 ms of signal per orientation suffice"); Fig. 10 caption without "(calibrated SQ model,
+  measured noise ...)"; Fig. 11 caption without "with 20 draws per level"; VII-C without the paragraph "The minimum
+  window depends on the link ..."; earlier: V-B no longer says that Table III came from the first 14 294 points of D1,
+  and the Fig. 4 caption no longer ends with "In (b), the stage is at 65 deg, the nominal stage zero."
+- Build: tracked 16 pages, accepted 16 pages, no warnings.
+
+## Fifth-round marks accepted; the instrument behind the height measurements is no longer named (user, 2026-11-13, sixth round)
+- Scripts %TEMP%/zconv/accept_all.py, round_tape.py; backup %TEMP%/zconv/backup_tape_20261113-175821.
+- The marks of the fifth round (V / VI reorganization, shorter conclusion) were ACCEPTED at the user's request; the
+  build after the acceptance has exactly the text and layout of the accepted build made before it.
+- USER DECISION (after a colleague's advice): the paper does not say that the LED height and the height of the gantry
+  carriage were measured with a tape; the origin of such measurements is usually not stated, it takes space and invites
+  remarks. Do NOT write "tape" again and do not ask the user again for the tape uncertainty. What stays true and
+  stated: the two heights are MEASURED values (Table III: "Measured", "Measured (base), CAD (e)"; IV-C: the LED height
+  "must be measured, or calibrated with a second plane"), the gantry provides the ground truth (V-A), the PD elevation
+  comes from the CAD model, and the triangulated LED heights are 3-5 cm below the measured value (VI-F, VII-A): that
+  discrepancy is a result and was kept.
+- Tracked edits of this round (10 marks, pending the user's review): Table III "Tape" -> "Measured" (two rows; the
+  struck word is set in a tiny font so that the tracked table does not overflow); VI-F "below the tape value" ->
+  "below the measured value"; VII-A "tape-measured height" -> "measured height"; V-A "The horizontal position of the
+  LED was not surveyed and is obtained from the calibration" -> "... is obtained from the calibration"; VII-E: the
+  sentence "The ground truth relies on the gantry, on two tape measurements and on the CAD model of the receiver."
+  removed (it repeated V-A and Table III). The user was told that this last one goes beyond a word swap (it was a
+  stated limitation) and can be rejected.
+- The "% AUTHOR" comment of V-A now only says: optional, if a reviewer asks for the accuracy of the reference
+  positions, state the positioning repeatability of the gantry. Told to the user: TIM is a measurement journal, a
+  reviewer may still ask for the uncertainty of the reference; keep the numbers at hand for the response letter.
+- Build: tracked 16 pages, accepted 16 pages, no warnings.
+
 ## Rebuild from this directory
 
 ```text

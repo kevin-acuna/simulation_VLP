@@ -19,18 +19,19 @@
 % Placeholder for schematics and photographs supplied by the author: \figplaceholder{height}{description}
 \newcommand{\figplaceholder}[2]{\fbox{\parbox[c][#1][c]{0.94\linewidth}{\centering\footnotesize\itshape #2}}}
 % Tracked changes for the author's review: \add{} new text (blue), \del{} removed text (red, struck out)
-\newcommand{\add}[1]{{\color{blue}#1}}
+\newcommand{\add}[1]{{\color{blue}\ifmmode\else{}\fi#1}}% in text, the empty group keeps a leading space of #1 (\color ends with \ignorespaces)
 \newcommand{\del}[1]{{\color{red}\sout{#1}}}
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\Cov}{Cov}
 \begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
 \title{3-D Visible Light Positioning With a Single LED and a Single Reorientable Photodiode: Bounds, Calibration, and Experimental Validation}
 \author{Author names and affiliations to be confirmed}
-\markboth{IEEE Transactions on Instrumentation and Measurement}{Single-LED, Single-PD 3D Positioning With a Reorientable Receiver}
+\markboth{IEEE Transactions on Instrumentation and Measurement}{Single-LED, Single-PD 3-D Positioning With a Reorientable Receiver}
 \maketitle
 \begin{abstract}
-Visible light positioning (VLP) with a single light-emitting diode (LED) is attractive where only one luminaire is in view, but a single received signal strength (RSS) measurement cannot determine a three-dimensional (3D) position. Existing centimeter-level systems that reorient a single photodiode (PD) estimate a two-dimensional position at a known height and assume a cosine response. This paper estimates the 3D position of a tilted PD from the RSS measured at a few known orientations under one fixed LED: their normalized profile gives the direction to the LED, and their common amplitude gives the distance through a calibrated LED model. A position error bound for an arbitrary receiver response, extended to orientation errors, yields two rules for the tilt of the PD. Maximum-likelihood and ratio-based least-squares estimators are derived for a general response, including the Square model of commercial PDs. Being model-based, they require neither fingerprints nor training: nine measurements calibrate the LED model, and nine known positions the orientation reference. On an automated testbed with a ceiling-mounted LED 3~m above the floor, the mean 3D error is 3.66~cm over 125 positions at five heights, and 4.10~cm over 131 random positions estimated live with five orientations. The response model is decisive (77~cm with the cosine response), the remaining error stems from model mismatch, notably the non-Lambertian LED pattern, rather than from noise, and 10~ms of signal per orientation suffice.
+Visible light positioning (VLP) with a single light-emitting diode (LED) is attractive where only one luminaire is in view, but a single received signal strength (RSS) measurement cannot determine a three-dimensional (\mbox{3-D}) position. Existing centimeter-level systems that reorient a single photodiode (PD) estimate a two-dimensional position at a known height and assume a cosine response. This paper estimates the \mbox{3-D} position of a tilted PD from the RSS measured at a few known orientations under one fixed LED: their normalized profile gives the direction to the LED, and their common amplitude gives the distance through a calibrated LED model. A position error bound for an arbitrary receiver response, extended to orientation errors, yields two rules for the tilt of the PD. Maximum-likelihood and ratio-based least-squares estimators are derived for a general response, including the Square model of commercial PDs. Being model-based, they require neither fingerprints nor training: nine measurements calibrate the LED model. On an automated testbed with a ceiling-mounted LED 3~m above the floor, the mean \mbox{3-D} error is 3.66~cm over 125 positions at five heights, and 4.10~cm over 131 random positions estimated live with five orientations. The response model is decisive (77~cm with the cosine response), the remaining error stems from model mismatch, notably the non-Lambertian LED pattern, and 10~ms of signal per orientation suffice.
 \end{abstract}
 \begin{IEEEkeywords}
 Cram\'er--Rao bound, photodiode, received signal strength (RSS), single LED, visible light positioning (VLP).
@@ -56,16 +57,13 @@ Cram\'er--Rao bound, photodiode, received signal strength (RSS), single LED, vis
 \label{sec:testbed}
 \input{sections/05_testbed_protocol}
 
-\section[Characterization and Positioning Accuracy]{Characterization and Positioning Accuracy}
+\section{Positioning Results}
 \label{sec:results}
 \input{sections/06_results}
 
 \section[Error Analysis and Operating Requirements]{Error Analysis and Operating Requirements}
 \label{sec:analysis}
 \input{sections/06b_error_analysis}
-
-\section{Discussion and Limitations}
-\label{sec:discussion}
 \input{sections/07_discussion}
 
 \section{Conclusion}
