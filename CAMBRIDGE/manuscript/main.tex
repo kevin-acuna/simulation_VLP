@@ -21,6 +21,12 @@
 % Tracked changes for the author's review: \add{} new text (blue), \del{} removed text (red, struck out)
 \newcommand{\add}[1]{{\color{blue}\ifmmode\else{}\fi#1}}% in text, the empty group keeps a leading space of #1 (\color ends with \ignorespaces)
 \newcommand{\del}[1]{{\color{red}\sout{#1}}}
+% The caption and rules of a ruled float (Algorithm 1) took the color of a tracked passage that spans a column break:
+% they are now set in the normal color, inside a balanced color group (no effect when nothing is tracked).
+\makeatletter
+\let\zz@float@makebox\float@makebox
+\def\float@makebox#1{\vbox{\color@begingroup\normalcolor\zz@float@makebox{#1}\color@endgroup}}
+\makeatother
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\Cov}{Cov}

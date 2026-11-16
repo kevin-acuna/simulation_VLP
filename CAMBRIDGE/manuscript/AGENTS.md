@@ -963,6 +963,63 @@
   reviewer may still ask for the uncertainty of the reference; keep the numbers at hand for the response letter.
 - Build: tracked 16 pages, accepted 16 pages, no warnings.
 
+## Sixth-round marks accepted; over-detail removed, accepted build = 15 pages (user, 2026-11-13, seventh round)
+- Scripts %TEMP%/zconv/round_trim.py, round_trim2.py, round_trim3.py; backup %TEMP%/zconv/backup_trim_20261113-181345.
+  The user had committed and pushed everything before this round (c608b4e4 "paper almost finish").
+- The marks of the sixth round ("tape" -> "measured") were ACCEPTED (PDF text and layout verified identical).
+- USER'S CONCERN (keep it in mind for every later edit): an AI-written text accumulates unnecessary data, values
+  computed internally that do not visibly come from anywhere, over-explanations and details that a human author would
+  not give. Target 15 pages. RULE: a number goes in the text only if it carries a conclusion; values that a table or a
+  figure already shows are not repeated; no implementation minutiae (seeds, tolerances, damping schedules, CPU model,
+  bin grouping); two significant figures are enough for secondary values.
+- RESULT: about 130 tracked marks (pending the user's review), 14 440 -> 13 340 words; accepted build 15 pages (page 15
+  about 40 % full), tracked build 16 pages, no warnings. Sections I and II were NOT touched (approved by the user).
+- What was removed or condensed (all tracked):
+  - III-B: "with coplanar normals, the SQ model can admit two symmetric solutions with a finite bound". III-E: 98.5 %,
+    the 8.5 deg / sigma 2 deg sentence, "coverage above 98 % up to 45 deg", the narrower-aperture sentence, 12.2 and
+    5.7 cm of the SNR sweep, "9.6 cm ... 6.5 cm on the floor to 5.1 cm at 1.8 m", "widens this window"; 1.06 -> 1.1 cm,
+    26 % -> "about a quarter"; Table I without "Number of positions 3 087" (edited directly, a float cannot be struck).
+  - IV-A: "the best three of a fixed set of seed directions, and solutions with competing minima are flagged" ->
+    "several seed directions"; the sentence "The estimator is deterministic and model-based ... stochastic search"
+    (repeated the introduction; flagged to the user as a positioning statement, reject the mark to keep it).
+  - V-A: PD height written "Z = 0.955 m + z_g" (0.858 + 0.097; the split 0.858 m / e = 96.96 mm is gone); "in
+    increasing order". V-C: the "apparent order" paragraph (5.9-6.1, 6.0-6.1 from 26 to 38 deg, m = 6.09) -> "the
+    pattern of the 500 kHz LED follows a single cosine power, of order close to 6, up to the limit of the scan at
+    38 deg"; Fig. 5 caption without the bin grouping. Table III: LED (281, 905) mm, A 0.0627, m 6.09, PD height
+    "0.955 m + z_g" (Measured, CAD), row "PD elevation e" removed.
+  - VI: RMSE no longer reported anywhere; VI-A without the three residuals (they are the rho column of Table IV), the
+    11-12 deg and "within 0.01 cm"; VI-B without the horizontal / vertical / direction means (last row of Table V), the
+    heights and bound values, 15 % / 49 %; VI-C without the two P90 and the gap-by-gap list; VI-D only the 3 x 3 grid
+    (3.54 cm) and the 0.2 m clustered grid (17 cm); VI-E without the bootstrap interval (the only number that was not
+    in paper_numbers.json), RMSE, direction error, "within 0.002 cm" and the border figures; VI-F without 1.865 m and
+    the beyond-35-deg figures.
+  - VII-A: P90 of the bound, K = 5 bound, "23 times" -> "more than twenty times", the 0.1 deg bound, "a fraction of a
+    degree in elevation", "through (21) corresponds to direction errors of the order of one degree"; the paragraph on
+    the design rules is now two sentences (38 deg, 27 deg, and "at the tilt of 15 deg, with K = 5 and sigma_theta =
+    0.5 deg, the bound stays below 10 cm at every position of D2"). VII-B: one pair of values (6.0 / 7.0 cm at 1 deg)
+    and "GLS and WLS follow the same trend"; no "within 4 %" / "5-19 %". VII-C: method in two sentences, 3.69 cm and the
+    K = 5 triplet removed. VII-D: "Most of this time", no "20 deg/s" sentence, no CPU model, one sentence for the
+    processing time (about 80 ms / 7 ms for K = 10).
+  - Appendix A: SQ derivative (already in III-A; Appendix C now points to Section III-A). Appendix C: normalization by
+    max|y|, Cholesky factor, beta update, damping schedule, exact-response remark, the whole "Initialization and
+    checks" paragraph (32 seeds up to 80 deg, three best, ambiguity flag) and the NLS initialization for cosine powers
+    -> three sentences at the end of "Solver"; Algorithm 1 from 13 to 9 lines (edited directly).
+- Every experimental number left in the paper is in figures/paper_numbers.json (produced by make_paper_figures.m).
+- main.tex: \float@makebox is wrapped in a balanced color group with \normalcolor (the caption and rules of Algorithm 1
+  took the red of a struck passage that spans a column break). No effect on the accepted build (verified: identical
+  layout with and without it).
+- NOT cut, possible if more margin is wanted: Table II (repeats V-B), Algorithm 1 (repeats Appendix C).
+
+## Seventh-round marks accepted; conclusion no longer lists several LEDs (user, 2026-11-13, eighth round)
+- All tracked marks accepted (accept_all.py); the sources contain NO mark; build 15 pages, no warnings. Backup of the
+  sources before: %TEMP%/zconv/backup_leds_20261113-192414.
+- The user had restored by hand, before this round, the IV-A sentence "The estimator is deterministic and model-based
+  ... without a fingerprint database, a training stage or a stochastic search." Keep it.
+- Conclusion, last sentence (edited directly, unmarked, as asked): "the combination of several LEDs" removed from the
+  next steps, because it contradicts the single-LED argument of the paper. Do not list multi-LED extensions as a next
+  step in the conclusion. VII-E still ends with "... and the use of several LEDs, whose directions can be intersected
+  without any gain or pattern calibration, are left for future work": the user was told and did not ask to change it.
+
 ## Rebuild from this directory
 
 ```text
