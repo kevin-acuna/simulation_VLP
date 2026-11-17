@@ -1,0 +1,66 @@
+ICS VISA diagnostic. No instrument commands or configuration changes.
+
+===== Python environment =====
+Python executable: C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Scripts\python.exe
+Python version: 3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]
+Pointer width: 64
+Windows: Windows-11-10.0.26200-SP0
+PyVISA: 1.16.2
+PyVISA file: C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Lib\site-packages\pyvisa\__init__.py
+
+===== VISA discovery information =====
+Machine Details:
+   Platform ID:    Windows-11-10.0.26200-SP0
+   Processor:      Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+
+Python:
+   Implementation: CPython
+   Executable:     C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Scripts\python.exe
+   Version:        3.12.10
+   Compiler:       MSC v.1943 64 bit (AMD64)
+   Architecture:   AMD64
+   Build:          Apr  8 2025 12:21:36 (#tags/v3.12.10:0cc8128)
+   Unicode:        UCS4
+
+PyVISA Version: 1.16.2
+
+Backends:
+   ivi:
+      Version: 1.16.2 (bundled with PyVISA)
+      #1: C:\Windows\system32\visa32.dll:
+         found by: auto
+         architecture:
+            ('x86', 64)
+         Could not get more info:
+            VI_ERROR_LIBRARY_NFOUND (-1073807202): A code library required by VISA could not be located or loaded.
+      #2: C:\Windows\system32\visa64.dll:
+         found by: auto
+         architecture:
+            ('x86', 64)
+         Could not get more info:
+            VI_ERROR_LIBRARY_NFOUND (-1073807202): A code library required by VISA could not be located or loaded.
+
+
+===== Resource manager creation: no instruments opened =====
+Requested backend/library: @ivi
+2026-11-13 16:37:58,975 - pyvisa - DEBUG - No user defined configuration
+2026-11-13 16:37:58,975 - pyvisa - DEBUG - Automatically found library files: [None, 'C:\\Windows\\system32\\visa32.dll', 'C:\\Windows\\system32\\visa32.dll', 'C:\\Windows\\system32\\visa64.dll', 'C:\\Windows\\system32\\visa64.dll']
+2026-11-13 16:37:58,975 - pyvisa - DEBUG - No user defined library files
+2026-11-13 16:37:58,975 - pyvisa - DEBUG - Library signatures: 90 ok, 0 failed
+2026-11-13 16:37:58,975 - pyvisa - DEBUG - Created library wrapper for C:\Windows\system32\visa32.dll
+2026-11-13 16:37:58,975 - pyvisa - DEBUG - viOpenDefaultRM('<ViObject object at 0x000002065DD136D0>',) -> -1073807202
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Lib\site-packages\pyvisa\highlevel.py", line 3002, in __new__
+    obj.session, _err = visa_library.open_default_resource_manager()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Lib\site-packages\pyvisa\ctwrapper\functions.py", line 1873, in open_default_resource_manager
+    ret = library.viOpenDefaultRM(byref(session))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 227, in _return_handler
+    return self.handle_return_value(session, ret_value)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Lib\site-packages\pyvisa\highlevel.py", line 252, in handle_return_value
+    raise errors.VisaIOError(rv)
+pyvisa.errors.VisaIOError: VI_ERROR_LIBRARY_NFOUND (-1073807202): A code library required by VISA could not be located or loaded.
+Resource manager test exit code: 1

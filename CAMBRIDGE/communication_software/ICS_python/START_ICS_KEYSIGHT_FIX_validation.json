@@ -1,0 +1,34 @@
+{
+  "preparedAt": "2026-11-13T16:41:36.269712+00:00",
+  "file": "START_ICS_KEYSIGHT_FIX.cmd",
+  "sha256": "83d1cd99325bc7689b5520f6fed2c5d7c88668bae7c0de8da31a3f337b6a9425",
+  "checks": [
+    "inline Python compiles",
+    "inline Python compiles"
+  ],
+  "hardwareTested": false,
+  "remedyConfirmedOnLabPC": false,
+  "effect": "Additional Keysight DLL search directory retained for each Python process; no global settings or instrument sessions during preflight.",
+  "mockedLauncherChecks": [
+    {
+      "name": "Successful mock VISA preflight and interactive state retained",
+      "exitCode": 0,
+      "stdout": "ICS Keysight VISA compatibility launcher\nThis adds a DLL search folder only inside this Python session.\nNo instrument settings, drivers or system configuration will be changed.\n\nChecking VISA with Keysight dependency search enabled...\nPython: C:\\Users\\ra714\\AppData\\Local\\Temp\\ics_visa_fix_test_i8z9gl89\\Project with spaces\\.venv\\Scripts\\python.exe\nPython version: 3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]\nPointer width: 64\nAdding DLL directory: C:\\Users\\ra714\\AppData\\Local\\Temp\\ics_visa_fix_test_i8z9gl89\\Program Files\\Keysight\\IO Libraries Suite\\bin\nRequested VISA library: @ivi\nVISA CHECK PASSED: MOCK VISA LIBRARY\nFIXTURE_MANAGER_CLOSED\nResource manager closed. No instrument sessions were opened.\n\nVISA check passed. Opening the normal ICS Python prompt.\nKeep using this launcher so the DLL search folder remains available.\nAt the prompt, run prepare, connect and check as before.\n\nFIXTURE_ICS_STARTED\nFIXTURE_CFG True\nFIXTURE_DLL_HANDLE True\n",
+      "stderr": ">>> >>> >>> "
+    },
+    {
+      "name": "Failed VISA preflight prevents program launch and retains report",
+      "exitCode": 1,
+      "stdout": "ICS Keysight VISA compatibility launcher\nThis adds a DLL search folder only inside this Python session.\nNo instrument settings, drivers or system configuration will be changed.\n\nChecking VISA with Keysight dependency search enabled...\n\nVISA could not start even with the additional Keysight DLL folder.\nPython: C:\\Users\\ra714\\AppData\\Local\\Temp\\ics_visa_fix_test_i8z9gl89\\Project with spaces\\.venv\\Scripts\\python.exe\nPython version: 3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]\nPointer width: 64\nAdding DLL directory: C:\\Users\\ra714\\AppData\\Local\\Temp\\ics_visa_fix_test_i8z9gl89\\Program Files\\Keysight\\IO Libraries Suite\\bin\nRequested VISA library: @ivi\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\ra714\\AppData\\Local\\Temp\\ics_visa_fix_test_i8z9gl89\\Project with spaces\\pyvisa.py\", line 4, in __init__\n    raise RuntimeError('FIXTURE_VISA_FAILURE')\nRuntimeError: FIXTURE_VISA_FAILURE\n\nPlease send VISA_KEYSIGHT_FIX_LOG.txt from this folder.\nNo instrument sessions were opened and no system settings were changed.\nPress any key to continue . . . \n",
+      "stderr": ""
+    },
+    {
+      "name": "Absent Keysight directory stops without native loading",
+      "exitCode": 1,
+      "stdout": "ICS Keysight VISA compatibility launcher\nThis adds a DLL search folder only inside this Python session.\nNo instrument settings, drivers or system configuration will be changed.\n\nThe standard 64-bit Keysight DLL directory was not found.\nChecked: \"C:\\Users\\ra714\\AppData\\Local\\Temp\\ics_visa_fix_test_i8z9gl89\\Missing Programs\\Keysight\\IO Libraries Suite\\bin\"\nYour Keysight installation may use a different location.\nPlease send VISA_KEYSIGHT_FIX_LOG.txt. Do not reinstall working drivers yet.\nPress any key to continue . . . \n",
+      "stderr": ""
+    }
+  ],
+  "mockedLauncherChecksPassed": true,
+  "independentReview": "No blocking quoting or handle-lifetime issue found."
+}

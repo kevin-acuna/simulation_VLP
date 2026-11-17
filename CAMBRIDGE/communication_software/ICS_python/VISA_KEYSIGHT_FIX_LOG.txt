@@ -1,0 +1,16 @@
+Python: C:\Users\LRDC_\Documents\ICS_standalone_Python\ICS_python\.venv\Scripts\python.exe
+Python version: 3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]
+Pointer width: 64
+Adding DLL directory: C:\Program Files\Keysight\IO Libraries Suite\bin
+Requested VISA library: @ivi
+2026-11-16 16:32:37,337 - pyvisa - DEBUG - No user defined configuration
+2026-11-16 16:32:37,353 - pyvisa - DEBUG - Automatically found library files: [None, 'C:\\Windows\\system32\\visa32.dll', 'C:\\Windows\\system32\\visa32.dll', 'C:\\Windows\\system32\\visa64.dll', 'C:\\Windows\\system32\\visa64.dll']
+2026-11-16 16:32:37,353 - pyvisa - DEBUG - No user defined library files
+2026-11-16 16:32:37,355 - pyvisa - DEBUG - Library signatures: 90 ok, 0 failed
+2026-11-16 16:32:37,355 - pyvisa - DEBUG - Created library wrapper for C:\Windows\system32\visa32.dll
+2026-11-16 16:32:37,355 - pyvisa - DEBUG - viOpenDefaultRM('<ViObject object at 0x00000207FEB77650>',) -> 0
+2026-11-16 16:32:37,355 - pyvisa - DEBUG - Created ResourceManager with session 1024
+VISA CHECK PASSED: Visa Library at C:\Windows\system32\visa32.dll
+2026-11-16 16:32:37,355 - pyvisa - DEBUG - Closing ResourceManager (session: 1024)
+2026-11-16 16:32:37,355 - pyvisa - DEBUG - viClose(1024,) -> 0
+Resource manager closed. No instrument sessions were opened.

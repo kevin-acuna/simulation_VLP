@@ -1,0 +1,205 @@
+test_capture_invalid_rate_and_span_are_saved (tests.test_instruments.InstrumentTests.test_capture_invalid_rate_and_span_are_saved) ... ok
+test_capture_no_running_memory_read_exact_scaling (tests.test_instruments.InstrumentTests.test_capture_no_running_memory_read_exact_scaling) ... ok
+test_capture_without_tx_and_mutation_rejected_before_io (tests.test_instruments.InstrumentTests.test_capture_without_tx_and_mutation_rejected_before_io) ... ok
+test_changed_physical_settings_invalidate_tx (tests.test_instruments.InstrumentTests.test_changed_physical_settings_invalidate_tx) ... ok
+test_changed_reference_clock_blocks_capture_before_scope (tests.test_instruments.InstrumentTests.test_changed_reference_clock_blocks_capture_before_scope) ... ok
+test_chunk_crosses_tone_and_frame_boundaries (tests.test_instruments.InstrumentTests.test_chunk_crosses_tone_and_frame_boundaries) ... ok
+test_connect_no_output_and_failure_cleanup (tests.test_instruments.InstrumentTests.test_connect_no_output_and_failure_cleanup) ... ok
+test_constructor_failure_closes_open_resource (tests.test_instruments.InstrumentTests.test_constructor_failure_closes_open_resource) ... ok
+test_stop_disconnect_session_cleanup (tests.test_instruments.InstrumentTests.test_stop_disconnect_session_cleanup) ... ok
+test_transport_binary_exact_and_termination (tests.test_instruments.InstrumentTests.test_transport_binary_exact_and_termination) ... ok
+test_transport_errors_restore_and_close (tests.test_instruments.InstrumentTests.test_transport_errors_restore_and_close) ... ok
+test_upload_backups_readback_before_playback (tests.test_instruments.InstrumentTests.test_upload_backups_readback_before_playback) ... ok
+test_upload_failure_stops_and_invalidates (tests.test_instruments.InstrumentTests.test_upload_failure_stops_and_invalidates) ... ok
+test_upload_one_frame_readback_stays_in_record (tests.test_instruments.InstrumentTests.test_upload_one_frame_readback_stays_in_record) ... ok
+test_comparison_preserves_disagreement_in_expected_result (tests.test_matlab_reference.MatlabReferenceTests.test_comparison_preserves_disagreement_in_expected_result) ... ok
+test_matlab_v7_double_counts_roundtrip_and_average (tests.test_matlab_reference.MatlabReferenceTests.test_matlab_v7_double_counts_roundtrip_and_average) ... ok
+test_all_constellations_gray_bits_and_unit_energy (tests.test_modem.ModemTests.test_all_constellations_gray_bits_and_unit_energy) ... ok
+test_all_orders_offsets_gain_and_cp_channel (tests.test_modem.ModemTests.test_all_orders_offsets_gain_and_cp_channel) ... ok
+test_awg_full_interpolated_frame_and_quantized_decode (tests.test_modem.ModemTests.test_awg_full_interpolated_frame_and_quantized_decode) ... ok
+test_held_out_payload_errors_are_counted_not_rejected (tests.test_modem.ModemTests.test_held_out_payload_errors_are_counted_not_rejected) ... ok
+test_invalid_inputs_rejected (tests.test_modem.ModemTests.test_invalid_inputs_rejected) ... ok
+test_missing_frame_is_rejected_and_attempted_bits_retained (tests.test_modem.ModemTests.test_missing_frame_is_rejected_and_attempted_bits_retained) ... ok
+test_noise_and_ambient (tests.test_modem.ModemTests.test_noise_and_ambient) ... ok
+test_non_signals_short_and_low_sample_rate_rejected (tests.test_modem.ModemTests.test_non_signals_short_and_low_sample_rate_rejected) ... ok
+test_packet_reproducibility_and_expected_baseline (tests.test_modem.ModemTests.test_packet_reproducibility_and_expected_baseline) ... ok
+test_resampler_against_independent_polyphase_sum (tests.test_modem.ModemTests.test_resampler_against_independent_polyphase_sum) ... ok
+test_round_ties_match_matlab_and_no_byte_overflow (tests.test_modem.ModemTests.test_round_ties_match_matlab_and_no_byte_overflow) ... ok
+test_scope_rates_and_fractional_capture_offsets (tests.test_modem.ModemTests.test_scope_rates_and_fractional_capture_offsets) ... ok
+test_averaging_baseline_tamper_detected (tests.test_processing.ProcessingTests.test_averaging_baseline_tamper_detected) ... ok
+test_changed_duration_qam_and_sample_phase (tests.test_processing.ProcessingTests.test_changed_duration_qam_and_sample_phase) ... ok
+test_default_arithmetic (tests.test_processing.ProcessingTests.test_default_arithmetic) ... ok
+test_default_capture_and_averaging (tests.test_processing.ProcessingTests.test_default_capture_and_averaging) ... ok
+test_fft_amplitude_resolution_odd_and_padding (tests.test_processing.ProcessingTests.test_fft_amplitude_resolution_odd_and_padding) ... ok
+test_held_out_payload_errors_counted (tests.test_processing.ProcessingTests.test_held_out_payload_errors_counted) ... ok
+test_incomplete_or_constant_input (tests.test_processing.ProcessingTests.test_incomplete_or_constant_input) ... ok
+test_matlab_float_integer_metadata (tests.test_processing.ProcessingTests.test_matlab_float_integer_metadata) ... ok
+test_missing_training_disables_average_without_dropping_frames (tests.test_processing.ProcessingTests.test_missing_training_disables_average_without_dropping_frames) ... ok
+test_pilot_selection_full_window_and_orientation (tests.test_processing.ProcessingTests.test_pilot_selection_full_window_and_orientation) ... ok
+test_wrong_slot_duration_retained_as_failure (tests.test_processing.ProcessingTests.test_wrong_slot_duration_retained_as_failure) ... ok
+Prepared: 10.000000 ms pilot observation; 12.000000 ms tone slot; 10.444800 ms OFDM (15 frames).
+Cycle 22.444800 ms; 359.117 MB. Capture needs >= 67.534400 ms at >= 5.000 MSa/s.
+No instruments contacted. Payload rates are nominal repeated-test-data rates.
+CapturedAt: synthetic
+Orientation: 1
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: True
+AveragedBER: 0.0
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+test_disabled_average_uses_original_ber (tests.test_workflow.WorkflowTests.test_disabled_average_uses_original_ber) ... CapturedAt: synthetic
+Orientation: 1
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: False
+AveragedBER: nan
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+Training averaging unavailable: Training averaging disabled or unavailable
+ok
+test_duration_and_target_settings_take_effect (tests.test_workflow.WorkflowTests.test_duration_and_target_settings_take_effect) ... Prepared: 5.000000 ms pilot observation; 7.000000 ms tone slot; 20.193280 ms OFDM (29 frames).
+Cycle 27.193280 ms; 435.092 MB. Capture needs >= 81.779840 ms at >= 5.000 MSa/s.
+No instruments contacted. Payload rates are nominal repeated-test-data rates.
+ok
+test_five_orientations_and_dummy_handoff (tests.test_workflow.WorkflowTests.test_five_orientations_and_dummy_handoff) ... CapturedAt: synthetic
+Orientation: 1
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: True
+AveragedBER: 0.0
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+Raw pilot MAT: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\scans\20261113_161606_c21b99f39dd3\pilots\20261113_161607_7409b5122793\orientation_01_pilot.mat
+CapturedAt: synthetic
+Orientation: 2
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: True
+AveragedBER: 0.0
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+Raw pilot MAT: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\scans\20261113_161606_c21b99f39dd3\pilots\20261113_161609_c3f23a6d5051\orientation_02_pilot.mat
+CapturedAt: synthetic
+Orientation: 3
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: True
+AveragedBER: 0.0
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+Raw pilot MAT: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\scans\20261113_161606_c21b99f39dd3\pilots\20261113_161611_5a5029544f01\orientation_03_pilot.mat
+CapturedAt: synthetic
+Orientation: 4
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: True
+AveragedBER: 0.0
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+Raw pilot MAT: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\scans\20261113_161606_c21b99f39dd3\pilots\20261113_161613_955c4f387c31\orientation_04_pilot.mat
+CapturedAt: synthetic
+Orientation: 5
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: True
+AveragedBER: 0.0
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+Raw pilot MAT: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\scans\20261113_161606_c21b99f39dd3\pilots\20261113_161615_05aab7920407\orientation_05_pilot.mat
+Five-orientation scan saved: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\scans\20261113_161606_c21b99f39dd3\scan.npz
+ok
+test_invalid_capture_and_signature (tests.test_workflow.WorkflowTests.test_invalid_capture_and_signature) ... ok
+test_public_processing_complete (tests.test_workflow.WorkflowTests.test_public_processing_complete) ... ok
+test_raw_pilot_mat_csv_exact_and_fft (tests.test_workflow.WorkflowTests.test_raw_pilot_mat_csv_exact_and_fft) ... Raw pilot MAT: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\pilots\20261113_161618_f5e9c6bdb7d5\orientation_01_pilot.mat
+ok
+test_scan_cancel_has_no_capture (tests.test_workflow.WorkflowTests.test_scan_cancel_has_no_capture) ... ok
+test_scan_failure_keeps_partial_results (tests.test_workflow.WorkflowTests.test_scan_failure_keeps_partial_results) ... CapturedAt: synthetic
+Orientation: 1
+AnalysisOK: True
+ToneAvailable: True
+ToneRMS_mV: 4.9496838391024305
+Observation_ms: 10.0
+OriginalBER: 0.0
+TrainingAverageAvailable: True
+AveragedBER: 0.0
+OFDMTargetMet: True
+AcceptedFrames: 45
+RejectedFrames: 0
+DecodedBits: 71280
+CombinedCriteriaMet: True
+NominalOFDMslotPayload_Mbps: 2.2748161764705883
+NominalCyclePayload_Mbps: 1.058597091531223
+PositionEstimateComputed: False
+Raw pilot MAT: C:\Users\LRDC_\AppData\Local\Temp\ics_workflow_94442g5t\scans\20261113_161619_de045f5728cb\pilots\20261113_161620_dacda835e635\orientation_01_pilot.mat
+Scan stopped; partial results retained: RuntimeError: mock capture failure
+ok
+test_storage_complex_arrays_and_nonfinite (tests.test_workflow.WorkflowTests.test_storage_complex_arrays_and_nonfinite) ... ok
+
+----------------------------------------------------------------------
+Ran 48 tests in 27.401s
+
+OK

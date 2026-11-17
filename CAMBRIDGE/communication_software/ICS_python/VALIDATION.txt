@@ -1,0 +1,67 @@
+PYTHON PORT VALIDATION -- 13 November 2026
+
+Executed result: 48 tests passed, zero failures, errors or skipped tests.
+The synthetic end-to-end export and both plotting functions also executed
+successfully with a non-interactive rendering backend.
+Run completed: 2026-11-13T15:25:55.467259+00:00
+
+Scope of verification
+The Python tests in validation/offline_tests.json and offline_tests.log execute
+signal processing, saved-data handling and simulated instrument responses.
+The test report gives the exact current count and pass/fail status.
+
+No Python command has been sent to the physical lab AWG or scope from this
+preparation environment. The successful MATLAB raw capture has not yet been
+supplied for Python replay. Offline success does not establish hardware success,
+driver compatibility or exact MATLAB/Python numerical equivalence.
+
+Retained lab baseline
+The successful MATLAB stationary capture at 14:47:11 on 13 November 2026 used:
+- 1 Vpp; 16 GSa/s waveform rate; 500 kHz tone; 12 ms tone slot.
+- 10.4448 ms of 64-QAM OFDM per cycle; scope at 10 ms/div.
+- 2 million returned points at 20 MSa/s.
+- 45 accepted frames, 71,280 bits, 3 original bit errors.
+- Zero observed errors after training averaging.
+- 4.9797 mV fitted tone RMS over a 10 ms observation.
+This is evidence for the MATLAB implementation, not a Python hardware result.
+
+Executed test coverage
+- QPSK, 16-, 64- and 256-QAM; deterministic frame generation.
+- Independent polyphase/FIR comparisons; full 11,141,120-sample int8 AWG frame.
+- Noise, polarity, timing and multipath; missing frames and known bit errors.
+- Combined tone/OFDM segmentation, changed slot lengths and sample rates.
+- Training-only channel averaging with held-out payload errors.
+- Exact raw pilot MAT/CSV samples and FFT scaling.
+- Five-orientation export, cancellation and partial failures.
+- Experiment integrity checks and numeric-array/JSON storage without pickle.
+- Mocked text/binary VISA transfers, complete block bytes and short reads.
+- Connection cleanup, sample conversion and capture rate/span validation.
+- Stopped-only AWG readback, backup-before-replacement, upload/start and failure
+  cleanup, including the shortest communication slot.
+- MATLAB reference bridge with synthetic MAT data and MATLAB-style metadata.
+
+Implementation boundaries
+The receiver keeps two QPSK training symbols and eight payload symbols per frame,
+NFFT=1024, CP=64, active bins 20..52 and interpolation by 1024. Timing and channel
+estimation use training, not known payload bits. Averaging aligns training phase
+and leaves each tested frame out of its averaged channel estimate. It operates
+within a stationary communication burst and buffers the burst; it is not claimed
+as a real-time receiver for a moving channel. Original results are retained.
+
+MATLAB column ordering, one-based saved indices, signed DAC rounding and MT19937
+uniform-bit generation are implemented explicitly. Floating-point calculations
+and resampling need not be bit-identical between the languages. The included
+ics_export_python_reference.m and replay_matlab_reference() compare the SAME
+samples and packet without instrument access. Bridge tests use synthetic MAT
+files; they do not constitute a native MATLAB execution or lab-data comparison.
+
+The position estimator is a placeholder. Five raw pilot waveforms are exported
+as estimator inputs. No actual coordinates or positioning accuracy are claimed.
+The working MATLAB source and release package have not been modified by this port.
+
+Primary interface references
+https://pyvisa.readthedocs.io/en/latest/introduction/configuring.html
+https://pyvisa.readthedocs.io/en/latest/api/resources.html
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample_poly.html
+https://www.keysight.com/us/en/assets/9018-04320/user-manuals/9018-04320.pdf
+https://www.keysight.com/us/en/assets/9018-06976/programming-guides/9018-06976.pdf

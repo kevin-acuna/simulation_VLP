@@ -1,0 +1,226 @@
+PYTHON INTEGRATED COMMUNICATION + SENSING
+Prepared 13 November 2026 for the same Windows lab computer.
+
+WHAT CHANGES
+Use this separate Python folder instead of the MATLAB program. Keep your
+working MATLAB folder as a reference. The wiring, LED bias, detector setup,
+Keysight IO Libraries and instrument addresses stay the same.
+
+Python uses PyVISA with the installed Keysight VISA library, NumPy/SciPy for
+processing, and Matplotlib for figures. Running this package requires neither
+MATLAB nor MTT. All editable settings are in config.py.
+
+VALIDATION LIMIT
+The included tests exercise Python signal processing and simulated instruments.
+Python has not yet controlled your physical AWG/scope here. The successful
+MATLAB lab capture has not yet been replayed in Python. See VALIDATION.txt.
+The optional same-capture comparison in step 3 checks the receiver before TX.
+
+1. INSTALL ONCE
+Install 64-bit Python 3.12 if it is not available. Unzip this package into its
+own folder. Open PowerShell/Terminal IN that folder, then run one line at a time:
+
+    py -3.12 -m venv .venv
+    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+    .\.venv\Scripts\python.exe selftest.py
+
+The tests must report passed: true, failures: 0 and errors: 0. They do not open
+instruments. Installation needs internet access; normal operation does not.
+Keep the existing Keysight VISA driver. If Python cannot locate it, retain the
+full error and check the 64-bit Keysight installation before changing drivers.
+
+2. EDIT config.py
+Confirm these complete VISA resource strings, already filled from your lab log:
+    awg_address:   TCPIP0::localhost::inst0::INSTR
+    scope_address: USB0::0x0957::0x17BC::MY63420113::0::INSTR
+
+Do not use MATLAB display names such as VISA-TCPIP-0-localhost-inst0.
+Main settings inside get_config() are dictionary entries; edit after the colon:
+
+    "pilot_frequency_hz": 500e3,
+    "pilot_measurement_s": 10e-3,
+    "pilot_lead_s": 1e-3,
+    "pilot_tail_s": 1e-3,
+    "ofdm_duration_s": 10e-3,
+    "qam_order": 64,
+    "ber_target": 1e-3,
+    "training_average": True,
+
+The default tone slot is 12 ms: 1 ms lead + a full 10 ms observation + 1 ms tail.
+OFDM rounds up to 15 complete frames, giving 10.4448 ms. Each repeating cycle
+lasts 22.4448 ms and occupies 359.117 MB in the AWG.
+
+Keep 1 Vpp, zero AWG offset, FOUR/DIV4, channel 1 in extended memory and a
+16 GSa/s waveform rate (64 GSa/s internal DAC). Other AWG outputs must be off.
+The code sets the successful scope timebase of 10 ms/div and checks the actual
+returned sample rate and record length. It does not change the scope vertical
+scale, input impedance or trigger configuration; retain the working settings.
+
+Longer slots still face memory and capture limits. A 60-second waveform at
+16 GSa/s needs about 960 GB. Editing a duration cannot make that fit in this
+single-waveform approach. prepare() reports the planned duration and memory.
+
+3. OPTIONAL: COMPARE THE SAME CAPTURE WITH MATLAB
+For a direct receiver comparison, copy only ics_export_python_reference.m
+into your working standalone MATLAB folder. While the successful experiment,
+capture and result variables are still present in MATLAB, run:
+
+    referencePath = ics_export_python_reference(experiment,capture,result);
+
+This creates matlab_reference_for_python.mat without accessing instruments.
+Copy it into this Python folder. If the file already exists, rename or move
+the old reference first; the exporter deliberately does not overwrite it.
+
+In Terminal, start Python:
+
+    .\.venv\Scripts\python.exe -i run_ics.py
+
+At Python's >>> prompt, run:
+
+    comparison = replay_matlab_reference("matlab_reference_for_python.mat")
+
+This uses the SAME received samples, training and payload packet. Compare
+original/averaged BER, accepted/rejected frames, bit count and tone RMS.
+The returned result contains matlabComparison, and its analysis folder contains
+matlab_comparison.csv. Investigate differences before claiming equivalence.
+The exporter creates MATLAB-v7 data; this helper does not directly read v7.3.
+
+4. CONNECT FROM PYTHON
+Release MATLAB's instrument connections first, using MATLAB:
+
+    ics_disconnect(rig);
+
+Then close MATLAB/MTT. Keep the Keysight M8195A control software running.
+Do not control the instruments from MATLAB and Python simultaneously.
+
+If you are not already at Python's >>> prompt, run this in Terminal:
+
+    .\.venv\Scripts\python.exe -i run_ics.py
+
+Alternatively, double-click start_python.cmd after installing the environment.
+The launcher loads cfg and functions. It does not connect or transmit.
+At >>>, run each line separately:
+
+    experiment = prepare(cfg)
+    rig = connect(cfg)
+    status = check(rig, experiment)
+    print(status["ready"])
+
+Continue only if ready is True. connect() queries and prints the real instrument
+identities, M8195A and MSO-X4154A. If any command raises an error, stop and retain
+the complete traceback. A variable from an earlier successful command can remain
+in Python after a later command fails; do not continue using it inadvertently.
+
+5. UPLOAD ONCE, CAPTURE AND DECODE
+Keep the mirror stationary. Run one command at a time:
+
+    tx = transmit(rig, experiment)
+    record = capture(rig, experiment)
+    result = process(record, experiment, 1)
+
+process() prints the result summary. To display it again:
+
+    print_summary(result)
+
+Wait for each command to finish. No SEQ option is required. The upload backs up
+existing shared extended-memory data before replacing it. Readback checks happen
+before playback starts. Capture never reads AWG waveform memory while it runs.
+A failed upload requests abort/output-off; it does not automatically restore the
+previous waveform. If that request fails, check the physical output state.
+
+Check these results:
+- record["validForProcessing"] is True: adequate span and at least 5 MSa/s.
+- ToneAvailable is True and Observation_ms is 10 for the default settings.
+- TrainingAverageAvailable and OFDMTargetMet are True, with BER <= 0.001.
+- Inspect AcceptedFrames and RejectedFrames; detection alone does not prove low BER.
+- CombinedCriteriaMet is True for the complete stationary bench criteria.
+
+Zero BER means no errors observed in the evaluated bits. The reported payload
+rates describe repeated test data; they are not measured application goodput.
+
+6. EXPORT THE RAW POSITIONING PILOT AND SHOW ITS FFT
+
+    pilot = export_pilot(result)
+    print(pilot["matPath"])
+    spectrum = pilot_fft(pilot)
+
+The export contains the exact received pilot samples in volts, including DC,
+noise and phase. No filtering, resampling or averaging is applied to these raw
+samples. MAT, CSV and NPZ files are saved; MATLAB can load the pilot MAT file.
+
+The FFT removes DC from a copy and applies a periodic Hann window. Its amplitude
+axis is mV peak. A 10 ms observation gives 100 Hz native bin spacing; zero padding
+only makes the displayed frequency grid finer.
+
+Optional plot of the complete capture:
+
+    from ics.plotting import plot_result
+    figure = plot_result(result)
+
+7. FIVE MIRROR ORIENTATIONS AT ONE FIXED RECEIVER LOCATION
+
+    scan_result = scan(rig, experiment)
+
+For each prompt, move the MTRS to the requested orientation, wait until it stops
+and settles, then press Enter. Keep the receiver fixed and use the orientation
+order required by your calibration. The code does not move the mirror motor.
+
+The scan acquires five NEW records. An earlier test capture is not reused.
+Type q at a prompt to cancel and retain partial results. Repeated tone slots
+within one capture all belong to that single mirror orientation.
+
+    print(scan_result["complete"])
+    print(scan_result["rms_mV"])
+    print(scan_result["averagedBER"])
+    print(scan_result["savedPath"])
+
+complete=True means all five pilot inputs were collected. Check BER separately
+for each orientation. The included position_dummy receives five raw pilot
+dictionaries and returns NaN coordinates with positionEstimateComputed=False.
+Replace it with the calibrated estimator later:
+
+    scan_result = scan(rig, experiment, my_estimator)
+
+my_estimator must accept a list of five raw pilot dictionaries, in order 1 to 5.
+
+8. REPEAT OR CHANGE DURATIONS
+For another capture with the unchanged waveform, no reupload is needed:
+
+    record = capture(rig, experiment)
+    result = process(record, experiment, 1)
+
+To change settings in the current session, prepare, check and upload again:
+
+    cfg["pilot_measurement_s"] = 5e-3
+    cfg["ofdm_duration_s"] = 20e-3
+    experiment = prepare(cfg)
+    status = check(rig, experiment)
+    print(status["ready"])
+
+Continue only if True:
+
+    tx = transmit(rig, experiment)
+
+Editing config.py affects the next launch. Editing cfg changes the current
+session. Do not edit fields inside an already prepared experiment; integrity
+checks reject that. Longer slots may need a longer scope timebase and more
+returned samples. Set those config values before preparing the new experiment.
+
+9. STOP AND DISCONNECT
+
+    disconnect(rig)
+
+This stops playback, requests channel 1 off and closes this program's connections.
+stop(rig) stops output while retaining connections. Closing the Python window
+alone is not a reliable way to stop hardware output. Reuse the same rig for
+repeated captures; reconnecting requires a new explicit upload.
+
+SAVED FILES
+results_python/transmissions: packet, configuration and transmission metadata.
+results_python/captures: raw waveform, preamble and matching experiment.
+results_python/analysis: original/averaged BER and tone, slot and frame tables.
+results_python/pilots: raw pilot MAT, CSV and NPZ files.
+results_python/scans: five-orientation results and partial scan snapshots.
+
+NPZ records contain numeric arrays and JSON metadata, without pickle.
+Use load_record(path), or replay(path) for a saved capture.npz.

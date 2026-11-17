@@ -1,0 +1,60 @@
+PYTHON QUICK START
+Read START_HERE.txt for the full guide and VALIDATION.txt for test limits.
+This Python version passed offline tests; its first physical lab run is pending.
+
+1. Unzip into a separate folder. Keep the successful MATLAB copy.
+   Install 64-bit Python 3.12 if needed.
+
+2. Open a Terminal in the extracted folder. Run one line at a time:
+
+   py -3.12 -m venv .venv
+   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+   .\.venv\Scripts\python.exe selftest.py
+
+   Require passed: true, failures: 0, errors: 0.
+
+3. Edit config.py if necessary. The confirmed instrument addresses are filled in.
+   Defaults: 1 Vpp; 500 kHz tone; full 10 ms pilot observation plus settling;
+   approximately 10 ms OFDM; 64-QAM; training averaging; scope 10 ms/div.
+
+4. In MATLAB, release the instruments with ics_disconnect(rig); then close MATLAB.
+   Keep the Keysight M8195A control software running.
+
+5. In Terminal, start the Python prompt:
+
+   .\.venv\Scripts\python.exe -i run_ics.py
+
+6. At >>>, type one command at a time. Stop if a command reports an error:
+
+   experiment = prepare(cfg)
+   rig = connect(cfg)
+   status = check(rig, experiment)
+   print(status["ready"])
+
+   Continue only if this prints True:
+
+   tx = transmit(rig, experiment)
+   record = capture(rig, experiment)
+   result = process(record, experiment, 1)
+
+   Check CombinedCriteriaMet is True and AveragedBER <= 0.001.
+
+7. Save the raw pilot and view its FFT:
+
+   pilot = export_pilot(result)
+   spectrum = pilot_fft(pilot)
+
+8. For five NEW captures at five stopped mirror orientations:
+
+   scan_result = scan(rig, experiment)
+
+   Move the mirror manually at each prompt, wait until it settles, then Enter.
+   Keep the receiver fixed. The position estimator is still a dummy.
+
+9. When finished:
+
+   disconnect(rig)
+
+To change durations, edit pilot_measurement_s and ofdm_duration_s in config.py
+before launching. If changing cfg during the session, prepare/check/transmit
+again. Longer slots must still fit AWG memory and the returned scope capture.

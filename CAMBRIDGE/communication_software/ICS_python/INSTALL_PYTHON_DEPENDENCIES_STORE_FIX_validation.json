@@ -1,0 +1,27 @@
+{
+  "testedAt": "2026-11-13T16:11:37.228939+00:00",
+  "checks": [
+    {
+      "name": "Real Python on PATH; spaces and ampersand in project path",
+      "exitCode": 0,
+      "stdout": "ICS Python dependency setup - Microsoft Store detection fix\nInternet access is required for package installation. No instruments will be connected.\n\nFound a compatible Python interpreter:\n\"C:\\Users\\ra714\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\"\nPython detection passed. This check did not install packages or create an environment.\n",
+      "stderr": ""
+    },
+    {
+      "name": "No compatible Python; explicit failure without installation",
+      "exitCode": 1,
+      "stdout": "ICS Python dependency setup - Microsoft Store detection fix\nInternet access is required for package installation. No instruments will be connected.\n\nNo working Python 3.12 64-bit interpreter could be verified.\nIf you installed Microsoft Store Python, open Start and search for:\nManage App Execution Aliases\nEnable the aliases belonging to Python 3.12, then run this file again.\nCheck that the installed app is Python 3.12 from the Python Software Foundation.\nA different Python version will not pass this check.\nYou do not need to uninstall your existing Python.\n\nSETUP STOPPED during: Finding a working Python 3.12 64-bit interpreter\nKeep this window open and copy or photograph the error above.\nFor self-test failures, also send validation\\offline_tests.log.\n",
+      "stderr": ""
+    },
+    {
+      "name": "Versioned WindowsApps path with real CPython executable fixture",
+      "exitCode": 0,
+      "stdout": "ICS Python dependency setup - Microsoft Store detection fix\nInternet access is required for package installation. No instruments will be connected.\n\nFound a compatible Python interpreter:\n\"C:\\Users\\ra714\\AppData\\Local\\Temp\\ics_store_detection_z_9gqpyx\\App Data\\Microsoft\\WindowsApps\\python3.12.exe\"\nPython detection passed. This check did not install packages or create an environment.\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "actualMicrosoftStoreInstallationTested": false,
+  "pipRun": false,
+  "hardwareAccessed": false
+}
