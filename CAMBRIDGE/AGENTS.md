@@ -378,6 +378,35 @@ called from outside the script).
   K = 3 -> 5.8 / 4.7 cm, no failures. Campaign timing (campaign_01, real): 27.2 s per 36 deg MTRS step,
   8.5 s per site change -> per step ~ step_deg/1.5 + 3.2 s; 500 measurements took 3.52 h.
 
+## ISAC collaboration (`CAMBRIDGE/isac_colab/`, 2026-11-17)
+- SELF-CONTAINED folder (user copies it to the lab PC "LRDC_" that hosts the M8195A, then
+  `py -3.12 -m venv .venv` + `pip install -r requirements.txt`): never import from database_acquisition / testbed_dev.
+  Lab PC = AWG (TCPIP0::localhost::inst0::INSTR) + scope by USB VISA (MY63420113, a different MSO-X 4154A from the
+  laptop one MY64080105) + gantry + MTRS (user decision). Local `.venv` (Python 3.13, pinned versions = the
+  database_acquisition ones: numpy 2.5.3, scipy 1.18.1, matplotlib 3.11.2, PyVISA 1.16.2, openpyxl 3.1.5,
+  pythonnet 3.2.0, cri_lib zip of commit 21995a1 so no git is needed). Code in English.
+- Source: colleague's `communication_software/ICS_python` (interactive console, cmd launchers). Ported to `isac/`:
+  modem.py + processing.py (black-formatted, logic unchanged; pilot_fft removed; position_input(state) without
+  the 1..5 orientation label + validate_windows), experiment.py (prepare / process / summary = ICS workflow without
+  MATLAB bridge, scan, pilot export), instruments.py (Rig methods check/transmit/capture/stop/disconnect/recover;
+  Keysight DLL dir added in Python = former START_ICS_KEYSIGHT_FIX.cmd; capture returns raw WORD `codes`, saves
+  nothing), storage.py (session folder, CSV + results.xlsx + wave/cNNNNN.npz), sim.py (SimRig), plotting.py,
+  devices.py. Bit-identical to ICS (packet, plan, 11.1 M-sample AWG frame, upload chunks, full result dicts on 9
+  synthetic cases; check script was %TEMP%/isac_port/compare_ics.py).
+- Waveform (ICS config.py test of 13/11): 500 kHz pilot slot 12 ms (1 + 10 + 1 ms) + OFDM 64-QAM 15 frames
+  10.4448 ms (33 carriers 305-794 kHz, NFFT 1024, CP 64, 2 QPSK training + 8 payload); cycle 22.4448 ms, 359 MB;
+  capture 10 ms/div, 2 Mpts, 20 MSa/s -> ~3 cycles. Other LEDs must be off (OFDM band / pilot purity band).
+- User decisions: AWG waveform REUSED if the loaded record has the planned length and the read-back blocks match
+  (boundaries + 32 evenly spaced), else backup (data/awg_backups/<time>/) + upload; instrument / motion errors
+  PAUSE the plan (Resume retries, Skip writes a row with `error`); comm failures are data; GUI = plan + manual
+  (exp01 style, matplotlib); raw records always saved; `data/` git-ignored.
+- Scripts: 01_check_instruments.py (read only), 02_single_capture.py [--sim] (ICS sequence + summary),
+  03_isac_acquisition.py [--sim] (GUI; hyperparameters at the top; devices in config/devices.toml).
+  Tests: `.venv\Scripts\python.exe -m unittest discover -s tests -t .` (51 tests, ~35 s; includes the engine with
+  simulated devices). Not yet run on the real AWG / scope / gantry / MTRS from this folder.
+- Known risk: scope over Keysight VISA USB locked up in long database campaigns (see Incident 2026-10-13); the ICS
+  capture uses :DIGitize + *OPC? (the safer pattern) but 4 MB WORD transfers. LAN socket is the fallback.
+
 ## Verification
 - No hardware: `python app/run.py --sim` (from `database_acquisition/`); other scripts with
   `DEVICE_MODE` = sim (Agg backend for headless tests). `node --check app/web/app.js` after JS changes.

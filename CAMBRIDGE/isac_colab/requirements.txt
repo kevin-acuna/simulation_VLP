@@ -1,0 +1,15 @@
+# Python >= 3.12 (64-bit, Windows). Tested with Python 3.13; the lab PC has Python 3.12.
+# Versions pinned to the tested ones.
+# Instruments: Keysight IO Libraries Suite (VISA) for the AWG and the oscilloscope,
+# Thorlabs Kinesis for the MTRS. Install with:  python -m pip install -r requirements.txt
+
+numpy==2.5.3
+scipy==1.18.1            # OFDM receiver (polyphase resampling, correlation)
+matplotlib==3.11.2       # acquisition GUI
+PyVISA==1.16.2           # AWG (M8195A) and oscilloscope (MSO-X 4154A) through Keysight VISA
+openpyxl==3.1.5          # results.xlsx
+pythonnet==3.2.0         # Thorlabs MTRS through the Kinesis .NET DLLs
+
+# igus gantry (CRI protocol): Commonplace Robotics library pinned to the tested commit
+# (archive URL: no git needed on the lab PC)
+cri_lib @ https://github.com/CommonplaceRobotics/CRI-Python-Lib/archive/21995a13acb20ca2ca5d3012e65d6a8668e6f60b.zip

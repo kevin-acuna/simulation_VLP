@@ -1,0 +1,105 @@
+# ==========================================================================
+# Devices of the ISAC testbed (single LED, PD on the MTRS, MTRS on the gantry).
+#
+# Configured ONCE per PC. The experiment hyperparameters (pilot / OFDM waveform, plan, timing) are at the
+# top of each script. Units: mm, deg, s, Hz, V.
+# AWG and oscilloscope values = the ICS config.py of the successful test (13/11/2026).
+# ==========================================================================
+
+# "real" = real device ; "sim" = simulated device (try the software without hardware).
+# `--sim` on the command line sets all of them to "sim".
+[modes]
+gantry = "real"
+mtrs = "real"
+isac = "real"                # AWG + oscilloscope
+sim_speedup = 4.0            # simulated gantry / MTRS move this many times faster
+
+# --------------------------------------------------------------------------
+# VISA (Keysight IO Libraries Suite)
+# --------------------------------------------------------------------------
+[visa]
+library = "@ivi"             # installed Keysight / IVI VISA (not pyvisa-py)
+# Added to the DLL search path of Python before loading VISA (on the lab PC VISA failed with
+# VI_ERROR_LIBRARY_NFOUND without it). "" = do not add.
+keysight_dll_dir = 'C:\Program Files\Keysight\IO Libraries Suite\bin'
+
+# --------------------------------------------------------------------------
+# Keysight M8195A AWG (M9502A chassis). Keep the M8195A soft front panel running.
+# The program never changes these settings, it only checks them: set FOUR DAC mode, extended memory
+# divider DIV4 (16 GSa/s), channel 1 in extended memory, 1 Vpp, 0 V offset, outputs 2-4 off.
+# --------------------------------------------------------------------------
+[awg]
+address = "TCPIP0::localhost::inst0::INSTR"
+timeout_s = 60.0
+channel = 1
+sample_rate_hz = 16e9
+vpp = 1.0
+offset_v = 0.0
+upload_chunk_samples = 512000
+max_waveform_samples = 1000000000
+backup_existing = true       # true: back up a DIFFERENT waveform found in the AWG before replacing it
+                             # (to data/awg_backups/); false: refuse to replace it
+
+# --------------------------------------------------------------------------
+# Agilent / Keysight MSO-X 4154A oscilloscope (PD output). The program sets the timebase, Normal acquisition
+# and the waveform transfer; it does NOT change the vertical scale, coupling, impedance or trigger.
+# --------------------------------------------------------------------------
+[scope]
+address = "USB0::0x0957::0x17BC::MY63420113::0::INSTR"
+timeout_s = 30.0
+channel = 1
+
+# --------------------------------------------------------------------------
+# igus DLE-RG-0012-BLDC gantry (CRI protocol)
+# --------------------------------------------------------------------------
+[gantry]
+ip = "192.168.3.11"          # iRC simulator: "127.0.0.1"
+port = 3920                  # iRC simulator: 3921
+# Allowed box (safety filter). Cartesian Z = +A3 in real mm: Z = 0 at the reference (lowest PD
+# position) and positive upwards. The robot limits A3 to [0, 720] mm.
+workspace_min_mm = [0.0, 0.0, 0.0]         # X, Y, Z
+workspace_max_mm = [1400.0, 1400.0, 700.0]
+velocity_mm_s = 50.0         # Cartesian speed of the moves
+override_pct = 100.0         # global controller override (actual speed = velocity * override / 100)
+acceleration_pct = 20.0      # % of the max acceleration; ignored with firmware < V14-004-1 (uses 40 %)
+tolerance_mm = 1.0           # arrival: distance to the target (repeatability +/-0.5 mm)
+still_speed_mm_s = 0.5       # below this speed the gantry is considered still
+connect_attempts = 5         # cri_lib uses a 0.1 s connect timeout; the first attempt may fail
+disable_on_exit = false      # false: motors stay enabled (an unbraked Z axis could fall)
+expected_robot = "DLE-RG-0012-BLDC"
+expected_versions = ["V980-14-003-3", "V980-14-004-4"]   # real robot / iRC simulator
+
+# --------------------------------------------------------------------------
+# Thorlabs MTRS (Kinesis). Home it in Kinesis, then close Kinesis before connecting.
+# --------------------------------------------------------------------------
+[mtrs]
+rot_serial = ""              # "" = auto-detect the "MTRS Rotate" channel (e.g. "117000001")
+tilt_serial = ""             # "" = auto-detect the "MTRS Tilt" channel
+velocity_deg_s = 1.5         # MTRS maximum
+acceleration_deg_s2 = 1.5
+# LinearRange: rotation within [0, 360] without crossing 360 -> the PD cable never winds up.
+rotation_mode = "LinearRange"          # LinearRange | RotationalRange | RotationalUnlimited
+rotation_direction = "Quickest"        # rotational modes only: Quickest | Forwards | Reverse
+tilt_target_deg = 0.0        # motorized tilt set when connecting
+tilt_limit_deg = 3.0         # motorized tilt travel: +/-3 deg (Thorlabs spec)
+tilt_velocity_deg_s = 0.5    # tilt maximum (Thorlabs spec)
+tilt_acceleration_deg_s2 = 0.5
+tolerance_deg = 0.05         # arrival: angular error, rotation and tilt (repeatability +/-0.05 deg)
+polling_ms = 50              # Kinesis internal polling period
+kinesis_path = 'C:\Program Files\Thorlabs\Kinesis'
+
+# --------------------------------------------------------------------------
+# Joint gantry + MTRS motion (Testbed.wait_pose)
+# --------------------------------------------------------------------------
+[motion]
+arrival_hold_s = 0.3         # both within tolerance for this long = arrived
+stall_time_s = 5.0           # both still without arriving for this long -> error
+timeout_margin_s = 30.0      # margin over the estimated move duration
+poll_s = 0.05                # arrival check period
+
+# --------------------------------------------------------------------------
+# Orientation of the GUI views (match the physical setup)
+# --------------------------------------------------------------------------
+[view]
+mtrs_zero_location = "N"     # where 0 deg of the MTRS is drawn: N, E, S, W
+mtrs_clockwise = false       # MTRS rotation direction seen from above
