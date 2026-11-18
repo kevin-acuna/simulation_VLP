@@ -41,6 +41,14 @@ off-axis range [0.0 64.0] deg, d range [0.90 2.44] m
     offaxis<=36.7 (n=1104): dir mean 0.93 p90 1.60 | pos med 2.35 p90 4.73 rmse 3.70 | range|err| med 1.04 p90 2.89 | lateral med 1.93
     offaxis<=40.0 (n=1326): dir mean 0.98 p90 1.64 | pos med 2.62 p90 5.34 rmse 3.93 | range|err| med 1.12 p90 3.29 | lateral med 2.10
     offaxis<=45.0 (n=1650): dir mean 1.04 p90 1.75 | pos med 3.01 p90 6.23 rmse 4.31 | range|err| med 1.24 p90 3.87 | lateral med 2.35
+
+Target zone |x|,|y| <= 1.0 m: 577 of 808 positions (vertical), 1731 of 2424 fixes (tilt)
+[vertical|GLS] zone: dir mean 1.02 p90 1.64 | pos mean 3.58 med 3.22 p90 5.66 rmse 4.24 | <=5cm 84.6% || outside: n=231 med 7.14 p90 16.20
+[vertical|WLS] zone: dir mean 1.09 p90 1.75 | pos mean 3.77 med 3.53 p90 5.88 rmse 4.37 | <=5cm 82.5% || outside: n=231 med 6.95 p90 16.13
+[vertical|NLS] zone: dir mean 0.96 p90 1.56 | pos mean 3.32 med 2.94 p90 5.52 rmse 3.99 | <=5cm 84.1% || outside: n=231 med 6.21 p90 13.81
+[tilt|GLS] zone: dir mean 1.07 p90 1.70 | pos mean 4.06 med 3.37 p90 6.65 rmse 5.38 | <=5cm 78.9% || outside: n=693 med 7.73 p90 24.42
+[tilt|WLS] zone: dir mean 1.15 p90 1.83 | pos mean 4.24 med 3.62 p90 6.70 rmse 5.49 | <=5cm 75.9% || outside: n=693 med 7.69 p90 24.73
+[tilt|NLS] zone: dir mean 0.99 p90 1.65 | pos mean 3.73 med 3.00 p90 6.28 rmse 5.05 | <=5cm 82.6% || outside: n=693 med 6.94 p90 22.85
 Orientation repeatability (NLS): 808 points with 4 PD orientations; pooled within-point angular RMS = 0.284 deg (0.91 cm at range)
 Orientation repeatability (GLS): pooled within-point angular RMS = 0.351 deg (1.12 cm)
 Mean |dir error tilt - dir error vertical| (NLS) = 0.116 deg; median = 0.078

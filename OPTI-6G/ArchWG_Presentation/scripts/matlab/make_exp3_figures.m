@@ -56,6 +56,22 @@ for s = 1:2
     end
 end
 
+% ---- 2 m x 2 m target zone under the AP (D2.3: 2x2x2 m3 / TP10: >= 4 m2 per AP)
+zoneHalf = 1.0;
+Zv = abs(V.pos_true(:,1)) <= zoneHalf+1e-9 & abs(V.pos_true(:,2)) <= zoneHalf+1e-9;
+Zt = abs(Tt.pos_true(:,1)) <= zoneHalf+1e-9 & abs(Tt.pos_true(:,2)) <= zoneHalf+1e-9;
+out('\nTarget zone |x|,|y| <= %.1f m: %d of %d positions (vertical), %d of %d fixes (tilt)\n', zoneHalf, nnz(Zv), numel(Zv), nnz(Zt), numel(Zt));
+zs = {'vertical', V, Zv; 'tilt', Tt, Zt};
+for s = 1:2
+    R = zs{s,2}; Z = zs{s,3};
+    for k = 1:numel(R.methods)
+        e = 100*R.pos(:,k); a = R.ang(:,k);
+        out('[%s|%s] zone: dir mean %.2f p90 %.2f | pos mean %.2f med %.2f p90 %.2f rmse %.2f | <=5cm %.1f%% || outside: n=%d med %.2f p90 %.2f\n', ...
+            zs{s,1}, R.estimators{k}, mean(a(Z),'omitnan'), pct(a(Z),90), mean(e(Z),'omitnan'), pct(e(Z),50), pct(e(Z),90), ...
+            sqrt(mean(e(Z).^2,'omitnan')), 100*mean(e(Z) <= 5), nnz(~Z), pct(e(~Z),50), pct(e(~Z),90));
+    end
+end
+
 % ---- receiver-orientation repeatability (same point: 1 vertical + 3 tilts)
 [spreadDeg, spreadCm, nPts, dirDiff] = orientation_spread(V, Tt, iN, T_led);
 out('Orientation repeatability (NLS): %d points with 4 PD orientations; pooled within-point angular RMS = %.3f deg (%.2f cm at range)\n', ...
@@ -73,10 +89,13 @@ ax = axes(f); hold(ax,'on'); grid(ax,'on'); box(ax,'off');
 e = 100*V.pos(:,iN);
 ec = min(e, 10);
 P = V.pos_true;
-% LED half-power cone footprint at floor of workspace (z=0.4) and top (z=1.1)
+% 2 m x 2 m target zone over the tested heights (z = 0.4 ... 1.1 m)
+sq = zoneHalf*[-1 1 1 -1 -1; -1 -1 1 1 -1];
 for zc = [0.4 1.1]
-    rr = (2-zc)*tand(phiHalf); tt = linspace(0,2*pi,200);
-    plot3(ax, rr*cos(tt), rr*sin(tt), zc*ones(size(tt)), ':', 'Color', [C.gray 0.9], 'LineWidth', 1.2);
+    plot3(ax, sq(1,:), sq(2,:), zc*ones(1,5), '--', 'Color', [0.15 0.15 0.15], 'LineWidth', 1.3);
+end
+for c = 1:4
+    plot3(ax, sq(1,[c c]), sq(2,[c c]), [0.4 1.1], '--', 'Color', [0.15 0.15 0.15], 'LineWidth', 1.3);
 end
 % codebook beams (K=9) as thin lines to z = 0
 cb = [16 90;16 210;16 330;60 0;64 60;64 120;60 180;64 240;64 300];
@@ -117,7 +136,7 @@ h = gobjects(0);
 h(end+1) = ecdf_(ax2, 100*V.pos(:,iN),  C.blue,   '-',  'NLS - vertical PD');
 h(end+1) = ecdf_(ax2, 100*Tt.pos(:,iN), C.blue,   '--', 'NLS - tilted PD');
 h(end+1) = ecdf_(ax2, 100*V.pos(:,iG),  C.orange, '-',  'GLS - vertical PD');
-h(end+1) = ecdf_(ax2, 100*V.pos(D.offax<=phiHalf, iN), C.green, '-', sprintf('NLS - inside LED half-power cone (\\leq%.1f\\circ)', phiHalf));
+h(end+1) = ecdf_(ax2, 100*V.pos(Zv, iN), C.green, '-', sprintf('NLS - 2 m \\times 2 m target zone (n=%d)', nnz(Zv)));
 xline(ax2, 5, '-', 'Color', C.red, 'LineWidth', 1.6, 'HandleVisibility','off');
 text(ax2, 12, 0.62, {'OPTI-6G target','P90 \leq 5 cm'}, 'Color', C.red, 'FontName', FN, 'FontSize', FS-3);
 annotation_arrow(ax2, [11.8 5.2], [0.62 0.62], C.red);
@@ -184,8 +203,8 @@ ax2 = nexttile(tl); hold(ax2,'on'); grid(ax2,'on'); box(ax2,'on');
 h = gobjects(0);
 h(end+1) = ecdf_(ax2, 100*V.pos(:,iN),  C.blue,  '-',  sprintf('vertical PD (n=%d)', size(V.pos,1)));
 h(end+1) = ecdf_(ax2, 100*Tt.pos(:,iN), C.purple,'--', sprintf('tilted PD \\leq15\\circ (n=%d)', size(Tt.pos,1)));
-h(end+1) = ecdf_(ax2, 100*V.pos(D.offax<=phiHalf,iN),  C.green, '-',  'vertical, inside half-power cone');
-h(end+1) = ecdf_(ax2, 100*Tt.pos(Dt.offax<=phiHalf,iN), C.green, '--', 'tilted, inside half-power cone');
+h(end+1) = ecdf_(ax2, 100*V.pos(Zv,iN),  C.green, '-',  'vertical, 2 m \times 2 m target zone');
+h(end+1) = ecdf_(ax2, 100*Tt.pos(Zt,iN), C.green, '--', 'tilted, 2 m \times 2 m target zone');
 xline(ax2, 5, '-', 'Color', C.red, 'LineWidth', 1.4, 'HandleVisibility','off');
 yline(ax2, 0.9, ':', 'Color', C.gray, 'LineWidth', 1.2, 'HandleVisibility','off');
 xlim(ax2,[0 20]); ylim(ax2,[0 1]);
@@ -209,14 +228,18 @@ end
 tt = linspace(0,2*pi,300);
 for zc = [0.4 0.75 1.1]
     rr = (2-zc)*tand(phiHalf);
-    plot(ax, rr*cos(tt), rr*sin(tt), '--', 'Color', [0.2 0.2 0.2], 'LineWidth', 1.1);
+    plot(ax, rr*cos(tt), rr*sin(tt), '--', 'Color', [0.35 0.35 0.35], 'LineWidth', 0.9);
 end
+hSq = plot(ax, sq(1,:), sq(2,:), '-', 'Color', [1 0 1], 'LineWidth', 2.6);
 plot(ax, 0, 0, 'p', 'MarkerSize', 20, 'MarkerFaceColor', C.gold, 'MarkerEdgeColor', 'k');
 colormap(ax, turbo(256)); caxis(ax,[0 10]);
 cb_ = colorbar(ax); cb_.Label.String = 'Median 3D error over heights [cm]'; cb_.Ticks = 0:2:10; cb_.TickLabels{end} = '\geq10';
 axis(ax,'equal'); xlim(ax,[-1.6 1.6]); ylim(ax,[-1.6 1.6]);
 xlabel(ax,'x [m]'); ylabel(ax,'y [m]');
 style(ax, FN, FS);
+% probe export (square in pure magenta) to locate the square in the PNG, then final export
+exportgraphics(f, fullfile(figDir, 'exp3_topview_probe.png'), 'Resolution', 250, 'BackgroundColor', 'white');
+hSq.Color = [0 0 0];
 savefig_(f, fullfile(figDir, 'exp3_topview_median_error'));
 
 % ================================== FIGURE 6: codebook footprints (beam sweep)
