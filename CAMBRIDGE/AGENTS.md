@@ -404,6 +404,24 @@ called from outside the script).
   03_isac_acquisition.py [--sim] (GUI; hyperparameters at the top; devices in config/devices.toml).
   Tests: `.venv\Scripts\python.exe -m unittest discover -s tests -t .` (51 tests, ~35 s; includes the engine with
   simulated devices). Not yet run on the real AWG / scope / gantry / MTRS from this folder.
+- 2026-11-19: figures/cNNNNN.png per capture (record + whole-record spectrum 0-5 MHz + constellation;
+  isac/plotting.save_capture_figure, OO API so the engine thread can save; ~0.7 s) in 02 and 03 (`SAVE_FIGURES`);
+  GUI has a spectrum panel. The pilot peak in the whole-record spectrum = pilot RMS x 12/22.4 (duty cycle).
+- First lab tests (laptop, 2026-11-18): AWG via the M9502A USB (-U20) + SFP 4.4.1.0 on the laptop
+  (`TCPIP0::localhost::inst0::INSTR` and hislip0 both answer), scope MY63420113 USB, gantry on "Ethernet 3".
+  Upload 359 MB worked; reuse works. Results: lights on -> 0 frames (flicker 110 mV p-p forces 59 mV/div,
+  LSB 1.98 mV); lights off + 16 mV/div -> still 0 frames: a 35 kHz-spaced interference comb (2-5 MHz, ~4 mVrms,
+  also lines in the OFDM band) kills the unfiltered sync correlation (0.31 < 0.35); offline low-pass 1.2 MHz ->
+  sync 0.93, BER 0.098. Session 181830 (AC coupling, pilot 4.80 mVrms): 60/60 frames, EVM 14.4 %, BER 0.031
+  (avg 0.020) = 64-QAM theory at ~17 dB. Comb is electrical (stays with the PD covered and the AWG off); it was in
+  the October LAN-scope data ~8x weaker -> suspected USB ground loop / laptop charger. PD gain 20 dB (800 kHz BW).
+  Pending user decisions: optional pre-sync low-pass, qam_order 16/4, scope HRES option, band-passed GUI record.
+- 2026-11-19 lab (laptop): AC coupling + ~10 mV/div + lights off -> 60/60 frames, BER 1.5e-3 (avg 2.9e-4); with
+  CH1 BW Limit ON (25 MHz analog filter: Normal mode at 20 MSa/s keeps 1 of 250 ADC samples, so noise up to
+  1.5 GHz aliased into 0-10 MHz) floor 0.143 -> 0.099 uV/rtHz, EVM 7.8 -> 5.7 %, BER 1.3e-4 (12 errors), avg
+  2.1e-5 (2) ~ MATLAB baseline (3 errors / 0). Comb 2-5 MHz unchanged (1.6 mVrms, real, < 25 MHz).
+  session.json now stores `scope_settings` (start) and, in 03, `scope_settings_end` (read_scope_settings: read
+  only, failed queries recorded as text, error queue drained); 01 prints BW limit. 52 tests.
 - Known risk: scope over Keysight VISA USB locked up in long database campaigns (see Incident 2026-10-13); the ICS
   capture uses :DIGitize + *OPC? (the safer pattern) but 4 MB WORD transfers. LAN socket is the fallback.
 

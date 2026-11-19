@@ -18,7 +18,7 @@ import numpy as np
 
 from isac import load_devices
 from isac.experiment import instrument_config
-from isac.instruments import _number, _profile, awg_snapshot, connect, open_resource_manager
+from isac.instruments import _profile, awg_snapshot, connect, open_resource_manager, read_scope_settings
 
 # ============================================================
 # HYPERPARAMETERS
@@ -51,13 +51,13 @@ def check_awg_scope(cfg):
         print(f"  CH1 segments [id, samples]: {s['catalogs'][0]}"
               + (f"; contiguous free memory {free / 1e6:.1f} MB" if np.isfinite(free) else ""))
         print(f"  reference clock {s['referenceClock']}, function mode {s['functionMode']}")
-        sc, ch = rig.scope, cfg["scope_channel"]
+        sc = read_scope_settings(rig.scope, cfg["scope_channel"])
         print("\nOscilloscope (MSO-X 4154A)")
-        print(f"  timebase {1e3 * _number(sc, ':TIMebase:SCALe?'):g} ms/div ({sc.query(':TIMebase:MODE?')}), "
-              f"acquisition {sc.query(':ACQuire:TYPE?')}, trigger sweep {sc.query(':TRIGger:SWEep?')}")
-        print(f"  channel {ch}: {1e3 * _number(sc, f':CHANnel{ch}:SCALe?'):g} mV/div, offset "
-              f"{_number(sc, f':CHANnel{ch}:OFFSet?'):g} V, coupling {sc.query(f':CHANnel{ch}:COUPling?')}, "
-              f"impedance {sc.query(f':CHANnel{ch}:IMPedance?')}")
+        print(f"  timebase {1e3 * sc['timebase_s_div']:g} ms/div ({sc['timebase_mode']}), acquisition "
+              f"{sc['acquire_type']}, trigger sweep {sc['trigger_sweep']}")
+        print(f"  channel {sc['channel']}: {1e3 * sc['ch_scale_V_div']:g} mV/div, offset {sc['ch_offset_V']:g} V, "
+              f"coupling {sc['ch_coupling']}, impedance {sc['ch_impedance']}, BW limit "
+              f"{'ON' if sc['ch_bw_limit'] else 'OFF'}, probe {sc['ch_probe']:g}:1")
         ready = mode and voltage and others_off
         print(f"\nAWG profile ready for the ISAC waveform: {ready}"
               + ("" if ready else "  (set it in the M8195A soft front panel: FOUR, DIV4, CH1 EXT, 1 Vpp, 0 V, "

@@ -7,7 +7,7 @@ measurements (VISA, Kinesis, CRI) runs in the worker thread; the telemetry threa
 One measurement:
   move gantry + MTRS together (the MTRS tilt is commanded again at every new site) -> wait for arrival ->
   settle -> capture (AWG playback checked, :DIGitize) -> receiver (pilot RMS, BER, EVM, frames) ->
-  raw record + CSV rows + results.xlsx.
+  raw record + CSV rows + results.xlsx (+ figures/cNNNNN.png).
 Errors of the instruments or of the motion PAUSE the plan: Resume retries the same measurement, Skip records
 it as failed (row with the error) and goes on, STOP ends the plan (it can be continued later).
 Communication failures (no sync, rejected frames, high BER, rejected pilot windows) are results, not errors.
@@ -24,15 +24,17 @@ import numpy as np
 import isac
 from hardware.testbed import Stopped
 from hardware.utils import RateTimer, wrap180
+from isac.plotting import save_capture_figure
 from isac.storage import isac_tables
 
 
 class Engine:
     def __init__(self, tb, rig, experiment, session, plan, settle_s=1.0, n_captures=1, manual_tilt_deg=0.0,
-                 backup_dir=None, telemetry_hz=10.0):
+                 backup_dir=None, save_figures=True, telemetry_hz=10.0):
         self.tb, self.rig, self.experiment, self.session, self.plan = tb, rig, experiment, session, plan
         self.settle_s, self.n_captures, self.manual_tilt = settle_s, int(n_captures), manual_tilt_deg
         self.backup_dir = backup_dir
+        self.save_figures = save_figures
         self.telemetry_hz = telemetry_hz
         self.lock = threading.Lock()
         self.mode = "IDLE"            # IDLE | PLAN | PAUSED | MANUAL
@@ -250,6 +252,12 @@ class Engine:
         row.update(self._pose_columns(m, mode, before, after, t_move, unix))
         row["capture_id"] = self.session.add(row, capture, windows, slots)
         self.session.write_excel()
+        if self.save_figures:
+            try:
+                save_capture_figure(state, self.session.figure_path(row["capture_id"]),
+                                    f"{self.session.dir.name}  capture {row['capture_id']} ({mode})")
+            except Exception as e:                          # a figure never stops the acquisition
+                print(f"[ISAC] Figure of capture {row['capture_id']} not saved: {e}")
         self._add_history(row)
         with self.lock:
             self.last = {"state": state, "row": row}

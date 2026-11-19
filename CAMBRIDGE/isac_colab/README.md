@@ -92,7 +92,8 @@ different waveform is backed up to `data/awg_backups/` and the new one is upload
 | `tone_windows.csv` | one row per pilot window: cycle, start, Vrms, DC, purity, peak frequency, valid, status |
 | `ofdm_slots.csv` | one row per OFDM burst: measured durations, frames, bit errors, BER, averaged BER, EVM |
 | `wave/cNNNNN.npz` | raw record: WORD codes + scale, `V = (codes - y_reference) * y_increment + y_origin` |
-| `session.json` | hyperparameters, devices, instruments, AWG load / reuse, status |
+| `figures/cNNNNN.png` | record (pilot windows / OFDM slots), spectrum of the whole record and OFDM constellation (`SAVE_FIGURES`) |
+| `session.json` | hyperparameters, devices, instruments, AWG load / reuse, oscilloscope settings (scale, offset, coupling, impedance, BW limit, acquisition; at the start and, in step 3, at the end), status |
 | `experiment.npz`, `transmission.npz` | prepared waveform (needed to re-process the raw records) and AWG metadata |
 
 `captures` columns: identification (`capture_id`, time, `mode` = plan / manual / here / single, `site_id`,

@@ -72,6 +72,7 @@ N_CAPTURES = 1                         # captures per pose (100 ms each, ~3 pilo
 SETTLE_TIME_S = 1.0                    # wait after arrival before capturing (vibrations)
 LABEL = ""                             # appended to the session folder name
 AWG_OFF_AT_EXIT = True                 # stop the playback and turn output 1 off when the program ends
+SAVE_FIGURES = True                    # figures/cNNNNN.png of every capture (record, spectrum, constellation)
 GUI_REFRESH_MS = 100
 OUTPUT_ROOT = Path(__file__).resolve().parent / "data"
 
@@ -121,11 +122,12 @@ def main(sim=False):
             raise RuntimeError("AWG not ready (mode {modeReady}, voltage {voltageReady}, other outputs off "
                                "{otherOutputsOff}, memory {fitsCurrentFreeMemory}): see 01_check_instruments.py"
                                .format(**report))
+        session.write_meta(scope_settings=rig.scope_settings())
         started = True
         tx = rig.transmit(experiment, session.dir, backup_dir=OUTPUT_ROOT / "awg_backups")
         session.write_meta(instruments=rig.idn, transmission={k: tx.get(k) for k in ("reused", "transmittedAt", "Vpp")})
         engine = Engine(tb, rig, experiment, session, plan, SETTLE_TIME_S, N_CAPTURES, MTRS_TILT_DEG,
-                        backup_dir=OUTPUT_ROOT / "awg_backups")
+                        backup_dir=OUTPUT_ROOT / "awg_backups", save_figures=SAVE_FIGURES)
         engine.start()
         engine._set(status=f"Ready: {len(plan)} plan measurements. 'Start plan', or type a pose and 'Go & measure'.")
         gui = GUI(engine, GUI_REFRESH_MS, f"ISAC acquisition - {session.dir.name}")
@@ -138,6 +140,11 @@ def main(sim=False):
     finally:
         if engine is not None:
             engine.shutdown()
+        if rig is not None and session is not None:
+            try:                       # settings at the end too: shows if they were changed during the session
+                session.write_meta(scope_settings_end=rig.scope_settings())
+            except Exception as e:
+                print(f"Oscilloscope settings at the end not read: {e}")
         if rig is not None:
             rig.disconnect() if AWG_OFF_AT_EXIT and started else rig.close()
         tb.close()

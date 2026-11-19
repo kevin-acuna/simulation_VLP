@@ -2,7 +2,8 @@
 gui.py - Matplotlib interface of the ISAC acquisition (same style as testbed exp01).
 
 Panels: gantry top view (plan sites, measured sites, live position), Z bar, MTRS rotation, live state + last
-capture, OFDM constellation, last PD record (pilot windows / OFDM slots) and the history of pilot RMS and BER.
+capture, OFDM constellation, last PD record (pilot windows / OFDM slots), its spectrum and the history of pilot
+RMS and BER.
 Buttons: Go & measure (typed X, Y, Z, rotation), Measure here, Start / Continue plan, Pause / Resume, Skip,
 STOP. The GUI only sends commands to the Engine; it never talks to the devices.
 """
@@ -13,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.widgets import Button, TextBox
 
-from isac.plotting import draw_capture, draw_constellation
+from isac.plotting import draw_capture, draw_constellation, draw_spectrum
 
 SITE_COLORS = {"ok": "tab:green", "comm": "tab:orange", "error": "tab:red"}
 
@@ -81,9 +82,11 @@ class GUI:
         self.ax_const.set_xticks([])
         self.ax_const.set_yticks([])
         self.ax_const.set_title("OFDM constellation", fontsize=9)
-        self.ax_wave = fig.add_axes([0.05, 0.175, 0.53, 0.19])
+        self.ax_wave = fig.add_axes([0.045, 0.175, 0.32, 0.19])
         self.ax_wave.set_title("Last PD record", fontsize=9)
-        self.ax_hist = fig.add_axes([0.63, 0.175, 0.30, 0.19])
+        self.ax_spec = fig.add_axes([0.425, 0.175, 0.245, 0.19])
+        self.ax_spec.set_title("Spectrum of the last record", fontsize=9)
+        self.ax_hist = fig.add_axes([0.715, 0.175, 0.235, 0.19])
         self.ax_ber = self.ax_hist.twinx()
 
         # --- controls ---
@@ -163,8 +166,12 @@ class GUI:
                                     for h in pts])
         if last is not None and "state" in last:
             draw_capture(self.ax_wave, last["state"])
+            draw_spectrum(self.ax_spec, last["state"])
             draw_constellation(self.ax_const, last["state"])
             self.ax_wave.set_title(f"Last PD record (capture #{last['row']['capture_id']})", fontsize=9)
+            self.ax_spec.set_title("Spectrum of the last record", fontsize=9)
+            self.ax_wave.set_xlabel("Time [ms]  (green: pilot, blue: OFDM)", fontsize=8)
+            self.ax_spec.set_xlabel("Frequency [kHz]  (blue: OFDM band)", fontsize=8)
         ah, ab = self.ax_hist, self.ax_ber
         ah.clear()
         ab.clear()

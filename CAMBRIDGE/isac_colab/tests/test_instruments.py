@@ -254,6 +254,19 @@ class InstrumentTests(unittest.TestCase):
         p=dict(toneTileSamplesAWG=2,toneSamplesAWG=4,toneTotalRepeats=2,ofdmFrameSamplesAWG=3,communicationFrames=2,totalSamplesAWG=10)
         out=ins.arb_chunk(np.array([1,2],dtype=np.int8),np.array([-1,-2,-3],dtype=np.int8),p,3,6)
         np.testing.assert_array_equal(out,[2,-1,-2,-3,-1,-2])
+    def test_scope_settings_are_read_only_and_tolerant(self):
+        class SettingsScope:
+            def __init__(self): self.commands=[]
+            def query(self,c):
+                self.commands.append(c)
+                values={':CHANnel1:SCALe?':'+10.6E-03',':CHANnel1:BWLimit?':'1',':CHANnel1:COUPling?':'AC',
+                        ':SYSTem:ERRor?':'+0,"No error"','*IDN?':'AGILENT TECHNOLOGIES,MSO-X 4154A,MOCK,1'}
+                if c not in values: raise RuntimeError('not supported')
+                return values[c]
+        sc=SettingsScope();out=ins.read_scope_settings(sc,1)
+        self.assertEqual(out['ch_scale_V_div'],0.0106);self.assertIs(out['ch_bw_limit'],True)
+        self.assertEqual(out['ch_coupling'],'AC');self.assertTrue(out['acquire_type'].startswith('not read'))
+        self.assertTrue(all(c.endswith('?') for c in sc.commands))
     def test_stop_disconnect_session_cleanup(self):
         _,_,rig,awg,scope=fixture(self.tmp.name)
         ins.disconnect(rig)

@@ -10,6 +10,7 @@ import numpy as np
 
 import isac
 from isac.common import load_record, save_record, signature, validate_experiment
+from isac.plotting import save_capture_figure, spectrum
 from isac.sim import SimRig
 from isac.storage import CAPTURE_COLUMNS, Session, isac_tables, load_capture, load_experiment
 from tests.common import get_config
@@ -112,6 +113,14 @@ class SessionTests(unittest.TestCase):
             for k in ("tone_Vrms", "ber", "ber_avg", "frames_accepted", "n_bits"):
                 self.assertEqual(row2[k], row[k], k)
             self.assertAlmostEqual(row["tone_Vrms"], cap["simulatedPilotVrms"], delta=5e-5)
+            png = save_capture_figure(state, s.figure_path(cid), "test")
+            self.assertTrue(png.is_file() and png.stat().st_size > 10000)
+            f, a, bin_hz = spectrum(cap["YData"], cap["FsCapture"])
+            self.assertEqual(bin_hz, cap["FsCapture"] / cap["YData"].size)
+            hf = f > 1e3                                       # above the simulated 100 Hz flicker
+            self.assertAlmostEqual(f[hf][np.argmax(a[hf])], 500e3, delta=2 * (f[1] - f[0]))
+            duty = exp["plan"]["toneDuration_s"] / exp["plan"]["cycleDuration_s"]   # pilot present ~53 % of the record
+            self.assertAlmostEqual(a[hf].max(), duty * row["tone_Vrms"], delta=0.15 * duty * row["tone_Vrms"])
             with patch("isac.storage.os.replace", side_effect=PermissionError("open in Excel")):
                 self.assertFalse(s.write_excel())
             self.assertTrue(s.write_excel())

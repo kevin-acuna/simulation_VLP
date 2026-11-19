@@ -104,6 +104,11 @@ class SimRig:
             self.stop()
         self.connected = False
 
+    def scope_settings(self):
+        return dict(channel=int(self.config["scope_channel"]), idn=self.idn["scope"], acquire_type="NORM",
+                    timebase_s_div=self.config["scope_timebase_s_per_div"], ch_scale_V_div=SCOPE_V_DIV,
+                    ch_offset_V=DC_V, ch_coupling="DC", ch_impedance="ONEM", ch_bw_limit=False, simulated=True)
+
     def recover(self):
         pass
 

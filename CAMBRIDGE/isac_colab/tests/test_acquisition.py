@@ -88,6 +88,7 @@ class EngineTests(unittest.TestCase):
             self.assertGreater(float(r["tone_Vrms"]), 0)
             self.assertEqual(r["mode"], "plan")
             self.assertTrue((self.session.dir / r["wave_file"]).is_file())
+            self.assertTrue(self.session.figure_path(r["capture_id"]).is_file())
         self.assertTrue(self.session.excel_path.is_file())
         self.assertIn("Plan complete", e.status)
 

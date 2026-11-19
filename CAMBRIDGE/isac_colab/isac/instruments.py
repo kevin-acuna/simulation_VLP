@@ -24,6 +24,14 @@ import numpy as np
 from .common import validate_experiment, save_record, now_iso
 
 REUSE_CHECK_BLOCKS = 32  # extra 128-sample blocks compared before reusing a loaded waveform
+# Oscilloscope settings that shape the record (read only; stored in session.json and the Excel "session" sheet)
+SCOPE_SETTING_QUERIES = {
+    "idn": "*IDN?", "acquire_type": ":ACQuire:TYPE?", "sample_rate_Sa_s": ":ACQuire:SRATe?",
+    "timebase_s_div": ":TIMebase:SCALe?", "timebase_mode": ":TIMebase:MODE?", "trigger_sweep": ":TRIGger:SWEep?",
+    "ch_scale_V_div": ":CHANnel{ch}:SCALe?", "ch_offset_V": ":CHANnel{ch}:OFFSet?",
+    "ch_coupling": ":CHANnel{ch}:COUPling?", "ch_impedance": ":CHANnel{ch}:IMPedance?",
+    "ch_bw_limit": ":CHANnel{ch}:BWLimit?", "ch_probe": ":CHANnel{ch}:PROBe?", "ch_invert": ":CHANnel{ch}:INVert?",
+}
 _DLL_DIRS = {}
 
 
@@ -217,6 +225,10 @@ class Rig:
     def disconnect(self):
         return disconnect(self)
 
+    def scope_settings(self):
+        with self.operation():
+            return read_scope_settings(self.scope, int(self.config.get("scope_channel", 1)))
+
     def recover(self):
         """Device clear of the oscilloscope after a VISA error: a late reply would shift the next ones."""
         try:
@@ -252,6 +264,25 @@ def scpi_errors(device, stage, fail_on_error=True):
             return messages
         messages.append(reply)
     raise RuntimeError(f"Instrument error queue did not end during {stage}: {' | '.join(messages)}")
+
+
+def read_scope_settings(scope, channel=1):
+    """Oscilloscope settings (vertical scale, offset, coupling, impedance, BW limit, acquisition, timebase,
+    trigger). Read only: a failed query is recorded as text and the error queue is emptied afterwards."""
+    out = {"channel": channel}
+    for key, command in SCOPE_SETTING_QUERIES.items():
+        try:
+            value = scope.query(command.format(ch=channel)).strip()
+        except Exception as exc:
+            out[key] = f"not read ({exc})"
+            continue
+        try:
+            value = float(value)
+        except ValueError:
+            pass
+        out[key] = bool(value) if key in ("ch_bw_limit", "ch_invert") and isinstance(value, float) else value
+    scpi_errors(scope, "reading the oscilloscope settings", fail_on_error=False)
+    return out
 
 
 def add_keysight_dll_dir(folder):

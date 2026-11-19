@@ -9,6 +9,7 @@
       ofdm_slots.csv      one row per OFDM slot (one per complete cycle) of every capture
       results.xlsx        the three tables (sheets captures / tone_windows / ofdm_slots) + a "session" sheet
       wave/cNNNNN.npz     raw oscilloscope record of capture NNNNN (WORD codes + scale, lossless)
+      figures/cNNNNN.png  record, spectrum and constellation of capture NNNNN (when figures are saved)
 
 The CSV files are written row by row (they survive a crash); results.xlsx is rebuilt from them. If it is open
 in Excel it cannot be replaced: the program warns and updates it when it is closed again.
@@ -171,6 +172,10 @@ class Session:
         tmp = self.dir / "session.json.tmp"
         tmp.write_text(json.dumps(self.meta, indent=2, default=str), encoding="utf-8")
         os.replace(tmp, self.dir / "session.json")
+
+    def figure_path(self, capture_id):
+        (self.dir / "figures").mkdir(exist_ok=True)
+        return self.dir / "figures" / f"c{int(capture_id):05d}.png"
 
     def save_experiment(self, experiment):
         save_record(self.dir / "experiment.npz", {"experiment": experiment})
