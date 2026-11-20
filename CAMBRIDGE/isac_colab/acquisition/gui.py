@@ -110,7 +110,7 @@ class GUI:
             a.set_animated(True)
         fig.canvas.mpl_connect("draw_event", self.on_draw)
         self.closed = False
-        fig.canvas.mpl_connect("close_event", lambda _e: setattr(self, "closed", True))
+        fig.canvas.mpl_connect("close_event", self.on_close)
         self.redraw_static()
         self.timer = fig.canvas.new_timer(interval=refresh_ms)
         self.timer.add_callback(self.update)
@@ -142,6 +142,10 @@ class GUI:
 
     def on_stop(self, _event):
         self.e.stop()
+
+    def on_close(self, _event=None):
+        self.closed = True
+        self.timer.stop()
 
     # ---------------------------------------------------------------
     # Drawing
@@ -192,8 +196,9 @@ class GUI:
         self.fig.canvas.draw()
 
     def update(self):
-        if self.closed:
-            return
+        # after the window is closed matplotlib replaces the canvas: the timer may still fire once
+        if self.closed or not hasattr(self.fig.canvas, "restore_region"):
+            return self.on_close()
         redraw = False
         while not self.e.events.empty():
             self.e.events.get_nowait()
@@ -249,8 +254,9 @@ class GUI:
                       + (f", site {r['site_id']}, k {r['k']}" if r.get("site_id") else "") + ")",
                       f"  pilot  {_fmt(r['tone_Vrms'], '.4g', ' mVrms', 1e3)}"
                       f"  ({r['tone_windows_valid']}/{r['tone_windows']} windows)",
+                      f"  rate   {_fmt(r.get('goodput_Mbps'), '.3f', ' Mb/s')} of {_fmt(r.get('rate_nominal_Mbps'), '.3f')}",
                       f"  BER    {_fmt(r['ber'], '.3g')} | avg {_fmt(r['ber_avg'], '.3g')}",
-                      f"  EVM    {_fmt(r['evm_pct'], '.2f', ' %')}",
+                      f"  EVM    {_fmt(r['evm_pct'], '.2f', ' %')}  (SNR {_fmt(r.get('snr_comm_dB'), '.1f', ' dB')})",
                       f"  frames {r['frames_accepted']} ok / {r['frames_rejected']} rejected",
                       f"  criteria {'MET' if r['isac_ok'] else 'NOT met'}"]
         return lines

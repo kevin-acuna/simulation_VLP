@@ -30,19 +30,21 @@ ID_COLUMNS = ["capture_id", "iso_time", "unix_time_s", "mode"]
 POSE_COLUMNS = ["site_id", "k", "rep", "x_cmd_mm", "y_cmd_mm", "z_cmd_mm", "angle_cmd_deg", "tilt_cmd_deg",
                 "x_mm", "y_mm", "z_mm", "angle_deg", "tilt_deg", "pos_err_mm", "angle_err_deg", "pos_drift_mm",
                 "move_time_s"]
-TONE_COLUMNS = ["tone_freq_Hz", "tone_Vrms", "tone_Vrms_mean", "tone_Vrms_std", "tone_windows_valid",
+TONE_COLUMNS = ["tone_freq_Hz", "tone_Vrms", "tone_Vrms_mean", "tone_Vrms_std", "snr_pilot_dB", "tone_windows_valid",
                 "tone_windows", "tone_purity_min", "tone_dc_V"]
-COMM_COLUMNS = ["ber", "bit_errors", "ber_avg", "bit_errors_avg", "n_bits", "evm_pct", "frames_accepted",
-                "frames_rejected", "frames_expected", "cycles_complete", "cycles_timing_ok", "timing_ok",
-                "ofdm_target_met", "isac_ok", "reason"]
+RATE_COLUMNS = ["goodput_Mbps", "goodput_frames_Mbps", "goodput_avg_Mbps", "goodput_cycle_Mbps", "rate_nominal_Mbps",
+                "rate_nominal_cycle_Mbps", "shannon_est_Mbps"]
+COMM_COLUMNS = ["ber", "bit_errors", "ber_avg", "bit_errors_avg", "n_bits", "evm_pct", "snr_comm_dB",
+                "frames_accepted", "frames_rejected", "frames_expected", "cycles_complete", "cycles_timing_ok",
+                "timing_ok", "ofdm_target_met", "isac_ok", "reason"]
 RECORD_COLUMNS = ["fs_Sa_s", "n_points", "duration_ms", "wave_mean_V", "wave_min_V", "wave_max_V", "wave_file",
                   "error"]
-CAPTURE_COLUMNS = ID_COLUMNS + POSE_COLUMNS + TONE_COLUMNS + COMM_COLUMNS + RECORD_COLUMNS
+CAPTURE_COLUMNS = ID_COLUMNS + POSE_COLUMNS + TONE_COLUMNS + RATE_COLUMNS + COMM_COLUMNS + RECORD_COLUMNS
 WINDOW_COLUMNS = ["capture_id", "window", "cycle", "start_ms", "duration_ms", "n_samples", "tone_Vrms", "dc_V",
                   "purity", "peak_freq_Hz", "accepted", "valid", "status"]
 SLOT_COLUMNS = ["capture_id", "cycle", "tone_start_ms", "tone_ms", "ofdm_ms", "cycle_ms", "timing_ok",
                 "frames_expected", "frames_located", "frames_accepted", "frames_rejected", "n_bits", "bit_errors",
-                "ber", "bit_errors_avg", "ber_avg", "evm_pct", "reason"]
+                "ber", "bit_errors_avg", "ber_avg", "evm_pct", "goodput_Mbps", "goodput_frames_Mbps", "reason"]
 TABLES = {"captures": CAPTURE_COLUMNS, "tone_windows": WINDOW_COLUMNS, "ofdm_slots": SLOT_COLUMNS}
 
 
@@ -57,6 +59,65 @@ def _num(v, scale=1.0):
     except (TypeError, ValueError):
         return None
     return v if math.isfinite(v) else None
+
+
+def pilot_snr_db(state):
+    """20 log10(pilot RMS / predicted std of its estimate) of the first valid pilot window (see rates)."""
+    pos = state["positionInput"]
+    if pos is None:
+        return None
+    cap = state["capture"]
+    fs, n = float(cap["FsCapture"]), int(pos["nSamples"])
+    first = int(round(pos["windowStart_s"] * fs))
+    seg = np.asarray(cap["YData"][first:first + n], dtype=float)
+    w = np.hanning(seg.size)
+    psd = np.abs(np.fft.rfft((seg - seg.mean()) * w)) ** 2 * 2 / (fs * np.sum(w**2))
+    df = np.abs(np.fft.rfftfreq(seg.size, 1 / fs) - state["cfg"]["toneFrequencyHz"])
+    n0 = np.median(psd[(df > 3e3) & (df < 100e3)]) / math.log(2)        # mean of chi2(2) bins = median / ln 2
+    return float(20 * math.log10(pos["rms_V"] / math.sqrt(n0 / (2 * seg.size / fs))))
+
+
+def rates(state):
+    """Pilot / communication SNR and bit rates of a processed capture [dB, Mb/s].
+
+    snr_pilot_dB       20 log10(pilot RMS / sigma) of the first valid pilot window, sigma = sqrt(N0 / 2T) = std of a
+                       least-squares amplitude over the window T in white noise of one-sided density N0 (N0 = median
+                       level within +/-100 kHz of the pilot, +/-3 kHz excluded). Same definition as RSS / sigma; the
+                       measured spread over the 3-4 windows of one capture is tone_Vrms_std
+    snr_comm_dB        -20 log10(EVM): effective SNR of the demodulated payload symbols (noise, interference,
+                       quantization and channel-estimation error included)
+    rate_nominal_Mbps  payload bits / frame duration = rate while the OFDM slot is on (ICS NominalOFDMslotPayload)
+    rate_nominal_cycle_Mbps   the same averaged over the whole cycle (ICS NominalCyclePayload)
+    goodput_Mbps       correctly decoded payload bits (original decisions) / duration of all the expected frames:
+                       rejected frames count as 0 bits; goodput_cycle_Mbps = averaged over the cycle;
+                       goodput_avg_Mbps = the same with the training-averaged decisions
+    goodput_frames_Mbps  frame (packet) goodput: payload of the accepted frames WITHOUT any bit error / duration of
+                       all the expected frames (no FEC: a frame with one wrong bit is lost)
+    shannon_est_Mbps   ESTIMATE, not measured: same frame structure with log2(1 + SNR) bits per carrier
+    """
+    r, p, packet = state.get("result", {}), state["plan"], state["packet"]
+    evm = _num(r.get("EVM"))
+    snr = 1.0 / evm**2 if evm else None
+    duty = p["communicationDuration_s"] / p["cycleDuration_s"]
+    nominal = p["nominalPayloadRate_bps"] / 1e6
+    expected = r.get("expectedFrames", 0)
+    good = good_avg = good_frames = None
+    if expected:
+        ok = sum(1 for f in r.get("frameResults", []) if f.get("accepted") and f.get("bitErrors") == 0)
+        good_frames = ok * packet["payloadBitCount"] / (expected * p["ofdmFrameDuration_s"]) / 1e6
+        errors = _num(r.get("bitErrors")) or 0.0
+        good = (r.get("nBits", 0) - errors) / (expected * p["ofdmFrameDuration_s"]) / 1e6
+        a = state["receiverAverage"]
+        if a.get("available"):
+            good_avg = (a["nBits"] - a["bitErrors"]) / (expected * p["ofdmFrameDuration_s"]) / 1e6
+    elif state["analysisOK"]:
+        good = good_frames = 0.0
+    return dict(
+        snr_pilot_dB=pilot_snr_db(state),
+        snr_comm_dB=10 * math.log10(snr) if snr else None,
+        rate_nominal_Mbps=nominal, rate_nominal_cycle_Mbps=p["nominalCyclePayloadRate_bps"] / 1e6,
+        goodput_Mbps=good, goodput_frames_Mbps=good_frames, goodput_avg_Mbps=good_avg, goodput_cycle_Mbps=None if good is None else good * duty,
+        shannon_est_Mbps=nominal * math.log2(1 + snr) / packet["bitsPerCarrier"] if snr else None)
 
 
 def isac_tables(state):
@@ -83,7 +144,7 @@ def isac_tables(state):
         isac_ok=bool(state["combinedCriteriaMet"]),
         reason=state["analysisError"] or r.get("reason", ""),
         fs_Sa_s=cap["FsCapture"], n_points=y.size, duration_ms=1e3 * cap["durationSeconds"],
-        wave_mean_V=float(y.mean()), wave_min_V=float(y.min()), wave_max_V=float(y.max()))
+        wave_mean_V=float(y.mean()), wave_min_V=float(y.min()), wave_max_V=float(y.max()), **rates(state))
     windows = [dict(window=i + 1, cycle=w["cycleIndex"], start_ms=_num(w["windowStart_s"], 1e3),
                     duration_ms=_num(w["windowDuration_s"], 1e3), n_samples=w["nSamples"],
                     tone_Vrms=_num(w["rms_V"]), dc_V=_num(w["dc_V"]), purity=_num(w["bandPurity"]),
@@ -95,6 +156,7 @@ def isac_tables(state):
         e, n = averaged.get(f["Cycle"], (0, 0))
         averaged[f["Cycle"]] = (e + f["AveragedErrors"], n + f["Bits"])
     slots = []
+    slot_s = state["plan"]["communicationFrames"] * state["plan"]["ofdmFrameDuration_s"]
     for s in r.get("slotResults", []):
         e_avg, n_avg = averaged.get(s["cycleIndex"], (None, 0))
         slots.append(dict(
@@ -104,7 +166,11 @@ def isac_tables(state):
             frames_expected=s["expectedFrames"], frames_located=s["framesLocated"],
             frames_accepted=s["acceptedFrames"], frames_rejected=s["rejectedFrames"], n_bits=s["nBits"],
             bit_errors=_num(s["bitErrors"]), ber=_num(s["BER"]), bit_errors_avg=e_avg,
-            ber_avg=e_avg / n_avg if n_avg else None, evm_pct=_num(s["EVM"], 100), reason=s["reason"]))
+            ber_avg=e_avg / n_avg if n_avg else None, evm_pct=_num(s["EVM"], 100),
+            goodput_Mbps=(s["nBits"] - (s["bitErrors"] if s["nBits"] else 0)) / slot_s / 1e6,
+            goodput_frames_Mbps=sum(1 for f in r.get("frameResults", []) if f["cycleIndex"] == s["cycleIndex"]
+                                    and f.get("accepted") and f.get("bitErrors") == 0)
+            * state["packet"]["payloadBitCount"] / slot_s / 1e6, reason=s["reason"]))
     return row, windows, slots
 
 

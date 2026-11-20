@@ -126,5 +126,42 @@ class SessionTests(unittest.TestCase):
             self.assertTrue(s.write_excel())
 
 
+class RateTests(unittest.TestCase):
+    def test_rates_and_snr(self):
+        from isac.storage import RATE_COLUMNS
+
+        cfg = get_config()
+        exp = isac.prepare(cfg)
+        with tempfile.TemporaryDirectory() as tmp:
+            s = Session(tmp, "rates", {})
+            s.save_experiment(exp)
+            rig = SimRig(cfg, lambda: ((700.0, 700.0, 300.0), 0.0, 0.0), seed=3)
+            rig.transmit(exp, s.dir)
+            cap = rig.capture(exp)
+            state = isac.process(cap, exp)
+            row, windows, slots = isac_tables(state)
+            nominal = exp["plan"]["nominalPayloadRate_bps"] / 1e6
+            self.assertAlmostEqual(row["rate_nominal_Mbps"], 2.2748161764705883, 12)
+            self.assertAlmostEqual(row["rate_nominal_cycle_Mbps"], nominal * 10.4448 / 22.4448, 6)
+            correct = (row["n_bits"] - row["bit_errors"]) / (row["frames_expected"] * exp["packet"]["payloadBitCount"])
+            self.assertAlmostEqual(row["goodput_Mbps"], nominal * correct, 9)
+            self.assertAlmostEqual(row["goodput_cycle_Mbps"], row["goodput_Mbps"] * 10.4448 / 22.4448, 6)
+            self.assertAlmostEqual(row["snr_comm_dB"], -20 * np.log10(row["evm_pct"] / 100), 9)
+            self.assertGreater(row["shannon_est_Mbps"], nominal)            # high-SNR pose: capacity above 64-QAM
+            # sim: white noise 0.4 mVrms over 10 MHz + 8-bit quantization -> sigma ~1 uV over 10 ms
+            self.assertAlmostEqual(row["snr_pilot_dB"], 20 * np.log10(row["tone_Vrms"] / 0.98e-6), delta=1.5)
+            self.assertTrue(all(abs(sl["goodput_Mbps"] - nominal) < 0.05 for sl in slots))
+            # a fully rejected capture: goodput 0, nominal unchanged
+            bad = dict(cap, YData=cap["YData"] + np.random.default_rng(1).normal(scale=0.02, size=cap["YData"].size))
+            row_bad = isac_tables(isac.process(bad, exp))[0]
+            self.assertLess(row_bad["goodput_Mbps"], 0.5 * nominal)
+            self.assertAlmostEqual(row_bad["rate_nominal_Mbps"], nominal, 12)
+            self.assertTrue(set(RATE_COLUMNS) <= set(CAPTURE_COLUMNS))
+            frames_ok = sum(1 for f in state["result"]["frameResults"] if f["accepted"] and f["bitErrors"] == 0)
+            self.assertAlmostEqual(row["goodput_frames_Mbps"], nominal * frames_ok / row["frames_expected"], 9)
+            self.assertLessEqual(row["goodput_frames_Mbps"], row["goodput_Mbps"] + 1e-12)
+            self.assertLessEqual(row_bad["goodput_frames_Mbps"], row_bad["goodput_Mbps"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -10,8 +10,8 @@
 # `--sim` on the command line sets all of them to "sim".
 [modes]
 gantry = "real"
-# mtrs = "real"
-mtrs = "sim"                 # 2026-11-18: MTRS not connected yet (back to "real" when it is)
+mtrs = "real"
+#mtrs = "sim"                 # 2026-11-18: MTRS not connected yet (back to "real" when it is)
 isac = "real"                # AWG + oscilloscope
 sim_speedup = 4.0            # simulated gantry / MTRS move this many times faster
 

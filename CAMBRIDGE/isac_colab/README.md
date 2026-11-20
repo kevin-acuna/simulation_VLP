@@ -28,6 +28,7 @@ OFDM: NFFT 1024, CP 64, 33 carriers from 305 to 794 kHz, 2 QPSK training + 8 pay
 01_check_instruments.py   step 1: VISA, AWG and oscilloscope check (read only)
 02_single_capture.py      step 2: one capture at the current pose (the ICS sequence, no console)
 03_isac_acquisition.py    step 3: GUI acquisition with gantry + MTRS (plan and manual)
+COLUMNS.md                definition of every column of the result tables (results.xlsx)
 config/devices.toml       instrument addresses and device settings (once per PC)
 isac/                     signal chain: waveform, AWG/scope I/O (VISA), receiver, storage, simulation
 hardware/                 gantry (igus, CRI) and MTRS (Thorlabs Kinesis) drivers
@@ -88,7 +89,7 @@ different waveform is backed up to `data/awg_backups/` and the new one is upload
 | file | content |
 |---|---|
 | `results.xlsx` | sheets `captures`, `tone_windows`, `ofdm_slots` (= the CSV files) and `session` |
-| `captures.csv` | one row per capture (columns below) |
+| `captures.csv` | one row per capture: pose, pilot, rates, communication, record (see COLUMNS.md) |
 | `tone_windows.csv` | one row per pilot window: cycle, start, Vrms, DC, purity, peak frequency, valid, status |
 | `ofdm_slots.csv` | one row per OFDM burst: measured durations, frames, bit errors, BER, averaged BER, EVM |
 | `wave/cNNNNN.npz` | raw record: WORD codes + scale, `V = (codes - y_reference) * y_increment + y_origin` |
@@ -96,13 +97,9 @@ different waveform is backed up to `data/awg_backups/` and the new one is upload
 | `session.json` | hyperparameters, devices, instruments, AWG load / reuse, oscilloscope settings (scale, offset, coupling, impedance, BW limit, acquisition; at the start and, in step 3, at the end), status |
 | `experiment.npz`, `transmission.npz` | prepared waveform (needed to re-process the raw records) and AWG metadata |
 
-`captures` columns: identification (`capture_id`, time, `mode` = plan / manual / here / single, `site_id`,
-`k`, `rep`); commanded and measured pose (`x|y|z_cmd_mm`, `angle_cmd_deg`, `tilt_cmd_deg`, `x|y|z_mm`,
-`angle_deg`, `tilt_deg`, errors, drift, move time); pilot (`tone_Vrms` = first valid window, as the ICS
-`ToneRMS`; `tone_Vrms_mean` / `_std` over the valid windows, number of windows, minimum purity, DC);
-communication (`ber`, `bit_errors`, `ber_avg`, `bit_errors_avg`, `n_bits`, `evm_pct`, frames accepted / rejected /
-expected, cycles, `timing_ok`, `ofdm_target_met`, `isac_ok` = ICS `CombinedCriteriaMet`, `reason`); record
-(`fs_Sa_s`, points, duration, mean / min / max, `wave_file`, `error`).
+Every column of the three tables and of the `session` sheet is defined in **[COLUMNS.md](COLUMNS.md)**.
+The main communication figure is `goodput_Mbps` / `goodput_frames_Mbps` (Mb/s received correctly; 2.27 Mb/s =
+the nominal 64-QAM rate in the OFDM slot), next to the pilot `tone_Vrms`.
 
 The CSV files are written row by row; `results.xlsx` is rebuilt after every capture. If it is open in Excel it
 is updated after Excel closes it.

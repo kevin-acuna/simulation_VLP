@@ -77,6 +77,10 @@ def main(sim=False):
             print(f"\nCapture {i + 1}/{N_CAPTURES}")
             isac.print_summary(state)
             row, windows, slots = isac_tables(state)
+            f = lambda k, spec: "n/a" if row[k] is None else format(row[k], spec)
+            print(f"  -> goodput {f('goodput_Mbps', '.4f')} Mb/s of {f('rate_nominal_Mbps', '.4f')} Mb/s in the OFDM slot "
+                  f"({f('goodput_cycle_Mbps', '.4f')} Mb/s over the cycle); SNR: communication "
+                  f"{f('snr_comm_dB', '.1f')} dB, pilot {f('snr_pilot_dB', '.1f')} dB")
             cid = session.add({**row, "mode": "single", "unix_time_s": round(unix, 3)}, capture, windows, slots)
             session.write_excel()
             if SAVE_FIGURES:

@@ -422,6 +422,15 @@ called from outside the script).
   2.1e-5 (2) ~ MATLAB baseline (3 errors / 0). Comb 2-5 MHz unchanged (1.6 mVrms, real, < 25 MHz).
   session.json now stores `scope_settings` (start) and, in 03, `scope_settings_end` (read_scope_settings: read
   only, failed queries recorded as text, error queue drained); 01 prints BW limit. 52 tests.
+- 2026-11-19: rate / SNR columns (isac/storage.rates, built on an uncommitted rates() found in the file):
+  goodput_Mbps (correct payload bits / expected-frame airtime; rejected frames = 0; caveat: at high BER random
+  bits still count ~50 %), goodput_avg_Mbps, goodput_cycle_Mbps, rate_nominal(_cycle)_Mbps = ICS Nominal* fields,
+  shannon_est_Mbps, snr_comm_dB = -20 log10 EVM, snr_pilot_dB = 20 log10(pilot / sqrt(N0/2T)) from the local noise
+  density (the window-to-window std of 3-4 windows jumped 65-86 dB). Per-slot goodput in ofdm_slots. Column order:
+  pilot -> rates -> comm. goodput_frames_Mbps = error-free accepted frames only (packet goodput, no FEC).
+  User removed 04_reprocess_session.py (no reprocessing tool) and kept only 2 good sessions in data/
+  (isac_20261119-185139_single, isac_20261119-185716_grid5x5x1_K5; tables rebuilt with the current columns).
+  Column definitions: isac_colab/COLUMNS.md (keep it in sync with isac/storage.py). 1-pose test (100, 100, 100), K=5 manual: pilot 5.36-6.28 mVrms, 0-2 bit errors, goodput 2.275.
 - Known risk: scope over Keysight VISA USB locked up in long database campaigns (see Incident 2026-10-13); the ICS
   capture uses :DIGitize + *OPC? (the safer pattern) but 4 MB WORD transfers. LAN socket is the fallback.
 

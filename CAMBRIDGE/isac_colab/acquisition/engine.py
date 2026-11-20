@@ -264,12 +264,14 @@ class Engine:
         self.events.put("capture")
         mv = lambda v: "n/a" if v is None else f"{v * 1e3:.4g} mVrms"
         ber = lambda v: "n/a" if v is None else f"{v:.3g}"
-        self._set(status=f"Capture #{row['capture_id']} saved: pilot {mv(row['tone_Vrms'])}, BER {ber(row['ber'])} "
+        self._set(status=f"Capture #{row['capture_id']} saved: pilot {mv(row['tone_Vrms'])}, "
+                         f"{ber(row['goodput_Mbps'])} Mb/s, BER {ber(row['ber'])} "
                          f"(averaged {ber(row['ber_avg'])}), {row['frames_accepted']} frames ok / "
                          f"{row['frames_rejected']} rejected" + ("" if row["isac_ok"] else "  [criteria NOT met]"))
         print(f"[ISAC] #{row['capture_id']} {mode} site={m.get('site_id')} k={m.get('k')} rep={m.get('rep')} "
               f"pos=({row['x_mm']}, {row['y_mm']}, {row['z_mm']}) rot={row['angle_deg']}: pilot {mv(row['tone_Vrms'])}, "
-              f"BER {ber(row['ber'])} / avg {ber(row['ber_avg'])}, EVM {ber(row['evm_pct'])} %")
+              f"BER {ber(row['ber'])} / avg {ber(row['ber_avg'])}, EVM {ber(row['evm_pct'])} %, "
+              f"goodput {ber(row['goodput_Mbps'])} of {ber(row['rate_nominal_Mbps'])} Mb/s")
 
     def _sleep(self, seconds):
         t_end = time.perf_counter() + seconds
