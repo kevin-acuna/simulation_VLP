@@ -25,3 +25,4 @@ CAMBRIDGE/analysis/**/*.out
 # Office lock files and MATLAB autosaves
 ~$*
 *.asv
+CAMBRIDGE/photos_videos/

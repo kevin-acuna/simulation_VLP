@@ -22,3 +22,19 @@ Pipeline (all outputs stay inside that folder; experiment data folders are read-
   `py -3.14 scripts/ml_positioning.py` -> `results/ml_predictions.csv`, `results/ml_metrics.txt`;
   `cd scripts/matlab; matlab -batch "make_ml_figure"` -> `figures/exp3_ml_cdf.png`.
   Stricter splits (spatial blocks, whole sessions): `py -3.14 scripts/ml_split_check.py`; inference time: `scripts/ml_latency.py`.
+
+## Cambridge final-meeting deck (`CAMBRIDGE/PPTs/final_meeting/`, 2026-11-23)
+7-slide summary of the visit for Iman (English, high level): title, TIM manuscript (no submission status, user choice),
+other results, software + digital twin (embedded video), ISAC with the AWG (+ user photo photos_videos/ISAC.jpeg),
+collaborations (in the group: Rizwana, Hossein / new contacts: ProrokLab, MSR), next steps / keeping in touch.
+Built on the master of `PPTs/2026-11-03 UVSQ Follow-up Meeting.pptx` (titles Helvetica 24 bold, accent1 lighter 40 %).
+1. `py -3.14 make_assets.py` -> `assets/` (paper pages via pdftoppm, author placeholder line hidden; RSS maps; ISAC crops;
+   images reused from earlier decks).
+2. `assets/dbacq_ui.png`: `database_acquisition/.venv/Scripts/python.exe app/run.py --sim --no-browser --no-log --output <temp>`,
+   POST a plan (/api/plan) + /api/start, then msedge --headless=new --window-size=1920,1200 --screenshot=...
+   "http://127.0.0.1:8765/?snapshot=1&view=3d&config=1".
+3. Video: `py -3.14 crop_video.py <temp>/twin.mp4` (16:9 crop drops the preview bar) then
+   `powershell -File compress_video.ps1 -Video <temp>/twin.mp4 -OutMp4 assets/digital_twin.mp4` (PowerPoint Resample:
+   bitrate is only a cap, ~3 MB; Save() keeps the original media, SaveAs writes the resampled one).
+4. `py -3.14 build_deck.py` -> `PPTs/2026-11-24 Final meeting - Visit summary.pptx`; verify with the OPTI-6G
+   `render_pptx.ps1` + `montage.py`.

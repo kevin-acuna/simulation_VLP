@@ -434,6 +434,57 @@ called from outside the script).
 - Known risk: scope over Keysight VISA USB locked up in long database campaigns (see Incident 2026-10-13); the ICS
   capture uses :DIGitize + *OPC? (the safer pattern) but 4 MB WORD transfers. LAN socket is the fallback.
 
+## Digital twin (`CAMBRIDGE/digital_twin_ows/`, own git repository, React + R3F; 2026-11-23)
+- Commands (from that folder): `npm run dev` (open access, http://127.0.0.1:5173), `npx tsc -b`, `npx vitest run` (39 files,
+  ~1350 tests, ~2 s). Playwright: the Chromium headless shell is not installed; run e2e with a temporary config that
+  sets `use: { ...base.use, channel: 'msedge' }`. Its own AGENTS.md is git-ignored (absent). Code and UI in English, no comments.
+- CAMBRIDGE preset = digital twin of the TIM testbed (`src/model/testbeds.ts`, `CAMBRIDGE_TWIN`, `gantryToTwin`): twin origin
+  = centre of the 1.4 x 1.4 m gantry area (gantry X = Y = 0.7 m), room 3 x 3 x 3 m, LED-01 = 500 kHz LED at gantry
+  (281.1, 904.8) mm and 3.0 m, m = 6.0918 (`halfPowerAngleFromOrder`), PDA100A2 75.4 mm2, SQ psi3dB 0.61 rad, FOV 90 deg,
+  noise 3.2 uV per 100-ms record. W domain with 1 uW of RSS = 1 mV of tone: P_t = A 2 pi / ((m+1) A_PD 1e3) = 0.7368 W,
+  per-sample variance (3.2e-9)^2 x 1e6 with N = 1e6. Three tilted-PD UAVs (15 deg, yaw 0/120/240 deg) with PD centres at
+  gantry (0.4, 0.4, 0.955), (1.0, 0.7, 1.135), (0.7, 1.3, 1.315) m; K = 5 uniform, dwell 0.3 s, transition 1 s, periodic
+  scans enabled (30 s), estimate + error overlays on. A browser that saved an older CAMBRIDGE template loads it instead:
+  "Restore default scene" (View tab) rebuilds the factory twin.
+- Tilted-PD drone: `receiver.droneMount = { kind: 'flat' | 'tilted', tiltDeg }` (receiverSystems.ts: isTiltedDrone,
+  getDroneTiltDeg, isAzimuthScan). The body stays level; heading = yaw + orientation.azimuthDeg (acquisition azimuths are
+  rotation angles relative to yaw, inclination forced to the tilt; azimuth smoothstep interpolation); PD centre on the
+  rotation axis at `getTiltedMountGeometry(tilt).pdCentreHeight` above the body centre (fixed during the rotation);
+  yaw-invariant bounds (swept rotor radius). Flat-PD drones keep the attitude acquisition.
+- Science: optional `optical.receiverResponse` (absent = cosine; SQ = [1 - a psi^2]+) used by los.ts; `estimator.ts` = TS
+  port of demo/vlp NLS (seeds 20/40/60/80 deg x 45 deg + normals, 3 starts, LM on the sphere, d = sqrt(A cos^m phi / beta))
+  and `singleLedPositionBound` (paper eqs. 11-16, tested against the axial closed form). MODEL_ID stays 'lambertian-los-v1'
+  (pinned by the MATLAB reference JSON).
+- Live estimates: `model/receiverEstimation.ts` (`estimateAcquisitionRun`, cached per run object; complete captures with a fixed
+  PD centre only = tilted drones and STRP; strongest LED; the estimator uses the channel parameters, so errors are noise
+  limited, ~1-3 mm, PEB ~1-3 mm). Shown by ProcessingOverlay (config.processing toggles), the X-Y plan and the Acquisition
+  panel ("Position estimate"); included in the acquisition and fleet exports.
+- 2026-11-23 (user, second/third round): estimate glyph in a sober blue (#2f6690, original size); the sober error label
+  ("x.xx cm", original style, at the middle of the error segment) is shown for EVERY receiver with an estimate; no visible
+  "EST" tag (user: not needed; a visually hidden `.estimate-label` keeps data-estimate-id for e2e/accessibility); the
+  uncertainty tag stays on the selected receiver only. The user rejected a loud orange marker/label design. Toolbar Acquire / Route act on the selected receiver only, or on every capable receiver when no receiver
+  is selected (clicking empty space deselects; opening the Receiver/Acquisition tab selects the active receiver).
+  Acquire pauses the routes of its receivers first (App.tsx startAcquisitions / toggleRoutes). New route pattern
+  'random' (model/motion.ts randomCircuit: 24 waypoints around the start within +/- route size, +/-0.15 m altitude,
+  closed Catmull-Rom loop, seed = hash of the start position in mm, so every drone and every restart differs); the
+  CAMBRIDGE factory preset uses it (size 0.5 m, 0.2 m/s). The user keeps a browser-saved CAMBRIDGE template with their own
+  room and drone values: do not invalidate saved templates (no storage-key bump).
+
+## Zenodo dataset of the TIM paper (`CAMBRIDGE/database_for_Zenodo/`, 2026-11-23)
+- `python build_package.py` writes `upload/` (17 files, 10.9 GB, git-ignored) = exactly what is uploaded: D1/D2/D3
+  `*_RSS.csv` (X, Y, Z m, alpha, normal with alpha_0 66.5, RSS), `D1_calibration_scan_tables.zip` + 4 D1 waveform parts,
+  `D2_grid.zip`, `D3_blind_test.zip`, `R_repeated_records.zip` (session folders: tables + raw .npz), README.md (from
+  `static/`, placeholders filled from the block at the top of the script), LICENSE (CC BY 4.0), Python/MATLAB examples,
+  checksums.md5. Existing zips are kept (`--force` rebuilds, ~1 min). Sessions are only read.
+- `python check_package.py [--quick]` (0 failures expected; TODO placeholders listed until authors/DOI/contact are set);
+  `matlab -batch "verify_against_paper"` (tables = pp_load_sites inputs; D2 3.656514 cm = grid.final_demo_offset,
+  D3 4.100633 cm = random.test). LEEME.md (Spanish: GO checklist, upload steps), zenodo_form.md (form values).
+- USER DECISIONS: D3 = the 131 paper positions only (session A points 1-47, B 84 complete), published as if nothing else
+  existed: NO note on the excluded points, D3 session.json without summary/end, counts = published. D1 raw waveforms
+  included. The D1 calibration subset (first 14,294 records) is NOT mentioned in the README. session.json also loses
+  local paths, IPs, testbed.config, former_name and z_conversion (DROP_* lists). fft/ not uploaded (fft_file column removed).
+  Authors, ORCID, article reference, funding, licence and timing (open at submission vs reserved DOI) await the professor.
+
 ## Verification
 - No hardware: `python app/run.py --sim` (from `database_acquisition/`); other scripts with
   `DEVICE_MODE` = sim (Agg backend for headless tests). `node --check app/web/app.js` after JS changes.
