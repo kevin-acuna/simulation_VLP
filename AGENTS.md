@@ -24,12 +24,15 @@ Pipeline (all outputs stay inside that folder; experiment data folders are read-
   Stricter splits (spatial blocks, whole sessions): `py -3.14 scripts/ml_split_check.py`; inference time: `scripts/ml_latency.py`.
 
 ## Cambridge final-meeting deck (`CAMBRIDGE/PPTs/final_meeting/`, 2026-11-23)
-7-slide summary of the visit for Iman (English, high level): title, TIM manuscript (no submission status, user choice),
-other results, software + digital twin (embedded video), ISAC with the AWG (+ user photo photos_videos/ISAC.jpeg),
+8 slides for Iman (English, high level, SOBER: user feedback "must look made by me, not AI-generated"): title and
+"Thank you" exactly as the 17/09 and 01/10 decks (Times New Roman, author in blue 2977A0, date dd/mm/yyyy), TIM
+manuscript (paper testbed figure + CDF, no submission status), DATABASE D1, D2, D3 of the paper to Zenodo (in
+progress), software + digital twin (embedded video), ISAC with the AWG (user photo photos_videos/ISAC.jpeg labelled
+like the paper testbed figure; link SNR vs pilot from isac_20261123-192424/analysis/ISAC_single_LED_results.pdf),
 collaborations (in the group: Rizwana, Hossein / new contacts: ProrokLab, MSR), next steps / keeping in touch.
-Built on the master of `PPTs/2026-11-03 UVSQ Follow-up Meeting.pptx` (titles Helvetica 24 bold, accent1 lighter 40 %).
-1. `py -3.14 make_assets.py` -> `assets/` (paper pages via pdftoppm, author placeholder line hidden; RSS maps; ISAC crops;
-   images reused from earlier decks).
+Avoid: fanned pages, big stat callouts, small-caps headers, accent sub-headings, long captions. Master of
+`PPTs/2026-11-03 UVSQ Follow-up Meeting.pptx`; section titles Helvetica 24 bold accent1 lighter 40 %, Arial labels.
+1. `py -3.14 make_assets.py` -> `assets/`; `matlab -batch "make_d2_figure"` -> `assets/d2_grid.png`.
 2. `assets/dbacq_ui.png`: `database_acquisition/.venv/Scripts/python.exe app/run.py --sim --no-browser --no-log --output <temp>`,
    POST a plan (/api/plan) + /api/start, then msedge --headless=new --window-size=1920,1200 --screenshot=...
    "http://127.0.0.1:8765/?snapshot=1&view=3d&config=1".

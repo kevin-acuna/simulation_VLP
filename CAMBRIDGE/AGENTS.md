@@ -431,6 +431,12 @@ called from outside the script).
   User removed 04_reprocess_session.py (no reprocessing tool) and kept only 2 good sessions in data/
   (isac_20261119-185139_single, isac_20261119-185716_grid5x5x1_K5; tables rebuilt with the current columns).
   Column definitions: isac_colab/COLUMNS.md (keep it in sync with isac/storage.py). 1-pose test (100, 100, 100), K=5 manual: pilot 5.36-6.28 mVrms, 0-2 bit errors, goodput 2.275.
+- 2026-11-23 session isac_20261123-192424 (3 sites x K=5, z=200, 15 deg adapter although PD_TILT_DEG=0 in metadata):
+  analysis/ISAC_single_LED_results.pdf (only file; build in %TEMP%/isac_report). OWP with TIM calibration, A x 0.5
+  (1 Vpp): 13.9/16.1/15.5 cm, common direction bias 3.4-3.9 deg (stage zero; internal test offset ~74 deg -> 7.5 cm,
+  not reported). Pilot-free test (%TEMP%/isac_report/csi_positioning.py): RSS from OFDM training |H| at 503.5 kHz
+  x max|w|/(gain sqrt2) = pilot within +0.5 % (std 0.7 %), no calibration; positioning 11.5/15.6/14.7 cm (K=4 at
+  site 3: no frame decoded at 1.1 mV), estimates 1.6-4 cm from the pilot ones; CSI precision 0.35-1.4 %.
 - Known risk: scope over Keysight VISA USB locked up in long database campaigns (see Incident 2026-10-13); the ICS
   capture uses :DIGitize + *OPC? (the safer pattern) but 4 MB WORD transfers. LAN socket is the fallback.
 
