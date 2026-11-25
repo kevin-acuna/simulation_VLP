@@ -41,3 +41,13 @@ Avoid: fanned pages, big stat callouts, small-caps headers, accent sub-headings,
    bitrate is only a cap, ~3 MB; Save() keeps the original media, SaveAs writes the resampled one).
 4. `py -3.14 build_deck.py` -> `PPTs/2026-11-24 Final meeting - Visit summary.pptx`; verify with the OPTI-6G
    `render_pptx.ps1` + `montage.py`.
+- The deck was then EDITED BY HAND (2026-11-23 23:11: GitHub and Vercel links on the software slide): do NOT rebuild it
+  with build_deck.py. Backup of that version: `final_meeting/_backup/..._user-edit_2026-11-23_2311.pptx`.
+  `py -3.14 update_isac_slide.py` changes ONLY the ISAC slide in place (23/11 report, version 22:50: Fig. 4(b) link SNR
+  at unvisited orientations, OFDM-only positioning, 15 cm stage-reference bias). Check that only slide5.xml and its
+  image changed (compare the parts of the backup and the deck; rels may be reordered by python-pptx).
+- Second hand edit (23:31, backup `..._user-edit_2026-11-23_2331.pptx`): the user deleted the "15 cm" bullet and the
+  "23/11 ... documentation in progress" note of the ISAC slide (do not add them back). The red outage line of the link
+  figure was removed at the user's request: `../../isac_colab/.venv/Scripts/python.exe make_isac_link_figure.py`
+  (reruns %TEMP%/isac_report/loo_link_prediction.py, else assets/isac_link_prediction.csv) then
+  `py -3.14 update_isac_slide.py --figure-only` (swaps only the image, same size and position).

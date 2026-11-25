@@ -437,6 +437,9 @@ called from outside the script).
   not reported). Pilot-free test (%TEMP%/isac_report/csi_positioning.py): RSS from OFDM training |H| at 503.5 kHz
   x max|w|/(gain sqrt2) = pilot within +0.5 % (std 0.7 %), no calibration; positioning 11.5/15.6/14.7 cm (K=4 at
   site 3: no frame decoded at 1.1 mV), estimates 1.6-4 cm from the pilot ones; CSI precision 0.35-1.4 %.
+  Leave-one-orientation-out link prediction (%TEMP%/isac_report/loo_link_prediction.py): NLS on K-1 orientations,
+  predicted SNR = 20log10(RSS) + offset of the visited orientations -> RMSE 0.31 dB (max 0.76, n=14), same with
+  CSI or pilot; baselines mean-of-visited 1.95 dB, nearest angle 2.09 dB; no-frame pose predicted 13.7 dB (link down).
 - Known risk: scope over Keysight VISA USB locked up in long database campaigns (see Incident 2026-10-13); the ICS
   capture uses :DIGitize + *OPC? (the safer pattern) but 4 MB WORD transfers. LAN socket is the fallback.
 
